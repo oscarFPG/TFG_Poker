@@ -10,3 +10,4 @@
 - Creación proyecto en GitHub
 - Organización de tareas en Projects
 - Revisión proyectos ya realizados por Valeria y Óscar
+![diagrama1](https://github.com/user-attachments/assets/2a30f568-fa53-414f-a447-c9ea97086ff8)
