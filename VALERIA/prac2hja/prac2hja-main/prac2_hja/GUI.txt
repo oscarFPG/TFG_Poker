@@ -1,0 +1,13 @@
+AhAcQhJhTh
+- Best Hand: Pair of Aces (AcAh)
+- Draw: Flush
+- Draw: Straight Gutshot
+
+AhKhQhJhTh
+- Best Hand: Royal Flush
+- Draw: Straight Flush
+- Draw: Flush
+
+AhAsQhAdAc
+- Best Hand: Poker of Aces (AsAcAdAh)
+
