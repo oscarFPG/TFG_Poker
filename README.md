@@ -12,3 +12,5 @@
 - Creación proyecto en GitHub
 - Organización de tareas en Projects
 - Revisión proyectos ya realizados por Valeria y Óscar
+  ![diagrama1](Resources/diagrama1.jpg)
+  ![diagrama2](Resources/diagrama2.jpg)
