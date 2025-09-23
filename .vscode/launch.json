@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Run Poker project",
+            "request": "launch",
+            "mainClass": "com.ucm.Main",
+            "projectName": "tfgpoker",
+            "preLaunchTask": "Run JavaFX"
+        }
+    ]
+}
