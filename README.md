@@ -6,6 +6,9 @@
 - Carla Toapanta Taipe
 - Valeria Corina Pulido Lozada
 
+Requisitos
+- Java version 21
+- JavaFX version 21
 18/09/2025
 
 - Diagrama de clases general de la lógica del juego
