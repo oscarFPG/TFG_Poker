@@ -4,7 +4,7 @@ package com.ucm.gameobjects;
 public class Player {
  
     private Card[] _cards;
-    private String _id;
+    private int _id;
     private String _name;
     private boolean _fold = false;
     private int _money;
@@ -14,8 +14,12 @@ public class Player {
     public Player(Card[] cards){
         this._cards = cards;
     }
-    
-    public Player(String id, Card[] cards,  String name, int money){
+
+    public Player(String name){
+        this._name = name;
+    }
+
+    public Player(int id, Card[] cards,  String name, int money){
         this._id = id;     
         this._cards = cards;
         this._name = name;
@@ -25,7 +29,7 @@ public class Player {
     
     public Card[] getCards(){ return _cards;}
     
-    public String getID(){  return _id;}
+    public int getID(){  return _id;}
         
     public String getName(){return _name;}
 

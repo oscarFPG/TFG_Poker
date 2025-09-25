@@ -1,5 +1,6 @@
 package com.ucm.control;
 
+import com.ucm.gameobjects.Player;
 import com.ucm.logic.Game;
 
 
@@ -10,14 +11,26 @@ public class Controller{
      */
     private Game _game;
     
-    Controller(Game game){
+    public Controller(Game game){
         _game = game;
     }
     
     private void configureGame(){
         
-        int numPlayers = 4;
+        /*
 
+        // PASOS
+        1- CREO EL MAZO
+        2- CREO LOS JUGADORES
+        3- ASIGNO ROLES A LOS JUGADORES
+        4- REPARTDO CARTAS A CADA JUDADOR
+        5- REPARTO CARTAS A LA MESA
+
+         */
+
+
+        _game.addPlayer( new Player("Valeria") );
+        //_game.repartirCartasAJugador()
         
     }
     

@@ -1,9 +1,14 @@
 package com.ucm;
 
+//GUI
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+
+// LOGIC
+import com.ucm.control.Controller;
+import com.ucm.logic.Game;
 
 public class Main extends Application {
 
@@ -16,6 +21,9 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        launch();
+        
+        Game game = new Game();
+        Controller controller = new Controller(game);
+        controller.run();
     }
 }

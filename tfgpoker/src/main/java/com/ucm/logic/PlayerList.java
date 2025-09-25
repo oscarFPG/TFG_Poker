@@ -5,14 +5,22 @@ import com.ucm.gameobjects.Player;
 public class PlayerList {
     
     Player[] players;
-    int numPlayers;
+    int _contPlayers;
+
+    public PlayerList(){
+        _contPlayers = 0;
+        players = new Player[Game.NUM_MAX_PLAYERS];
+    }
 
     public PlayerList(int n){
-        numPlayers = n;
+        _contPlayers = 0;
         players = new Player[n];
     }
 
-    public void addPlayer(Player p, int pos){
-        players[pos] = p;
+    public int getContPlayers(){ return _contPlayers; }
+
+    public void addPlayer(Player p){
+        players[_contPlayers] = p;
+        _contPlayers++;
     }
 }

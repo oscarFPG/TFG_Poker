@@ -1,13 +1,13 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.ucm.logic;
 
-/**
- *
- * @author usuario_local
- */
+import com.ucm.gameobjects.Deck;
+
 public class Table {
+
+    private Deck _deck; 
+    
+    public Table(){
+        _deck = new Deck();
+    }
     
 }

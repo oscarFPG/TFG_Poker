@@ -1,5 +1,7 @@
 package com.ucm.logic;
 
+import com.ucm.gameobjects.Player;
+
 
 public class Game{
     
@@ -7,17 +9,19 @@ public class Game{
     public static int NUM_MAX_PLAYERS = 9;
     
     private Table _table;
-    
-    
+    private PlayerList _playerList;
     public Game(){
         _table = new Table();
     }
   
     
-    public void addPlayerToTable(Player p){
-        _table.addPlayerToTable(p);
+    public void addPlayer(Player p){
+       _playerList.addPlayer(p);
     }
     
+    /*
+    
+    */
     public void shareOutAllCards(){
         _table.shareOutAllCards();
     }
