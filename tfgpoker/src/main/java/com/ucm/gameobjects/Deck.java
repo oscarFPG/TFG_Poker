@@ -3,48 +3,48 @@ package com.ucm.gameobjects;
 import java.util.Random;
 
 public class Deck {
-    private static final int NUM_SUITS = 4; // Ajusta según tu definición
-    private static final int NUM_VALUES = 13; // Ajusta según tu definición (2–14 si usas As=14)
-
-    private Card[][] fullDeck;
-    private Random random;
-    private final String numberOrder = "23456789TJQKA";
+   
+    private Card[][] _deck;
+    private Random _random;
+    
+    private static final char[] SUITS = new char[] {'h','d','c','s'};
+    private static final char[] NUMBERS = new char[] {'A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'};
+    
 
     public Deck() {
-        fullDeck = new Card[NUM_SUITS][NUM_VALUES];
-        random = new Random();
+        _random = new Random();
         initializeDeck();
     }
 
     private void initializeDeck() {
-        String suitOrder = "hdcs";
-        for (int i = 0; i < NUM_SUITS; i++) {
-            for (int j = 2; j < NUM_VALUES + 2; j++) {
-                fullDeck[i][j - 2] = new Card(numberOrder.charAt(j), suitOrder.charAt(i));
+        _deck = new Card[SUITS.length][NUMBERS.length];
+        for (int i = 0; i < SUITS.length; i++) {
+            for (int j = 0; j < NUMBERS.length; j++) {
+                _deck[i][j] = new Card( NUMBERS[j], SUITS[i]);
             }
         }
     }
 
     public Card takeRandomCard() {
-        int suit = random.nextInt(NUM_SUITS);
-        int value = random.nextInt(NUM_VALUES);
+        int suit = _random.nextInt(SUITS.length);
+        int value = _random.nextInt(NUMBERS.length);
 
-        if (fullDeck[suit][value] == null) {
+        if (!_deck[suit][value].getAvailable()) { // si la carta no esta disponible en el mazo
             return takeRandomCard(); // vuelve a intentar si ya fue retirada
         }
 
-        Card taken = fullDeck[suit][value];
-        fullDeck[suit][value] = null; // la quitamos del mazo
+        Card taken = _deck[suit][value];
+        taken.setAvailable(false); // la quitamos del mazo --> indicamos que no esta disponible
         return taken;
     }
 
     public void printAllDeck() {
-        for (int i = 0; i < NUM_SUITS; i++) {
-            for (int j = 0; j < NUM_VALUES; j++) {
-                if (fullDeck[i][j] == null) {
+        for (int i = 0; i < SUITS.length; i++) {
+            for (int j = 0; j < NUMBERS.length; j++) {
+                if (_deck[i][j] == null) {
                     System.out.print("[xx]");
                 } else {
-                    System.out.print(fullDeck[i][j].toString());
+                    System.out.print(_deck[i][j].toString());
                 }
             }
             System.out.println();
@@ -52,9 +52,6 @@ public class Deck {
     }
 
     public void retrieveCard(Card card) {
-        // La primera carta (2) se guarda en posición 0, la 3 en la 1, etc.
-        int suit = card.getSuit();
-        int valueIndex = card.getNumber() - 2;
-        fullDeck[suit][valueIndex] = card;
+        _deck[card.getSuit()][card.getNumber()].setAvailable(true); // la devolvemos al mazo --> indicamos que esta disponible
     }
 }

@@ -4,14 +4,14 @@ public class Card {
 
     private char _number;
     private char _suit; 
-    private boolean _active;
+    private boolean _available;
     private boolean _sol;
             
     public Card (char number ,char suit) {
         this._number = number;
         this._suit = suit;
         this._sol = false;
-        this._active = true;
+        this._available = true;
     } 
     
     public char getNumber(){
@@ -25,15 +25,15 @@ public class Card {
     public void setSol(boolean b){
         _sol = b;
     }
-    public void setActive(boolean b){
-        _active = b;
+    public void setAvailable(boolean b){
+        _available = b;
     }
   
     public boolean getSol(){
         return _sol;
     }
     
-     public boolean getActive(){
-        return _active;
+     public boolean getAvailable(){
+        return _available;
     }
 }
