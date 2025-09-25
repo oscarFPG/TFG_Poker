@@ -8,6 +8,7 @@ public class Player {
     private String _name;
     private boolean _fold = false;
     private int _money;
+    private String _role;
     
 
     public Player(Card[] cards){
@@ -40,7 +41,7 @@ public class Player {
     public void setName(String n) {
         _name = n;
     }
-    
+
     public void setMoney(int m) {
         _money = m;
     }

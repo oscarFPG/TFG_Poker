@@ -3,11 +3,11 @@ package com.ucm.gameobjects;
 public class Card {
 
     private char _number;
-    private char _suit; 
+    private Suit _suit; 
     private boolean _available;
     private boolean _sol;
             
-    public Card (char number ,char suit) {
+    public Card (char number ,Suit suit) {
         this._number = number;
         this._suit = suit;
         this._sol = false;
@@ -18,7 +18,7 @@ public class Card {
         return _number;
     }
     
-    public char getSuit(){
+    public Suit getSuit(){
         return _suit;
     }
     

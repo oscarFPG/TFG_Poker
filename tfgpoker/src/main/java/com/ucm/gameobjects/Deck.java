@@ -7,7 +7,6 @@ public class Deck {
     private Card[][] _deck;
     private Random _random;
     
-    private static final char[] SUITS = new char[] {'h','d','c','s'};
     private static final char[] NUMBERS = new char[] {'A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'};
     
 
@@ -17,6 +16,8 @@ public class Deck {
     }
 
     private void initializeDeck() {
+
+        Suit[] SUITS = Suit.values();
         _deck = new Card[SUITS.length][NUMBERS.length];
         for (int i = 0; i < SUITS.length; i++) {
             for (int j = 0; j < NUMBERS.length; j++) {
@@ -26,6 +27,7 @@ public class Deck {
     }
 
     public Card takeRandomCard() {
+         Suit[] SUITS = Suit.values();
         int suit = _random.nextInt(SUITS.length);
         int value = _random.nextInt(NUMBERS.length);
 
@@ -39,6 +41,7 @@ public class Deck {
     }
 
     public void printAllDeck() {
+        Suit[] SUITS = Suit.values();
         for (int i = 0; i < SUITS.length; i++) {
             for (int j = 0; j < NUMBERS.length; j++) {
                 if (_deck[i][j] == null) {
@@ -52,6 +55,7 @@ public class Deck {
     }
 
     public void retrieveCard(Card card) {
-        _deck[card.getSuit()][card.getNumber()].setAvailable(true); // la devolvemos al mazo --> indicamos que esta disponible
+         Suit[] SUITS = Suit.values();
+        _deck[card.getSuit().getIndex()][card.getNumber()].setAvailable(true); // la devolvemos al mazo --> indicamos que esta disponible
     }
 }

@@ -16,12 +16,9 @@ public class Controller{
     
     private void configureGame(){
         
-        _game.addPlayerToTable( /* Un jugador */ );
-        _game.addPlayerToTable( /* Un jugador */ );
-        _game.addPlayerToTable( /* Un jugador */ );
-        _game.addPlayerToTable( /* Un jugador */ );
-        _game.addPlayerToTable( /* Un jugador */ );
-        _game.addPlayerToTable( /* Un jugador */ );
+        int numPlayers = 4;
+
+        
     }
     
     public void run(){
