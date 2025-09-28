@@ -22,7 +22,7 @@
             <artifactId>maven-compiler-plugin</artifactId>
             <version>3.11.0</version>
             <configuration>
-            <release>21</release>
+                <release>21</release>
             </configuration>
         </plugin>
 
@@ -31,7 +31,7 @@
             <artifactId>javafx-maven-plugin</artifactId>
             <version>0.0.8</version>
             <configuration>
-            <mainClass>com.ucm.Main</mainClass>
+                <mainClass>com.ucm.Main</mainClass>
             </configuration>
         </plugin>
 

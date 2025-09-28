@@ -39,7 +39,7 @@ public class Player {
 
 
     public void setCards(Card[] c) {
-         _cards = c;
+        _cards = c;
     }
 
     public void setName(String n) {

@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import com.ucm.control.Controller;
 import com.ucm.logic.Game;
 
+
 public class Main extends Application {
 
     @Override
@@ -22,6 +23,8 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         
+        launch();
+
         Game game = new Game();
         Controller controller = new Controller(game);
         controller.run();

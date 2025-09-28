@@ -10,6 +10,8 @@ public class Game{
     
     private Table _table;
     private PlayerList _playerList;
+
+
     public Game(){
         _table = new Table();
     }
@@ -19,9 +21,6 @@ public class Game{
        _playerList.addPlayer(p);
     }
     
-    /*
-    
-    */
     public void shareOutAllCards(){
         _table.shareOutAllCards();
     }

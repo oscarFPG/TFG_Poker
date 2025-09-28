@@ -23,19 +23,18 @@ public class Controller{
         1- CREO EL MAZO
         2- CREO LOS JUGADORES
         3- ASIGNO ROLES A LOS JUGADORES
-        4- REPARTDO CARTAS A CADA JUDADOR
+        4- REPARTO CARTAS A CADA JUDADOR
         5- REPARTO CARTAS A LA MESA
 
-         */
-
+        */
 
         _game.addPlayer( new Player("Valeria") );
-        //_game.repartirCartasAJugador()
         
     }
     
     public void run(){
-        
+
+        configureGame();
     }
     
 }

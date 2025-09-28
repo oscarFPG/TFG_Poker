@@ -8,6 +8,14 @@
             "mainClass": "com.ucm.Main",
             "projectName": "tfgpoker",
             "preLaunchTask": "Run JavaFX"
+        },
+        {
+            "type": "java",
+            "name": "Debug Poker project",
+            "request": "attach",
+            "hostName": "localhost",
+            "port": 5001,
+            "preLaunchTask": "Debug JavaFX"
         }
     ]
 }

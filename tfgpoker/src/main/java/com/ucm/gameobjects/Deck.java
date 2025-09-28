@@ -27,7 +27,8 @@ public class Deck {
     }
 
     public Card takeRandomCard() {
-         Suit[] SUITS = Suit.values();
+        
+        Suit[] SUITS = Suit.values();
         int suit = _random.nextInt(SUITS.length);
         int value = _random.nextInt(NUMBERS.length);
 
@@ -41,6 +42,7 @@ public class Deck {
     }
 
     public void printAllDeck() {
+
         Suit[] SUITS = Suit.values();
         for (int i = 0; i < SUITS.length; i++) {
             for (int j = 0; j < NUMBERS.length; j++) {
@@ -55,7 +57,6 @@ public class Deck {
     }
 
     public void retrieveCard(Card card) {
-         Suit[] SUITS = Suit.values();
         _deck[card.getSuit().getIndex()][card.getNumber()].setAvailable(true); // la devolvemos al mazo --> indicamos que esta disponible
     }
 }

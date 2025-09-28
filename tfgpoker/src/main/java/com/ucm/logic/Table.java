@@ -9,5 +9,22 @@ public class Table {
     public Table(){
         _deck = new Deck();
     }
+
     
+    public void shareOutAllCards(){}
+
+    public void retrieveAllCards(){}
+
+    public void addCardToTable(){}
+
+    public void retrieveCardsFromTable(){}
+
+    public void assignRolesToAllPlayers(){}
+
+    public void passTurn(){}
+
+    public void playFullHand(){}
+
+    public void printTable(){}
+
 }
