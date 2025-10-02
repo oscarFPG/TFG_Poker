@@ -11,6 +11,7 @@
 - JavaFX 21
 
 #Patrones de diseño utilizados
+
 -Singleton
 -Builders /Cosntructores
 - Tipos de cartas ---> abstract factory
