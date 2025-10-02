@@ -24,3 +24,13 @@
 # 29/09/2025
 - Diagrama de clase más completo (https://lucid.app/lucidchart/d3f7ede4-6c95-4eab-ac28-97cf29b15127/edit?invitationId=inv_d0d21d1d-be79-4cfb-9e71-16f0b3f42e50)
 ![classDiagram](resources/classDiagram.png)
+
+# 02/10/2025
+## CASOS DE USO:
+- Repartir/devolver cartas: jugador y mesa
+- Asignar roles
+- Eliminar/añadir jugadores
+- Configurar parámetros de la partida
+- Jugar una mano: apostar y opciones de ronda (check, bet, call, raise, fold)
+- Gestionar ganador en cada ronda
+
