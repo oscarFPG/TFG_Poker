@@ -29,12 +29,16 @@ public class Controller{
         */
 
         _game.addPlayer( new Player("Valeria") );
+        _game.addPlayer( new Player("Oscar") );
+        _game.addPlayer( new Player("Carla") );
         
     }
     
     public void run(){
 
         configureGame();
+        
+        
     }
     
 }
