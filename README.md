@@ -10,7 +10,7 @@
 - Java SDK 21
 - JavaFX 21
 
-#Patrones de diseño utilizados
+# Patrones de diseño utilizados
 
 -Singleton
 -Builders /Cosntructores
