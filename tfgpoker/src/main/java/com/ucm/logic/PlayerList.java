@@ -40,4 +40,8 @@ public class PlayerList {
             c.setAvailable(true);
         }
     }
+
+    public void shareOutAllCardsFromPlayer(Card c, int index) {
+        players[index].addCard(c);
+    }
 }
