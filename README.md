@@ -10,6 +10,14 @@
 - Java SDK 21
 - JavaFX 21
 
+#Patrones de diseño utilizados
+-Singleton
+-Builders /Cosntructores
+- Tipos de cartas ---> abstract factory
+- Comandos para el fold, check ..etc
+- Observer ----> para las estadisticas
+- Adapter ---> partidas json
+
 # 18/09/2025
 - Diagrama de clases general de la lógica del juego
 - Creación proyecto en GitHub
