@@ -12,8 +12,8 @@
 
 # Patrones de diseño utilizados
 
--Singleton
--Builders /Cosntructores
+- Singleton
+- Builders /Cosntructores
 - Tipos de cartas ---> abstract factory
 - Comandos para el fold, check ..etc
 - Observer ----> para las estadisticas
