@@ -15,7 +15,7 @@ public class Game{
     
     public Game(){
         _deck = new Deck();
-        _playerList = new PlayerList();
+        _playerList = new PlayerList(3);
     }
   
     
