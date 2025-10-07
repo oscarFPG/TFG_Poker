@@ -29,11 +29,11 @@ public class Game {
      * Repartir 2 cartas a todos los jugadores al principio de la partida
      */
     public void shareOutAllCards() {
+        
         for (int i = 0; i < (_playerList.getContPlayers() * 2); i++) {
             Card randomCard = _deck.takeRandomCard();
             _playerList.shareOutAllCardsFromPlayer(randomCard, (i % _playerList.getContPlayers()));
         }
-
     }
 
     /**
