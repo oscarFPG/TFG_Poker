@@ -21,6 +21,16 @@ public class Main extends Application {
         stage.show();
     }
 
+
+    /*
+     * Debug: 
+     *  Primero: 
+     *      Ejecutar el comando:    cd tfgpoker ; .\mvnwDebug.cmd clean compile exec:java
+     *      Debe aparecer el mensaje: "Listening for transport dt_socket at address: 8000"
+     *  Segundo: 
+     *      cd tfgpoker ; .\mvnw.cmd clean
+     *      Darle a la tarea "Debug JavaFX project" en el apartado "Run and Debug" de VSCode
+     */
     public static void main(String[] args) {
         
         launch();

@@ -9,7 +9,7 @@
         {
             "label": "Debug JavaFX",
             "type": "shell",
-            "command": "cd tfgpoker; .\\mvnw.cmd clean javafx:run -DjvmArgs=\"'-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005'\""
+            "command": "cd tfgpoker; .\\mvnw.cmd clean"
         }
     ]
 }

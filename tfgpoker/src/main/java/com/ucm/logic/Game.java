@@ -17,7 +17,7 @@ public class Game {
 
     public Game() {
         _deck = new Deck();
-        _playerList = new PlayerList();
+        //_playerList = new PlayerList();
         _tableCards = new Card[MAX_CARDS_IN_TABLE];
     }
 
@@ -30,17 +30,17 @@ public class Game {
      */
     public void shareOutAllCards() {
         
-        for (int i = 0; i < (_playerList.getContPlayers() * 2); i++) {
-            Card randomCard = _deck.takeRandomCard();
-            _playerList.shareOutAllCardsFromPlayer(randomCard, (i % _playerList.getContPlayers()));
-        }
+        //for (int i = 0; i < (_playerList.getContPlayers() * 2); i++) {
+            //Card randomCard = _deck.takeRandomCard();
+            //_playerList.shareOutAllCardsFromPlayer(randomCard, (i % _playerList.getContPlayers()));
+        //}
     }
 
     /**
      * Devolver todas las cartas que se hayan cogido
      */
     public void retrieveAllCards() {
-        _playerList.retrieveAllCardsFromPlayers();
+        //_playerList.retrieveAllCardsFromPlayers();
         retrieveCardsFromTable();
     }
 
@@ -48,7 +48,7 @@ public class Game {
      * Devolver todas las cartas que haya cogido un jugador
      */
     public void retrieveAllCardsFromPlayer(Player p) {
-        _playerList.retrieveAllCardsFromPlayer(p);
+        //_playerList.retrieveAllCardsFromPlayer(p);
     }
 
     public void addCardToTable() {
