@@ -14,7 +14,7 @@ public class Player {
         _id = id;
         _name = name;
         _money = money;
-        _role = PlayerRole.NO_ROLE;
+        _role = _role.NO_ROL;
     }
         
     public void setRole(PlayerRole pr){
