@@ -3,6 +3,7 @@ package com.ucm.logic;
 
 import com.ucm.gameobjects.Player;
 import com.ucm.gameobjects.Card;
+import com.ucm.gameobjects.PlayerAction;
 
 
 public class PlayerList {
@@ -65,12 +66,10 @@ public class PlayerList {
         delete(i);
     }
 
-
     private void delete(Node p){
 
         if(p == null)
             return ;
-
 
         Node previous = p._prev;
         Node next = p._next;
@@ -85,6 +84,32 @@ public class PlayerList {
         }
 
         --_playerCounter;
+    }
+    
+    public int playHand(final int sb, final int bb){
+        
+        boolean handCompleted = false;
+        int totalPot = 0;
+        int playsMade = 0;
+        int lastBet = 0;
+        
+        Node pNode = _first;
+        Node lastNode = _first;
+        while(!handCompleted){
+
+            PlayerAction action = pNode._player.makePlay(sb, bb);
+            if(action == PlayerAction.FOLD){
+                pNode._player.fold();
+            }
+            else if(action == PlayerAction.RAISE){
+                lastNode = pNode;
+                playsMade = 0;
+            }
+            
+            pNode = pNode._next;
+        }
+        
+        return totalPot;
     }
     
     public void shareOutAllCardsFromPlayer(Card c, Player p) {

@@ -16,7 +16,17 @@ public class Player {
         _money = money;
         _role = _role.NO_ROL;
     }
+     
+    
+    public PlayerAction makePlay(final int sb, final int bb){
         
+        return PlayerAction.FOLD;
+    }
+    
+    public void fold(){
+        
+    }
+    
     public void setRole(PlayerRole pr){
         _role = pr;
     }

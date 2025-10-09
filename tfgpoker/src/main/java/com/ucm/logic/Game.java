@@ -7,21 +7,32 @@ import com.ucm.gameobjects.Player;
 
 public class Game {
 
-    public static int NUM_MIN_PLAYERS = 2;
-    public static int NUM_MAX_PLAYERS = 9;
+    public static final int NUM_MIN_PLAYERS = 2;
+    public static final int NUM_MAX_PLAYERS = 9;
     public static final int MAX_CARDS_IN_TABLE = 5;
 
+    private int _initialSmallBlind = 1;
+    private int _initialBigBlind = 2;
     
     private PlayerList _playerList;
     private Card[] _tableCards;
-    private int _actualTableCards = 0;
     private Deck _deck;
+    private int _actualTableCards;
+    private int _totalPot;
 
+    private int _currentSB;
+    private int _currentBB;
     
     public Game() {
         _deck = new Deck();
         _playerList = new PlayerList(3);
         _tableCards = new Card[MAX_CARDS_IN_TABLE];
+        
+        _actualTableCards = 0;
+        _totalPot = 0;
+        
+        _currentSB = _initialSmallBlind;
+        _currentBB = _initialBigBlind;
     }
 
     public void addPlayer(Player p) {
@@ -78,8 +89,9 @@ public class Game {
     }
 
     public void playHand() {
-        
-        
+    
+        int pot = _playerList.playHand(_currentSB, _currentBB);
+        this._totalPot += pot;
     }
 
     public void printGame() {
