@@ -15,6 +15,7 @@ public class Controller{
         _game = game;
     }
     
+    
     private void configureGame(){
         
         /*
@@ -27,19 +28,39 @@ public class Controller{
 
         */
 
-        return;
-/* 
         _game.addPlayer( new Player(0, "Valeria", 1000) );
         _game.addPlayer( new Player(1, "Oscar", 1000) );
         _game.addPlayer( new Player(2, "Carla", 1000) );
-*/
     }
     
     public void run(){
 
         configureGame();
         
-        
+        _game.assignRolesToAllPlayers();
+        while(!_game.isGameFinished()){
+            
+            // First hand
+            _game.shareOutAllCards();
+            _game.playHand();
+            
+            // Adding 3 cards to table and play
+            _game.addCardToTable();
+            _game.addCardToTable();
+            _game.addCardToTable();
+            _game.playHand();
+
+            // Add 1 card to table and play
+            _game.addCardToTable();
+            _game.playHand();
+            
+            // Add 1 card to table
+            _game.addCardToTable();
+            _game.playHand();
+
+            // Select winner
+            // _game.selectWinner();
+        }
     }
     
 }

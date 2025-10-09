@@ -31,7 +31,7 @@ public class PlayerList {
         _playerCounter = 0;
         _maxNumberOfPlayers = n;
     }
-           
+    
     
     public void addPlayer(Player p){
         
@@ -54,6 +54,7 @@ public class PlayerList {
         if(isEmpty())
             return;
 
+        
         if(_first._player == p)
             delete(_first);
 
@@ -86,8 +87,11 @@ public class PlayerList {
         --_playerCounter;
     }
     
+    public void shareOutAllCardsFromPlayer(Card c, Player p) {
+        
+    }
 
-    public boolean isEmpty(){ return _playerCounter == 0; }
+    public boolean isEmpty(){ return size() == 0; }
     public boolean isFull(){ return size() == max(); }
     public int size(){ return _playerCounter; }
     public int max(){ return _maxNumberOfPlayers; }
