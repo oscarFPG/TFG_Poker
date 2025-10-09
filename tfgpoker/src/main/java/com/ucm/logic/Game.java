@@ -4,7 +4,6 @@ import com.ucm.gameobjects.Card;
 import com.ucm.gameobjects.Deck;
 import com.ucm.gameobjects.Player;
 
-
 public class Game {
 
     public static final int NUM_MIN_PLAYERS = 2;
@@ -13,7 +12,7 @@ public class Game {
 
     private int _initialSmallBlind = 1;
     private int _initialBigBlind = 2;
-    
+
     private PlayerList _playerList;
     private Card[] _tableCards;
     private Deck _deck;
@@ -22,15 +21,15 @@ public class Game {
 
     private int _currentSB;
     private int _currentBB;
-    
+
     public Game() {
         _deck = new Deck();
         _playerList = new PlayerList(3);
         _tableCards = new Card[MAX_CARDS_IN_TABLE];
-        
+
         _actualTableCards = 0;
         _totalPot = 0;
-        
+
         _currentSB = _initialSmallBlind;
         _currentBB = _initialBigBlind;
     }
@@ -43,18 +42,19 @@ public class Game {
      * Repartir 2 cartas a todos los jugadores al principio de la partida
      */
     public void shareOutAllCards() {
-        
-        //for (int i = 0; i < (_playerList.getContPlayers() * 2); i++) {
-            //Card randomCard = _deck.takeRandomCard();
-            //_playerList.shareOutAllCardsFromPlayer(randomCard, (i % _playerList.getContPlayers()));
-        //}
+
+        for (int i = 0; i < _playerList.size(); i++) {
+            Card randomCard1 = _deck.takeRandomCard();
+            Card randomCard2 = _deck.takeRandomCard();
+            _playerList.shareOutAllCardsFromPlayer(randomCard1, randomCard2);
+        }
     }
 
     /**
      * Devolver todas las cartas que se hayan cogido
      */
     public void retrieveAllCards() {
-        //_playerList.retrieveAllCardsFromPlayers();
+        _playerList.retrieveAllCardsFromPlayers();
         retrieveCardsFromTable();
     }
 
@@ -62,7 +62,7 @@ public class Game {
      * Devolver todas las cartas que haya cogido un jugador
      */
     public void retrieveAllCardsFromPlayer(Player p) {
-        //_playerList.retrieveAllCardsFromPlayer(p);
+        _playerList.retrieveAllCardsFromPlayer(p);
     }
 
     public void addCardToTable() {
@@ -71,11 +71,11 @@ public class Game {
     }
 
     public void retrieveCardsFromTable() {
-        
+
         for (Card old_card : _tableCards) {
             _deck.retrieveCard(old_card);
         }
-        
+
         _tableCards = new Card[MAX_CARDS_IN_TABLE];
         _actualTableCards = 0;
     }
@@ -89,7 +89,7 @@ public class Game {
     }
 
     public void playHand() {
-    
+
         int pot = _playerList.playHand(_currentSB, _currentBB);
         this._totalPot += pot;
     }
