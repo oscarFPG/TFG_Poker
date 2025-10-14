@@ -24,7 +24,7 @@ public class Player {
         _fold = false;
     }
 
-    
+
     public PlayerAction makePlay(final int sb, final int bb, final int maxBet) {
 
         PlayerAction action;
@@ -71,7 +71,7 @@ public class Player {
 
     private int makeForcedPlay(int q){
         _money -= q;
-        _pocketMoney -= q;
+        _pocketMoney += q;
         return q;
     }
 

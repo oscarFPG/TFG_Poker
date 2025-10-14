@@ -94,7 +94,7 @@ public class Game {
     public void playHand() {
 
         int pot = _playerList.playHand(_currentSB, _currentBB);
-        this._totalPot += pot;
+        _totalPot += pot;
     }
 
     public void printGame() {
@@ -102,7 +102,7 @@ public class Game {
     }
 
     public boolean isGameFinished() {
-        return true;
+        return false;
     }
 
 }
