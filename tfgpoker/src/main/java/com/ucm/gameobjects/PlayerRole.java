@@ -2,7 +2,7 @@ package com.ucm.gameobjects;
 
 public enum PlayerRole {
     
-    NO_ROL(0),
+    NO_ROLE(0),
     DEALER(1),
     SMALL_BLIND(2),
     BIG_BLIND(3),

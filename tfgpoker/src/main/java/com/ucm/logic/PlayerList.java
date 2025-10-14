@@ -84,22 +84,35 @@ public class PlayerList {
 
         boolean handCompleted = false;
         int totalPot = 0;
-        int playsMade = 0;
-        int lastBet = 0;
+        int maxBet = 0;
+        int currentBet = 0;
 
-        Node pNode = _first;
-        Node lastNode = _first;
+        Node pNode = _first._next;  // Empezamos por el small-blind
+        Node lastNode = _first._next;
         while (!handCompleted) {
 
-            PlayerAction action = pNode._player.makePlay(sb, bb);
-            if (action == PlayerAction.FOLD) {
-                pNode._player.fold();
-            } else if (action == PlayerAction.RAISE) {
+            // Player makes a play
+            PlayerAction action = pNode._player.makePlay(sb, bb, maxBet);
+
+            if (action == PlayerAction.FOLD){
+                totalPot += pNode._player.fold();
+                currentBet = 0;
+                pNode = pNode._next;
+            }
+            else if(action == PlayerAction.CHECK){
+                currentBet = action.getMoney();
+                pNode = pNode._next;
+            }
+            else if (action == PlayerAction.RAISE){
                 lastNode = pNode;
-                playsMade = 0;
+                pNode = pNode._next;
+            }
+            else{
+                // Not used now, but future use will be for detecting posible errors
             }
 
-            pNode = pNode._next;
+            maxBet = Integer.max(maxBet, currentBet);
+
         }
 
         return totalPot;
@@ -109,21 +122,22 @@ public class PlayerList {
 
         if (isEmpty())
             return;
-        if (_first._player.getContCards() == 0) {
-            _first._player.addCard(c1);
-            _first._player.addCard(c2);
+        if (_first._player.getNumCards() == 0) {
+            _first._player.receiveCard(c1);
+            _first._player.receiveCard(c2);
             _index = _first._next;
             return;
         }
         if (_index == _first)
             return;
 
-        _index._player.addCard(c1);
-        _index._player.addCard(c2);
+        _index._player.receiveCard(c1);
+        _index._player.receiveCard(c2);
         _index = _index._next;
     }
 
     public void retrieveAllCardsFromPlayers() {
+
         Node i = _first._next;
         for (Card c : _first._player.getCards()) {
             c.setAvailable(true);
@@ -137,37 +151,19 @@ public class PlayerList {
     }
 
     public void retrieveAllCardsFromPlayer(Player p) {
-        Node i = _first._next;
-        if (p == _first._player) {
-            for (Card c : p.getCards()) {
-                c.setAvailable(true);
-            }
-            return;
-        }
-        while (i != _first) {
-            if (i._player == p) {
-                for (Card c : p.getCards()) {
-                    c.setAvailable(true);
-                }
-            }
-            i = i._next;
-        }
+        
+        Card c1 = p.retrieveCard();
+        if(c1 != null)
+            c1.setAvailable(true);
+
+        Card c2 = p.retrieveCard();
+        if(c2 != null)
+            c2.setAvailable(true);
     }
 
-    public boolean isEmpty() {
-        return size() == 0;
-    }
-
-    public boolean isFull() {
-        return size() == max();
-    }
-
-    public int size() {
-        return _playerCounter;
-    }
-
-    public int max() {
-        return _maxNumberOfPlayers;
-    }
+    public boolean isEmpty() { return size() == 0; }
+    public boolean isFull() { return size() == max(); }
+    public int size() { return _playerCounter; }
+    public int max() { return _maxNumberOfPlayers; }
 
 }

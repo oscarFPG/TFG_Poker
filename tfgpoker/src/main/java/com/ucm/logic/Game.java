@@ -4,6 +4,7 @@ import com.ucm.gameobjects.Card;
 import com.ucm.gameobjects.Deck;
 import com.ucm.gameobjects.Player;
 
+
 public class Game {
 
     public static final int NUM_MIN_PLAYERS = 2;
@@ -22,6 +23,7 @@ public class Game {
     private int _currentSB;
     private int _currentBB;
 
+
     public Game() {
         _deck = new Deck();
         _playerList = new PlayerList(3);
@@ -33,6 +35,7 @@ public class Game {
         _currentSB = _initialSmallBlind;
         _currentBB = _initialBigBlind;
     }
+
 
     public void addPlayer(Player p) {
         _playerList.addPlayer(p);
