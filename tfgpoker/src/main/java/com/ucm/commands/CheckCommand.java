@@ -11,7 +11,6 @@ public class CheckCommand extends Command {
 
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
-
         return CommandResult.continuePlaying(this._player.getPocketMoney(), false);
     }
 }

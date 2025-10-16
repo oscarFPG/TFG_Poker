@@ -1,52 +1,41 @@
 package com.ucm.logic;
 
+import com.ucm.commands.Command;
 import com.ucm.gameobjects.Player;
 import com.ucm.gameobjects.Card;
-<<<<<<< Updated upstream
-=======
 import com.ucm.middleclasses.CommandResult;
->>>>>>> Stashed changes
+import com.ucm.gameobjects.PlayerRole;
+
 
 public class PlayerList {
 
-    private Player[] players;
-    private int _contPlayers;
+    public class Node {
+        Node _prev;
+        Player _player;
+        Node _next;
 
-    public PlayerList() {
-        _contPlayers = 0;
-        players = new Player[Game.NUM_MAX_PLAYERS];
+        public Node(Node prev, Player p, Node next) {
+            _prev = prev;
+            _player = p;
+            _next = next;
+        }
     }
 
-<<<<<<< Updated upstream
-=======
     private Node _first;
     private Node _last;
     private int _playerCounter;
     private int _maxNumberOfPlayers;
     private Node _index;
 
->>>>>>> Stashed changes
+
     public PlayerList(int n) {
-        _contPlayers = 0;
-        players = new Player[n];
+        _first = null;
+        _last = null;
+        _playerCounter = 0;
+        _maxNumberOfPlayers = n;
     }
 
-<<<<<<< Updated upstream
-    public int getContPlayers() {
-        return _contPlayers;
-    }
 
-    public void addPlayer(Player p) {
-        players[_contPlayers] = p;
-        _contPlayers++;
-    }
-
-    public void retrieveAllCardsFromPlayers() {
-        for (Player p : players) {
-            for (Card c : p.getCards()) {
-                c.setAvailable(true);
-            }
-=======
     public void addPlayer(Player p) {
 
         Node newNode = new Node(_last, p, _first);
@@ -57,7 +46,8 @@ public class PlayerList {
             _first._prev = newNode;
             _last._next = newNode;
             _last._prev = newNode;
-        } else {
+        } 
+        else {
             _first._prev = newNode;
             _last._next = newNode;
             _last = newNode;
@@ -100,6 +90,39 @@ public class PlayerList {
         --_playerCounter;
     }
 
+    public void assignRolesToAllPlayers(){
+
+        int n = getActivePlayers();
+        Node _current = _first;
+
+        //NO HAY DEALER --> SOLO SB Y BB
+        if ( n == 0 || n == 1 ) return;
+
+        if ( n == 2) {
+            _current = getNextPlayerActive(_first);
+            _current._player.setRole(PlayerRole.SMALL_BLIND);
+
+            _current = getNextPlayerActive(_current._next);
+            _current._player.setRole(PlayerRole.BIG_BLIND);
+        }
+        else {
+            _current = getNextPlayerActive(_first);
+            _current._player.setRole(PlayerRole.DEALER);
+
+            _current = getNextPlayerActive(_current._next);
+            _current._player.setRole(PlayerRole.SMALL_BLIND);
+
+            _current = getNextPlayerActive(_current._next);
+            _current._player.setRole(PlayerRole.BIG_BLIND);
+        
+            while ( _current != _first){
+                _current = getNextPlayerActive(_current._next);
+                _current._player.setRole(PlayerRole.NO_ROLE);
+                _current = _current._next;
+            }
+        }
+    }
+
     public int playHand(final int sb, final int bb) {
 
         boolean handCompleted = false;
@@ -108,25 +131,25 @@ public class PlayerList {
         int currentBet = 0;
         int playsToMake = size();
 
-        Node pNode = _first._next; // Starting from the small-blind
-        while (!handCompleted) {
+        Node pNode = _first._next;  // Starting from the small-blind
+        while (!handCompleted){
 
             // Player executes a command
             Command command = pNode._player.makePlay(sb, bb, maxBet);
 
             // Execute command
             CommandResult result = command.execute(sb, bb, maxBet);
-
+            
             // Player wants to fold
-            if (result.folds())
+            if(result.folds())
                 pNode._player.fold();
-
+            
             // Update remaining players loop
-            if (result.raises())
+            if(result.raises())
                 playsToMake = size();
             else
                 --playsToMake;
-
+            
             currentBet = result.bet();
             maxBet = Integer.max(maxBet, currentBet);
             pNode = pNode._next;
@@ -138,7 +161,7 @@ public class PlayerList {
         // Collect all players bets
         pNode = _first;
         totalPot += pNode._player.placeBet();
-
+        
         return totalPot;
     }
 
@@ -147,6 +170,7 @@ public class PlayerList {
         if (isEmpty())
             return;
 
+            
         if (_first._player.getNumCards() == 0) {
             _first._player.receiveCard(c1);
             _first._player.receiveCard(c2);
@@ -164,48 +188,57 @@ public class PlayerList {
     public void retrieveAllCardsFromPlayers() {
 
         Node i = _first._next;
-
         retrieveAllCardsFromPlayer(_first._player);
 
         while (i != _first) {
             retrieveAllCardsFromPlayer(i._player);
             i = i._next;
->>>>>>> Stashed changes
         }
     }
 
     public void retrieveAllCardsFromPlayer(Player p) {
-<<<<<<< Updated upstream
-        for (Card c : p.getCards()) {
-            c.setAvailable(true);
-        }
-    }
-=======
-
+        
         Card c1 = p.retrieveCard();
-        if (c1 != null)
+        if(c1 != null)
             c1.setAvailable(true);
 
         Card c2 = p.retrieveCard();
-        if (c2 != null)
+        if(c2 != null)
             c2.setAvailable(true);
     }
 
-    public boolean isEmpty() {
-        return size() == 0;
+    public int getActivePlayers(){
+        
+        int cont = (_first._player.hasFolded()) ? 0: 1;
+        Node _current = _first._next;
+        
+        while ( _current != _first){
+           cont += (_current._player.hasFolded()) ? 0 : 1;
+           _current = _current._next;
+        }
+        return cont;
     }
 
-    public boolean isFull() {
-        return size() == max();
+    private Node getNextPlayerActive(Node current){
+        while ( current._player.hasFolded()){
+            current._player.setRole(PlayerRole.NO_ROLE);
+            current = current._next;
+        }
+        return current;
     }
 
-    public int size() {
-        return _playerCounter;
+    public void passTurn(){
+        _first = _first._next;
+        _last = _last._next;
+        assignRolesToAllPlayers();
     }
 
-    public int max() {
-        return _maxNumberOfPlayers;
-    }
 
->>>>>>> Stashed changes
+    public boolean isEmpty() { return size() == 0; }
+    public boolean isFull() { return size() == max(); }
+    public int size() { return _playerCounter; }
+    public int max() { return _maxNumberOfPlayers; }
+
+    
+
 }

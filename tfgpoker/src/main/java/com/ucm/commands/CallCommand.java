@@ -10,9 +10,8 @@ public class CallCommand extends Command {
     }
 
     @Override
-    public CommandResult execute(int sb, int bb, int maxBet) {
+    public CommandResult execute(int sb, int bb, int maxBet) {  
         this._player.call(maxBet);
-
         return CommandResult.continuePlaying(this._player.getPocketMoney(), false);
     }
 }

@@ -11,7 +11,6 @@ public class FoldCommand extends Command {
 
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
-
         this._player.fold();
         return CommandResult.stopPlaying(this._player.getPocketMoney());
     }

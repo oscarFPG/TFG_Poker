@@ -1,5 +1,6 @@
 package com.ucm.middleclasses;
 
+
 public record CommandResult(int bet, boolean folds, boolean raises) {
 
     public static CommandResult continuePlaying(int b, boolean r) {
