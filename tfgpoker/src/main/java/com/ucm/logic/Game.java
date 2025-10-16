@@ -84,10 +84,11 @@ public class Game {
     }
 
     public void assignRolesToAllPlayers() {
-
+        _playerList.assignRolesToAllPlayers();
     }
 
     public void passTurn() {
+        _playerList.passTurn();
 
     }
 
