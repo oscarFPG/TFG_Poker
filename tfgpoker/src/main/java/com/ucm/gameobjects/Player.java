@@ -53,7 +53,7 @@ public class Player {
         return c;
     }
 
-    public int makeBet(){
+    public int placeBet(){
         
         int money = _pocketMoney;
         _pocketMoney = 0;
