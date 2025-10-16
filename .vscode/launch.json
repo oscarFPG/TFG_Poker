@@ -14,7 +14,8 @@
             "name": "Debug Poker project",
             "request": "attach",
             "hostName": "localhost",
-            "port": 8000
+            "port": 5001,
+            "preLaunchTask": "Debug JavaFX"
         }
     ]
 }

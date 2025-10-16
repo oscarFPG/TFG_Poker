@@ -21,18 +21,9 @@ public class Main extends Application {
         stage.show();
     }
 
-
-    /*
-     * Debug: 
-     *  Primero: 
-     *      Ejecutar el comando:    cd tfgpoker ; .\mvnwDebug.cmd exec:java
-     *      Debe aparecer el mensaje: "Listening for transport dt_socket at address: 8000"
-     *  Segundo:
-     *      Darle a la tarea "Debug Poker project" en el apartado "Run and Debug" de VSCode
-     */
     public static void main(String[] args) {
         
-        //launch();
+        launch();
 
         Game game = new Game();
         Controller controller = new Controller(game);

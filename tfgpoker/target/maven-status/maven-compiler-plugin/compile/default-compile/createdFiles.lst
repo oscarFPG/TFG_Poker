@@ -1,5 +1,9 @@
-com\ucm\middleclasses\CommandResult.class
-com\ucm\commands\FoldCommand.class
-com\ucm\commands\RaiseCommand.class
-com\ucm\commands\CheckCommand.class
-com\ucm\commands\Command.class
+com\ucm\gameobjects\Deck.class
+com\ucm\control\Controller.class
+com\ucm\gameobjects\Card.class
+com\ucm\gameobjects\Player.class
+com\ucm\logic\Table.class
+com\ucm\logic\PlayerList.class
+com\ucm\logic\Game.class
+com\ucm\Main.class
+com\ucm\gameobjects\Suit.class

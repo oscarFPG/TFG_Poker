@@ -4,53 +4,32 @@ import com.ucm.gameobjects.Card;
 import com.ucm.gameobjects.Deck;
 import com.ucm.gameobjects.Player;
 
-
 public class Game {
 
-    public static final int NUM_MIN_PLAYERS = 2;
-    public static final int NUM_MAX_PLAYERS = 9;
+    public static int NUM_MIN_PLAYERS = 2;
+    public static int NUM_MAX_PLAYERS = 9;
     public static final int MAX_CARDS_IN_TABLE = 5;
-
-    private int _initialSmallBlind = 1;
-    private int _initialBigBlind = 2;
 
     private PlayerList _playerList;
     private Card[] _tableCards;
+    private int _actualTableCards = 0;
     private Deck _deck;
-    private int _actualTableCards;
-    private int _totalPot;
-
-    private int _currentSB;
-    private int _currentBB;
-
 
     public Game() {
         _deck = new Deck();
-        _playerList = new PlayerList(3);
+        _playerList = new PlayerList();
         _tableCards = new Card[MAX_CARDS_IN_TABLE];
-
-        _actualTableCards = 0;
-        _totalPot = 0;
-
-        _currentSB = _initialSmallBlind;
-        _currentBB = _initialBigBlind;
     }
-
 
     public void addPlayer(Player p) {
         _playerList.addPlayer(p);
     }
 
     /**
-     * Repartir 2 cartas a todos los jugadores al principio de la partida
+     * Repartir 2 cartas a todos los jugadores
      */
-    public void shareOutCardsToAllPlayers() {
+    public void shareOutAllCards() {
 
-        for (int i = 0; i < _playerList.size(); i++) {
-            Card randomCard1 = _deck.takeRandomCard();
-            Card randomCard2 = _deck.takeRandomCard();
-            _playerList.shareOutAllCardsFromPlayer(randomCard1, randomCard2);
-        }
     }
 
     /**
@@ -74,36 +53,30 @@ public class Game {
     }
 
     public void retrieveCardsFromTable() {
-
         for (Card old_card : _tableCards) {
             _deck.retrieveCard(old_card);
         }
-
         _tableCards = new Card[MAX_CARDS_IN_TABLE];
         _actualTableCards = 0;
     }
 
     public void assignRolesToAllPlayers() {
-        _playerList.assignRolesToAllPlayers();
+
     }
 
     public void passTurn() {
-        _playerList.passTurn();
 
     }
 
     public void playHand() {
 
-        int pot = _playerList.playHand(_currentSB, _currentBB);
-        _totalPot += pot;
     }
 
-    public Player selectWinner(){
-        
-        return null;
+    public void printGame() {
+
     }
-    
-    public boolean isGameFinished() {
+
+    public boolean isGameFinished(int n, float h, Game c) {
         return false;
     }
 
