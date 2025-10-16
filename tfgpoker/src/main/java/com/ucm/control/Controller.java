@@ -15,26 +15,43 @@ public class Controller{
         _game = game;
     }
     
+    
     private void configureGame(){
-        
-        /*
-
-        // PASOS
-        1- CREO EL MAZO
-        2- CREO LOS JUGADORES
-        3- ASIGNO ROLES A LOS JUGADORES
-        4- REPARTO CARTAS A CADA JUDADOR
-        5- REPARTO CARTAS A LA MESA
-
-        */
-
-        _game.addPlayer( new Player("Valeria") );
-        
+      
+        _game.addPlayer( new Player(0, "Valeria", 1000) );
+        _game.addPlayer( new Player(1, "Oscar", 1000) );
+        _game.addPlayer( new Player(2, "Carla", 1000) );
     }
     
     public void run(){
 
         configureGame();
+        
+        // Game loop
+        _game.assignRolesToAllPlayers();
+        while(!_game.isGameFinished()){
+            
+            // Pre-flop
+            _game.shareOutCardsToAllPlayers();
+            _game.playHand();
+            
+            // Flop
+            _game.addCardToTable();
+            _game.addCardToTable();
+            _game.addCardToTable();
+            _game.playHand();
+
+            // Turn
+            _game.addCardToTable();
+            _game.playHand();
+            
+            // River
+            _game.addCardToTable();
+            _game.playHand();
+
+            // Showdown
+            _game.selectWinner();
+        }
     }
     
 }
