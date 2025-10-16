@@ -1,25 +1,12 @@
 package com.ucm.gameobjects;
 
-<<<<<<< Updated upstream
-=======
 import com.ucm.commands.Command;
 import com.ucm.commands.FoldCommand;
->>>>>>> Stashed changes
 
 public class Player {
- 
-    private Card[] _cards;
+
     private int _id;
     private String _name;
-<<<<<<< Updated upstream
-    private boolean _fold = false;
-    private int _money;
-    private String _role;
-    
-
-    public Player(Card[] cards){
-        this._cards = cards;
-=======
     private int _money; // Player's total money
     private int _pocketMoney; // Money the play has bet. It is not lost unless the player folds or loses and
                               // it is a portion of the remaining of the total
@@ -103,7 +90,6 @@ public class Player {
         decreaseMoney(resto);
         // Aumento la apuesta de mi ronda
         increasePoketMoney(resto);
-
     }
 
     public void allIn() {
@@ -131,28 +117,21 @@ public class Player {
 
     private void increasePoketMoney(int resto) {
         this._pocketMoney += resto;
->>>>>>> Stashed changes
     }
 
-    public Player(String name){
-        this._name = name;
+    public boolean receiveCard(Card c) {
+
+        if (_numCards == 2)
+            return false;
+
+        _cards[_numCards++] = c;
+        return true;
     }
 
-<<<<<<< Updated upstream
-    public Player(int id, Card[] cards,  String name, int money){
-        this._id = id;     
-        this._cards = cards;
-        this._name = name;
-        this._money = money;
+    public void setRole(PlayerRole pr) {
+        _role = pr;
     }
-        
-    
-    public Card[] getCards(){ return _cards;}
-    
-    public int getID(){  return _id;}
-        
-    public String getName(){return _name;}
-=======
+
     public int getID() {
         return _id;
     }
@@ -180,27 +159,5 @@ public class Player {
     public boolean hasFolded() {
         return _fold;
     }
->>>>>>> Stashed changes
 
-    public boolean getFold() {return _fold; }
-    
-    public int getMoney(){ return _money;}
-
-
-    public void setCards(Card[] c) {
-        _cards = c;
-    }
-
-    public void setName(String n) {
-        _name = n;
-    }
-
-    public void setMoney(int m) {
-        _money = m;
-    }
-    public void setFold(boolean f) {
-        _fold = f;
-    }
-    
-    
 }
