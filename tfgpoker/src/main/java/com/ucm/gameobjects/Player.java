@@ -1,5 +1,8 @@
 package com.ucm.gameobjects;
 
+import com.ucm.commands.Command;
+import com.ucm.commands.FoldCommand;
+
 
 public class Player {
 
@@ -25,22 +28,10 @@ public class Player {
     }
 
 
-    public PlayerAction makePlay(final int sb, final int bb, final int maxBet) {
+    public Command makePlay(final int sb, final int bb, final int maxBet) {
 
-        PlayerAction action;
-        if(_role == PlayerRole.SMALL_BLIND){
-            action = PlayerAction.FORCED_PLAY;
-            action.setPot( makeForcedPlay(sb) );
-        }
-        else if(_role == PlayerRole.BIG_BLIND){
-            action = PlayerAction.FORCED_PLAY;
-            action.setPot( makeForcedPlay(bb) );
-        }
-        else{
-            action = PlayerAction.CHECK;
-        }
-
-        return action;
+        
+        return new FoldCommand(this, sb);
     }
 
     public boolean receiveCard(Card c) {
@@ -75,8 +66,8 @@ public class Player {
         return q;
     }
 
-    public int fold() {
-        return 0;   // returns the amount of money the player put on bet
+    public void fold() {
+    
     }
 
 

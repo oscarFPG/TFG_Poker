@@ -37,29 +37,30 @@ public class Controller{
 
         configureGame();
         
+        // Game loop
         _game.assignRolesToAllPlayers();
         while(!_game.isGameFinished()){
             
-            // First hand
-            _game.shareOutAllCards();
+            // Pre-flop
+            _game.shareOutCardsToAllPlayers();
             _game.playHand();
             
-            // Adding 3 cards to table and play
+            // Flop
             _game.addCardToTable();
             _game.addCardToTable();
             _game.addCardToTable();
             _game.playHand();
 
-            // Add 1 card to table and play
+            // Turn
             _game.addCardToTable();
             _game.playHand();
             
-            // Add 1 card to table
+            // River
             _game.addCardToTable();
             _game.playHand();
 
-            // Select winner
-            // _game.selectWinner();
+            // Showdown
+            _game.selectWinner();
         }
     }
     

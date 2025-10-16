@@ -44,7 +44,7 @@ public class Game {
     /**
      * Repartir 2 cartas a todos los jugadores al principio de la partida
      */
-    public void shareOutAllCards() {
+    public void shareOutCardsToAllPlayers() {
 
         for (int i = 0; i < _playerList.size(); i++) {
             Card randomCard1 = _deck.takeRandomCard();
@@ -97,10 +97,11 @@ public class Game {
         _totalPot += pot;
     }
 
-    public void printGame() {
-
+    public Player selectWinner(){
+        
+        return null;
     }
-
+    
     public boolean isGameFinished() {
         return false;
     }

@@ -1,8 +1,10 @@
 package com.ucm.logic;
 
+import com.ucm.commands.Command;
 import com.ucm.gameobjects.Player;
 import com.ucm.gameobjects.Card;
-import com.ucm.gameobjects.PlayerAction;
+import com.ucm.middleclasses.CommandResult;
+
 
 public class PlayerList {
 
@@ -93,40 +95,38 @@ public class PlayerList {
         int totalPot = 0;
         int maxBet = 0;
         int currentBet = 0;
-        int playsToMade = size();
+        int playsToMake = size();
 
         Node pNode = _first._next;  // Empezamos por el small-blind
         while (!handCompleted){
 
-            // Player makes a play
-            PlayerAction action = pNode._player.makePlay(sb, bb, maxBet);
+            // Player executes a command
+            Command command = pNode._player.makePlay(sb, bb, maxBet);
 
-            // Update current bet, playerlist rotation and player status
-            if (action == PlayerAction.FOLD){
-                currentBet = 0;
-                totalPot += pNode._player.fold();
-                --playsToMade;
-            }
-            else if(action == PlayerAction.CHECK){
-                currentBet = action.getMoney();
-                --playsToMade;
-            }
-            else if (action == PlayerAction.RAISE){
-                currentBet = action.getMoney();
-                playsToMade = size();
-            }
-            else{
-                // Not used now, but future use will be for detecting posible errors
-            }
-
-            // Update max bet
+            // Execute command
+            CommandResult result = command.execute(sb, bb, maxBet);
+            
+            // Player wants to fold
+            if(result.folds())
+                pNode._player.fold();
+            
+            if(result.raises())
+                playsToMake = size();
+            else
+                --playsToMake;
+            
+            
+            currentBet = result.bet();
             maxBet = Integer.max(maxBet, currentBet);
             pNode = pNode._next;
 
-            // Check if the hand is completed -> All players remaining have checked
-            handCompleted = (playsToMade == 0);
+            // If all players remaining have checked -> Exit loop
+            handCompleted = (playsToMake == 0);
         }
 
+        // Collect all players bets
+        
+        
         return totalPot;
     }
 
@@ -156,6 +156,7 @@ public class PlayerList {
         for (Card c : _first._player.getCards()) {
             c.setAvailable(true);
         }
+        
         while (i != _first) {
             for (Card c : i._player.getCards()) {
                 c.setAvailable(true);
