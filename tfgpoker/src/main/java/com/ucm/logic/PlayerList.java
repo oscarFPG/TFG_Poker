@@ -24,6 +24,7 @@ public class PlayerList {
     private int _maxNumberOfPlayers;
     private Node _index;
 
+
     public PlayerList(int n) {
         _first = null;
         _last = null;
@@ -31,15 +32,21 @@ public class PlayerList {
         _maxNumberOfPlayers = n;
     }
 
+
     public void addPlayer(Player p) {
 
-        Node newNode = new Node(null, p, null);
+        Node newNode = new Node(_last, p, _first);
         if (isEmpty()) {
             _first = newNode;
-            _last = _first;
-        } else {
-            newNode._prev = _last;
-            newNode._next = _first;
+            _last = newNode;
+            _first._next = newNode;
+            _first._prev = newNode;
+            _last._next = newNode;
+            _last._prev = newNode;
+        } 
+        else {
+            _first._prev = newNode;
+            _last._next = newNode;
             _last = newNode;
         }
 
@@ -86,33 +93,38 @@ public class PlayerList {
         int totalPot = 0;
         int maxBet = 0;
         int currentBet = 0;
+        int playsToMade = size();
 
         Node pNode = _first._next;  // Empezamos por el small-blind
-        Node lastNode = _first._next;
-        while (!handCompleted) {
+        while (!handCompleted){
 
             // Player makes a play
             PlayerAction action = pNode._player.makePlay(sb, bb, maxBet);
 
+            // Update current bet, playerlist rotation and player status
             if (action == PlayerAction.FOLD){
-                totalPot += pNode._player.fold();
                 currentBet = 0;
-                pNode = pNode._next;
+                totalPot += pNode._player.fold();
+                --playsToMade;
             }
             else if(action == PlayerAction.CHECK){
                 currentBet = action.getMoney();
-                pNode = pNode._next;
+                --playsToMade;
             }
             else if (action == PlayerAction.RAISE){
-                lastNode = pNode;
-                pNode = pNode._next;
+                currentBet = action.getMoney();
+                playsToMade = size();
             }
             else{
                 // Not used now, but future use will be for detecting posible errors
             }
 
+            // Update max bet
             maxBet = Integer.max(maxBet, currentBet);
+            pNode = pNode._next;
 
+            // Check if the hand is completed -> All players remaining have checked
+            handCompleted = (playsToMade == 0);
         }
 
         return totalPot;
@@ -122,6 +134,8 @@ public class PlayerList {
 
         if (isEmpty())
             return;
+
+            
         if (_first._player.getNumCards() == 0) {
             _first._player.receiveCard(c1);
             _first._player.receiveCard(c2);
