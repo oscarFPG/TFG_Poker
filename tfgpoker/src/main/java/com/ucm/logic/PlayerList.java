@@ -99,34 +99,41 @@ public class PlayerList {
 
         Node pNode = _first._next;  // Starting from the small-blind
         while (!handCompleted){
-
-            // Player executes a command
-            Command command = pNode._player.makePlay(sb, bb, maxBet);
-
-            // Execute command
-            CommandResult result = command.execute(sb, bb, maxBet);
             
-            // Player wants to fold
-            if(result.folds())
-                pNode._player.fold();
-            
-            // Update remaining players loop
-            if(result.raises())
-                playsToMake = size();
-            else
-                --playsToMake;
-            
-            currentBet = result.bet();
-            maxBet = Integer.max(maxBet, currentBet);
-            pNode = pNode._next;
+            if(pNode._player.hasFolded()){
+                pNode = pNode._next;
+            }
+            else{
+                
+                // Player executes a command
+                Command command = pNode._player.makePlay(sb, bb, maxBet);
 
-            // If all players remaining have checked -> Exit loop
-            handCompleted = (playsToMake == 0);
+                // Execute command
+                CommandResult result = command.execute(sb, bb, maxBet);
+
+                // Update remaining players loop
+                if(result.raises())
+                    playsToMake = size();
+                else
+                    --playsToMake;
+
+                currentBet = result.bet();
+                maxBet = Integer.max(maxBet, currentBet);
+                pNode = pNode._next;
+
+                // If all players remaining have checked -> Exit loop
+                handCompleted = (playsToMake == 0);
+            }
+            
         }
 
         // Collect all players bets
-        pNode = _first;
-        totalPot += pNode._player.placeBet();
+        totalPot += _first._player.placeBet();
+        pNode = _first._next;
+        while(pNode != _first){
+            totalPot += pNode._player.placeBet();
+            pNode = pNode._next;
+        }
         
         return totalPot;
     }
@@ -154,14 +161,10 @@ public class PlayerList {
     public void retrieveAllCardsFromPlayers() {
 
         Node i = _first._next;
-        for (Card c : _first._player.getCards()) {
-            c.setAvailable(true);
-        }
-        
+        retrieveAllCardsFromPlayer(_first._player);
+
         while (i != _first) {
-            for (Card c : i._player.getCards()) {
-                c.setAvailable(true);
-            }
+            retrieveAllCardsFromPlayer(i._player);
             i = i._next;
         }
     }

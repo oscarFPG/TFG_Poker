@@ -30,7 +30,6 @@ public class Player {
 
     public Command makePlay(final int sb, final int bb, final int maxBet) {
 
-        
         return new FoldCommand(this, sb);
     }
 

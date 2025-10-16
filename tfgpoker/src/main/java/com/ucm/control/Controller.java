@@ -17,17 +17,7 @@ public class Controller{
     
     
     private void configureGame(){
-        
-        /*
-
-        // PASOS
-        1- CREO LOS JUGADORES
-        3- ASIGNO ROLES A LOS JUGADORES
-        4- REPARTO CARTAS A CADA JUDADOR
-        5- REPARTO CARTAS A LA MESA
-
-        */
-
+      
         _game.addPlayer( new Player(0, "Valeria", 1000) );
         _game.addPlayer( new Player(1, "Oscar", 1000) );
         _game.addPlayer( new Player(2, "Carla", 1000) );

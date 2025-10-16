@@ -1,0 +1,5 @@
+com\ucm\middleclasses\CommandResult.class
+com\ucm\commands\FoldCommand.class
+com\ucm\commands\RaiseCommand.class
+com\ucm\commands\CheckCommand.class
+com\ucm\commands\Command.class
