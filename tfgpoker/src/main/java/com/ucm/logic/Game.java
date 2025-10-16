@@ -48,13 +48,14 @@ public class Game{
        _tableCards = new Card[MAX_CARDS_IN_TABLE];
        _actualTableCards = 0;
     }
-    
-    public void assignRolesToAllPlayers(){
-       
+
+    public void assignRolesToAllPlayers() {
+        _playerList.assignRolesToAllPlayers();
     }
-    
-    public void passTurn(){
-       
+
+    public void passTurn() {
+        _playerList.passTurn();
+
     }
     
     public void playHand(){
