@@ -42,25 +42,9 @@
 - Configurar parámetros de la partida
 - Jugar una mano: apostar y opciones de ronda (check, bet, call, raise, fold)
 - Gestionar ganador en cada ronda
-
 # 09/10/2025
-- [ ] *Logica juego (Game)
-- [X] 1. Inicia Juego
-- [ ] 2. Se asignan roles
-- [X] 3. Dealer reparte 2 cartas
-- [X] 4. Dealer reparte cartas mesa
-- [ ] 5. Small_blind hace apuesta (obligatoria)
-- [ ] 6. Big_blind hace apuesta (obligatoria)
-- [ ] 7. Under_the_gun hace apuesta (libre) --> y resto de jugadores
-- [ ] 8. Hcaer jugada (Fold, All-in, Igualar, Raise)
-- [ ] 9. Comprobar bote ( si -> continuo punto 10, no -> vuelvo a punto 7)
-- [X] 10. EL FLOP ( Voltear 3 primeras cartas)
-- [ ] 11. Apuestas desde el jugador situado a la izquierda del dealer
-- [X] 12. EL TURN (Voltear siguiente carta, 4)
-- [ ] 13. Apuestas desde el jugador situado a la izquierda del dealer
-- [X] 14. EL RIVER (Voltear siguiente carta, 5)
-- [ ] 15. Apuestas finales
-- [ ] 16. ~Mostrar cartas/ o no~
-- [ ] 17. Escoger Ganador --> dar lote (jugadas)
-- [ ] 18. Dealer se rota -->
-- [ ] 19. Inicio de nuevo segun contexto
+- Lista de tareas para sprint-backlog
+
+# 16/10/2025
+- Bucle de jugar mano, hacer jugada, rotar, asignar roles : Pendientes de review
+- Correccion de devolver cartas
