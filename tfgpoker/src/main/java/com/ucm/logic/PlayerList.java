@@ -97,7 +97,7 @@ public class PlayerList {
         int currentBet = 0;
         int playsToMake = size();
 
-        Node pNode = _first._next;  // Empezamos por el small-blind
+        Node pNode = _first._next;  // Starting from the small-blind
         while (!handCompleted){
 
             // Player executes a command
@@ -110,11 +110,11 @@ public class PlayerList {
             if(result.folds())
                 pNode._player.fold();
             
+            // Update remaining players loop
             if(result.raises())
                 playsToMake = size();
             else
                 --playsToMake;
-            
             
             currentBet = result.bet();
             maxBet = Integer.max(maxBet, currentBet);
@@ -125,7 +125,8 @@ public class PlayerList {
         }
 
         // Collect all players bets
-        
+        pNode = _first;
+        totalPot += pNode._player.placeBet();
         
         return totalPot;
     }

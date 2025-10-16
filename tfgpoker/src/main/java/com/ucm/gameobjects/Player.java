@@ -46,18 +46,18 @@ public class Player {
 
     public Card retrieveCard(){
         
-        Card c = _cards[0];
-        _cards[0] = null;
-        --_numCards;
-
-
+        if(_numCards <= 0)
+            return null;
+        
+        Card c = _cards[_numCards--];
         return c;
     }
 
     public int makeBet(){
-        _money -= 10;
-        _pocketMoney += 10;
-        return _pocketMoney;
+        
+        int money = _pocketMoney;
+        _pocketMoney = 0;
+        return money;
     }
 
     private int makeForcedPlay(int q){
@@ -69,8 +69,6 @@ public class Player {
     public void fold() {
     
     }
-
-
 
     public void setRole(PlayerRole pr) {
         _role = pr;
