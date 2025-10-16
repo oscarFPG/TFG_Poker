@@ -5,13 +5,13 @@ import com.ucm.middleclasses.CommandResult;
 
 public class AllInCommand extends Command {
 
-    public AllInCommand(Player p, int value) {
-        super(p, value);
+    public AllInCommand(Player p, int money) {
+        super(p, money);
     }
 
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
-        this._player.allIn();
-        return CommandResult.stopPlaying(this._player.getPocketMoney());
+        _player.allIn();
+        return CommandResult.stopPlaying(_money);   // _player.getPocketMoney() == this._pocketMoney
     }
 }

@@ -98,7 +98,11 @@ public class Game {
     }
 
     public Player selectWinner(){
-        return null;
+
+        Player p = _playerList.selectWinner();
+        p.receivePriceMoney(_totalPot);
+        _totalPot = 0;
+        return p;
     }
     
     public boolean isGameFinished() {
