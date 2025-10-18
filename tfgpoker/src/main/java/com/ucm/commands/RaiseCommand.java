@@ -5,13 +5,14 @@ import com.ucm.middleclasses.CommandResult;
 
 public class RaiseCommand extends Command {
 
-    public RaiseCommand(Player p, int value) {
-        super(p, value);
+
+    public RaiseCommand(Player p, int money) {
+        super(p, money);
     }
 
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
-        this._player.raise(maxBet);
-        return CommandResult.continuePlaying(this._player.getPocketMoney(), false);
+        _player.raise(_money);
+        return CommandResult.continuePlaying(_money, true);     // _player.getPocketMoney() == this._pocketMoney
     }
 }

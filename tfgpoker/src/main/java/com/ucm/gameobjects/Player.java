@@ -2,6 +2,7 @@ package com.ucm.gameobjects;
 
 import com.ucm.commands.Command;
 import com.ucm.commands.FoldCommand;
+import com.ucm.commands.RaiseCommand;
 
 public class Player {
 
@@ -28,9 +29,26 @@ public class Player {
     }
 
 
-    public Command makePlay(final int sb, final int bb, final int maxBet) {
-        // hacer linea comando para apuestas
-        return new FoldCommand(this, sb);
+    public Command makePlay(int maxBet) {
+
+        // Hacer linea comando para apuestas
+        // No comprobar AQUI si el valor para RaiseCommand, CallCommand o AllInCommand es correcto
+        // Comprobar en el comando concreto
+        return new FoldCommand(this, _pocketMoney);
+    }
+
+    public void makeForcedBet(int sb, int bb){
+        
+        int bet = 0;
+
+        // Forced small-blind and big-blind
+        if(_role == PlayerRole.SMALL_BLIND)
+            bet = sb;
+        else if(_role == PlayerRole.BIG_BLIND)
+            bet = bb;
+
+        increasePocketMoney(bet);
+        decreaseMoney(bet);
     }
 
     public boolean receiveCard(Card c) {
@@ -47,7 +65,8 @@ public class Player {
         if (_numCards <= 0)
             return null;
 
-        Card c = _cards[_numCards--];
+        Card c = _cards[--_numCards];
+        _cards[_numCards] = null;
         return c;
     }
 
@@ -87,15 +106,15 @@ public class Player {
             return;
         }
 
+        // Aumento la apuesta de mi ronda
+        increasePocketMoney(resto);
+
         // Quito de mi cartera la diferencia
         decreaseMoney(resto);
-
-        // Aumento la apuesta de mi ronda
-        increasePoketMoney(resto);
     }
 
     public void allIn() {
-        increasePoketMoney(this._money);
+        increasePocketMoney(this._money);
         this._money = 0;
     }
 
@@ -106,12 +125,16 @@ public class Player {
         if (this._pocketMoney < maxBet) {
             call(maxBet);
             // ejemplo: apuesto 10
-            this._pocketMoney += 10;
+            //this._pocketMoney += 10;
             return;
         }
 
         // En cualquier otro caso subo lo que eliga el player(max All-in)
         this._pocketMoney += 10;
+    }
+
+    public void receivePriceMoney(int money){
+        _money += money;
     }
 
     public void setRole(PlayerRole pr) {
@@ -122,7 +145,7 @@ public class Player {
         this._money -= resto;
     }
 
-    private void increasePoketMoney(int resto) {
+    private void increasePocketMoney(int resto) {
         this._pocketMoney += resto;
     }
 

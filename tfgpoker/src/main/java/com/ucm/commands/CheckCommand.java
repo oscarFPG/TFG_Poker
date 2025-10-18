@@ -5,12 +5,12 @@ import com.ucm.middleclasses.CommandResult;
 
 public class CheckCommand extends Command {
 
-    public CheckCommand(Player p, int value) {
-        super(p, value);
+    public CheckCommand(Player p, int money) {
+        super(p, money);
     }
 
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
-        return CommandResult.continuePlaying(this._player.getPocketMoney(), false);
+        return CommandResult.continuePlaying(_money, false);    // _player.getPocketMoney() == this._pocketMoney
     }
 }
