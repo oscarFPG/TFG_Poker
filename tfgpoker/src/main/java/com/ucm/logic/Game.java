@@ -1,5 +1,6 @@
 package com.ucm.logic;
 
+import com.ucm.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.gameobjects.Card;
 import com.ucm.gameobjects.Deck;
 import com.ucm.gameobjects.Player;
@@ -91,18 +92,31 @@ public class Game {
         _playerList.passTurn();
     }
 
-    public void playHand() {
+    public void playHand() throws OnlyOnePlayerLeftException {
 
-        int pot = _playerList.playHand(_currentSB, _currentBB);
+        int pot = 0;
+        try{
+            _playerList.playHand(_currentSB, _currentBB);
+        }
+        catch(OnlyOnePlayerLeftException e){    // Collect remaining bets only if the round ended because all players folded in their turn and there is only one left
+            pot = _playerList.collectAllBets();
+            _totalPot += pot;
+            throw e;
+        }
+        
+        pot = _playerList.collectAllBets();
         _totalPot += pot;
     }
 
-    public Player selectWinner(){
+    public Player giveRewardToWinner(){
 
         Player p = _playerList.selectWinner();
         p.receivePriceMoney(_totalPot);
-        _totalPot = 0;
         return p;
+    }
+
+    public void restartRound(){
+        // TODO
     }
     
     public boolean isGameFinished() {

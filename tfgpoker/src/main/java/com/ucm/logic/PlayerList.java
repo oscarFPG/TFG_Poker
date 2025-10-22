@@ -1,6 +1,7 @@
 package com.ucm.logic;
 
 import com.ucm.commands.Command;
+import com.ucm.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.gameobjects.Player;
 import com.ucm.gameobjects.Card;
 import com.ucm.middleclasses.CommandResult;
@@ -25,7 +26,6 @@ public class PlayerList {
     private Node _last;
     private int _playerCounter;
     private int _maxNumberOfPlayers;
-    private Node _index;
 
 
     public PlayerList(int n) {
@@ -123,30 +123,33 @@ public class PlayerList {
         }
     }
 
-    public int playHand(final int sb, final int bb) {
-
-        int totalPot = 0;
-        int currentBet = 0, maxBet = 0;
-        int playsToMake = activePlayersCounter() - 1;
-        Node pNode = _first;
+    private Node smallBlindAndBigBlindPlays(final int sb, final int bb, final int playsToMake){
 
         // Select first player to make a bet when :
         // 1. Only two players left
         // 2. More than one player left
-        if(playsToMake == 1){
-            pNode._player.makeForcedBet(sb, bb);    // Small-blind
-            pNode = pNode._next;
-            pNode._player.makeForcedBet(sb, bb);    // Big-blind
-            pNode = pNode._next;
-        }
-        else{
-            pNode = pNode._next;
-            pNode._player.makeForcedBet(sb, bb);    // Small-blind
-            pNode = pNode._next;
-            pNode._player.makeForcedBet(sb, bb);    // Big-blind
-            pNode = pNode._next;
-        }
+        Node pNode = (playsToMake == 1) ? _first : _first._next;
 
+        pNode._player.makeForcedBet(sb, bb);    // Small-blind
+        pNode = pNode._next;
+        pNode._player.makeForcedBet(sb, bb);    // Big-blind
+        pNode = pNode._next;
+
+        return pNode;
+    }
+
+    public void playHand(final int sb, final int bb) throws OnlyOnePlayerLeftException {
+
+        int currentBet = 0, maxBet = 0;
+        int playsToMake = activePlayersCounter() - 1;
+        int playersRemaining = playsToMake + 1; // Number of players active
+
+
+        // Small-blind and Big-blind plays if they have to
+        // Besides, retrieves the next player to play
+        Node pNode = smallBlindAndBigBlindPlays(sb, bb, playsToMake);
+
+        // Keep players betting until all have reach the same bet or only one player is left
         maxBet = bb;
         while ( !(playsToMake == 0) ){  // If all players remaining have checked -> Exit loop
 
@@ -156,6 +159,13 @@ public class PlayerList {
             // Execute command
             CommandResult result = command.execute(sb, bb, maxBet);
             
+            // Check number of active players to break normal execution if there is only one left
+            if(result.folds()){
+                --playersRemaining;
+                if(playersRemaining == 1)
+                    throw new OnlyOnePlayerLeftException("Only one player left to play mid round");
+            }
+
             // Update remaining players loop
             playsToMake = result.raises() ? (activePlayersCounter() - 1) : (playsToMake - 1);
             
@@ -164,15 +174,20 @@ public class PlayerList {
             maxBet = Integer.max(maxBet, currentBet);
             pNode = getNextPlayerActive(pNode);
         }
+    }
 
-        // Collect all players bets
-        totalPot += _first._player.placeBet();
-        pNode = _first._next;
+    public int collectAllBets(){
+
+        int totalPot = 0;
+        Node pNode = _first;
+
+        totalPot += pNode._player.placeBet();
+        pNode = pNode._next;
         while(pNode != _first){
             totalPot += pNode._player.placeBet();
             pNode = pNode._next;
         }
-        
+
         return totalPot;
     }
 
@@ -181,19 +196,23 @@ public class PlayerList {
         if (isEmpty())
             return;
 
-            
-        if (_first._player.getNumCards() == 0) {
+        if(_first._player.getNumCards() == 0){
             _first._player.receiveCard(c1);
             _first._player.receiveCard(c2);
-            _index = _first._next;
             return;
         }
-        if (_index == _first)
-            return;
 
-        _index._player.receiveCard(c1);
-        _index._player.receiveCard(c2);
-        _index = _index._next;
+        Node index = _first._next;
+        while(index != _first){
+
+            if(index._player.getNumCards() == 0){
+                index._player.receiveCard(c1);
+                index._player.receiveCard(c2);
+                break;
+            }
+
+            index = index._next;
+        }
     }
 
     public void retrieveAllCardsFromPlayer(Player p) {
@@ -225,14 +244,16 @@ public class PlayerList {
     }
 
     public Player selectWinner(){
-        return _first._player;  // TODO
+        return _first._player;  // TODO : Search for winner player
     }
 
     private Node getNextPlayerActive(Node current){
+
         while ( current._player.hasFolded() ){
             current._player.setRole(PlayerRole.NO_ROLE);
             current = current._next;
         }
+
         return current;
     }
 

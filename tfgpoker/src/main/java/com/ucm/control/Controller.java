@@ -1,5 +1,6 @@
 package com.ucm.control;
 
+import com.ucm.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.gameobjects.Player;
 import com.ucm.logic.Game;
 
@@ -31,26 +32,34 @@ public class Controller{
         _game.assignRolesToAllPlayers();
         while(!_game.isGameFinished()){
             
-            // Pre-flop
-            _game.shareOutCardsToAllPlayers();
-            _game.playHand();
-            
-            // Flop
-            _game.addCardToTable();
-            _game.addCardToTable();
-            _game.addCardToTable();
-            _game.playHand();
+            try{
+                // Pre-flop
+                _game.shareOutCardsToAllPlayers();
+                _game.playHand();
+                
+                // Flop
+                _game.addCardToTable();
+                _game.addCardToTable();
+                _game.addCardToTable();
+                _game.playHand();
 
-            // Turn
-            _game.addCardToTable();
-            _game.playHand();
-            
-            // River
-            _game.addCardToTable();
-            _game.playHand();
+                // Turn
+                _game.addCardToTable();
+                _game.playHand();
+                
+                // River
+                _game.addCardToTable();
+                _game.playHand();
 
-            // Showdown
-            _game.selectWinner();
+                // Showdown
+                _game.giveRewardToWinner();
+            }
+            catch(OnlyOnePlayerLeftException e){
+                _game.giveRewardToWinner();
+            }
+
+            // Devolver todas las cartas al mazo, restablecer jugadores que han 'foldeado', etc...
+            _game.restartRound();
         }
     }
     
