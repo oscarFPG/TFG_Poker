@@ -48,3 +48,7 @@
 # 16/10/2025
 - Bucle de jugar mano, hacer jugada, rotar, asignar roles : Pendientes de review
 - Correccion de devolver cartas
+# 22/10/2025
+- Primer debug del proyecto
+- Clases para mostrar el estado del juego en el debug
+- Lista de comando para realizar jugada
