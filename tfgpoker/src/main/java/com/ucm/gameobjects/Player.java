@@ -1,22 +1,24 @@
 package com.ucm.gameobjects;
 
+import com.ucm.commands.AllInCommand;
+import com.ucm.commands.CallCommand;
+import com.ucm.commands.CheckCommand;
 import com.ucm.commands.Command;
 import com.ucm.commands.FoldCommand;
 import com.ucm.commands.RaiseCommand;
-
+import java.util.Scanner;
 
 public class Player {
 
     private int _id;
     private String _name;
-    private int _money;         // Player's total money
-    private int _pocketMoney;   // Money the play has bet. It is not lost unless the player folds or loses and
-                                // it is a portion of the remaining of the total
+    private int _money; // Player's total money
+    private int _pocketMoney; // Money the play has bet. It is not lost unless the player folds or loses and
+                              // it is a portion of the remaining of the total
     private PlayerRole _role;
     private Card[] _cards;
     private int _numCards;
     private boolean _fold;
-
 
     public Player(int id, String name, int money) {
         _id = id;
@@ -29,23 +31,54 @@ public class Player {
         _fold = false;
     }
 
-
     public Command makePlay(int maxBet) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Instrucciones jugada: ");
+        System.out.println("0: fold ");
+        System.out.println("1: check ");
+        System.out.println("2: call ");
+        System.out.println("3: raise ");
+        System.out.println("4: allIn ");
+        System.out.println("Introduce tu jugada: ");
+        int jugada = sc.nextInt();
+        sc.close();
+        switch (jugada) {
+            case 0:
+                return new FoldCommand(this, _pocketMoney);
+            case 1:
+                return new CheckCommand(this, _pocketMoney);
+            case 2:
+                if (!isEnoughMoney(maxBet)) { // No puedo igualar porque no tengo suficiente dinero
+                    System.out.println("Not enough money to make a call");
+                    // Habrá que preguntarle al jugador si quiere hacer un allIn retirarse
+                }
+                return new CallCommand(this, _pocketMoney);
+            case 3:
+                if (!isEnoughMoney(maxBet)) { // No puedo igualar porque no tengo suficiente dinero
+                    System.out.println("Not enough money to make a raise");
+                }
+                // Seguir haciendo...
+                return new RaiseCommand(this, _pocketMoney);
+            case 4:
+                return new AllInCommand(this, _pocketMoney);
+            default:
+                System.out.println("Opción no válida.");
+                return null;
+        }
 
-        // Hacer linea comando para apuestas
-        // No comprobar AQUI si el valor para RaiseCommand, CallCommand o AllInCommand es correcto
+        // No comprobar AQUI si el valor para RaiseCommand, CallCommand o AllInCommand
+        // es correcto
         // Comprobar en el comando concreto
-        return new FoldCommand(this, _pocketMoney);
     }
 
-    public void makeForcedBet(int sb, int bb){
-        
+    public void makeForcedBet(int sb, int bb) {
+
         int bet = 0;
 
         // Forced small-blind and big-blind
-        if(_role == PlayerRole.SMALL_BLIND)
+        if (_role == PlayerRole.SMALL_BLIND)
             bet = sb;
-        else if(_role == PlayerRole.BIG_BLIND)
+        else if (_role == PlayerRole.BIG_BLIND)
             bet = bb;
 
         increasePocketMoney(bet);
@@ -54,7 +87,7 @@ public class Player {
 
     public boolean receiveCard(Card c) {
 
-        if(_numCards == 2)
+        if (_numCards == 2)
             return false;
 
         _cards[_numCards++] = c;
@@ -99,19 +132,18 @@ public class Player {
         // Cogemos la apuesta que está en juego ahora y calculamos la diferencia entre
         // la apuesta en juego
         // y lo que tengo apostado de momento
-        int resto = maxBet - this._pocketMoney;
 
         // Si quiero igualar pero no tengo dinero puedo hacer un allin
-        if (resto > this._money) {
+        if (!isEnoughMoney(maxBet)) {
             allIn();
             return;
         }
 
         // Aumento la apuesta de mi ronda
-        increasePocketMoney(resto);
+        increasePocketMoney(maxBet);
 
         // Quito de mi cartera la diferencia
-        decreaseMoney(resto);
+        decreaseMoney(maxBet);
     }
 
     public void allIn() {
@@ -120,13 +152,13 @@ public class Player {
     }
 
     public void raise(int maxBet) {
-        
+
         // Si tengo menos dinero de lo que está apostado y quiero subir
         // entonces primero igualo y luego subo lo que sea(max All-in)
         if (this._pocketMoney < maxBet) {
             call(maxBet);
             // ejemplo: apuesto 10
-            //this._pocketMoney += 10;
+            // this._pocketMoney += 10;
             return;
         }
 
@@ -134,7 +166,7 @@ public class Player {
         this._pocketMoney += 10;
     }
 
-    public void receivePriceMoney(int money){
+    public void receivePriceMoney(int money) {
         _money += money;
     }
 
@@ -142,20 +174,49 @@ public class Player {
         _role = pr;
     }
 
-    private void decreaseMoney(int resto) {
+    private void decreaseMoney(int maxBet) {
+        int resto = maxBet - this._pocketMoney;
         this._money -= resto;
     }
 
-    private void increasePocketMoney(int resto) {
+    private void increasePocketMoney(int maxBet) {
+        int resto = maxBet - this._pocketMoney;
         this._pocketMoney += resto;
     }
 
-    public int getID() { return _id; }
-    public String getName() { return _name; }
-    public int getMoney() { return _money; }
-    public int getPocketMoney() { return _pocketMoney; }
-    public PlayerRole getPlayerRole() { return _role; }
-    public int getNumCards() { return _numCards; }
-    public boolean hasFolded() { return _fold; }
+    private boolean isEnoughMoney(int maxBet) {
+        if ((maxBet - _pocketMoney) > this._money)
+            return false;
+
+        return true;
+    }
+
+    public int getID() {
+        return _id;
+    }
+
+    public String getName() {
+        return _name;
+    }
+
+    public int getMoney() {
+        return _money;
+    }
+
+    public int getPocketMoney() {
+        return _pocketMoney;
+    }
+
+    public PlayerRole getPlayerRole() {
+        return _role;
+    }
+
+    public int getNumCards() {
+        return _numCards;
+    }
+
+    public boolean hasFolded() {
+        return _fold;
+    }
 
 }
