@@ -2,7 +2,6 @@ package com.ucm.gameobjects;
 
 import com.ucm.commands.Command;
 import com.ucm.commands.FoldCommand;
-import com.ucm.commands.RaiseCommand;
 
 
 public class Player {
@@ -157,5 +156,17 @@ public class Player {
     public PlayerRole getPlayerRole() { return _role; }
     public int getNumCards() { return _numCards; }
     public boolean hasFolded() { return _fold; }
+
+    public void resetCards(){
+         _cards = new Card[2];
+    }
+
+    public void setFold(boolean fold){
+        _fold = fold;
+    }
+
+     public boolean getFold(){
+        return _fold;
+    }
 
 }

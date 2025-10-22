@@ -2,10 +2,10 @@ package com.ucm.logic;
 
 import com.ucm.commands.Command;
 import com.ucm.exceptions.OnlyOnePlayerLeftException;
-import com.ucm.gameobjects.Player;
 import com.ucm.gameobjects.Card;
-import com.ucm.middleclasses.CommandResult;
+import com.ucm.gameobjects.Player;
 import com.ucm.gameobjects.PlayerRole;
+import com.ucm.middleclasses.CommandResult;
 
 
 public class PlayerList {
@@ -277,6 +277,15 @@ public class PlayerList {
     public int size() { return _playerCounter; }
     public int max() { return _maxNumberOfPlayers; }
 
+    public void resetPlayers(){
+        Node current = _first;
+        current._player.resetCards();
+        current._player.setFold(false);
+        while ( current != _first){
+            current._player.resetCards();
+            current._player.setFold(false);
+            current = current._next;
+        }
+    }
     
-
 }

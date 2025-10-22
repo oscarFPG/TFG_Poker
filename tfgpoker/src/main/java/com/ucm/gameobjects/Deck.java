@@ -59,4 +59,15 @@ public class Deck {
     public void retrieveCard(Card card) {
         _deck[card.getSuit().getIndex()][card.getNumber()].setAvailable(true); // la devolvemos al mazo --> indicamos que esta disponible
     }
+
+    public void resetDesk(){
+        Suit[] SUITS = Suit.values();
+        for (int i = 0; i < SUITS.length; i++) {
+            for (int j = 0; j < NUMBERS.length; j++) {
+                _deck[i][j].setAvailable(true);
+            }
+        }
+
+    }
 }
+

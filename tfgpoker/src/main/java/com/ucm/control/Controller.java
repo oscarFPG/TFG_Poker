@@ -22,12 +22,13 @@ public class Controller{
         _game.addPlayer( new Player(0, "Valeria", 1000) );
         _game.addPlayer( new Player(1, "Oscar", 1000) );
         _game.addPlayer( new Player(2, "Carla", 1000) );
+
     }
     
     public void run(){
 
         configureGame();
-        
+        int i = 0;
         // Game loop
         _game.assignRolesToAllPlayers();
         while(!_game.isGameFinished()){
@@ -36,7 +37,7 @@ public class Controller{
                 // Pre-flop
                 _game.shareOutCardsToAllPlayers();
                 _game.playHand();
-                
+                System.err.println(i);
                 // Flop
                 _game.addCardToTable();
                 _game.addCardToTable();
@@ -53,6 +54,7 @@ public class Controller{
 
                 // Showdown
                 _game.giveRewardToWinner();
+                i++;
             }
             catch(OnlyOnePlayerLeftException e){
                 _game.giveRewardToWinner();

@@ -1,14 +1,13 @@
 package com.ucm;
 
 //GUI
+import com.ucm.control.Controller;
+import com.ucm.logic.Game;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
-
-// LOGIC
-import com.ucm.control.Controller;
-import com.ucm.logic.Game;
 
 
 public class Main extends Application {
@@ -21,7 +20,6 @@ public class Main extends Application {
         stage.show();
     }
 
-
     /*
      * Debug: 
      *  Primero: 
@@ -29,10 +27,14 @@ public class Main extends Application {
      *      Debe aparecer el mensaje: "Listening for transport dt_socket at address: 8000"
      *  Segundo:
      *      Darle a la tarea "Debug Poker project" en el apartado "Run and Debug" de VSCode
+     * 
+     * 
+     * Run:
+     *     .\mvnw.cmd exec:java
      */
     public static void main(String[] args) {
         
-        //launch();
+       //launch();
 
         Game game = new Game();
         Controller controller = new Controller(game);

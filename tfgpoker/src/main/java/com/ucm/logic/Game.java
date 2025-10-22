@@ -70,8 +70,11 @@ public class Game {
     }
 
     public void addCardToTable() {
-        _tableCards[_actualTableCards] = _deck.takeRandomCard();
-        _actualTableCards++;
+        if ( _tableCards.length >= 5){
+             return;
+        }
+          _tableCards[_actualTableCards] = _deck.takeRandomCard();
+         _actualTableCards++;
     }
 
     public void retrieveCardsFromTable() {
@@ -116,7 +119,8 @@ public class Game {
     }
 
     public void restartRound(){
-        // TODO
+        _deck.resetDesk();
+        _playerList.resetPlayers();
     }
     
     public boolean isGameFinished() {
