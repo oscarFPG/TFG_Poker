@@ -20,6 +20,7 @@ public class Game {
     private Deck _deck;
     private int _actualTableCards;
     private int _totalPot;
+    private boolean _isPreflop;
 
     private int _currentSB;
     private int _currentBB;
@@ -96,7 +97,7 @@ public class Game {
 
         int pot = 0;
         try{
-            _playerList.playHand(_currentSB, _currentBB);
+            _playerList.playHand(_currentSB, _currentBB, _isPreflop);
         }
         catch(OnlyOnePlayerLeftException e){    // Collect remaining bets only if the round ended because all players folded in their turn and there is only one left
             pot = _playerList.collectAllBets();
@@ -117,6 +118,7 @@ public class Game {
 
     public void restartRound(){
         // TODO
+        _isPreflop = true;
     }
     
     public boolean isGameFinished() {

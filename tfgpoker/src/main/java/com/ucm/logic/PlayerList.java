@@ -138,16 +138,16 @@ public class PlayerList {
         return pNode;
     }
 
-    public void playHand(final int sb, final int bb) throws OnlyOnePlayerLeftException {
+    public void playHand(final int sb, final int bb, final boolean isPreflop) throws OnlyOnePlayerLeftException {
 
+        Node pNode = null;
         int currentBet = 0, maxBet = 0;
-        int playsToMake = activePlayersCounter() - 1;
-        int playersRemaining = playsToMake + 1; // Number of players active
+        int playsToMake = activePlayersCounter() - 1;   // Number of players that have to, at least, fold
+        int playersRemaining = playsToMake + 1;         // Number of players active
 
 
-        // Small-blind and Big-blind plays if they have to
-        // Besides, retrieves the next player to play
-        Node pNode = smallBlindAndBigBlindPlays(sb, bb, playsToMake);
+        // Forced plays by sb and bb if it is first round(Preflop)
+        pNode = (isPreflop) ? smallBlindAndBigBlindPlays(sb, bb, playsToMake) : _first._next._next;
 
         // Keep players betting until all have reach the same bet or only one player is left
         maxBet = bb;
