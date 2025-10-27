@@ -33,7 +33,7 @@ public class Player {
 
     public Command makePlay(int maxBet) {
         Scanner sc = new Scanner(System.in);
-        System.out.println("Instrucciones jugada: ");
+        System.out.println("Opciones de jugada: ");
         System.out.println("0: fold ");
         System.out.println("1: check ");
         System.out.println("2: call ");
@@ -46,18 +46,26 @@ public class Player {
             case 0:
                 return new FoldCommand(this, _pocketMoney);
             case 1:
+                if (maxBet != 0) {// No puedo hacer check si hay alguna apuesta en juego
+                    System.out.println("You can't do check");
+                }
                 return new CheckCommand(this, _pocketMoney);
             case 2:
-                if (!isEnoughMoney(maxBet)) { // No puedo igualar porque no tengo suficiente dinero
+                if (!isEnoughMoney(maxBet - _pocketMoney)) { // No puedo igualar porque no tengo suficiente dinero
                     System.out.println("Not enough money to make a call");
-                    // Habrá que preguntarle al jugador si quiere hacer un allIn retirarse
+                    // Habrá que preguntarle al jugador si quiere hacer un allIn retirarse. Se
+                    // entiende que no quiere hacer fold
                 }
                 return new CallCommand(this, _pocketMoney);
             case 3:
-                if (!isEnoughMoney(maxBet)) { // No puedo igualar porque no tengo suficiente dinero
+                if (!isEnoughMoney(10)) { // Si no tengo suficiente dinero para subir, ver si tengo suficiente dinero
+                                          // para
+                                          // igualar y si tengo hago call (decidir si hacer call obligatoriamente o
+                                          // preguntar si el jugador quiere hacer call u allin), si no,
+                                          // tendría que hacer fold u allin
                     System.out.println("Not enough money to make a raise");
                 }
-                // Seguir haciendo...
+
                 return new RaiseCommand(this, _pocketMoney);
             case 4:
                 return new AllInCommand(this, _pocketMoney);
@@ -65,10 +73,6 @@ public class Player {
                 System.out.println("Opción no válida.");
                 return null;
         }
-
-        // No comprobar AQUI si el valor para RaiseCommand, CallCommand o AllInCommand
-        // es correcto
-        // Comprobar en el comando concreto
     }
 
     public void makeForcedBet(int sb, int bb) {
@@ -129,21 +133,12 @@ public class Player {
 
     public void call(int maxBet) {
 
-        // Cogemos la apuesta que está en juego ahora y calculamos la diferencia entre
-        // la apuesta en juego
-        // y lo que tengo apostado de momento
-
-        // Si quiero igualar pero no tengo dinero puedo hacer un allin
-        if (!isEnoughMoney(maxBet)) {
-            allIn();
-            return;
-        }
-
+        int resto = maxBet - this._pocketMoney;// dinero que necesita para igualar la apuesta en juego
         // Aumento la apuesta de mi ronda
-        increasePocketMoney(maxBet);
+        increasePocketMoney(resto);
 
         // Quito de mi cartera la diferencia
-        decreaseMoney(maxBet);
+        decreaseMoney(resto);
     }
 
     public void allIn() {
@@ -174,18 +169,16 @@ public class Player {
         _role = pr;
     }
 
-    private void decreaseMoney(int maxBet) {
-        int resto = maxBet - this._pocketMoney;
-        this._money -= resto;
+    private void decreaseMoney(int bet) {
+        this._money -= bet;
     }
 
-    private void increasePocketMoney(int maxBet) {
-        int resto = maxBet - this._pocketMoney;
-        this._pocketMoney += resto;
+    private void increasePocketMoney(int bet) {
+        this._pocketMoney += bet;
     }
 
-    private boolean isEnoughMoney(int maxBet) {
-        if ((maxBet - _pocketMoney) > this._money)
+    private boolean isEnoughMoney(int bet) {
+        if (bet > this._money)
             return false;
 
         return true;
