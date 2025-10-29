@@ -8,6 +8,8 @@ import com.ucm.gameobjects.Player;
 
 public class Game {
 
+    public static final boolean DEBUG = true;
+
     public static final int NUM_MIN_PLAYERS = 2;
     public static final int NUM_MAX_PLAYERS = 9;
     public static final int MAX_CARDS_IN_TABLE = 5;
@@ -40,6 +42,11 @@ public class Game {
 
 
     public void addPlayer(Player p) {
+
+        if(Game.DEBUG){
+            System.out.printf("Intentando añadir jugador [%s]\n", p.getName());   
+        }
+
         _playerList.addPlayer(p);
     }
 
@@ -47,6 +54,10 @@ public class Game {
      * Repartir 2 cartas a todos los jugadores al principio de la partida
      */
     public void shareOutCardsToAllPlayers() {
+
+        if(Game.DEBUG){
+            System.out.printf("Repartiendo cartas a los jugadores...\n");
+        }
 
         for (int i = 0; i < _playerList.size(); i++) {
             Card randomCard1 = _deck.takeRandomCard();
@@ -59,6 +70,11 @@ public class Game {
      * Devolver todas las cartas que se hayan cogido
      */
     public void retrieveAllCards() {
+        
+        if(Game.DEBUG){
+            System.out.printf("Devolviendo todas las cartas...\n");
+        }
+        
         _playerList.retrieveAllCardsFromPlayers();
         retrieveCardsFromTable();
     }
@@ -90,11 +106,20 @@ public class Game {
     }
 
     public void passTurn() {
+        
+        if(Game.DEBUG){
+            System.out.printf("Pasando turno...\n");
+        }
+        
         _playerList.passTurn();
     }
 
     public void playHand() throws OnlyOnePlayerLeftException {
 
+        if(Game.DEBUG){
+            System.out.printf("Jugando mano...\n");
+        }
+        
         int pot = 0;
         try{
             _playerList.playHand(_currentSB, _currentBB, _isPreflop);
@@ -113,10 +138,20 @@ public class Game {
 
         Player p = _playerList.selectWinner();
         p.receivePriceMoney(_totalPot);
+
+        if(Game.DEBUG){
+            System.out.printf("%s ha ganado %d€!\n", p.getName(), _totalPot);
+        }
+        
         return p;
     }
 
     public void restartRound(){
+        
+        if(Game.DEBUG){
+            System.out.printf("Reiniciando ronda...\n");
+        }
+        
         // TODO
         _isPreflop = true;
     }
@@ -125,4 +160,21 @@ public class Game {
         return false;
     }
 
+    public void showStateDEBUG(){
+        
+        // Mostrar estado de los jugadores y sus cartas
+        _playerList.showPlayersStateDEBUG();
+        
+        // Mostrar estado de las cartas de la mesa
+        for(int i = 0; i < _tableCards.length; i++){
+            
+            if(_tableCards[i] == null){
+                System.out.print( Card.FlippedDownCardToString() );
+            }
+            else{
+                System.out.print( _tableCards[i].toString() );
+            }
+        }
+    }
+    
 }

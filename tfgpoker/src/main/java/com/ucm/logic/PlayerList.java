@@ -278,5 +278,15 @@ public class PlayerList {
     public int max() { return _maxNumberOfPlayers; }
 
     
+    public void showPlayersStateDEBUG(){
+        
+        Node pNode = _first._next;
+        System.out.print( _first._player.toString() );
+        
+        while(pNode != _first){
+            System.out.print( pNode._player.toString() );
+            pNode = pNode._next;
+        }
+    }
 
 }

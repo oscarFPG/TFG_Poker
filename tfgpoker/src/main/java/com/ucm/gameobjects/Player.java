@@ -150,6 +150,14 @@ public class Player {
         this._pocketMoney += resto;
     }
 
+    public String toString(){
+        
+        String carta1 = (this._cards[0] != null) ? _cards[0].toString() : Card.MissingCardToString();
+        String carta2 = (this._cards[1] != null) ? _cards[1].toString() : Card.MissingCardToString();
+        
+        return String.format("Player[%d]: %s - %s%s", _id, _name, carta1, carta2);
+    }
+    
     public int getID() { return _id; }
     public String getName() { return _name; }
     public int getMoney() { return _money; }
