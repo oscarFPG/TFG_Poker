@@ -11,14 +11,14 @@ public class Controller{
      * Atributo que referencia la clase Game
      */
     private Game _game;
-    
+
+
     public Controller(Game game){
         _game = game;
     }
     
     
     private void configureGame(){
-      
         _game.addPlayer( new Player(0, "Valeria", 1000) );
         _game.addPlayer( new Player(1, "Oscar", 1000) );
         _game.addPlayer( new Player(2, "Carla", 1000) );
@@ -36,25 +36,34 @@ public class Controller{
             try{
                 // Pre-flop
                 _game.shareOutCardsToAllPlayers();
+                if(Game.DEBUG)
+                    _game.showStateDEBUG();
                 _game.playHand();
                 System.err.println(i);
                 // Flop
                 _game.addCardToTable();
                 _game.addCardToTable();
                 _game.addCardToTable();
+                if(Game.DEBUG)
+                    _game.showStateDEBUG();
                 _game.playHand();
 
                 // Turn
                 _game.addCardToTable();
+                if(Game.DEBUG)
+                    _game.showStateDEBUG();
                 _game.playHand();
                 
                 // River
                 _game.addCardToTable();
+                if(Game.DEBUG)
+                    _game.showStateDEBUG();
                 _game.playHand();
 
                 // Showdown
                 _game.giveRewardToWinner();
-                i++;
+                if(Game.DEBUG)
+                    _game.showStateDEBUG();
             }
             catch(OnlyOnePlayerLeftException e){
                 _game.giveRewardToWinner();

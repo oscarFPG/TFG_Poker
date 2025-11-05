@@ -22,7 +22,20 @@ public class Card {
     public void setAvailable(boolean b){
         _available = b;
     }
-
+    
+    static public String FlippedDownCardToString(){
+        return "[xx]";
+    }
+    
+    static public String MissingCardToString(){
+        return "[--]";
+    }
+    
+    public String toString(){
+        return String.format("[%c%s]", _number, _suit.getLetra());
+    }
+    
+    
     public char getNumber(){ return _number; }
     public Suit getSuit(){ return _suit; }
     public boolean getSol(){ return _sol; }
