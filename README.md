@@ -52,3 +52,9 @@
 - Primer debug del proyecto
 - Clases para mostrar el estado del juego en el debug
 - Lista de comando para realizar jugada
+
+
+# 05/11/2025
+- Configuracion basica para la interfaz java fx
+- Visualizar logica por consola, (comandos)
+- Algoritmo evaluador jugadas
