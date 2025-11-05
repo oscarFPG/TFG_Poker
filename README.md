@@ -58,3 +58,6 @@
 - Configuracion basica para la interfaz java fx
 - Visualizar logica por consola, (comandos)
 - Algoritmo evaluador jugadas
+
+git rm --cached *.class
+git rm -r --cached target
