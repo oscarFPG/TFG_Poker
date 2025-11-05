@@ -2,12 +2,12 @@ package com.ucm.gameobjects;
 
 public class Card {
 
-    private char _number;
+    private int _number;
     private Suit _suit; 
     private boolean _available;
     private boolean _sol;
             
-    public Card (char number, Suit suit) {
+    public Card (int number, Suit suit) {
         _number = number;
         _suit = suit;
         _sol = false;
@@ -36,7 +36,7 @@ public class Card {
     }
     
     
-    public char getNumber(){ return _number; }
+    public int getNumber(){ return _number; }
     public Suit getSuit(){ return _suit; }
     public boolean getSol(){ return _sol; }
     public boolean getAvailable(){ return _available; }
