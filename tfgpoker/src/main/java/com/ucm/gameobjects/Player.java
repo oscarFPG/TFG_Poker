@@ -4,11 +4,12 @@ import com.ucm.commands.AllInCommand;
 import com.ucm.commands.CallCommand;
 import com.ucm.commands.CheckCommand;
 import com.ucm.commands.Command;
-import com.ucm.commands.FoldCommand;import om.ucm.commands.RaiseCommand;
+import com.ucm.commands.FoldCommand;
+import com.ucm.commands.RaiseCommand;
 import java.util.Scanner;
 
 public class Player {
-    priate int _id;
+    private int _id;
     private String _name;
     private int _money; // Player's total money
     private int _pocketMoney; // Money the play has bet. It is not lost unless the player folds or loses and
@@ -203,31 +204,51 @@ public class Player {
         return true;
     }
 
-    public String toString(){
-        
+    public String toString() {
+
         String carta1 = (this._cards[0] != null) ? _cards[0].toString() : Card.MissingCardToString();
         String carta2 = (this._cards[1] != null) ? _cards[1].toString() : Card.MissingCardToString();
-        
+
         return String.format("Player[%d]: %s - %s%s", _id, _name, carta1, carta2);
     }
-    
-    public int getID() { return _id; }
-    public String getName() { return _name; }
-    public int getMoney() { return _money; }
-    public int getPocketMoney() { return _pocketMoney; }
-    public PlayerRole getPlayerRole() { return _role; }
-    public int getNumCards() { return _numCards; }
-    public boolean hasFolded() { return _fold; }
 
-    public void resetCards(){
-         _cards = new Card[2];
+    public int getID() {
+        return _id;
     }
 
-    public void setFold(boolean fold){
+    public String getName() {
+        return _name;
+    }
+
+    public int getMoney() {
+        return _money;
+    }
+
+    public int getPocketMoney() {
+        return _pocketMoney;
+    }
+
+    public PlayerRole getPlayerRole() {
+        return _role;
+    }
+
+    public int getNumCards() {
+        return _numCards;
+    }
+
+    public boolean hasFolded() {
+        return _fold;
+    }
+
+    public void resetCards() {
+        _cards = new Card[2];
+    }
+
+    public void setFold(boolean fold) {
         _fold = fold;
     }
 
-     public boolean getFold(){
+    public boolean getFold() {
         return _fold;
     }
 
