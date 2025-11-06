@@ -12,6 +12,6 @@ public class AllInCommand extends Command {
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
         _player.allIn();
-        return CommandResult.stopPlaying(_money);   // _player.getPocketMoney() == this._pocketMoney
+        return CommandResult.stopPlaying(_money); // _player.getPocketMoney() == this._money
     }
 }

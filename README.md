@@ -52,3 +52,26 @@
 - Primer debug del proyecto
 - Clases para mostrar el estado del juego en el debug
 - Lista de comando para realizar jugada
+
+
+# 05/11/2025
+- Configuracion basica para la interfaz java fx
+- Visualizar logica por consola, (comandos)
+- Algoritmo evaluador jugadas
+
+git rm --cached *.class
+git rm -r --cached target
+
+
+# CANVAS
+https://www.canva.com/design/DAG0pwSg_LM/2e3t-G-t7Hn5cMWBzcePAw/edit?utm_content=DAG0pwSg_LM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+
+
+# IDEAS
+- Poner botones de repodrucir / parar / continuar / volver atras / siguiente accion como si fuera un video pero interactivo.
+  Las partidas pueden reproducirse (al guardar una partida y cargarla por ejemplo) incicia desde cero, cada accion es un estado de la partida, y el usuario puede decidir si continuar a las siguienteses acciones y detenerse en un momento especifico, tomar una decision y cambiar el curso de la partida o simplemente seguir las acciones hasta llegar añ final sin ningun cambio.
+- Modo creador --> Será posible recerear una partida escogiendo las cartas de todos losjugadors, las cartas de la mesa y las acciones que se haran en el juego a cada momento.
+  Toda partida jugada sera registrada ya sea aleatoria o simulada, siempre tendra la opcion "guardar partida" y luego "cargar partida" respectivamente. ( Y si el jugador quiere conitnuar la partida aleatoriamente a partir de un momento)
+- Bot que te suguiera la siguiente accion
+- Bot personalizado ( parametros que el usuario quiere que tenga el bot)
+- 

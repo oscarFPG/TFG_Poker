@@ -1,2 +1,14 @@
+# Ignorar compilaciones y binarios
+target/
 *.class
-tfgpoker\target\
+
+# Ignorar archivos temporales de IDEs
+.idea/
+.vscode/
+*.log
+*.tmp
+*.bak
+
+# Ignorar otros archivos comunes
+.DS_Store
+Thumbs.db
