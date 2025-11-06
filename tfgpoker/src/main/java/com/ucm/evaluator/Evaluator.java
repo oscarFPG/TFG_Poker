@@ -5,6 +5,10 @@ import com.ucm.gameobjects.Player;
 import com.ucm.gameobjects.Suit;
 import com.ucm.middleclasses.HandInfo;
 
+import java.nio.file.*;
+import java.io.IOException;
+import java.util.*;
+
 
 public class Evaluator {
 
@@ -27,6 +31,17 @@ public class Evaluator {
      */
     private Evaluator(){} 
     
+    
+    private void loadEvaluator()throws IOException{
+        
+        List<String> lineas = Files.readAllLines(Path.of("../arrays/test.txt"));
+        short[] datos = new short[ lineas.size() ];
+        
+        for(int i = 0; i < lineas.size(); i++){
+            datos[i] = Short.parseShort( lineas.get(i).trim() );
+        }
+        
+    }
 
     public static Player evaluateAllHands(HandInfo[] playerHands, Card[] tableCards){
        
@@ -48,7 +63,7 @@ public class Evaluator {
             new Card(4, Suit.CLUBS), 
             new Card(5, Suit.CLUBS), 
             new Card(6, Suit.CLUBS)
-        };  
+        };
         short value = evaluate5hand( test );
 
         return winner;
