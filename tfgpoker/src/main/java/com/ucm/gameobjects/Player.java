@@ -185,10 +185,6 @@ public class Player {
         _money += money;
     }
 
-    public void setRole(PlayerRole pr) {
-        _role = pr;
-    }
-
     private void decreaseMoney(int bet) {
         this._money -= bet;
     }
@@ -198,6 +194,7 @@ public class Player {
     }
 
     private boolean isEnoughMoney(int bet) {
+        
         if (bet > this._money)
             return false;
 
