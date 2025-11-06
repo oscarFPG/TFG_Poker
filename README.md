@@ -65,3 +65,8 @@ git rm -r --cached target
 
 # CANVAS
 https://www.canva.com/design/DAG0pwSg_LM/2e3t-G-t7Hn5cMWBzcePAw/edit?utm_content=DAG0pwSg_LM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+
+
+# IDEAS
+- Poner botones de repodrucir / parar / continuar siguiente accion como si fuera un video pero interactivo.
+  Las partidas pueden reproducirse (al guardar una partida y cargarla por ejemplo) incicia desde cero, cada accion es un estado de la partida, y el usuario puede decidir si continuar a las siguienteses acciones y detenerse en un momento especifico, tomar una decision y cambiar el curso de la partida o simplemente seguir las acciones hasta llegar añ final sin ningun cambio.
