@@ -7,7 +7,6 @@ import com.ucm.gameobjects.Deck;
 import com.ucm.gameobjects.Player;
 import com.ucm.middleclasses.HandInfo;
 
-
 public class Game {
 
     public static final boolean DEBUG = true;
@@ -29,7 +28,6 @@ public class Game {
     private int _currentSB;
     private int _currentBB;
 
-
     public Game() {
         _deck = new Deck();
         _playerList = new PlayerList(3);
@@ -42,11 +40,10 @@ public class Game {
         _currentBB = _initialBigBlind;
     }
 
-
     public void addPlayer(Player p) {
 
-        if(Game.DEBUG){
-            System.out.printf("Intentando añadir jugador [%s]\n", p.getName());   
+        if (Game.DEBUG) {
+            System.out.printf("Intentando añadir jugador [%s]\n", p.getName());
         }
 
         _playerList.addPlayer(p);
@@ -57,7 +54,7 @@ public class Game {
      */
     public void shareOutCardsToAllPlayers() {
 
-        if(Game.DEBUG){
+        if (Game.DEBUG) {
             System.out.printf("Repartiendo cartas a los jugadores...\n");
         }
 
@@ -72,11 +69,11 @@ public class Game {
      * Devolver todas las cartas que se hayan cogido
      */
     public void retrieveAllCards() {
-        
-        if(Game.DEBUG){
+
+        if (Game.DEBUG) {
             System.out.printf("Devolviendo todas las cartas...\n");
         }
-        
+
         _playerList.retrieveAllCardsFromPlayers();
         retrieveCardsFromTable();
     }
@@ -89,11 +86,13 @@ public class Game {
     }
 
     public void addCardToTable() {
-        if ( _tableCards.length >= 5){
-             return;
+
+        if (_actualTableCards >= 5) {
+            return;
         }
-          _tableCards[_actualTableCards] = _deck.takeRandomCard();
-         _actualTableCards++;
+
+        _tableCards[_actualTableCards] = _deck.takeRandomCard();
+        _actualTableCards++;
     }
 
     public void retrieveCardsFromTable() {
@@ -111,79 +110,78 @@ public class Game {
     }
 
     public void passTurn() {
-        
-        if(Game.DEBUG){
+
+        if (Game.DEBUG) {
             System.out.printf("Pasando turno...\n");
         }
-        
+
         _playerList.passTurn();
     }
 
     public void playHand() throws OnlyOnePlayerLeftException {
 
-        if(Game.DEBUG){
+        if (Game.DEBUG) {
             System.out.printf("Jugando mano...\n");
         }
-        
+
         int pot = 0;
-        try{
+        try {
             _playerList.playHand(_currentSB, _currentBB, _isPreflop);
-        }
-        catch(OnlyOnePlayerLeftException e){    // Collect remaining bets only if the round ended because all players folded in their turn and there is only one left
+        } catch (OnlyOnePlayerLeftException e) { // Collect remaining bets only if the round ended because all players
+                                                 // folded in their turn and there is only one left
             pot = _playerList.collectAllBets();
             _totalPot += pot;
             throw e;
         }
-        
+
         pot = _playerList.collectAllBets();
         _totalPot += pot;
     }
 
-    public Player giveRewardToWinner(){
+    public Player giveRewardToWinner() {
 
         HandInfo[] playerHands = _playerList.getPlayerHandsInfo();
         Player p = Evaluator.evaluateAllHands(playerHands, _tableCards);
 
-        if(Game.DEBUG){
+        if (Game.DEBUG) {
             System.out.printf("%s ha ganado %d€!\n", p.getName(), _totalPot);
         }
-        
+
         return p;
     }
 
-    public void restartRound(){
-        
+    public void restartRound() {
+
         _deck.resetDesk();
         _playerList.resetPlayers();
-        
-        if(Game.DEBUG){
+
+        if (Game.DEBUG) {
             System.out.printf("Reiniciando ronda...\n");
         }
-        
+
         // TODO
         _isPreflop = true;
     }
-    
+
     public boolean isGameFinished() {
         return false;
     }
 
-    public void showStateDEBUG(){
-        
+    public void showStateDEBUG() {
+
         // Mostrar estado de los jugadores y sus cartas
         _playerList.showPlayersStateDEBUG();
-        
+
         // Mostrar estado de las cartas de la mesa
-        for(int i = 0; i < _tableCards.length; i++){
-            
-            if(_tableCards[i] == null){
-                System.out.print( Card.FlippedDownCardToString() );
-            }
-            else{
-                System.out.print( _tableCards[i].toString() );
+        for (int i = 0; i < _tableCards.length; i++) {
+
+            if (_tableCards[i] == null) {
+                System.out.print(Card.FlippedDownCardToString());
+            } else {
+                System.out.print(_tableCards[i].toString());
             }
         }
         System.out.print('\n');
     }
-    
+
 }

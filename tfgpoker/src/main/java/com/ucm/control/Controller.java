@@ -1,43 +1,41 @@
 package com.ucm.control;
 
+import java.io.IOException;
+import com.ucm.evaluator.Evaluator;
 import com.ucm.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.gameobjects.Player;
 import com.ucm.logic.Game;
 
+public class Controller {
 
-public class Controller{
-    
     /**
      * Atributo que referencia la clase Game
      */
     private Game _game;
 
-
-    public Controller(Game game){
+    public Controller(Game game) {
         _game = game;
     }
-    
-    
-    private void configureGame(){
-        _game.addPlayer( new Player(0, "Valeria", 1000) );
-        _game.addPlayer( new Player(1, "Oscar", 1000) );
-        _game.addPlayer( new Player(2, "Carla", 1000) );
 
+    private void configureGame() {
+        _game.addPlayer(new Player(0, "Valeria", 1000));
+        _game.addPlayer(new Player(1, "Oscar", 1000));
+        _game.addPlayer(new Player(2, "Carla", 1000));
     }
-    
-    public void run(){
+
+    public void run() {
 
         configureGame();
         int i = 0;
 
         // Game loop
         _game.assignRolesToAllPlayers();
-        while(!_game.isGameFinished()){
-            
-            try{
+        while (!_game.isGameFinished()) {
+
+            try {
                 // Pre-flop
                 _game.shareOutCardsToAllPlayers();
-                if(Game.DEBUG)
+                if (Game.DEBUG)
                     _game.showStateDEBUG();
                 _game.playHand();
 
@@ -45,34 +43,34 @@ public class Controller{
                 _game.addCardToTable();
                 _game.addCardToTable();
                 _game.addCardToTable();
-                if(Game.DEBUG)
+                if (Game.DEBUG)
                     _game.showStateDEBUG();
                 _game.playHand();
 
                 // Turn
                 _game.addCardToTable();
-                if(Game.DEBUG)
+                if (Game.DEBUG)
                     _game.showStateDEBUG();
                 _game.playHand();
-                
+
                 // River
                 _game.addCardToTable();
-                if(Game.DEBUG)
+                if (Game.DEBUG)
                     _game.showStateDEBUG();
                 _game.playHand();
 
                 // Showdown
                 _game.giveRewardToWinner();
-                if(Game.DEBUG)
+                if (Game.DEBUG)
                     _game.showStateDEBUG();
-            }
-            catch(OnlyOnePlayerLeftException e){
+            } catch (OnlyOnePlayerLeftException e) {
                 _game.giveRewardToWinner();
             }
 
-            // Devolver todas las cartas al mazo, restablecer jugadores que han 'foldeado', etc...
+            // Devolver todas las cartas al mazo, restablecer jugadores que han 'foldeado',
+            // etc...
             _game.restartRound();
         }
     }
-    
+
 }
