@@ -1,5 +1,6 @@
 package com.ucm.gameobjects;
 
+import com.ucm.commands.CallCommand;
 import com.ucm.commands.Command;
 import com.ucm.commands.FoldCommand;
 
@@ -34,7 +35,7 @@ public class Player {
         // Hacer linea comando para apuestas
         // No comprobar AQUI si el valor para RaiseCommand, CallCommand o AllInCommand es correcto
         // Comprobar en el comando concreto
-        return new FoldCommand(this, _pocketMoney);
+        return new CallCommand(this, _pocketMoney);
     }
 
     public void makeForcedBet(int sb, int bb){
@@ -137,10 +138,6 @@ public class Player {
         _money += money;
     }
 
-    public void setRole(PlayerRole pr) {
-        _role = pr;
-    }
-
     private void decreaseMoney(int resto) {
         this._money -= resto;
     }
@@ -157,6 +154,20 @@ public class Player {
         return String.format("Player[%d]: %s - %s%s", _id, _name, carta1, carta2);
     }
     
+
+    public void setRole(PlayerRole pr) {
+        _role = pr;
+    }
+
+    public void resetCards(){
+        _cards = new Card[2];
+    }
+
+    public void setFold(boolean fold){
+        _fold = fold;
+    }
+
+    public Card[] getCards() { return _cards; } // TODO Esto deberia estar con una interfaz para llamarse desde PlayerList
     public int getID() { return _id; }
     public String getName() { return _name; }
     public int getMoney() { return _money; }
@@ -164,17 +175,5 @@ public class Player {
     public PlayerRole getPlayerRole() { return _role; }
     public int getNumCards() { return _numCards; }
     public boolean hasFolded() { return _fold; }
-
-    public void resetCards(){
-         _cards = new Card[2];
-    }
-
-    public void setFold(boolean fold){
-        _fold = fold;
-    }
-
-     public boolean getFold(){
-        return _fold;
-    }
 
 }

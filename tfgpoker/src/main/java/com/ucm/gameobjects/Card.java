@@ -22,6 +22,10 @@ public class Card {
     public void setAvailable(boolean b){
         _available = b;
     }
+
+    public String toString(){
+        return String.format("[%c%s]", valueToString(), _suit.getLetra());
+    }
     
     static public String FlippedDownCardToString(){
         return "[xx]";
@@ -30,11 +34,23 @@ public class Card {
     static public String MissingCardToString(){
         return "[--]";
     }
-    
-    public String toString(){
-        return String.format("[%c%s]", _number, _suit.getLetra());
+
+    private char valueToString(){
+
+        if(_number <= 10)
+            return Character.forDigit(_number, 10);
+
+        switch (_number) {
+            case 11:
+                return 'J';
+            case 12:
+                return 'Q';
+            case 13:
+                return 'K';
+            default:
+                return 'A';
+        }
     }
-    
     
     public int getNumber(){ return _number; }
     public Suit getSuit(){ return _suit; }

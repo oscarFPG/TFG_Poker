@@ -1,9 +1,11 @@
 package com.ucm.logic;
 
+import com.ucm.evaluator.Evaluator;
 import com.ucm.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.gameobjects.Card;
 import com.ucm.gameobjects.Deck;
 import com.ucm.gameobjects.Player;
+import com.ucm.middleclasses.HandInfo;
 
 
 public class Game {
@@ -139,8 +141,8 @@ public class Game {
 
     public Player giveRewardToWinner(){
 
-        Player p = _playerList.selectWinner();
-        p.receivePriceMoney(_totalPot);
+        HandInfo[] playerHands = _playerList.getPlayerHandsInfo();
+        Player p = Evaluator.evaluateAllHands(playerHands, _tableCards);
 
         if(Game.DEBUG){
             System.out.printf("%s ha ganado %d€!\n", p.getName(), _totalPot);
@@ -181,6 +183,7 @@ public class Game {
                 System.out.print( _tableCards[i].toString() );
             }
         }
+        System.out.print('\n');
     }
     
 }

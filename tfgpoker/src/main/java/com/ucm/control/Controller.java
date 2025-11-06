@@ -29,6 +29,7 @@ public class Controller{
 
         configureGame();
         int i = 0;
+
         // Game loop
         _game.assignRolesToAllPlayers();
         while(!_game.isGameFinished()){
@@ -39,7 +40,7 @@ public class Controller{
                 if(Game.DEBUG)
                     _game.showStateDEBUG();
                 _game.playHand();
-                System.err.println(i);
+
                 // Flop
                 _game.addCardToTable();
                 _game.addCardToTable();
