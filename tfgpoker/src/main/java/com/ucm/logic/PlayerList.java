@@ -286,12 +286,8 @@ public class PlayerList {
         return cont;
     }
 
-    public boolean isEmpty() { return size() == 0; }
-    public boolean isFull() { return size() == max(); }
-    public int size() { return _playerCounter; }
-    public int max() { return _maxNumberOfPlayers; }
-
     public void resetPlayers(){
+        
         Node current = _first;
         current._player.resetCards();
         current._player.setFold(false);
@@ -301,6 +297,11 @@ public class PlayerList {
             current = current._next;
         }
     }
+
+    public boolean isEmpty() { return size() == 0; }
+    public boolean isFull() { return size() == max(); }
+    public int size() { return _playerCounter; }
+    public int max() { return _maxNumberOfPlayers; }
     
     public void showPlayersStateDEBUG(){
         

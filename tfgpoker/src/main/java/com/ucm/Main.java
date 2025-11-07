@@ -45,7 +45,8 @@ public class Main extends Application {
             Game game = new Game();
             Controller controller = new Controller(game);
             controller.run();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             System.out.printf("Evaluator class failed on instaciating\n");
         }
 

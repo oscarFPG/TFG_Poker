@@ -78,11 +78,10 @@ public class Evaluator {
         }
     }
 
-    public static Player evaluateAllHands(HandInfo[] playerHands, Card[] tableCards) {
+    public static List<Player> evaluateAllHands(HandInfo[] playerHands, Card[] tableCards) {
 
         int encodedPlayerCards[][] = new int[playerHands.length][2];
         int encodedTableCards[] = new int[tableCards.length];
-        Player winner = null;
 
         for (int i = 0; i < playerHands.length; i++) {
             encodedPlayerCards[i][0] = encodeCard(playerHands[i].cards()[0]);
@@ -92,35 +91,46 @@ public class Evaluator {
             encodedTableCards[i] = encodeCard(tableCards[i]);
         }
 
-        Card[] test = {
-                new Card(2, Suit.CLUBS),
-                new Card(3, Suit.CLUBS),
-                new Card(4, Suit.CLUBS),
-                new Card(5, Suit.CLUBS),
-                new Card(6, Suit.CLUBS)
-        };
+        /*
+         * Por cada jugador, calcular la mejor mano de 5 cartas con las dos del jugador y las 5 de la mesa
+         */
+        short bestHandValue[] = new short[playerHands.length];
+        RANK bestRank[] = new RANK[playerHands.length];
+        int encoded7Cards[] = new int[playerHands.length + tableCards.length];   // It is always size = 7
+        short tableRank = evaluate5hand(
+            encodedTableCards[0], 
+            encodedTableCards[1], 
+            encodedTableCards[2], 
+            encodedTableCards[3], 
+            encodedTableCards[4]
+        );
+        for(int i = 0; i < playerHands.length; i++){
 
-        int[] testEncode = {
-                encodeCard(test[0]),
-                encodeCard(test[1]),
-                encodeCard(test[2]),
-                encodeCard(test[3]),
-                encodeCard(test[4])
-        };
+            encoded7Cards[0] = encodedPlayerCards[i][0];    // First player card
+            encoded7Cards[1] = encodedPlayerCards[i][1];    // Second player card
+            encoded7Cards[2] = encodedTableCards[0];        // First card on the table
+            encoded7Cards[3] = encodedTableCards[1];        // Second card on the table
+            encoded7Cards[4] = encodedTableCards[2];        // Third card on the table
+            encoded7Cards[5] = encodedTableCards[3];        // Fourth card on the table
+            encoded7Cards[6] = encodedTableCards[4];        // Fifth card on the table
 
-        short value = evaluate5hand(testEncode);
-        RANK rank = hand_rank(value);
+            // Assign best hand value obtained between:
+            // One or both player cards + 3 on the table
+            // All 5 on the table
+            bestHandValue[i] = (short) Math.max( tableRank, evaluate7hand(encoded7Cards) );
+            bestRank[i] = handRank( bestHandValue[i] );
+        }
+
+        List<Player> winner = new ArrayList<Player>();
+        // TODO : Gestionar empates
 
         return winner;
     }
 
-    private static short evaluate5hand(int[] cards) {
+    private static short evaluate5hand(final int card1, final int card2, final int card3, final int card4, final int card5) {
 
-        if (cards.length != 5)
-            return -1;
-
-        int q = (cards[0] | cards[1] | cards[2] | cards[3] | cards[4]) >> 16;
-        boolean bIsFlush = (cards[0] & cards[1] & cards[2] & cards[3] & cards[4] & 0xf000) != 0;
+        int q = (card1 | card2 | card3 | card4 | card5) >> 16;
+        boolean bIsFlush = (card1 & card2 & card3 & card4 & card5 & 0xf000) != 0;
         short s = _unique5[q];
 
         // This checks for Flushes and Straight Flushes.
@@ -132,8 +142,53 @@ public class Evaluator {
             return s;
 
         // This performs a perfect-hash lookup for remaining hands.
-        q = (cards[0] & 0xff) * (cards[1] & 0xff) * (cards[2] & 0xff) * (cards[3] & 0xff) * (cards[4] & 0xff);
-        return _hashValues[findFast(q)];
+        q = (card1 & 0xff) * (card2 & 0xff) * (card3 & 0xff) * (card4 & 0xff) * (card5 & 0xff);
+        return _hashValues[ findFast(q) ];
+    }
+
+    /**
+     * This method calculates the best hand making all the combinations ONLY including at least one of players card.
+     * Both cards must be the first two on the array
+     * @param cards
+     * @return
+     */
+    private static short evaluate7hand(final int[] cards){
+
+        if(cards.length != 7)   // TODO : Lanzar excepcion
+            return -1;
+
+
+        short bestHandValue = 0;
+        short value = 0;
+        // Includes both player cards
+        for(int first = 2; first < cards.length - 2; first++){
+            for(int second = first + 1; second < cards.length - 1; second++){
+                for(int third = second + 1; third < cards.length; third++){
+                    value = evaluate5hand(cards[0], cards[1], cards[first], cards[second], cards[third]);
+                    bestHandValue = (short) Math.max(bestHandValue, value);
+                }
+            }
+        }
+
+        // Includes only one player card
+        for(int first = 2; first < cards.length - 3; first++){
+            for(int second = first + 1; second < cards.length - 2; second++){
+                for(int third = second + 1; third < cards.length - 1; third++){
+                    for(int fourth = third + 1; fourth < cards.length; fourth++){
+
+                        // Using first card + 4 on the table
+                        value = evaluate5hand(cards[0], cards[first], cards[second], cards[third], cards[fourth]);
+                        bestHandValue = (short) Math.max(bestHandValue, value);
+
+                        // Using second card + 4 on the table
+                        value = evaluate5hand(cards[1], cards[first], cards[second], cards[third], cards[fourth]);
+                        bestHandValue = (short) Math.max(bestHandValue, value);
+                    }
+                }
+            }
+        }
+
+        return bestHandValue;
     }
 
     private static short findFast(int u) {
@@ -151,25 +206,26 @@ public class Evaluator {
         return r;
     }
 
-    private static RANK hand_rank(short val) {
+    private static RANK handRank(short val) {
 
         if (val > 6185)
             return RANK.HIGH_CARD;          // 1277 high card
-        if (val > 3325)
+        else if (val > 3325)
             return RANK.ONE_PAIR;           // 2860 one pair
-        if (val > 2467)
+        else if (val > 2467)
             return RANK.TWO_PAIR;           // 858 two pair
-        if (val > 1609)
+        else if (val > 1609)
             return RANK.THREE_OF_A_KIND;    // 858 three-kind
-        if (val > 1599)
+        else if (val > 1599)
             return RANK.STRAIGHT;           // 10 straights
-        if (val > 322)
+        else if (val > 322)
             return RANK.FLUSH;              // 1277 flushes
-        if (val > 166)
+        else if (val > 166)
             return RANK.FULL_HOUSE;         // 156 full house
-        if (val > 10)
+        else if (val > 10)
             return RANK.FOUR_OF_A_KIND;     // 156 four-kind
-        return RANK.STRAIGHT_FLUSH;         // 10 straight-flushes
+        else
+            return RANK.STRAIGHT_FLUSH;     // 10 straight-flushes
     }
 
     private static int encodeCard(Card c) {

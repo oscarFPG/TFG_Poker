@@ -1,7 +1,5 @@
 package com.ucm.control;
 
-import java.io.IOException;
-import com.ucm.evaluator.Evaluator;
 import com.ucm.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.gameobjects.Player;
 import com.ucm.logic.Game;
@@ -26,13 +24,13 @@ public class Controller {
     public void run() {
 
         configureGame();
-        int i = 0;
 
         // Game loop
         _game.assignRolesToAllPlayers();
         while (!_game.isGameFinished()) {
 
             try {
+                
                 // Pre-flop
                 _game.shareOutCardsToAllPlayers();
                 if (Game.DEBUG)
@@ -63,13 +61,15 @@ public class Controller {
                 _game.giveRewardToWinner();
                 if (Game.DEBUG)
                     _game.showStateDEBUG();
-            } catch (OnlyOnePlayerLeftException e) {
+            }
+            catch (OnlyOnePlayerLeftException e) {
                 _game.giveRewardToWinner();
             }
 
             // Devolver todas las cartas al mazo, restablecer jugadores que han 'foldeado',
             // etc...
             _game.restartRound();
+            _game.passTurn();
         }
     }
 
