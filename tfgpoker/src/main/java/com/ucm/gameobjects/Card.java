@@ -38,7 +38,7 @@ public class Card {
     private char valueToString(){
 
         if(_number <= 10)
-            return Character.forDigit(_number, 10);
+            return Character.forDigit(_number, 11);
 
         switch (_number) {
             case 11:

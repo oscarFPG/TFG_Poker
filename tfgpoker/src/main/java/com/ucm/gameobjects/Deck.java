@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class Deck {
 
-    private static int NUM_VALUES = 13;
+    private static int NUM_VALUES = 12;
     private static int NUM_SUITS = Suit.values().length;
     private static Suit[] SUITS = Suit.values();
 
@@ -24,7 +24,7 @@ public class Deck {
 
             int value = 2;
             for (int j = 0; j < NUM_VALUES; j++) {
-                _deck[i][j] = new Card( value, SUITS[i]);
+                _deck[i][j] = new Card(value, SUITS[i]);
                 ++value;
             }
         }

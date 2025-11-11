@@ -22,7 +22,8 @@ public class Evaluator {
         FOUR_OF_A_KIND,
         STRAIGHT_FLUSH
     }
-
+                                        /* 2  3	 4  5   6   7   8   9   10  J   Q   K   A  */
+                                        /* 2  3	 5	7  11  13  17  19  23  29  31  37  41 */
     private static int PRIME_NUMBERS[] = { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41 };
 
     private static short _flushes[];
@@ -87,6 +88,12 @@ public class Evaluator {
             encodedPlayerCards[i][0] = encodeCard(playerHands[i].cards()[0]);
             encodedPlayerCards[i][1] = encodeCard(playerHands[i].cards()[1]);
         }
+
+        tableCards[0] = new Card(12, Suit.CLUBS);
+        tableCards[1] = new Card(10, Suit.DIAMONDS);
+        tableCards[2] = new Card(5, Suit.HEARTS);
+        tableCards[3] = new Card(4, Suit.HEARTS);
+        tableCards[4] = new Card(3, Suit.CLUBS);
         for (int i = 0; i < tableCards.length; i++) {
             encodedTableCards[i] = encodeCard(tableCards[i]);
         }
@@ -98,12 +105,13 @@ public class Evaluator {
         RANK bestRank[] = new RANK[playerHands.length];
         int encoded7Cards[] = new int[playerHands.length + tableCards.length];   // It is always size = 7
         short tableRank = evaluate5hand(
-            encodedTableCards[0], 
+            encodedTableCards[0],
             encodedTableCards[1], 
             encodedTableCards[2], 
             encodedTableCards[3], 
             encodedTableCards[4]
         );
+
         for(int i = 0; i < playerHands.length; i++){
 
             encoded7Cards[0] = encodedPlayerCards[i][0];    // First player card
@@ -230,41 +238,30 @@ public class Evaluator {
 
     private static int encodeCard(Card c) {
 
-        int card = (byte) Evaluator.PRIME_NUMBERS[c.getNumber() - 2];
+        int prime = Evaluator.PRIME_NUMBERS[c.getNumber() - 2];
+        int rank = c.getNumber() - 2;
+        int suit = encodeSuit(c.getSuit());
+        int bitmask = 1 << rank;
 
-        card |= ((byte) c.getNumber() << 8);
-        card |= ((byte) encodeSuit(c.getSuit()) << 12);
-        card |= ((byte) encodeRank(c.getNumber()) << 16);
-
-        return card;
+        return prime | (rank << 8) | (suit << 12) | (bitmask << 16);
     }
 
-    private static byte encodeSuit(Suit suit) {
+    private static int encodeSuit(Suit suit) {
 
-        byte s = 0;
         switch (suit) {
             case Suit.SPADES:
-                s |= (1 << 0);
-                break;
+                return 1;
 
             case Suit.HEARTS:
-                s |= (1 << 1);
-                break;
+                return 2;
 
             case Suit.DIAMONDS:
-                s |= (1 << 2);
-                break;
+                return 4;
 
             default:
-                s |= (1 << 3);
-                break;
+                return 8;
         }
-
-        return s;
     }
 
-    private static byte encodeRank(int rank) {
-        return (byte) (1 << (rank - 2));
-    }
 
 }

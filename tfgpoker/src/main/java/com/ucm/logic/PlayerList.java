@@ -298,11 +298,6 @@ public class PlayerList {
         }
     }
 
-    public boolean isEmpty() { return size() == 0; }
-    public boolean isFull() { return size() == max(); }
-    public int size() { return _playerCounter; }
-    public int max() { return _maxNumberOfPlayers; }
-    
     public void showPlayersStateDEBUG(){
         
         Node pNode = _first._next;
@@ -313,5 +308,11 @@ public class PlayerList {
             pNode = pNode._next;
         }
     }
+    
+
+    public boolean isEmpty() { return size() == 0; }
+    public boolean isFull() { return size() == max(); }
+    public int size() { return _playerCounter; }
+    public int max() { return _maxNumberOfPlayers; }
 
 }

@@ -134,10 +134,6 @@ public class Game {
 
     public void playHand() throws OnlyOnePlayerLeftException {
 
-        if (Game.DEBUG) {
-            System.out.printf("Jugando mano...\n");
-        }
-
         int pot = 0;
         try {
             _playerList.playHand(_currentSB, _currentBB, _isPreflop);
@@ -150,7 +146,7 @@ public class Game {
         }
 
         if (Game.DEBUG) {
-            System.out.printf("Mano numero %d terminada!\n", _handCounter);
+            System.out.printf("Mano numero %d terminada!\n\n", _handCounter);
         }
 
         pot = _playerList.collectAllBets();
@@ -211,7 +207,7 @@ public class Game {
                 System.out.print(_tableCards[i].toString());
             }
         }
-        System.out.print('\n');
+        System.out.print("\n\n");
     }
 
 }

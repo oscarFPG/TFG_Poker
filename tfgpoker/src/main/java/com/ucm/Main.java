@@ -1,16 +1,17 @@
 package com.ucm;
 
-import java.io.IOException;
 
 //GUI
-import com.ucm.control.Controller;
-import com.ucm.evaluator.Evaluator;
-import com.ucm.logic.Game;
-
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+
+import java.io.IOException;
+import com.ucm.control.Controller;
+import com.ucm.evaluator.Evaluator;
+import com.ucm.logic.Game;
+
 
 public class Main extends Application {
 
