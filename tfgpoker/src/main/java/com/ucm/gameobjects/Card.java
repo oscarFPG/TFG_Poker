@@ -2,12 +2,12 @@ package com.ucm.gameobjects;
 
 public class Card {
 
-    private char _number;
+    private int _number;
     private Suit _suit; 
     private boolean _available;
     private boolean _sol;
             
-    public Card (char number, Suit suit) {
+    public Card(int number, Suit suit) {
         _number = number;
         _suit = suit;
         _sol = false;
@@ -22,6 +22,10 @@ public class Card {
     public void setAvailable(boolean b){
         _available = b;
     }
+
+    public String toString(){
+        return String.format("[%c%s]", valueToString(), _suit.getLetra());
+    }
     
     static public String FlippedDownCardToString(){
         return "[xx]";
@@ -30,13 +34,27 @@ public class Card {
     static public String MissingCardToString(){
         return "[--]";
     }
-    
-    public String toString(){
-        return String.format("[%c%s]", _number, _suit.getLetra());
+
+    private char valueToString(){
+
+        if(_number < 10)
+            return Character.forDigit(_number, 11);
+
+        switch (_number) {
+            case 10:
+                return 'T';
+            case 11:
+                return 'J';
+            case 12:
+                return 'Q';
+            case 13:
+                return 'K';
+            default:
+                return 'A';
+        }
     }
     
-    
-    public char getNumber(){ return _number; }
+    public int getNumber(){ return _number; }
     public Suit getSuit(){ return _suit; }
     public boolean getSol(){ return _sol; }
     public boolean getAvailable(){ return _available; }

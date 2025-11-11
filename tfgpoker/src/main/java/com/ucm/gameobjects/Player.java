@@ -30,55 +30,60 @@ public class Player {
         _fold = false;
     }
 
+    
     public Command makePlay(int maxBet) {
 
-        menuMakePlay();
         Scanner sc = new Scanner(System.in);
-        int jugada = sc.nextInt();
-        int opcion = sc.nextInt();
+        int jugada = -1;
+
         do {
-            jugada = opcion;
+
+            menuMakePlay();
+            jugada = sc.nextInt();
+
             switch (jugada) {
                 case 0:
                     return new FoldCommand(this, _pocketMoney);
-                case 1:
-                    if (maxBet != 0) {// No puedo hacer check si hay alguna apuesta en juego
-                        System.out.println("You can't do check");
 
+                case 1:
+                    if (maxBet != 0) {  // No puedo hacer check si hay alguna apuesta en juego
+                        System.out.println("You can't do check");
                     }
                     return new CheckCommand(this, _pocketMoney);
+
                 case 2:
                     if (!isEnoughMoney(maxBet - _pocketMoney)) { // No puedo igualar porque no tengo suficiente dinero
                         System.out.println("Not enough money to make a call");
                         return new FoldCommand(this, _pocketMoney);
-                        // TODO Habrá que preguntarle al jugador si quiere hacer un allIn retirarse. Se
-                        // TODO entiende que no quiere hacer fold
+                        // TODO Habrá que preguntarle al jugador si quiere hacer un allIn retirarse. 
+                        // Se entiende que no quiere hacer fold
                     }
                     return new CallCommand(this, _pocketMoney);
+
                 case 3:
-                    if (!isEnoughMoney(10)) { // TODO Si no tengo suficiente dinero para subir, ver si tengo suficiente
-                                              // TODO dinero
-                                              // TODO para
-                                              // TODO igualar, y si tengo, hago call (decidir si hacer call
-                                              // TODO obligatoriamente
-                                              // TODO o
-                                              // TODO preguntar si el jugador quiere hacer call u allin), si no,
-                                              // TODO tendría que hacer fold u allin
+                    /*
+                     * TODO Si no tengo suficiente dinero para subir, ver si tengo suficiente dinero para igualar, y si tengo, hago call
+                     * (decidir si hacer call obligatoriamente o preguntar si el jugador quiere hacer call u allin), si no,
+                     * tendría que hacer fold u allin
+                     */
+                    if (!isEnoughMoney(10)) { 
                         System.out.println("Not enough money to make a raise");
                         return new CallCommand(this, _pocketMoney);
                     }
-
                     return new RaiseCommand(this, _pocketMoney);
+
                 case 4:
                     return new AllInCommand(this, _pocketMoney);
+
                 default:
                     System.out.println("Opción no válida. Vuelva a intentarlo...");
-                    menuMakePlay();
-                    opcion = sc.nextInt();
+                    jugada = -1;
                     break;
             }
-        } while (jugada < 0 || jugada > 4); // TODO Más adelante habrá que poner un try catch para controlar la
-                                            // TODO excepción cuando NO sea un número
+
+        // TODO Más adelante habrá que poner un try catch para controlar la
+        // excepción cuando NO sea un número
+        } while (jugada == -1);
 
         sc.close();
 
@@ -185,10 +190,6 @@ public class Player {
         _money += money;
     }
 
-    public void setRole(PlayerRole pr) {
-        _role = pr;
-    }
-
     private void decreaseMoney(int bet) {
         this._money -= bet;
     }
@@ -198,6 +199,7 @@ public class Player {
     }
 
     private boolean isEnoughMoney(int bet) {
+        
         if (bet > this._money)
             return false;
 
@@ -211,36 +213,13 @@ public class Player {
 
         return String.format("Player[%d]: %s - %s%s", _id, _name, carta1, carta2);
     }
+    
 
-    public int getID() {
-        return _id;
+    public void setRole(PlayerRole pr) {
+        _role = pr;
     }
 
-    public String getName() {
-        return _name;
-    }
-
-    public int getMoney() {
-        return _money;
-    }
-
-    public int getPocketMoney() {
-        return _pocketMoney;
-    }
-
-    public PlayerRole getPlayerRole() {
-        return _role;
-    }
-
-    public int getNumCards() {
-        return _numCards;
-    }
-
-    public boolean hasFolded() {
-        return _fold;
-    }
-
-    public void resetCards() {
+    public void resetCards(){
         _cards = new Card[2];
     }
 
@@ -248,8 +227,13 @@ public class Player {
         _fold = fold;
     }
 
-    public boolean getFold() {
-        return _fold;
-    }
+    public Card[] getCards() { return _cards; } // TODO Esto deberia estar con una interfaz para llamarse desde PlayerList
+    public int getID() { return _id; }
+    public String getName() { return _name; }
+    public int getMoney() { return _money; }
+    public int getPocketMoney() { return _pocketMoney; }
+    public PlayerRole getPlayerRole() { return _role; }
+    public int getNumCards() { return _numCards; }
+    public boolean hasFolded() { return _fold; }
 
 }
