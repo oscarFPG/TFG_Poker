@@ -6,11 +6,13 @@ import com.ucm.gameobjects.Card;
 import com.ucm.gameobjects.Player;
 import com.ucm.gameobjects.PlayerRole;
 import com.ucm.middleclasses.CommandResult;
+import com.ucm.middleclasses.HandInfo;
+
 
 
 public class PlayerList {
 
-    public class Node {
+    private class Node {
         Node _prev;
         Player _player;
         Node _next;
@@ -243,8 +245,20 @@ public class PlayerList {
         assignRolesToAllPlayers();
     }
 
-    public Player selectWinner(){
-        return _first._player;  // TODO : Search for winner player
+    public HandInfo[] getPlayerHandsInfo(){
+
+        HandInfo[] info = new HandInfo[ activePlayersCounter() ];
+        Node pNode = null;
+        int i = 0;
+
+        info[i++] = new HandInfo(_first._player.getCards(), _first._player);
+        pNode = _first._next;
+        while(pNode != _first){
+            info[i++] = new HandInfo(pNode._player.getCards(), pNode._player);
+            pNode = pNode._next;
+        }
+
+        return info;
     }
 
     private Node getNextPlayerActive(Node current){
@@ -272,12 +286,8 @@ public class PlayerList {
         return cont;
     }
 
-    public boolean isEmpty() { return size() == 0; }
-    public boolean isFull() { return size() == max(); }
-    public int size() { return _playerCounter; }
-    public int max() { return _maxNumberOfPlayers; }
-
     public void resetPlayers(){
+        
         Node current = _first;
         current._player.resetCards();
         current._player.setFold(false);
@@ -287,16 +297,22 @@ public class PlayerList {
             current = current._next;
         }
     }
-    
+
     public void showPlayersStateDEBUG(){
         
         Node pNode = _first._next;
-        System.out.print( _first._player.toString() );
+        System.out.println( _first._player.toString() );
         
         while(pNode != _first){
-            System.out.print( pNode._player.toString() );
+            System.out.println( pNode._player.toString() );
             pNode = pNode._next;
         }
     }
+    
+
+    public boolean isEmpty() { return size() == 0; }
+    public boolean isFull() { return size() == max(); }
+    public int size() { return _playerCounter; }
+    public int max() { return _maxNumberOfPlayers; }
 
 }
