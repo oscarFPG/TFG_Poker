@@ -93,9 +93,9 @@ public class Evaluator {
         
         tableCards[0] = new Card(7, Suit.CLUBS);
         tableCards[1] = new Card(7, Suit.DIAMONDS);
-        tableCards[2] = new Card(7, Suit.SPADES);
-        tableCards[3] = new Card(4, Suit.HEARTS);
-        tableCards[4] = new Card(2, Suit.DIAMONDS);
+        tableCards[2] = new Card(7, Suit.HEARTS);
+        tableCards[3] = new Card(4, Suit.SPADES);
+        tableCards[4] = new Card(2, Suit.CLUBS);
         
         for (int i = 0; i < tableCards.length; i++) {
             encodedTableCards[i] = encodeCard(tableCards[i]);
@@ -113,6 +113,8 @@ public class Evaluator {
             encodedTableCards[3],
             encodedTableCards[4]
         );
+
+        RANK rank = handRank(tableRank);
 
         short value = 0;
         short bestValue = Short.MAX_VALUE;
@@ -147,7 +149,7 @@ public class Evaluator {
 
     private static short evaluate5hand(final int card1, final int card2, final int card3, final int card4, final int card5) {
 
-        int q = (card1 | card2 | card3 | card4 | card5) >> 16;
+        int q = (card1 | card2 | card3 | card4 | card5) >>> 16;
         boolean bIsFlush = (card1 & card2 & card3 & card4 & card5 & 0xF000) != 0;
         short s = _unique5[q];
 
@@ -214,11 +216,11 @@ public class Evaluator {
         int a, b, r;
 
         u += 0xE91AAA35;
-        u ^= u >> 16;
+        u ^= u >>> 16;
         u += u << 8;
-        u ^= u >> 4;
-        b = ((u >> 8) & 0x1FF);
-        a = ((u + (u << 2)) >> 19);
+        u ^= u >>> 4;
+        b = ((u >>> 8) & 0x1FF);
+        a = ((u + (u << 2)) >>> 19);
         r = (a ^ _hashAdjust[b]);
 
         return r;

@@ -7,7 +7,7 @@ public class Card {
     private boolean _available;
     private boolean _sol;
             
-    public Card (int number, Suit suit) {
+    public Card(int number, Suit suit) {
         _number = number;
         _suit = suit;
         _sol = false;
