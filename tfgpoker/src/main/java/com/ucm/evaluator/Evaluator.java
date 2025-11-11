@@ -90,13 +90,13 @@ public class Evaluator {
         }
 
         // Cartas de ejemplo
-        
+        /*
         tableCards[0] = new Card(7, Suit.CLUBS);
         tableCards[1] = new Card(7, Suit.DIAMONDS);
         tableCards[2] = new Card(7, Suit.HEARTS);
         tableCards[3] = new Card(4, Suit.SPADES);
         tableCards[4] = new Card(2, Suit.CLUBS);
-        
+        */
         for (int i = 0; i < tableCards.length; i++) {
             encodedTableCards[i] = encodeCard(tableCards[i]);
         }
@@ -105,7 +105,7 @@ public class Evaluator {
          * Por cada jugador, calcular la mejor mano de 5 cartas con las dos del jugador y las 5 de la mesa
          */
         short bestHandValue[] = new short[playerHands.length];
-        int encoded7Cards[] = new int[playerHands.length + tableCards.length];   // It is always size = 7
+        int encoded7Cards[] = new int[7];
         short tableRank = evaluate5hand(
             encodedTableCards[0],
             encodedTableCards[1],
@@ -178,14 +178,14 @@ public class Evaluator {
             return -1;
 
 
-        short bestHandValue = 0;
+        short bestHandValue = Short.MAX_VALUE;
         short value = 0;
         // Includes both player cards
         for(int first = 2; first < cards.length - 2; first++){
             for(int second = first + 1; second < cards.length - 1; second++){
                 for(int third = second + 1; third < cards.length; third++){
                     value = evaluate5hand(cards[0], cards[1], cards[first], cards[second], cards[third]);
-                    bestHandValue = (short) Math.max(bestHandValue, value);
+                    bestHandValue = (short) Math.min(bestHandValue, value);
                 }
             }
         }
@@ -198,11 +198,11 @@ public class Evaluator {
 
                         // Using first card + 4 on the table
                         value = evaluate5hand(cards[0], cards[first], cards[second], cards[third], cards[fourth]);
-                        bestHandValue = (short) Math.max(bestHandValue, value);
+                        bestHandValue = (short) Math.min(bestHandValue, value);
 
                         // Using second card + 4 on the table
                         value = evaluate5hand(cards[1], cards[first], cards[second], cards[third], cards[fourth]);
-                        bestHandValue = (short) Math.max(bestHandValue, value);
+                        bestHandValue = (short) Math.min(bestHandValue, value);
                     }
                 }
             }

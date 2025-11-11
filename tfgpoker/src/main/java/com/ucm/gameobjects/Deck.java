@@ -68,14 +68,14 @@ public class Deck {
         _deck[suitIndex][valueIndex].setAvailable(true); // la devolvemos al mazo --> indicamos que esta disponible
     }
 
-    public void resetDesk(){
+    public void resetDeck(){
 
         for (int i = 0; i < NUM_SUITS; i++) {
             for (int j = 0; j < NUM_VALUES; j++) {
                 _deck[i][j].setAvailable(true);
             }
         }
-
     }
+    
 }
 
