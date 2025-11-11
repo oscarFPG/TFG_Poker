@@ -22,8 +22,8 @@ public class Evaluator {
         FOUR_OF_A_KIND,
         STRAIGHT_FLUSH
     }
-                                        /* 2  3	 4  5   6   7   8   9   10  J   Q   K   A  */
-                                        /* 2  3	 5	7  11  13  17  19  23  29  31  37  41 */
+
+
     private static int PRIME_NUMBERS[] = { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41 };
 
     private static short _flushes[];
@@ -89,11 +89,14 @@ public class Evaluator {
             encodedPlayerCards[i][1] = encodeCard(playerHands[i].cards()[1]);
         }
 
-        tableCards[0] = new Card(12, Suit.CLUBS);
-        tableCards[1] = new Card(10, Suit.DIAMONDS);
-        tableCards[2] = new Card(5, Suit.HEARTS);
+        // Cartas de ejemplo
+        
+        tableCards[0] = new Card(7, Suit.CLUBS);
+        tableCards[1] = new Card(7, Suit.DIAMONDS);
+        tableCards[2] = new Card(7, Suit.SPADES);
         tableCards[3] = new Card(4, Suit.HEARTS);
-        tableCards[4] = new Card(3, Suit.CLUBS);
+        tableCards[4] = new Card(2, Suit.DIAMONDS);
+        
         for (int i = 0; i < tableCards.length; i++) {
             encodedTableCards[i] = encodeCard(tableCards[i]);
         }
@@ -102,16 +105,17 @@ public class Evaluator {
          * Por cada jugador, calcular la mejor mano de 5 cartas con las dos del jugador y las 5 de la mesa
          */
         short bestHandValue[] = new short[playerHands.length];
-        RANK bestRank[] = new RANK[playerHands.length];
         int encoded7Cards[] = new int[playerHands.length + tableCards.length];   // It is always size = 7
         short tableRank = evaluate5hand(
             encodedTableCards[0],
-            encodedTableCards[1], 
-            encodedTableCards[2], 
-            encodedTableCards[3], 
+            encodedTableCards[1],
+            encodedTableCards[2],
+            encodedTableCards[3],
             encodedTableCards[4]
         );
 
+        short value = 0;
+        short bestValue = Short.MAX_VALUE;
         for(int i = 0; i < playerHands.length; i++){
 
             encoded7Cards[0] = encodedPlayerCards[i][0];    // First player card
@@ -125,12 +129,18 @@ public class Evaluator {
             // Assign best hand value obtained between:
             // One or both player cards + 3 on the table
             // All 5 on the table
-            bestHandValue[i] = (short) Math.max( tableRank, evaluate7hand(encoded7Cards) );
-            bestRank[i] = handRank( bestHandValue[i] );
+            value = (short) Math.min( tableRank, evaluate7hand(encoded7Cards) );
+            bestHandValue[i] = value;
+
+            bestValue = (short) Math.min(value, bestValue);
         }
 
+        // Select all players with the best value hand
         List<Player> winner = new ArrayList<Player>();
-        // TODO : Gestionar empates
+        for(int i = 0; i < playerHands.length; i++){
+            if(bestHandValue[i] == bestValue)
+                winner.add( playerHands[i].player() );
+        }
 
         return winner;
     }
@@ -138,24 +148,24 @@ public class Evaluator {
     private static short evaluate5hand(final int card1, final int card2, final int card3, final int card4, final int card5) {
 
         int q = (card1 | card2 | card3 | card4 | card5) >> 16;
-        boolean bIsFlush = (card1 & card2 & card3 & card4 & card5 & 0xf000) != 0;
+        boolean bIsFlush = (card1 & card2 & card3 & card4 & card5 & 0xF000) != 0;
         short s = _unique5[q];
 
-        // This checks for Flushes and Straight Flushes.
+        // This checks for Flushes and Straight Flushes
         if (bIsFlush)
             return _flushes[q];
 
-        // This checks for Straights and High Card hands.
+        // This checks for Straights and High Card hands
         if (s != 0)
             return s;
 
         // This performs a perfect-hash lookup for remaining hands.
-        q = (card1 & 0xff) * (card2 & 0xff) * (card3 & 0xff) * (card4 & 0xff) * (card5 & 0xff);
+        q = (card1 & 0xFF) * (card2 & 0xFF) * (card3 & 0xFF) * (card4 & 0xFF) * (card5 & 0xFF);
         return _hashValues[ findFast(q) ];
     }
 
     /**
-     * This method calculates the best hand making all the combinations ONLY including at least one of players card.
+     * This method calculates the best hand making all the combinations ONLY including at least one of players card
      * Both cards must be the first two on the array
      * @param cards
      * @return
@@ -199,17 +209,17 @@ public class Evaluator {
         return bestHandValue;
     }
 
-    private static short findFast(int u) {
+    private static int findFast(int u) {
 
-        short a, b, r;
+        int a, b, r;
 
-        u += 0xe91aaa35;
+        u += 0xE91AAA35;
         u ^= u >> 16;
         u += u << 8;
         u ^= u >> 4;
-        b = (byte) ((u >> 8) & 0x1ff);
-        a = (byte) ((u + (u << 2)) >> 19);
-        r = (byte) (a ^ _hashAdjust[b]);
+        b = ((u >> 8) & 0x1FF);
+        a = ((u + (u << 2)) >> 19);
+        r = (a ^ _hashAdjust[b]);
 
         return r;
     }

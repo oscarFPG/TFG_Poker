@@ -30,6 +30,7 @@ public class Player {
         _fold = false;
     }
 
+    
     public Command makePlay(int maxBet) {
 
         Scanner sc = new Scanner(System.in);

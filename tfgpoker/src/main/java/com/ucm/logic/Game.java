@@ -159,7 +159,7 @@ public class Game {
         HandInfo[] playerHands = _playerList.getPlayerHandsInfo();
         List<Player> winners = Evaluator.evaluateAllHands(playerHands, _tableCards);
 
-        if (Game.DEBUG && winners.size() == 1) {
+        if (Game.DEBUG && winners.size() == 1) {    
             System.out.printf("%s ha ganado %d€!\n", winners.get(0).getName(), _totalPot);
         }
         else if(Game.DEBUG && winners.size() > 1){

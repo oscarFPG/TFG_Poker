@@ -16,9 +16,9 @@ public class Controller {
     }
 
     private void configureGame() {
-        _game.addPlayer(new Player(0, "Valeria", 1000));
-        _game.addPlayer(new Player(1, "Oscar", 1000));
-        _game.addPlayer(new Player(2, "Carla", 1000));
+        _game.addPlayer( new Player(0, "Valeria", 1000) );
+        _game.addPlayer( new Player(1, "Oscar", 1000) );
+        _game.addPlayer( new Player(2, "Carla", 1000) );
     }
 
     public void run() {
