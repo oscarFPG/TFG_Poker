@@ -1,5 +1,5 @@
 # TFG_Poker
-
+# Referencia cliente-servidor con sockets juego 4 en raya: https://github.com/oscarFPG/4EnRaya_Sockets
 # Integrantes:
 
 - Óscar Fabian Pineda German
@@ -42,25 +42,23 @@
 - Configurar parámetros de la partida
 - Jugar una mano: apostar y opciones de ronda (check, bet, call, raise, fold)
 - Gestionar ganador en cada ronda
+  
 # 09/10/2025
 - Lista de tareas para sprint-backlog
-
+  
 # 16/10/2025
 - Bucle de jugar mano, hacer jugada, rotar, asignar roles : Pendientes de review
 - Correccion de devolver cartas
+  
 # 22/10/2025
 - Primer debug del proyecto
 - Clases para mostrar el estado del juego en el debug
 - Lista de comando para realizar jugada
-
-
+  
 # 05/11/2025
 - Configuracion basica para la interfaz java fx
 - Visualizar logica por consola, (comandos)
 - Algoritmo evaluador jugadas
-
-git rm --cached *.class
-git rm -r --cached target
 
 
 # CANVAS
@@ -74,4 +72,3 @@ https://www.canva.com/design/DAG0pwSg_LM/2e3t-G-t7Hn5cMWBzcePAw/edit?utm_content
   Toda partida jugada sera registrada ya sea aleatoria o simulada, siempre tendra la opcion "guardar partida" y luego "cargar partida" respectivamente. ( Y si el jugador quiere conitnuar la partida aleatoriamente a partir de un momento)
 - Bot que te suguiera la siguiente accion
 - Bot personalizado ( parametros que el usuario quiere que tenga el bot)
-- 
