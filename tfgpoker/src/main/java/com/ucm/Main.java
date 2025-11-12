@@ -1,6 +1,5 @@
 package com.ucm;
 
-
 //GUI
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -11,7 +10,6 @@ import java.io.IOException;
 import com.ucm.control.Controller;
 import com.ucm.evaluator.Evaluator;
 import com.ucm.logic.Game;
-
 
 public class Main extends Application {
 
@@ -36,6 +34,9 @@ public class Main extends Application {
      * 
      * Run:
      * .\mvnw.cmd exec:java
+     * 
+     * Run the Tests
+     * .\mvnw.cmd test
      */
     public static void main(String[] args) {
 
@@ -46,8 +47,7 @@ public class Main extends Application {
             Game game = new Game();
             Controller controller = new Controller(game);
             controller.run();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.out.printf("Evaluator class failed on instaciating\n");
         }
 
