@@ -337,7 +337,7 @@ public class EvaluatorTest { // TODO Hacer test para chequear datos que debería
 
     }
 
-    // 7 6 5 4 2 HC Seven-Hig
+    // 7 6 5 4 2 HC Seven-High
     @Test
     public void evaluate5hand7459Test() {
         int c1 = Evaluator.encodeCard(tableCards7459[0]);
