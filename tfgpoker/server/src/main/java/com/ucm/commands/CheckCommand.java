@@ -1,0 +1,16 @@
+package com.ucm.server.commands;
+
+import com.ucm.server.gameobjects.Player;
+import com.ucm.server.middleclasses.CommandResult;
+
+public class CheckCommand extends Command {
+
+    public CheckCommand(Player p, int money) {
+        super(p, money);
+    }
+
+    @Override
+    public CommandResult execute(int sb, int bb, int maxBet) {
+        return CommandResult.continuePlaying(_money, false);    // _player.getPocketMoney() == this._pocketMoney
+    }
+}
