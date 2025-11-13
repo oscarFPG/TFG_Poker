@@ -1,4 +1,5 @@
-package com.ucm.server.gameobjects;
+package com.ucm.gameobjects;
+
 
 public enum Suit {
     HEARTS('h', 0), DIAMONDS('d', 1), CLUBS('c', 2), SPADES('s', 3);

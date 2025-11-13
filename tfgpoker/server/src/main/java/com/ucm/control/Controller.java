@@ -1,8 +1,8 @@
-package com.ucm.server.control;
+package com.ucm.control;
 
-import com.ucm.server.exceptions.OnlyOnePlayerLeftException;
-import com.ucm.server.gameobjects.Player;
-import com.ucm.server.logic.Game;
+import com.ucm.exceptions.OnlyOnePlayerLeftException;
+import com.ucm.gameobjects.Player;
+import com.ucm.logic.Game;
 
 
 public class Controller {

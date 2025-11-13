@@ -1,13 +1,13 @@
-package com.ucm.server.logic;
+package com.ucm.logic;
 
 import java.util.List;
 
-import com.ucm.server.evaluator.Evaluator;
-import com.ucm.server.exceptions.OnlyOnePlayerLeftException;
-import com.ucm.server.gameobjects.Card;
-import com.ucm.server.gameobjects.Deck;
-import com.ucm.server.gameobjects.Player;
-import com.ucm.server.middleclasses.HandInfo;
+import com.ucm.evaluator.Evaluator;
+import com.ucm.exceptions.OnlyOnePlayerLeftException;
+import com.ucm.gameobjects.Card;
+import com.ucm.gameobjects.Deck;
+import com.ucm.gameobjects.Player;
+import com.ucm.middleclasses.HandInfo;
 
 
 public class Game {

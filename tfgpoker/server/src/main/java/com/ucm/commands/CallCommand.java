@@ -1,7 +1,7 @@
-package com.ucm.server.commands;
+package com.ucm.commands;
 
-import com.ucm.server.gameobjects.Player;
-import com.ucm.server.middleclasses.CommandResult;
+import com.ucm.gameobjects.Player;
+import com.ucm.middleclasses.CommandResult;
 
 public class CallCommand extends Command {
 

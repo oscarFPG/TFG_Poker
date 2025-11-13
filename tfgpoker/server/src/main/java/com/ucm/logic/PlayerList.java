@@ -1,12 +1,12 @@
-package com.ucm.server.logic;
+package com.ucm.logic;
 
-import com.ucm.server.commands.Command;
-import com.ucm.server.exceptions.OnlyOnePlayerLeftException;
-import com.ucm.server.gameobjects.Card;
-import com.ucm.server.gameobjects.Player;
-import com.ucm.server.gameobjects.PlayerRole;
-import com.ucm.server.middleclasses.CommandResult;
-import com.ucm.server.middleclasses.HandInfo;
+import com.ucm.commands.Command;
+import com.ucm.exceptions.OnlyOnePlayerLeftException;
+import com.ucm.gameobjects.Card;
+import com.ucm.gameobjects.Player;
+import com.ucm.gameobjects.PlayerRole;
+import com.ucm.middleclasses.CommandResult;
+import com.ucm.middleclasses.HandInfo;
 
 
 

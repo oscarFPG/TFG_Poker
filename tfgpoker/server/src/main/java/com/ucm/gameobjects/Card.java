@@ -1,4 +1,5 @@
-package com.ucm.server.gameobjects;
+package com.ucm.gameobjects;
+
 
 public class Card {
 

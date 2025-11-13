@@ -1,11 +1,11 @@
-package com.ucm.server.gameobjects;
+package com.ucm.gameobjects;
 
-import com.ucm.server.commands.AllInCommand;
-import com.ucm.server.commands.CallCommand;
-import com.ucm.server.commands.CheckCommand;
-import com.ucm.server.commands.Command;
-import com.ucm.server.commands.FoldCommand;
-import com.ucm.server.commands.RaiseCommand;
+import com.ucm.commands.AllInCommand;
+import com.ucm.commands.CallCommand;
+import com.ucm.commands.CheckCommand;
+import com.ucm.commands.Command;
+import com.ucm.commands.FoldCommand;
+import com.ucm.commands.RaiseCommand;
 import java.util.Scanner;
 
 

@@ -2,9 +2,21 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Server run",
+            "type": "shell",
+            "command": "cd .\\tfgpoker; .\\mvnw.cmd -pl server -Pdebug exec:java"
+        },
+        {
+            "label": "Client debug",
+            "type": "shell",
+            "command": "cd .\\tfgpoker; .\\mvnwDebug.cmd -pl client -Pdebug exec:java"
+        }
+        /*
+        {
             "label": "Run JavaFX",
             "type": "shell",
             "command": "cd tfgpoker; .\\mvnw.cmd clean javafx:run"
         }
+        */
     ]
 }

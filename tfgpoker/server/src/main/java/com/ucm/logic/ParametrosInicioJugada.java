@@ -1,4 +1,4 @@
-package com.ucm.server.logic;
+package com.ucm.logic;
 
 public class ParametrosInicioJugada {
     // Codigo de mesa que ha creado un jugador

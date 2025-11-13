@@ -1,4 +1,4 @@
-package com.ucm.server.exceptions;
+package com.ucm.exceptions;
 
 
 public class GameException extends Exception {

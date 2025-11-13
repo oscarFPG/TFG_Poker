@@ -1,4 +1,4 @@
-package com.ucm.server.gameobjects;
+package com.ucm.gameobjects;
 
 public enum PlayerRole {
     

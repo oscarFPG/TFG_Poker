@@ -1,13 +1,13 @@
-package com.ucm.server.evaluator;
+package com.ucm.evaluator;
 
 import java.nio.file.*;
 import java.io.IOException;
 import java.util.*;
 
-import com.ucm.server.gameobjects.Card;
-import com.ucm.server.gameobjects.Player;
-import com.ucm.server.gameobjects.Suit;
-import com.ucm.server.middleclasses.HandInfo;
+import com.ucm.gameobjects.Card;
+import com.ucm.gameobjects.Player;
+import com.ucm.gameobjects.Suit;
+import com.ucm.middleclasses.HandInfo;
 
 
 public class Evaluator {

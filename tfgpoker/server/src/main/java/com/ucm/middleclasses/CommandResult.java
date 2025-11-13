@@ -1,4 +1,4 @@
-package com.ucm.server.middleclasses;
+package com.ucm.middleclasses;
 
 
 public record CommandResult(int bet, boolean raises, boolean folds) {
