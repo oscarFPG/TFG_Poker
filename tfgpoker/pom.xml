@@ -13,6 +13,7 @@
         <maven.compiler.release>21</maven.compiler.release>
         <javafx.version>21</javafx.version>
         <javafx.platform>win</javafx.platform>
+        <junit.jupiter.version>5.10.2</junit.jupiter.version>
     </properties>
 
     <!-- Dependencias del proyecto -->
@@ -38,6 +39,20 @@
             <version>${javafx.version}</version>
             <classifier>${javafx.platform}</classifier>
         </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -53,6 +68,13 @@
                 </configuration>
             </plugin>
 
+            <!-- compatibilidad con JUnit 5 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M9</version> <!-- versión reciente (3.0.0 o superior) -->
+            </plugin>
+            
             <!-- Ejecucion -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

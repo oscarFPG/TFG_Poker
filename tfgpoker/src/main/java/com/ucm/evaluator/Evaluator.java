@@ -23,7 +23,6 @@ public class Evaluator {
         STRAIGHT_FLUSH
     }
 
-
     private static int PRIME_NUMBERS[] = { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41 };
 
     private static short _flushes[];
@@ -79,6 +78,8 @@ public class Evaluator {
         }
     }
 
+    // COMENTADO PARA HACER LOS TEST
+
     public static List<Player> evaluateAllHands(HandInfo[] playerHands, Card[] tableCards) {
 
         int encodedPlayerCards[][] = new int[playerHands.length][2];
@@ -93,47 +94,52 @@ public class Evaluator {
         }
 
         /*
-         * For each player, calculate the best 5 cards hand including the two players cards + all table cards
+         * For each player, calculate the best 5 cards hand including the two players
+         * cards + all table cards
          */
+
         short bestHandValue[] = new short[playerHands.length];
         int encoded7Cards[] = new int[7];
         short tableRank = evaluate5hand(
-            encodedTableCards[0],
-            encodedTableCards[1],
-            encodedTableCards[2],
-            encodedTableCards[3],
-            encodedTableCards[4]
-        );
+                encodedTableCards[0],
+                encodedTableCards[1],
+                encodedTableCards[2],
+                encodedTableCards[3],
+                encodedTableCards[4]);
 
         short bestValue = Short.MAX_VALUE;
-        for(int i = 0; i < playerHands.length; i++){
+        short value = 0;
+        for (int i = 0; i < playerHands.length; i++) {
 
-            encoded7Cards[0] = encodedPlayerCards[i][0];    // First player card
-            encoded7Cards[1] = encodedPlayerCards[i][1];    // Second player card
-            encoded7Cards[2] = encodedTableCards[0];        // First card on the table
-            encoded7Cards[3] = encodedTableCards[1];        // Second card on the table
-            encoded7Cards[4] = encodedTableCards[2];        // Third card on the table
-            encoded7Cards[5] = encodedTableCards[3];        // Fourth card on the table
-            encoded7Cards[6] = encodedTableCards[4];        // Fifth card on the table
+            encoded7Cards[0] = encodedPlayerCards[i][0]; // First player card
+            encoded7Cards[1] = encodedPlayerCards[i][1]; // Second player card
+            encoded7Cards[2] = encodedTableCards[0]; // First card on the table
+            encoded7Cards[3] = encodedTableCards[1]; // Second card on the table
+            encoded7Cards[4] = encodedTableCards[2]; // Third card on the table
+            encoded7Cards[5] = encodedTableCards[3]; // Fourth card on the table
+            encoded7Cards[6] = encodedTableCards[4]; // Fifth card on the table
 
             // Assign best hand value obtained between:
             // One or both player cards + 3 on the table
             // All 5 on the table
-            bestHandValue[i] = (short) Math.min( tableRank, evaluate7hand(encoded7Cards) );
-            bestValue = (short) Math.min(bestHandValue[i], bestValue);
+            value = (short) Math.min(tableRank, evaluate7hand(encoded7Cards));
+            bestHandValue[i] = value;
+
+            bestValue = (short) Math.min(value, bestValue);
         }
 
         // Select all players with the best value hand
         List<Player> winner = new ArrayList<Player>();
-        for(int i = 0; i < playerHands.length; i++){
-            if(bestHandValue[i] == bestValue)
-                winner.add( playerHands[i].player() );
+        for (int i = 0; i < playerHands.length; i++) {
+            if (bestHandValue[i] == bestValue)
+                winner.add(playerHands[i].player());
         }
 
         return winner;
     }
 
-    private static short evaluate5hand(final int card1, final int card2, final int card3, final int card4, final int card5) {
+    public static short evaluate5hand(final int card1, final int card2, final int card3, final int card4,
+            final int card5) { // TODO Cambiar a private
 
         int q = (card1 | card2 | card3 | card4 | card5) >>> 16;
         boolean bIsFlush = (card1 & card2 & card3 & card4 & card5 & 0xF000) != 0;
@@ -148,28 +154,30 @@ public class Evaluator {
             return s;
 
         // This performs a perfect-hash lookup for remaining hands.
-        q = (card1 & 0xFF) * (card2 & 0xFF) * (card3 & 0xFF) * (card4 & 0xFF) * (card5 & 0xFF);
-        return _hashValues[ findFast(q) ];
+        q = (card1 & 0xFF) * (card2 & 0xFF) * (card3 & 0xFF) * (card4 & 0xFF) *
+                (card5 & 0xFF);
+        return _hashValues[findFast(q)];
     }
 
     /**
-     * This method calculates the best hand making all the combinations ONLY including at least one of players card
+     * This method calculates the best hand making all the combinations ONLY
+     * including at least one of players card
      * Both cards must be the first two on the array
+     * 
      * @param cards
      * @return
      */
-    private static short evaluate7hand(final int[] cards){
+    private static short evaluate7hand(final int[] cards) {
 
-        if(cards.length != 7)   // TODO : Lanzar excepcion
+        if (cards.length != 7) // TODO : Lanzar excepcion
             return -1;
-
 
         short bestHandValue = Short.MAX_VALUE;
         short value = 0;
         // Includes both player cards + 3 on the table
-        for(int first = 2; first < cards.length - 2; first++){
-            for(int second = first + 1; second < cards.length - 1; second++){
-                for(int third = second + 1; third < cards.length; third++){
+        for (int first = 2; first < cards.length - 2; first++) {
+            for (int second = first + 1; second < cards.length - 1; second++) {
+                for (int third = second + 1; third < cards.length; third++) {
                     value = evaluate5hand(cards[0], cards[1], cards[first], cards[second], cards[third]);
                     bestHandValue = (short) Math.min(bestHandValue, value);
                 }
@@ -177,10 +185,10 @@ public class Evaluator {
         }
 
         // Includes only one player card
-        for(int first = 2; first < cards.length - 3; first++){
-            for(int second = first + 1; second < cards.length - 2; second++){
-                for(int third = second + 1; third < cards.length - 1; third++){
-                    for(int fourth = third + 1; fourth < cards.length; fourth++){
+        for (int first = 2; first < cards.length - 3; first++) {
+            for (int second = first + 1; second < cards.length - 2; second++) {
+                for (int third = second + 1; third < cards.length - 1; third++) {
+                    for (int fourth = third + 1; fourth < cards.length; fourth++) {
 
                         // Using first card + 4 on the table
                         value = evaluate5hand(cards[0], cards[first], cards[second], cards[third], cards[fourth]);
@@ -215,26 +223,26 @@ public class Evaluator {
     private static RANK handRank(short val) {
 
         if (val > 6185)
-            return RANK.HIGH_CARD;          // 1277 high card
+            return RANK.HIGH_CARD; // 1277 high card
         else if (val > 3325)
-            return RANK.ONE_PAIR;           // 2860 one pair
+            return RANK.ONE_PAIR; // 2860 one pair
         else if (val > 2467)
-            return RANK.TWO_PAIR;           // 858 two pair
+            return RANK.TWO_PAIR; // 858 two pair
         else if (val > 1609)
-            return RANK.THREE_OF_A_KIND;    // 858 three-kind
+            return RANK.THREE_OF_A_KIND; // 858 three-kind
         else if (val > 1599)
-            return RANK.STRAIGHT;           // 10 straights
+            return RANK.STRAIGHT; // 10 straights
         else if (val > 322)
-            return RANK.FLUSH;              // 1277 flushes
+            return RANK.FLUSH; // 1277 flushes
         else if (val > 166)
-            return RANK.FULL_HOUSE;         // 156 full house
+            return RANK.FULL_HOUSE; // 156 full house
         else if (val > 10)
-            return RANK.FOUR_OF_A_KIND;     // 156 four-kind
+            return RANK.FOUR_OF_A_KIND; // 156 four-kind
         else
-            return RANK.STRAIGHT_FLUSH;     // 10 straight-flushes
+            return RANK.STRAIGHT_FLUSH; // 10 straight-flushes
     }
 
-    private static int encodeCard(Card c) {
+    public static int encodeCard(Card c) { // TODO cambiar a private
 
         int prime = Evaluator.PRIME_NUMBERS[c.getNumber() - 2];
         int rank = c.getNumber() - 2;
@@ -260,6 +268,5 @@ public class Evaluator {
                 return 8;
         }
     }
-
 
 }
