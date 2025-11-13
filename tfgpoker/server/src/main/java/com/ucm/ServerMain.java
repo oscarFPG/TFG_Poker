@@ -6,7 +6,12 @@ import com.ucm.control.Controller;
 import com.ucm.evaluator.Evaluator;
 import com.ucm.logic.Game;
 
+// Socket Utils
+import com.ucm.SocketUtils;
+
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -27,14 +32,28 @@ public class ServerMain {
         try{
 
             ServerSocket serverSocket = new ServerSocket(port);
-            System.out.printf("Socket creado en el puerto %d\n", port);
+            System.out.printf("Socket servidor creado en el puerto %d\n", port);
 
             System.out.printf("Socket esperando conexion cliente...\n");
             Socket clientSocket = serverSocket.accept();
-            System.out.printf("Socket creado con exito\n");
+            System.out.printf("Conexion cliente aceptada!\n");
+
+            OutputStream output = clientSocket.getOutputStream();   // Send Buffer
+            InputStream input =  clientSocket.getInputStream();     // Receive buffer
+
+            // Enviar mensaje
+            SocketUtils.sendString(output, "Server first message");
+
+            // Recibir mensaje
+            String message = SocketUtils.receiveString(input);
+            System.out.printf("Mensaje recibido del cliente: %s\n", message);
+
+            serverSocket.close();
+            clientSocket.close();
+            return;
         }
         catch(IOException e){
-            System.out.printf("Error al crear y establecer la conexion con el socket\n");
+            System.out.printf("ERROR: %s\n", e.getMessage());
         }
         
 

@@ -13,9 +13,17 @@
     </parent>
 
     <artifactId>server</artifactId>
+    <packaging>jar</packaging>
 
     <!-- Dependencias -->
     <dependencies>
+
+        <dependency>
+            <groupId>com.ucm</groupId>
+            <artifactId>common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
 
     <!-- Plugins -->
