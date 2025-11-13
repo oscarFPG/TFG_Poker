@@ -26,6 +26,9 @@ public class ServerMain {
      *      .\mvnw.cmd -pl server -Prun exec:java
      *  Debug:
      *      .\mvnwDebug.cmd -pl server -Pdebug exec:java
+     * 
+     * Run the Tests
+     *      .\mvnw.cmd test
      */
     public static void main(String[] args) {
 

@@ -9,6 +9,7 @@
         <groupId>com.ucm</groupId>
         <artifactId>tfgpoker</artifactId>
         <version>1.0-SNAPSHOT</version>
+        <junit.jupiter.version>5.10.2</junit.jupiter.version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -37,6 +38,20 @@
             <artifactId>javafx-fxml</artifactId>
             <version>21</version>
             <classifier>win</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -78,6 +93,13 @@
                 <configuration>
                     <mainClass>com.ucm.ClientMain</mainClass>
                 </configuration>
+            </plugin>
+
+            <!-- Compatibilidad con JUnit 5 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M9</version> <!-- versión reciente (3.0.0 o superior) -->
             </plugin>
 
         </plugins>

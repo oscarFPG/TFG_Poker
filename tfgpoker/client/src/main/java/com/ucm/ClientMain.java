@@ -26,6 +26,8 @@ public class ClientMain extends Application {
      *      .\mvnw.cmd -pl client -Prun exec:java
      * Debug:
      *      .\mvnwDebug.cmd -pl client -Pdebug exec:java
+     * Run the Tests
+     *      .\mvnw.cmd test
      */
     public static void main(String[] args) {
 
