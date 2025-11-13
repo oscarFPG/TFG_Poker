@@ -10,6 +10,30 @@
 - Java SDK 21
 - JavaFX 21
 
+# Casos de uso
+Modelo de repodruccion de partidas : https://www.chess.com/game/live/148153400091?username=coach_fearless_king2&move=69
+Añadir bots y jugaodres se podra solo EN PREPARTIDA
+Se permite jugadores y bots en todas las modalidades
+
+## Modo casual
+### No se pueden escoger las cartas de los jugadores, ni los de la mesa
+### Partida de poker clasica
+### Sin retroceder moviminntos
+### Permita guardar el historial en cualquier momento pero no cargarlo 
+  
+## Modo avanzado
+### No se pueden escoger las cartas de los jugadores, ni los de la mesa
+### Botones de cargar una partida anterior SOLO EN PREPARTIDA
+### Retroceder movimientos (parar de "reproducir automaticamente" la partida cargada, retoceder, avanzar)
+### Permita guardar el historial en cualquier momento
+
+## Modo constructor
+### Si se pueden escoger las cartas de los jugadores y las de la mesa
+## Botones de cargar una partida anterior SOLO EN PREPARTIDA
+### Retroceder movimientos (Botones de cargar, parar, retoceder, retroceder x2, avanzar, avanzar x2)
+### Permita guardar el historial en cualquier momento
+
+
 # Patrones de diseño utilizados
 
 - Singleton
