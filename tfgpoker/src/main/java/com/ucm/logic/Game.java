@@ -80,26 +80,6 @@ public class Game {
         }
     }
 
-    /**
-     * Devolver todas las cartas que se hayan cogido
-     */
-    public void retrieveAllCards() {
-
-        if (Game.DEBUG) {
-            System.out.printf("Devolviendo todas las cartas...\n");
-        }
-
-        _playerList.retrieveAllCardsFromPlayers();
-        retrieveCardsFromTable();
-    }
-
-    /**
-     * Devolver todas las cartas que haya cogido un jugador
-     */
-    public void retrieveAllCardsFromPlayer(Player p) {
-        _playerList.retrieveAllCardsFromPlayer(p);
-    }
-
     public void addCardToTable() {
 
         if (_actualTableCards >= 5)
@@ -111,11 +91,11 @@ public class Game {
 
     public void retrieveCardsFromTable() {
 
-        for (Card old_card : _tableCards) {
-            _deck.retrieveCard(old_card);
+        for (int i = 0; i < _actualTableCards; i++){
+            _deck.retrieveCard( _tableCards[i] );
+            _tableCards[i] = null;
         }
 
-        _tableCards = new Card[MAX_CARDS_IN_TABLE];
         _actualTableCards = 0;
     }
 
@@ -178,14 +158,14 @@ public class Game {
 
     public void restartRound() {
 
-        _deck.resetDesk();
+        retrieveCardsFromTable();
         _playerList.resetPlayers();
+        _deck.resetDeck();
 
         if (Game.DEBUG) {
             System.out.printf("Reiniciando ronda...\n");
         }
 
-        // TODO
         _isPreflop = true;
     }
 

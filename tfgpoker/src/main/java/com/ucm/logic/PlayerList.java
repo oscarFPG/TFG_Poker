@@ -125,26 +125,11 @@ public class PlayerList {
         }
     }
 
-    private Node smallBlindAndBigBlindPlays(final int sb, final int bb, final int playsToMake){
-
-        // Select first player to make a bet when :
-        // 1. Only two players left
-        // 2. More than one player left
-        Node pNode = (playsToMake == 1) ? _first : _first._next;
-
-        pNode._player.makeForcedBet(sb, bb);    // Small-blind
-        pNode = pNode._next;
-        pNode._player.makeForcedBet(sb, bb);    // Big-blind
-        pNode = pNode._next;
-
-        return pNode;
-    }
-
     public void playHand(final int sb, final int bb, final boolean isPreflop) throws OnlyOnePlayerLeftException {
 
         Node pNode = null;
         int currentBet = 0, maxBet = 0;
-        int playsToMake = activePlayersCounter() - 1;   // Number of players that have to, at least, fold
+        int playsToMake = (isPreflop) ? activePlayersCounter() - 1 : activePlayersCounter();   // Number of players that have to, at least, fold
         int playersRemaining = playsToMake + 1;         // Number of players active
 
 
@@ -216,28 +201,6 @@ public class PlayerList {
             index = index._next;
         }
     }
-
-    public void retrieveAllCardsFromPlayer(Player p) {
-        
-        Card c1 = p.retrieveCard();
-        if(c1 != null)
-            c1.setAvailable(true);
-
-        Card c2 = p.retrieveCard();
-        if(c2 != null)
-            c2.setAvailable(true);
-    }
-
-    public void retrieveAllCardsFromPlayers() {
-
-        Node i = _first._next;
-        retrieveAllCardsFromPlayer(_first._player);
-
-        while (i != _first) {
-            retrieveAllCardsFromPlayer(i._player);
-            i = i._next;
-        }
-    }
     
     public void passTurn(){
         _first = _first._next;
@@ -261,16 +224,6 @@ public class PlayerList {
         return info;
     }
 
-    private Node getNextPlayerActive(Node current){
-
-        while ( current._player.hasFolded() ){
-            current._player.setRole(PlayerRole.NO_ROLE);
-            current = current._next;
-        }
-
-        return current;
-    }
-
     public int activePlayersCounter(){
         
         if(isEmpty())
@@ -288,10 +241,11 @@ public class PlayerList {
 
     public void resetPlayers(){
         
-        Node current = _first;
-        current._player.resetCards();
-        current._player.setFold(false);
-        while ( current != _first){
+        _first._player.resetCards();
+        _first._player.setFold(false);
+
+        Node current = _first._next;
+        while (current != _first){
             current._player.resetCards();
             current._player.setFold(false);
             current = current._next;
@@ -307,6 +261,31 @@ public class PlayerList {
             System.out.println( pNode._player.toString() );
             pNode = pNode._next;
         }
+    }
+
+    private Node smallBlindAndBigBlindPlays(final int sb, final int bb, final int playsToMake){
+
+        // Select first player to make a bet when :
+        // 1. Only two players left
+        // 2. More than one player left
+        Node pNode = (playsToMake == 1) ? _first : _first._next;
+
+        pNode._player.makeForcedBet(sb, bb);    // Small-blind
+        pNode = pNode._next;
+        pNode._player.makeForcedBet(sb, bb);    // Big-blind
+        pNode = pNode._next;
+
+        return pNode;
+    }
+
+    private Node getNextPlayerActive(Node current){
+
+        while ( current._player.hasFolded() ){
+            current._player.setRole(PlayerRole.NO_ROLE);
+            current = current._next;
+        }
+
+        return current;
     }
     
 

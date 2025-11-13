@@ -9,15 +9,17 @@ import com.ucm.commands.RaiseCommand;
 import java.util.Scanner;
 
 public class Player {
+
+
     private int _id;
     private String _name;
-    private int _money; // Player's total money
-    private int _pocketMoney; // Money the play has bet. It is not lost unless the player folds or loses and
-                              // it is a portion of the remaining of the total
+    private int _money;         // Player's total money
+    private int _pocketMoney;   // Money the play has bet. It is not lost unless the player folds or loses and it is a portion of the remaining of the total
     private PlayerRole _role;
     private Card[] _cards;
     private int _numCards;
     private boolean _fold;
+
 
     public Player(int id, String name, int money) {
         _id = id;
@@ -61,11 +63,11 @@ public class Player {
                     return new CallCommand(this, _pocketMoney);
 
                 case 3:
-                    /*
-                     * TODO Si no tengo suficiente dinero para subir, ver si tengo suficiente dinero para igualar, y si tengo, hago call
-                     * (decidir si hacer call obligatoriamente o preguntar si el jugador quiere hacer call u allin), si no,
-                     * tendría que hacer fold u allin
-                     */
+                    //
+                    // TODO Si no tengo suficiente dinero para subir, ver si tengo suficiente dinero para igualar, y si tengo, hago call
+                    // (decidir si hacer call obligatoriamente o preguntar si el jugador quiere hacer call u allin), si no,
+                    // tendría que hacer fold u allin
+                    //
                     if (!isEnoughMoney(10)) { 
                         System.out.println("Not enough money to make a raise");
                         return new CallCommand(this, _pocketMoney);
@@ -88,6 +90,7 @@ public class Player {
         sc.close();
 
         return null;
+        
     }
 
     private void menuMakePlay() {
@@ -220,7 +223,14 @@ public class Player {
     }
 
     public void resetCards(){
-        _cards = new Card[2];
+
+        if(_cards[0] != null)
+            _cards[0] = null;
+
+        if(_cards[1] != null)
+            _cards[1] = null;
+
+        _numCards = 0;
     }
 
     public void setFold(boolean fold) {
