@@ -3,18 +3,19 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Run Poker project",
-            "request": "launch",
-            "mainClass": "com.ucm.Main",
-            "projectName": "tfgpoker",
-            "preLaunchTask": "Run JavaFX"
+            "name": "Debug Server",
+            "request": "attach",
+            "hostName": "localhost",
+            "port": 8000,
+            "projectName": "server"
         },
         {
             "type": "java",
-            "name": "Debug Poker project",
+            "name": "Debug Client",
             "request": "attach",
             "hostName": "localhost",
-            "port": 8000
+            "port": 8000,
+            "projectName": "client"
         }
     ]
 }

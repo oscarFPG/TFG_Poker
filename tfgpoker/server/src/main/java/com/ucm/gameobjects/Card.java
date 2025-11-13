@@ -1,5 +1,6 @@
 package com.ucm.gameobjects;
 
+
 public class Card {
 
     private int _number;

@@ -4,6 +4,7 @@ import com.ucm.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.gameobjects.Player;
 import com.ucm.logic.Game;
 
+
 public class Controller {
 
     /**
@@ -27,7 +28,8 @@ public class Controller {
 
         // Game loop
         _game.assignRolesToAllPlayers();
-        while (!_game.isGameFinished()) {
+        int i = 0;
+        while (i < 5 && !_game.isGameFinished()) {
 
             try {
                 
@@ -70,6 +72,7 @@ public class Controller {
             // etc...
             _game.restartRound();
             _game.passTurn();
+            ++i;
         }
     }
 

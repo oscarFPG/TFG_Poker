@@ -2,6 +2,7 @@ package com.ucm.gameobjects;
 
 import java.util.Random;
 
+
 public class Deck {
 
     private static int NUM_VALUES = 12;

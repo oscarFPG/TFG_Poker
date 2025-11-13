@@ -9,6 +9,7 @@ import com.ucm.gameobjects.Player;
 import com.ucm.gameobjects.Suit;
 import com.ucm.middleclasses.HandInfo;
 
+
 public class Evaluator {
 
     public enum RANK {
