@@ -2,11 +2,10 @@ package com.ucm.evaluator;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.ucm.gameobjects.Card;
 import com.ucm.gameobjects.Suit;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 
