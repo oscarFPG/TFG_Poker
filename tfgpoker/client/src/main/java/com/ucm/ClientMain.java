@@ -1,18 +1,15 @@
 package com.ucm;
 
 // GUI
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
-
-// Socket Utils
-import com.ucm.SocketUtils;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.*;
 
 
 public class ClientMain extends Application {
@@ -44,8 +41,20 @@ public class ClientMain extends Application {
             String message = SocketUtils.receiveString(input);
             System.out.printf("Mensaje recibido del servidor: %s\n", message);
 
-            // Enviar mensaje
-            SocketUtils.sendString(output, "Client first message");
+            // Solicitar unirse a patida
+            SocketUtils.sendInteger(output, GameType.ESTABLISH_CONECTION);
+
+            // Mensaje unido a partida
+            int conection = SocketUtils.receiveInt(input);
+            if (conection == GameType.CONECTION_ACEPTED) {
+                System.out.print("Servidor ha aceptado la conexion");
+            } 
+            // Mensaje no unido a partida
+            else if ( conection == GameType.CONECTION_DECLINE){
+                System.out.print("Servidor ha rechazado la conexion") ;
+            }
+
+            
 
             socket.close();
         }

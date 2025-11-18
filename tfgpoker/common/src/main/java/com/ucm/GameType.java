@@ -17,6 +17,13 @@ public class GameType {
     //RAISE
     public static final int RAISE = 5;
    
+    //SOLICITAR CONEXION 
+    public static final int ESTABLISH_CONECTION = 10;
+    //ACEPTAR CONEXION
+    public static final int CONECTION_ACEPTED = 11;
+    //DENEGAR CONEXION 
+    public static final int CONECTION_DECLINE = 12;
+
     //TURN_MOVE
      public static final int TURN_MOVE = 20;
     //TURN_WAIT
@@ -35,4 +42,27 @@ public class GameType {
     public static final int GAME_OVER_LOSE = 61;
     //
 
+
+    //SUITS
+    public static final int HEARTS = 100;
+    public static final int DIAMONDS = 101;
+    public static final int CLUBS = 102;
+    public static final int SPADES = 101;
+
+    //NUMBERS
+    public static final int NUMBER_ONE = 200;
+    public static final int NUMBER_TWO = 201;
+    public static final int NUMBER_THREE = 203;
+    public static final int NUMBER_FOUR = 204;
+    public static final int NUMBER_FIVE = 205;
+    public static final int NUMBER_SIX = 206;
+    public static final int NUMBER_SEVEN = 207;
+    public static final int NUMBER_EIGHT = 208;
+    public static final int NUMBER_NINE = 209;
+    public static final int NUMBER_T = 210;
+    public static final int NUMBER_J = 211;
+    public static final int NUMBER_Q = 212;
+    public static final int NUMBER_K = 213;
+    public static final int NUMBER_A = 214;
+    
 }
