@@ -2,18 +2,15 @@ package com.ucm;
 
 
 // Poker Game
-import com.ucm.control.Controller;
-import com.ucm.evaluator.Evaluator;
-import com.ucm.logic.Game;
-
-// Socket Utils
-import com.ucm.SocketUtils;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+
+import com.ucm.control.Controller;
+import com.ucm.evaluator.Evaluator;
+import com.ucm.logic.Game;
 
 
 public class ServerMain {
@@ -22,6 +19,7 @@ public class ServerMain {
 
     /*
      *  Desde la ruta TFGPOKER/tfgpoker
+     * .\mvnw.cmd clean install   
      *  Run:
      *      .\mvnw.cmd -pl server -Prun exec:java
      *  Debug:
