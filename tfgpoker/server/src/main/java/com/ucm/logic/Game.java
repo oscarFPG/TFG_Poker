@@ -1,5 +1,6 @@
 package com.ucm.logic;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.ucm.evaluator.Evaluator;
@@ -31,6 +32,7 @@ public class Game {
 
     private int _totalPot;
     private boolean _isPreflop;
+    private boolean _showdownSkipped;
 
     private int _currentSB;
     private int _currentBB;
@@ -48,7 +50,8 @@ public class Game {
         _actualTableCards = 0;
 
         _totalPot = 0;
-        _isPreflop = false;
+        _isPreflop = true;
+        _showdownSkipped = false;
 
         _currentSB = _initialSmallBlind;
         _currentBB = _initialBigBlind;
@@ -120,6 +123,8 @@ public class Game {
         } 
         catch (OnlyOnePlayerLeftException e) {  // Collect remaining bets only if the round ended because all players
                                                 // folded in their turn and there is only one left
+            _isPreflop = false;
+            _showdownSkipped = true;
             pot = _playerList.collectAllBets();
             _totalPot += pot;
             throw e;
@@ -129,6 +134,7 @@ public class Game {
             System.out.printf("Mano numero %d terminada!\n\n", _handCounter);
         }
 
+        _isPreflop = false;
         pot = _playerList.collectAllBets();
         _totalPot += pot;
         ++_handCounter;
@@ -137,10 +143,18 @@ public class Game {
     public void giveRewardToWinner() {
 
         HandInfo[] playerHands = _playerList.getPlayerHandsInfo();
-        List<Player> winners = Evaluator.evaluateAllHands(playerHands, _tableCards);
+        List<Player> winners = null;
+
+        if(_showdownSkipped){
+            winners = new ArrayList<Player>();
+            winners.add( playerHands[0].player() );
+        }
+        else{
+            winners = Evaluator.evaluateAllHands(playerHands, _tableCards);
+        }
 
         if (Game.DEBUG && winners.size() == 1) {    
-            System.out.printf("%s ha ganado %d€!\n", winners.get(0).getName(), _totalPot);
+            System.out.printf("%s ha ganado %d$!\n", winners.get(0).getName(), _totalPot);
         }
         else if(Game.DEBUG && winners.size() > 1){
             System.out.printf("Empate entre %d jugadores: ", winners.size());
@@ -163,10 +177,11 @@ public class Game {
         _deck.resetDeck();
 
         if (Game.DEBUG) {
-            System.out.printf("Reiniciando ronda...\n");
+            System.out.printf("------------------------ Reiniciando ronda... ------------------------\n\n\n");
         }
 
         _isPreflop = true;
+        _showdownSkipped = false;
     }
 
     public boolean isGameFinished() {
@@ -187,7 +202,7 @@ public class Game {
                 System.out.print(_tableCards[i].toString());
             }
         }
-        System.out.print("\n\n");
+        System.out.print("\n");
     }
 
 }

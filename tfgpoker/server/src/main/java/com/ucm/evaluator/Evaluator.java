@@ -79,8 +79,6 @@ public class Evaluator {
         }
     }
 
-    // COMENTADO PARA HACER LOS TEST
-
     public static List<Player> evaluateAllHands(HandInfo[] playerHands, Card[] tableCards) {
 
         int encodedPlayerCards[][] = new int[playerHands.length][2];
@@ -106,7 +104,8 @@ public class Evaluator {
                 encodedTableCards[1],
                 encodedTableCards[2],
                 encodedTableCards[3],
-                encodedTableCards[4]);
+                encodedTableCards[4]
+        );
 
         short bestValue = Short.MAX_VALUE;
         short value = 0;
