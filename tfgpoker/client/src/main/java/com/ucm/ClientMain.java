@@ -60,22 +60,6 @@ public class ClientMain extends Application {
 
             boolean endOfGame = false;
             while (!endOfGame){
-                // PRE- FLOP
-                //Repartir dos cartas
-                //Primero Number luego Suit
-                
-                try {
-                    // Repartir dos cartas
-                    for (int i = 0; i < 4; i++) {
-                        Cards[i] = SocketUtils.receiveInt(input);
-                    }
-                    System.out.println("Cartas recibidas: " + Arrays.toString(Cards));
-                } catch (IOException e) {
-                    System.out.println("Error al recibir cartas: " + e.getMessage());
-                }
-
-
-               
                 boolean endOfHand = false;
                 
                 //NO ES SHOW DOWN
@@ -86,6 +70,17 @@ public class ClientMain extends Application {
                         int action = SocketUtils.receiveInt(input);
                         //AVISAR TURNO DE JUGADOR
                         switch (action) {
+                            case GameType.GAME_STARTS:
+                                    try {
+                                    // Repartir dos cartas
+                                    for (int i = 0; i < 4; i++) {
+                                        Cards[i] = SocketUtils.receiveInt(input);
+                                    }
+                                    System.out.println("Cartas recibidas: " + Arrays.toString(Cards));
+                                } catch (IOException e) {
+                                    System.out.println("Error al recibir cartas: " + e.getMessage());
+                                }
+                                break;
                             case GameType.TURN_WAIT:
                                 System.out.println("Usuario esperando a que sea su turno");
                                 break;
