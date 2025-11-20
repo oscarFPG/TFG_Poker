@@ -16,6 +16,10 @@ public class GameType {
     public static final int CALL = 4;
     //RAISE
     public static final int RAISE = 5;
+    // ES PREFLOP
+    public static final int PRE_FLOP = 6;
+    // NO ES PREFLOP
+    public static final int NO_PRE_FLOP = 6;
    
     //SOLICITAR CONEXION 
     public static final int ESTABLISH_CONECTION = 10;
@@ -25,21 +29,32 @@ public class GameType {
     public static final int CONECTION_DECLINE = 12;
 
     //TURN_MOVE
-     public static final int TURN_MOVE = 20;
+     public static final int TURN_PLAY = 20;
     //TURN_WAIT
      public static final int TURN_WAIT = 21;
     //TURN_OTHER_PLAYER
      public static final int TURN_OTHER_PLAYER = 22;
+    //END_OF_ROUND (PRE-FLOP, FLOP, RIVER, ETC)
+     public static final int END_OF_ROUND = 23;
+    //END_OF_HAND (SHOW_DOWN)
+     public static final int END_OF_HAND= 24;
+
+    //END_OF_GAME (SE ACABA TODO EL JUEGO)
+     public static final int END_OF_GAME= 25;
+    
+
 
     //MAX_TIME AVISA AL CLIENTE QUE SE HA QUEDADO SIN TIEMPO
     public static final int MAX_TIME = 40;
-    //TURN_FINISH
-    public static final int TURN_FINISH = 41;
-      
+    
+    //HAND OVER WIN
+    public static final int HAND_OVER_WIN = 60;
+    //HAND OVER LOSE
+    public static final int HAND_OVER_LOSE = 61;
     //GAME OVER WIN
-    public static final int GAME_OVER_WIN = 60;
+    public static final int GAME_OVER_WIN = 62;
     //GAME OVER LOSE
-    public static final int GAME_OVER_LOSE = 61;
+    public static final int GAME_OVER_LOSE = 63;
     //
 
 
