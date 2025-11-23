@@ -13,46 +13,58 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.*;
-
+import java.util.Scanner;
 
 public class ClientMain extends Application {
-    
+
     public static String host = "localhost";
     public static int port = 5005;
 
     /*
      * Desde la ruta TFGPOKER/tfgpoker
      * Run:
-     *      .\mvnw.cmd -pl client -Prun exec:java
+     * .\mvnw.cmd -pl client -Prun exec:java
      * Debug:
-     *      .\mvnwDebug.cmd -pl client -Pdebug exec:java
+     * .\mvnwDebug.cmd -pl client -Pdebug exec:java
      * Run the Tests
-     *      .\mvnw.cmd test
+     * .\mvnw.cmd test
      */
     public static void main(String[] args) {
 
-        //launch(args);
-        try{
+        // launch(args);
+        int isAdmin = -1;
+        int gameStart = -1;
+
+        try {
 
             Socket socket = new Socket(host, port);
             System.out.printf("Socket cliente creado en el puerto %d\n", port);
 
-            OutputStream output = socket.getOutputStream(); // Send buffer
-            InputStream input = socket.getInputStream();    // Receive buffer
+            isAdmin = SocketUtils.receiveInt(socket.getInputStream());
+            if(isAdmin == GameType.PLAYER_IS_ADMIN){
 
-            // Recibir mensaje
-            String message = SocketUtils.receiveString(input);
-            System.out.printf("Mensaje recibido del servidor: %s\n", message);
+                System.out.printf("Esperando a que todos los jugadores se unan...\n");
+                System.out.printf("Pulsa ENTER para comenzar la partida\n");
+                Scanner sc = new Scanner(System.in);
+                sc.nextLine();
+                sc.close();
+                
+                SocketUtils.sendInteger(socket.getOutputStream(), GameType.GAME_START_ADMINISTRATOR);
+            }
+            else if(isAdmin == GameType.PLAYER_NOT_ADMIN) {
+                System.out.printf("Esperando a comenzar la partida...\n");
+            }
 
-            // Enviar mensaje
-            SocketUtils.sendString(output, "Client first message");
+            gameStart = SocketUtils.receiveInt(socket.getInputStream());
+            System.out.printf("Comenzando partida!\n");
+
+            // La partida comienza
 
             socket.close();
-        }
-        catch(IOException e){
+        } catch (IOException e) {
             System.out.printf("ERROR: %s\n", e.getMessage());
         }
-        
+
     }
 
     @Override
