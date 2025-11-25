@@ -31,7 +31,13 @@ public class ClientMain extends Application {
      */
     public static void main(String[] args) {
 
-        //launch(args);
+       
+        
+    }
+
+
+    private void logic(){
+         //launch(args);
         try{
 
             Socket socket = new Socket(host, port);
@@ -146,12 +152,6 @@ public class ClientMain extends Application {
         catch(IOException e){
             System.out.printf("ERROR: %s\n", e.getMessage());
         }
-        
-    }
-
-
-    private void recieveCards(){
-
 
     }
 
