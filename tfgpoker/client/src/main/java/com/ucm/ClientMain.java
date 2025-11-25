@@ -19,9 +19,9 @@ import java.util.Scanner;
 public class ClientMain extends Application {
 
     public static String host = "localhost";
-    public static int port = 5005;
     private static int Cards[] = new int[4];
     private static int Board_Cards[] = new int[10];
+    private static String _playerName = "User";
 
     /*
      * Desde la ruta TFGPOKER/tfgpoker
@@ -42,31 +42,43 @@ public class ClientMain extends Application {
         int isAdmin = -1;
         int gameStart = -1;
 
+        Scanner scanner = new Scanner(System.in);
+
         try {
 
-            Socket socket = new Socket(host, port);
-            System.out.printf("Socket cliente creado en el puerto %d\n", port);
+            Socket socket = new Socket(host, GameType.PORT);                                     
+            System.out.printf("Socket cliente creado en el puerto %d\n", GameType.PORT);
+            
+            // Ask client's name
+            System.out.printf("Introduce tu nombre: \n");
+            _playerName = scanner.nextLine();
+        
+            // Send playername to server
+            SocketUtils.sendString(socket.getOutputStream(), _playerName);
 
+            // Receive server to tell client if its an admin
             isAdmin = SocketUtils.receiveInt(socket.getInputStream());
+
             if(isAdmin == GameType.PLAYER_IS_ADMIN){
 
                 System.out.printf("Esperando a que todos los jugadores se unan...\n");
                 System.out.printf("Pulsa ENTER para comenzar la partida\n");
-                Scanner sc = new Scanner(System.in);
-                sc.nextLine();
-                sc.close();
-                
+                scanner.nextLine();
+
+                // Send order START_GAME to server
                 SocketUtils.sendInteger(socket.getOutputStream(), GameType.GAME_START_ADMINISTRATOR);
             }
             else if(isAdmin == GameType.PLAYER_NOT_ADMIN) {
                 System.out.printf("Esperando a comenzar la partida...\n");
             }
 
+            // Wait for server GAME_START signal
             gameStart = SocketUtils.receiveInt(socket.getInputStream());
             System.out.printf("Comenzando partida!\n");
 
             // La partida comienza
 
+            scanner.close();
             socket.close();
         } catch (IOException e) {
             System.out.printf("ERROR: %s\n", e.getMessage());
@@ -74,12 +86,13 @@ public class ClientMain extends Application {
 
     }
 
-     private void logic(){
-         //launch(args);
+    private void logic(){
+        
+        //launch(args);
         try{
 
-            Socket socket = new Socket(host, port);
-            System.out.printf("Socket cliente creado en el puerto %d\n", port);
+            Socket socket = new Socket(host, GameType.PORT);
+            System.out.printf("Socket cliente creado en el puerto %d\n", GameType.PORT);
 
             OutputStream output = socket.getOutputStream(); // Send buffer
             InputStream input = socket.getInputStream();    // Receive buffer
