@@ -1,21 +1,29 @@
 package com.ucm;
 
-// Poker Game
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Random;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+// Poker Game
 import com.ucm.control.Controller;
 import com.ucm.evaluator.Evaluator;
+import com.ucm.middleclasses.DTOClient;
 import com.ucm.logic.Game;
 import com.ucm.SocketUtils;
+
 
 public class ServerMain {
 
     private static int MAX_PLAYERS = 3;
     private static int port = 5005;
+    private static int idCounter = 0;
+
 
     private static ServerSocket _serverSocket;
 
@@ -32,9 +40,9 @@ public class ServerMain {
      */
     public static void main(String[] args) {
 
-        /*
         try{
 
+            Evaluator ev = Evaluator.getInstance();
             _serverSocket = new ServerSocket(port);
             System.out.printf("Socket servidor creado en el puerto %d\n", port);
 
@@ -65,6 +73,11 @@ public class ServerMain {
         Socket socketList[] = new Socket[3];
         int socketCounter = 0;
 
+        Random rand = new Random();
+        int matchID = rand.nextInt();
+
+        List<DTOClient> _sockets = new ArrayList<>();
+
         try {
 
             /*
@@ -79,8 +92,12 @@ public class ServerMain {
              * IMPORTANTE: SOLO PREPARTIDA
              */
 
+
+            
             while (socketCounter < MAX_PLAYERS) {
                 socketList[socketCounter] = _serverSocket.accept();
+                String playerName = SocketUtils.receiveString(socketList[socketCounter].getInputStream());
+                _sockets.add(new DTOClient(socketCounter, matchID, playerName, socketList[socketCounter]));
                 socketCounter++;
             }
 
@@ -107,13 +124,22 @@ public class ServerMain {
             for(int i = 0; i < MAX_PLAYERS; i++){
                 SocketUtils.sendInteger(socketList[i].getOutputStream(), GameType.START_GAME);
             }
-
+            //
             // Empezar partida
             // ...
+            
+            
 
         } catch (IOException e) {
             System.out.printf("ERROR: %s\n", e.getMessage());
         }
+    }
+
+    public static void game(final List<DTOClient> sockets) throws IOException{
+
+        Game g = new Game(sockets);
+        Controller cl = new Controller(g);
+        cl.run();
     }
 
 }

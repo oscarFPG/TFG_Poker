@@ -1,5 +1,8 @@
 package com.ucm.logic;
 
+import java.util.List;
+
+import com.ucm.middleclasses.DTOClient;
 import com.ucm.commands.Command;
 import com.ucm.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.gameobjects.Card;
@@ -30,15 +33,19 @@ public class PlayerList {
     private int _maxNumberOfPlayers;
 
 
-    public PlayerList(int n) {
+    public PlayerList(final int maxSize, final List<DTOClient> clients) {
         _first = null;
         _last = null;
         _playerCounter = 0;
-        _maxNumberOfPlayers = n;
+        _maxNumberOfPlayers = maxSize;
+
+        for(DTOClient client : clients){
+            addPlayer( new Player(client.playerID(), client.playerName(), 1000, client.socket()) );
+        }
     }
 
 
-    public void addPlayer(Player p) {
+    private void addPlayer(Player p) {
 
         Node newNode = new Node(_last, p, _first);
         if (isEmpty()) {
@@ -58,7 +65,7 @@ public class PlayerList {
         ++_playerCounter;
     }
 
-    public void removePlayer(Player p) {
+    private void removePlayer(Player p) {
 
         if (isEmpty())
             return;
@@ -66,11 +73,11 @@ public class PlayerList {
         if (_first._player == p)
             delete(_first);
 
-        Node i = _first._next;
-        while (i._player != p && i != _first && i != null)
-            i = i._next;
+        Node iNode = _first._next;
+        while (iNode._player != p && iNode != _first && iNode != null)
+            iNode = iNode._next;
 
-        delete(i);
+        delete(iNode);
     }
 
     private void delete(Node p) {

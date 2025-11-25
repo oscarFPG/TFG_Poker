@@ -3,6 +3,7 @@ package com.ucm.logic;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ucm.middleclasses.DTOClient;
 import com.ucm.evaluator.Evaluator;
 import com.ucm.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.gameobjects.Card;
@@ -38,13 +39,13 @@ public class Game {
     private int _currentBB;
 
 
-    public Game() {
+    public Game(final List<DTOClient> sockets) {
 
         _initialSmallBlind = Game.INITIAL_SB;
         _initialBigBlind = Game.INITIAL_BB;
         _handCounter = 1;
 
-        _playerList = new PlayerList(Game.NUM_MAX_PLAYERS);
+        _playerList = new PlayerList(NUM_MAX_PLAYERS, sockets);
         _deck = new Deck();
         _tableCards = new Card[MAX_CARDS_IN_TABLE];
         _actualTableCards = 0;
@@ -55,16 +56,6 @@ public class Game {
 
         _currentSB = _initialSmallBlind;
         _currentBB = _initialBigBlind;
-    }
-
-
-    public void addPlayer(Player p) {
-
-        if (Game.DEBUG) {
-            System.out.printf("Intentando añadir jugador [%s]\n", p.getName());
-        }
-
-        _playerList.addPlayer(p);
     }
 
     /**
@@ -119,6 +110,14 @@ public class Game {
 
         int pot = 0;
         try {
+
+            int currentBet = 0, maxBet = 0;
+            int playsToMake = (_isPreflop) ? _playerList.activePlayersCounter() - 1 : _playerList.activePlayersCounter();
+            int playerRemaining = playsToMake + 1;
+            while( !(playsToMake == 0) ){
+
+            }
+
             _playerList.playHand(_currentSB, _currentBB, _isPreflop);
         } 
         catch (OnlyOnePlayerLeftException e) {  // Collect remaining bets only if the round ended because all players

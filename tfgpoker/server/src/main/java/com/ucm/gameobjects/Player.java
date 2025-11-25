@@ -1,5 +1,7 @@
 package com.ucm.gameobjects;
 
+import java.net.Socket;
+import com.ucm.SocketUtils;
 import com.ucm.commands.AllInCommand;
 import com.ucm.commands.CallCommand;
 import com.ucm.commands.CheckCommand;
@@ -11,19 +13,37 @@ import java.util.Scanner;
 
 public class Player {
 
+    /**
+     * 
+     */
     private int _id;
+
+    /**
+     * 
+     */
     private String _name;
-    private int _money;         // Player's total money
-    private int _pocketMoney;   // Money the play has bet. It is not lost unless the player folds or loses and
-                                // it is a portion of the remaining of the total
+
+    /**
+     * Player's total money that is not on bet
+     */
+    private int _money;
+
+    /** 
+     * Money the play has bet.
+     * It is not lost unless the player folds or loses and it is a portion of all player money
+     */
+    private int _pocketMoney;
+
     private PlayerRole _role;
     private Card[] _cards;
     private int _numCards;
     private boolean _fold;
     private boolean _hasLost;
 
+    private Socket _socket;
 
-    public Player(int id, String name, int money) {
+
+    public Player(int id, String name, int money, Socket socket) {
         _id = id;
         _name = name;
         _money = money;
@@ -34,85 +54,14 @@ public class Player {
         _numCards = 0;
         _fold = false;
         _hasLost = false;
+
+        _socket = socket;
     }
 
-    public Command makePlay() {
+    public void makePlay() {
 
-        Scanner sc = new Scanner(System.in);
-        int jugada = -1;
-
-        do {
-
-            menuMakePlay();
-            jugada = sc.nextInt();  // Suponemos que la entrada siempre es un numero
-            sc.close();
-
-            switch (jugada) {
-            case 0:
-                return new FoldCommand(this);
-            
-            case 1:
-                return new CheckCommand(this);
-            
-            case 2:
-                return new CallCommand(this, _money, _pocketMoney);
-
-            case 3:
-                return new RaiseCommand(this, _money, _pocketMoney);
-
-            case 4:
-                return new AllInCommand(this, _money, _pocketMoney);
-
-            default:
-                return null;
-            }
-
-            /*
-            switch (jugada) {
-                case 0:
-                    return new FoldCommand(this, _pocketMoney);
-
-                case 1:
-                    if (maxBet != 0) { // No puedo hacer check si hay alguna apuesta en juego
-                        System.out.println("You can't do check"); 
-                    }
-                    return new CheckCommand(this, _pocketMoney);
-
-                case 2:
-                    if (!isEnoughMoney(maxBet - _pocketMoney)) { // No puedo igualar porque no tengo suficiente dinero
-                        System.out.println("Not enough money to make a call");
-                        return new FoldCommand(this, _pocketMoney);
-                        // TODO Habrá que preguntarle al jugador si quiere hacer un allIn retirarse.
-                        // Se entiende que no quiere hacer fold
-                    }
-                    return new CallCommand(this, _pocketMoney);
-
-                case 3:
-                    //
-                    // TODO Si no tengo suficiente dinero para subir, ver si tengo suficiente dinero
-                    // para igualar, y si tengo, hago call
-                    // (decidir si hacer call obligatoriamente o preguntar si el jugador quiere
-                    // hacer call u allin), si no,
-                    // tendría que hacer fold u allin
-                    //
-                    if (!isEnoughMoney(10)) {
-                        System.out.println("Not enough money to make a raise");
-                        return new CallCommand(this, _pocketMoney);
-                    }
-                    return new RaiseCommand(this, _pocketMoney);
-
-                case 4:
-                    return new AllInCommand(this, _pocketMoney);
-
-                default:
-                    System.out.println("Opción no válida. Vuelva a intentarlo...");
-                    jugada = -1;
-                    break;
-            }
-            */
-
-        } while (jugada == -1);
-
+        menuMakePlay();
+        
     }
 
     private void menuMakePlay() {
