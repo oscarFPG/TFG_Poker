@@ -59,6 +59,18 @@ public class GameType {
     public static final int GAME_OVER_LOSE = 63;
     //
 
+    // ADMIN PLAYER
+    public static final int PLAYER_IS_ADMIN = 70;
+    // NOT ADMIN PLAYER
+    public static final int PLAYER_NOT_ADMIN = 76;
+    // GAME START ADMINISTRATOR
+    public static final int GAME_START_ADMINISTRATOR = 71;
+    // START GAME
+    public static final int START_GAME = 72;
+    // FULL TABLE
+    public static final int FULL_TABLE = 73;
+    // WAIT_GAME
+    public static final int WAIT_GAME = 74;
 
     //SUITS
     public static final int HEARTS = 100;
@@ -83,3 +95,5 @@ public class GameType {
     public static final int NUMBER_A = 214;
     
 }
+
+ 

@@ -13,26 +13,30 @@ public class Player {
 
     private int _id;
     private String _name;
-    private int _money; // Player's total money
-    private int _pocketMoney; // Money the play has bet. It is not lost unless the player folds or loses and
-                              // it is a portion of the remaining of the total
+    private int _money;         // Player's total money
+    private int _pocketMoney;   // Money the play has bet. It is not lost unless the player folds or loses and
+                                // it is a portion of the remaining of the total
     private PlayerRole _role;
     private Card[] _cards;
     private int _numCards;
     private boolean _fold;
+    private boolean _hasLost;
+
 
     public Player(int id, String name, int money) {
         _id = id;
         _name = name;
         _money = money;
         _pocketMoney = 0;
+
         _role = PlayerRole.NO_ROLE;
         _cards = new Card[2];
         _numCards = 0;
         _fold = false;
+        _hasLost = false;
     }
 
-    public Command makePlay(int maxBet) {
+    public Command makePlay() {
 
         Scanner sc = new Scanner(System.in);
         int jugada = -1;
@@ -40,16 +44,37 @@ public class Player {
         do {
 
             menuMakePlay();
-            jugada = sc.nextInt();
+            jugada = sc.nextInt();  // Suponemos que la entrada siempre es un numero
+            sc.close();
 
+            switch (jugada) {
+            case 0:
+                return new FoldCommand(this);
+            
+            case 1:
+                return new CheckCommand(this);
+            
+            case 2:
+                return new CallCommand(this, _money, _pocketMoney);
+
+            case 3:
+                return new RaiseCommand(this, _money, _pocketMoney);
+
+            case 4:
+                return new AllInCommand(this, _money, _pocketMoney);
+
+            default:
+                return null;
+            }
+
+            /*
             switch (jugada) {
                 case 0:
                     return new FoldCommand(this, _pocketMoney);
 
                 case 1:
                     if (maxBet != 0) { // No puedo hacer check si hay alguna apuesta en juego
-                        System.out.println("You can't do check");
-                        break;
+                        System.out.println("You can't do check"); 
                     }
                     return new CheckCommand(this, _pocketMoney);
 
@@ -84,18 +109,14 @@ public class Player {
                     jugada = -1;
                     break;
             }
+            */
 
-            // TODO Más adelante habrá que poner un try catch para controlar la
-            // excepción cuando NO sea un número
         } while (jugada == -1);
-
-        sc.close();
-
-        return null;
 
     }
 
     private void menuMakePlay() {
+        System.out.printf("Haz una jugada, %s!\n", getName());
         System.out.println("Opciones de jugada: ");
         System.out.println("0: fold ");
         System.out.println("1: check ");
@@ -163,7 +184,7 @@ public class Player {
 
     public void call(int maxBet) {
 
-        int resto = maxBet - this._pocketMoney;// dinero que necesita para igualar la apuesta en juego
+        int resto = maxBet - this._pocketMoney; // dinero que necesita para igualar la apuesta en juego
         // Aumento la apuesta de mi ronda
         increasePocketMoney(resto);
 
@@ -238,36 +259,18 @@ public class Player {
         _fold = fold;
     }
 
-    public Card[] getCards() {
-        return _cards;
-    } // TODO Esto deberia estar con una interfaz para llamarse desde PlayerList
-
-    public int getID() {
-        return _id;
+    public void setHasLost(boolean lost){
+        _hasLost = lost;
     }
 
-    public String getName() {
-        return _name;
-    }
-
-    public int getMoney() {
-        return _money;
-    }
-
-    public int getPocketMoney() {
-        return _pocketMoney;
-    }
-
-    public PlayerRole getPlayerRole() {
-        return _role;
-    }
-
-    public int getNumCards() {
-        return _numCards;
-    }
-
-    public boolean hasFolded() {
-        return _fold;
-    }
+    public Card[] getCards(){ return _cards; }
+    public int getID(){ return _id; }
+    public String getName(){ return _name; }
+    public int getMoney(){ return _money; }
+    public int getPocketMoney(){ return _pocketMoney; }
+    public PlayerRole getPlayerRole(){ return _role; }
+    public int getNumCards(){ return _numCards; }
+    public boolean hasFolded(){ return _fold; }
+    public boolean hasLost(){ return _hasLost; }
 
 }

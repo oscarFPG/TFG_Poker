@@ -141,11 +141,17 @@ public class PlayerList {
         while ( !(playsToMake == 0) ){  // If all players remaining have checked -> Exit loop
 
             // Player executes a command
-            Command command = pNode._player.makePlay(maxBet);
+            Command command = pNode._player.makePlay();
+
+            // Command receives all necessary info
+            command.receiveCurrentBet(maxBet);
 
             // Execute command
             CommandResult result = command.execute(sb, bb, maxBet);
             
+            if(Game.DEBUG)
+                System.out.printf("Jugador %s hace %s!\n\n", pNode._player.getName(), command.getCommandName());
+
             // Check number of active players to break normal execution if there is only one left
             if(result.folds()){
                 --playersRemaining;
@@ -210,13 +216,12 @@ public class PlayerList {
 
     public HandInfo[] getPlayerHandsInfo(){
 
-        HandInfo[] info = new HandInfo[ activePlayersCounter() ];
-        Node pNode = null;
+        int size = activePlayersCounter();
+        HandInfo[] info = new HandInfo[ size ];
+        Node pNode = (!_first._player.hasFolded()) ? _first : getNextPlayerActive(_first);
         int i = 0;
 
-        info[i++] = new HandInfo(_first._player.getCards(), _first._player);
-        pNode = _first._next;
-        while(pNode != _first){
+        while(i < size){
             info[i++] = new HandInfo(pNode._player.getCards(), pNode._player);
             pNode = pNode._next;
         }
@@ -231,7 +236,7 @@ public class PlayerList {
 
         int cont = _first._player.hasFolded() ? 0 : 1;
         Node _current = _first._next;
-        while ( _current != _first){
+        while ( _current != _first ){
            cont += _current._player.hasFolded() ? 0 : 1;
            _current = _current._next;
         }
