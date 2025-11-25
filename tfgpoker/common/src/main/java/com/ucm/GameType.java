@@ -4,6 +4,8 @@ public class GameType {
     
     private GameType(){}
 
+    // PORT
+    public static final int PORT = 5005;
 
     //JUGADAS
     //FOLD

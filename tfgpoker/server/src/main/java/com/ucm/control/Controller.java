@@ -1,5 +1,7 @@
 package com.ucm.control;
 
+import java.io.IOException;
+
 import com.ucm.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.gameobjects.Player;
 import com.ucm.logic.Game;
@@ -61,6 +63,9 @@ public class Controller {
                 _game.giveRewardToWinner();
                 if (Game.DEBUG)
                     _game.showStateDEBUG();
+            }
+            catch(IOException e){
+                // TODO : Revisar bien esto, es un problema serio
             }
             catch (OnlyOnePlayerLeftException e) {
                 _game.giveRewardToWinner();

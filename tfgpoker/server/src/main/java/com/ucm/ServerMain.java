@@ -20,10 +20,7 @@ import com.ucm.SocketUtils;
 
 public class ServerMain {
 
-    private static int MAX_PLAYERS = 3;
-    private static int port = 5005;
-    private static int idCounter = 0;
-
+    private static int MAX_PLAYERS = 9;
 
     private static ServerSocket _serverSocket;
 
@@ -43,16 +40,16 @@ public class ServerMain {
         try{
 
             Evaluator ev = Evaluator.getInstance();
-            _serverSocket = new ServerSocket(port);
-            System.out.printf("Socket servidor creado en el puerto %d\n", port);
+            _serverSocket = new ServerSocket(GameType.PORT);
+            System.out.printf("Socket servidor creado en el puerto %d\n", GameType.PORT);
 
             while(true){
-                preGame();
-                //game();
+                List<DTOClient> clientList = preGame();
+                game(clientList);
             }
         }
         catch(IOException e){
-            
+            System.out.printf("ERROR: %s\n", e.getMessage());
         }
 
 
@@ -68,49 +65,46 @@ public class ServerMain {
          */
     }
 
-    public static void preGame(){
-
-        Socket socketList[] = new Socket[3];
-        int socketCounter = 0;
-
-        Random rand = new Random();
-        int matchID = rand.nextInt();
+    public static List<DTOClient> preGame(){
 
         List<DTOClient> _sockets = new ArrayList<>();
+        Random rand = new Random();
+        int matchID = rand.nextInt();
+        int socketCounter = 0;
 
         try {
 
             /*
              * 1. Guardar cada conexion en una lista
-             * 2. Mientras se pueda aceptar más jugadores, esperar a un jugador nuevo
-             * 3. Si la partida está llena, esperar al cliente administrar que quiera
+             * 2. Mientras se pueda aceptar mas jugadores, esperar a un jugador nuevo
+             * 3. Si la partida esta llena, esperar al cliente administrar que quiera
              * empezar
-             * 4. Si el código de empezar coincide con START_GAME
+             * 4. Si el codigo de empezar coincide con START_GAME
              * -> Hacer llegar el socket a playerList
              * -> controller.run
              * 
              * IMPORTANTE: SOLO PREPARTIDA
              */
-
-
-            
+ 
             while (socketCounter < MAX_PLAYERS) {
-                socketList[socketCounter] = _serverSocket.accept();
-                String playerName = SocketUtils.receiveString(socketList[socketCounter].getInputStream());
-                _sockets.add(new DTOClient(socketCounter, matchID, playerName, socketList[socketCounter]));
+                Socket clientSocket = _serverSocket.accept();
+                String playerName = SocketUtils.receiveString(clientSocket.getInputStream());
+                _sockets.add( new DTOClient(socketCounter, matchID, playerName, clientSocket) );
                 socketCounter++;
             }
 
-            Socket adminSocket = socketList[0];
+            Socket adminSocket = _sockets.get(0).socket();
             int code = 0;
 
             // Avisar a los jugadores si son admin o no
             System.out.printf("Mandando permisos de clientes\n");
             for(int i = 0; i < MAX_PLAYERS; i++){
-                if(socketList[i] == adminSocket)
-                    SocketUtils.sendInteger(socketList[i].getOutputStream(), GameType.PLAYER_IS_ADMIN);
+
+                Socket currentSocket = _sockets.get(i).socket();
+                if(currentSocket == adminSocket)
+                    SocketUtils.sendInteger(currentSocket.getOutputStream(), GameType.PLAYER_IS_ADMIN);
                 else
-                    SocketUtils.sendInteger(socketList[i].getOutputStream(), GameType.PLAYER_NOT_ADMIN);
+                    SocketUtils.sendInteger(currentSocket.getOutputStream(), GameType.PLAYER_NOT_ADMIN);
             }
 
             // Esperar a que el administrador empiece la partida
@@ -118,28 +112,25 @@ public class ServerMain {
             do {
                 code = SocketUtils.receiveInt(adminSocket.getInputStream());
             } while (code != GameType.GAME_START_ADMINISTRATOR);
-            System.out.printf("Admin ha comenzado la partida!\n");
 
             // Avisar a todos los clientes de que la partida ha comenzado
+            System.out.printf("Admin ha comenzado la partida!\n");
             for(int i = 0; i < MAX_PLAYERS; i++){
-                SocketUtils.sendInteger(socketList[i].getOutputStream(), GameType.START_GAME);
+                SocketUtils.sendInteger(_sockets.get(i).socket().getOutputStream(), GameType.START_GAME);
             }
-            //
-            // Empezar partida
-            // ...
-            
-            
 
         } catch (IOException e) {
             System.out.printf("ERROR: %s\n", e.getMessage());
         }
+
+        return _sockets;
     }
 
-    public static void game(final List<DTOClient> sockets) throws IOException{
+    public static void game(final List<DTOClient> clients) throws IOException{
 
-        Game g = new Game(sockets);
-        Controller cl = new Controller(g);
-        cl.run();
+        Game game = new Game(clients);
+        Controller controller = new Controller(game);
+        controller.run();
     }
 
 }

@@ -1,5 +1,6 @@
 package com.ucm.gameobjects;
 
+import java.io.IOException;
 import java.net.Socket;
 import com.ucm.SocketUtils;
 import com.ucm.commands.AllInCommand;
@@ -58,21 +59,19 @@ public class Player {
         _socket = socket;
     }
 
-    public void makePlay() {
-
-        menuMakePlay();
-        
+    public int makePlay() throws IOException{
+        return SocketUtils.receiveInt( _socket.getInputStream() );
     }
 
     private void menuMakePlay() {
         System.out.printf("Haz una jugada, %s!\n", getName());
-        System.out.println("Opciones de jugada: ");
-        System.out.println("0: fold ");
-        System.out.println("1: check ");
-        System.out.println("2: call ");
-        System.out.println("3: raise ");
-        System.out.println("4: allIn ");
-        System.out.println("Introduce tu jugada: ");
+        System.out.printf("Opciones de jugada: \n");
+        System.out.printf("0: fold \n");
+        System.out.printf("1: check \n");
+        System.out.printf("2: call \n");
+        System.out.printf("3: raise \n");
+        System.out.printf("4: allIn \n");
+        System.out.printf("Introduce tu jugada: ");
     }
 
     public void makeForcedBet(int sb, int bb) {

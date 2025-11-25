@@ -1,9 +1,18 @@
 package com.ucm.logic;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ucm.middleclasses.CommandResult;
 import com.ucm.middleclasses.DTOClient;
+import com.ucm.GameType;
+import com.ucm.commands.AllInCommand;
+import com.ucm.commands.CallCommand;
+import com.ucm.commands.CheckCommand;
+import com.ucm.commands.Command;
+import com.ucm.commands.FoldCommand;
+import com.ucm.commands.RaiseCommand;
 import com.ucm.evaluator.Evaluator;
 import com.ucm.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.gameobjects.Card;
@@ -37,7 +46,6 @@ public class Game {
 
     private int _currentSB;
     private int _currentBB;
-
 
     public Game(final List<DTOClient> sockets) {
 
@@ -106,7 +114,7 @@ public class Game {
         _playerList.passTurn();
     }
 
-    public void playHand() throws OnlyOnePlayerLeftException {
+    public void playHand() throws OnlyOnePlayerLeftException, IOException {
 
         int pot = 0;
         try {
@@ -114,14 +122,42 @@ public class Game {
             int currentBet = 0, maxBet = 0;
             int playsToMake = (_isPreflop) ? _playerList.activePlayersCounter() - 1 : _playerList.activePlayersCounter();
             int playerRemaining = playsToMake + 1;
-            while( !(playsToMake == 0) ){
 
+            Player player = (_isPreflop) ? _playerList.smallBlindAndBigBlindPlays(_currentSB, _currentBB, playsToMake) : _playerList.getFirst(); 
+            // Keep players betting until all have reach the same bet or only one player is left
+            maxBet = _currentBB;
+            while( !(playsToMake == 0) ){// If all players remaining have checked -> Exit loop
+
+                // Player executes a command
+                int codePlay = player.makePlay();
+
+                // Command receives all necessary info
+                Command play = infoPlay(codePlay, player);
+        
+                // Execute command
+                CommandResult result = play.execute(_currentSB, _currentBB, maxBet);
+
+                if(Game.DEBUG)
+                    System.out.printf("Jugador %s hace %s!\n\n", player.getName(), play.getCommandName());
+
+                // Check number of active players to break normal execution if there is only one left
+                if(result.folds()){
+                    --playerRemaining;
+                    if(playerRemaining == 1)
+                        throw new OnlyOnePlayerLeftException("Only one player left to play mid round");
+                }
+
+                // Update remaining players loop
+                playsToMake = result.raises() ? (_playerList.activePlayersCounter() - 1) : (playsToMake - 1);
+                // Update maxBet and get next player
+                currentBet = result.bet();
+                maxBet = Integer.max(maxBet, currentBet);
+                Player nextPlayer = _playerList.getNextPlayerActive(player);
             }
 
-            _playerList.playHand(_currentSB, _currentBB, _isPreflop);
-        } 
-        catch (OnlyOnePlayerLeftException e) {  // Collect remaining bets only if the round ended because all players
-                                                // folded in their turn and there is only one left
+        }
+        // Collect remaining bets only if the round ended because all players folded in their turn and there is only one left
+        catch (OnlyOnePlayerLeftException e) {
             _isPreflop = false;
             _showdownSkipped = true;
             pot = _playerList.collectAllBets();
@@ -202,6 +238,29 @@ public class Game {
             }
         }
         System.out.print("\n");
+    }
+
+    private Command infoPlay(int codePlay, Player player){
+        
+        switch (codePlay) {
+            case GameType.FOLD:
+                return new FoldCommand(player);
+
+            case GameType.CHECK:
+                
+                return new CheckCommand(player);
+            case GameType.ALL_IN:
+                
+                return new AllInCommand(player, player.getMoney(), player.getPocketMoney());
+            case GameType.CALL:
+                
+                return new CallCommand(player, player.getMoney(), player.getPocketMoney());
+            case GameType.RAISE:
+                
+                return new RaiseCommand(player, player.getMoney(), player.getPocketMoney());
+            default:
+                return null;
+        }
     }
 
 }
