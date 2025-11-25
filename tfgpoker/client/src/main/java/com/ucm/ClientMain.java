@@ -106,6 +106,7 @@ public class ClientMain extends Application {
                                 break;
                         }
                     }
+                    //prueba
                 
                     //REPARTIR CARTAS DE LA MESA
                     if ( !endOfHand && !endOfGame){
