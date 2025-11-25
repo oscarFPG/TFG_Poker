@@ -30,6 +30,7 @@ public class ServerMain {
      */
     public static void main(String[] args) {
 
+        /*
         try{
 
             ServerSocket serverSocket = new ServerSocket(port);
@@ -56,7 +57,7 @@ public class ServerMain {
         catch(IOException e){
             System.out.printf("ERROR: %s\n", e.getMessage());
         }
-        
+        */
 
         try {
             Evaluator ev = Evaluator.getInstance();
