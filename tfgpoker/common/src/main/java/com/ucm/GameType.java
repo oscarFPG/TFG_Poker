@@ -41,6 +41,8 @@ public class GameType {
 
     //END_OF_GAME (SE ACABA TODO EL JUEGO)
      public static final int END_OF_GAME= 25;
+
+     public static final int GAME_STARTS= 26;
     
 
 

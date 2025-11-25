@@ -32,6 +32,7 @@ public class ServerMain {
      */
     public static void main(String[] args) {
 
+        /*
         try{
 
             _serverSocket = new ServerSocket(port);
