@@ -31,10 +31,10 @@ public class ClientMain extends Application {
      */
     public static void main(String[] args) {
         preGame();
-        
     }
 
     public static void preGame(){
+        
         // launch(args);
         int isAdmin = -1;
         int gameStart = -1;
@@ -52,54 +52,6 @@ public class ClientMain extends Application {
                 Scanner sc = new Scanner(System.in);
                 sc.nextLine();
                 sc.close();
-            boolean endOfGame = false;
-            while (!endOfGame){
-                boolean endOfHand = false;
-                
-                //NO ES SHOW DOWN
-                while ( !endOfHand){
-                     boolean endOfRound = false;
-                    //RONDA DE APUESTAS, HASTA QUE NO ACABE, NO SE REPARTEN LAS SIGUIENTES CARTAS EN LA MESA
-                    while( !endOfRound){
-                        int action = SocketUtils.receiveInt(input);
-                        //AVISAR TURNO DE JUGADOR
-                        switch (action) {
-                            case GameType.GAME_STARTS:
-                                    try {
-                                    // Repartir dos cartas
-                                    for (int i = 0; i < 4; i++) {
-                                        Cards[i] = SocketUtils.receiveInt(input);
-                                    }
-                                    System.out.println("Cartas recibidas: " + Arrays.toString(Cards));
-                                } catch (IOException e) {
-                                    System.out.println("Error al recibir cartas: " + e.getMessage());
-                                }
-                                break;
-                            case GameType.TURN_WAIT:
-                                System.out.println("Usuario esperando a que sea su turno");
-                                break;
-                            case GameType.TURN_PLAY:
-                                //ACCION DEL JUGADOR
-                                System.out.println("Usuario a jugado: FOLD");
-                                SocketUtils.sendInteger(output, GameType.FOLD);
-                                break;
-                            case GameType.END_OF_ROUND:
-                                System.out.println("Fin de la ronda de apuestas");
-                                endOfRound = true;
-                                break;
-                            case GameType.END_OF_HAND: //ES SHOW_DOWN
-                                System.out.println("Fin de la mano");
-                                endOfRound = true;
-                                endOfHand= true;
-                                break;
-                            case GameType.END_OF_GAME:
-                                System.out.println("El juego ha acabado");
-                                endOfRound = true;
-                                endOfHand= true;
-                                endOfGame = true;
-                                break;
-                        }
-                    }
                 
                 SocketUtils.sendInteger(socket.getOutputStream(), GameType.GAME_START_ADMINISTRATOR);
             }
