@@ -6,19 +6,31 @@ import com.ucm.middleclasses.CommandResult;
 
 public class RaiseCommand extends Command {
 
-    public RaiseCommand(Player p, int money, int pocketMoney) {
+    protected int _targetBet;
+
+    public RaiseCommand(Player p, int newBet, int money, int pocketMoney) {
         super(p, money, pocketMoney);
+        _targetBet = newBet;
     }
 
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
-        _player.raise(_money);
-        return CommandResult.continuePlaying(_money, true);     // _player.getPocketMoney() == this._pocketMoney
+
+        if(!checkCommand())
+            return null;
+
+        if (_targetBet == _money + _pocketMoney) {
+            AllInCommand command = new AllInCommand(_player, _money + _pocketMoney);
+            return command.execute(sb, bb, maxBet);
+        }
+
+        _player.raise(_targetBet);
+        return CommandResult.continuePlaying(_targetBet, true);
     }
 
     @Override
     public boolean checkCommand() {
-        return false;
+        return _money + _pocketMoney <= _targetBet;
     }
 
     @Override

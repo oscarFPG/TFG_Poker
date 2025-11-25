@@ -17,13 +17,12 @@ public class CallCommand extends Command {
             return null;
 
         if(_currentBet == _money + _pocketMoney){
-            AllInCommand allIn = new AllInCommand(_player, _money, _pocketMoney);
+            AllInCommand allIn = new AllInCommand(_player, _money + _pocketMoney);
             return allIn.execute(sb, bb, maxBet);
         }
-        else{
-            _player.call(maxBet);
-            return CommandResult.continuePlaying(_money, false);
-        }
+        
+        _player.call(maxBet);
+        return CommandResult.continuePlaying(_money, false);
     }
 
     @Override

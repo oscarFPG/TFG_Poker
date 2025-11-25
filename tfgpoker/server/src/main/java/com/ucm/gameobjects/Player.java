@@ -58,10 +58,16 @@ public class Player {
                 return new CallCommand(this, _money, _pocketMoney);
 
             case 3:
-                return new RaiseCommand(this, _money, _pocketMoney);
+                Scanner scanner = new Scanner(System.in);
+                int nuevaApuesta = 0;
+                System.out.printf("Introduzca la cantidad a apostar: ");
+                nuevaApuesta = scanner.nextInt();
+                System.out.printf("\n");
+
+                return new RaiseCommand(this, nuevaApuesta, _money, _pocketMoney);
 
             case 4:
-                return new AllInCommand(this, _money, _pocketMoney);
+                return new AllInCommand(this, _money + _pocketMoney);
 
             default:
                 return null;
@@ -184,7 +190,7 @@ public class Player {
 
     public void call(int maxBet) {
 
-        int resto = maxBet - this._pocketMoney; // dinero que necesita para igualar la apuesta en juego
+        int resto = maxBet - _pocketMoney; // dinero que necesita para igualar la apuesta en juego
         // Aumento la apuesta de mi ronda
         increasePocketMoney(resto);
 
@@ -193,23 +199,21 @@ public class Player {
     }
 
     public void allIn() {
-        increasePocketMoney(this._money);
-        this._money = 0;
+        increasePocketMoney(_money);
+        _money = 0;
     }
 
     public void raise(int maxBet) {
 
         // Si tengo menos dinero de lo que está apostado y quiero subir
         // entonces primero igualo y luego subo lo que sea(max All-in)
-        if (this._pocketMoney < maxBet) {
+        if (_pocketMoney <= maxBet) {
             call(maxBet);
-            // ejemplo: apuesto 10
-            // this._pocketMoney += 10;
             return;
         }
 
         // En cualquier otro caso subo lo que eliga el player(max All-in)
-        this._pocketMoney += 10;
+        _pocketMoney += 10;
     }
 
     public void receivePriceMoney(int money) {
@@ -217,16 +221,16 @@ public class Player {
     }
 
     private void decreaseMoney(int bet) {
-        this._money -= bet;
+        _money -= bet;
     }
 
     private void increasePocketMoney(int bet) {
-        this._pocketMoney += bet;
+        _pocketMoney += bet;
     }
 
     private boolean isEnoughMoney(int bet) {
 
-        if (bet > this._money)
+        if (bet > _money)
             return false;
 
         return true;
@@ -234,8 +238,8 @@ public class Player {
 
     public String toString() {
 
-        String carta1 = (this._cards[0] != null) ? _cards[0].toString() : Card.MissingCardToString();
-        String carta2 = (this._cards[1] != null) ? _cards[1].toString() : Card.MissingCardToString();
+        String carta1 = (_cards[0] != null) ? _cards[0].toString() : Card.MissingCardToString();
+        String carta2 = (_cards[1] != null) ? _cards[1].toString() : Card.MissingCardToString();
 
         return String.format("Player[%d]: %s - %s%s", _id, _name, carta1, carta2);
     }
