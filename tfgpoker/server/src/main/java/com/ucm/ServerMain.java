@@ -85,7 +85,7 @@ public class ServerMain {
              * 
              * IMPORTANTE: SOLO PREPARTIDA
              */
- 
+            
             while (socketCounter < MAX_PLAYERS) {
                 Socket clientSocket = _serverSocket.accept();
                 String playerName = SocketUtils.receiveString(clientSocket.getInputStream());

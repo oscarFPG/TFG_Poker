@@ -65,6 +65,25 @@ Hacer guía de instalación y ejecución de nuestro proyecto
 Diagrama de clase: https://www.canva.com/design/DAG0pwSg_LM/2e3t-G-t7Hn5cMWBzcePAw/edit?utm_content=DAG0pwSg_LM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton \
 Diagrama de secuencia client-servidor: https://lucid.app/lucidchart/f9ab4fa7-5727-42d4-9d75-b75961c8ec07/edit?invitationId=inv_c586c0df-b514-4305-80bf-8c6dccd676c5
 
+## Enlaces interfaces
+### Oscar: https://docs.google.com/presentation/d/1YZSDqGb1XTa3UW3WH0HIk1tJuKWi6cKmR3BGTJ0WJ68/edit?usp=sharing
+### Carla: https://www.canva.com/design/DAG4-bkXV3g/rrCtnFoGoazWZRvlErGPMg/view?utm_content=DAG4-bkXV3g&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h82762ed43d
+### Valeria: https://www.canva.com/design/DAG5ozfLFcY/nyCNiNNGe0UVs5OQ7FaYrg/edit
+
+### Esquema
+- INTERFAZ PRINCIPAL: CARLA
+- CREDITOS: CARLA
+- SELECCIONAR MODO DE JUEGO: OSCAR
+- SELECCIONAR PARTIDA PUBLICA/PRIVADA: VALERIA
+- UNIRSE A PARTIDA: OSCAR
+- CREAR PARTIDA: CARLA
+- CONFIGURACION DE PARTIDA: CARLA
+- PREPARTIDA(ESPERANDO A JUGADORES): OSCAR
+- VISTA EN PARTIDA: OSCAR
+- BOTON JUGADAS: CARLA
+- HISTORIAL PARTIDAS CARGADAS: CARLA
+- FORMATO/COLORES: VALERIA
+
 
 # Ideas
 - Bot que te suguiera la siguiente accion
