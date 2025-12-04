@@ -1,10 +1,17 @@
 package com.ucm.commands;
 
+import java.io.IOException;
+
+import com.ucm.GameType;
 import com.ucm.gameobjects.Player;
 import com.ucm.middleclasses.CommandResult;
 
 
 public class CallCommand extends Command {
+
+    public CallCommand(){
+        super();
+    };
 
     public CallCommand(Player p, int money, int pocketMoney) {
         super(p, money, pocketMoney);
@@ -35,4 +42,23 @@ public class CallCommand extends Command {
     public String getCommandName() {
         return "CALL";
     }
+
+    @Override
+    protected int getCommandIdentifier(){
+        return GameType.CALL;
+    }
+
+    @Override
+    public Command create(int codePlay, Player p) throws IOException {
+        //TODO controlar exception
+        if(!correctCode(codePlay)) throw null;
+        return new CallCommand(p, p.getMoney(), p.getPocketMoney());
+    }
+
+    @Override
+    protected boolean correctCode(int codePlay) {
+         return codePlay == GameType.CALL;
+    }
+
+    
 }

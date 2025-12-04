@@ -15,7 +15,7 @@ public class GameType {
     public static final int CALL = 4;
     public static final int RAISE = 5;
     public static final int PRE_FLOP = 6;
-    public static final int NO_PRE_FLOP = 6;
+    public static final int NO_PRE_FLOP = 7;
    
     // SOLICITAR CONEXION 
     public static final int ESTABLISH_CONECTION = 10;

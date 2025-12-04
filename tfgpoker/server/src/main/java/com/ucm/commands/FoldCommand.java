@@ -1,10 +1,17 @@
 package com.ucm.commands;
 
+import java.io.IOException;
+
+import com.ucm.GameType;
 import com.ucm.gameobjects.Player;
 import com.ucm.middleclasses.CommandResult;
 
 
 public class FoldCommand extends Command {
+
+    public FoldCommand(){
+        super();
+    }
 
     public FoldCommand(Player p) {
         super(p, 0, 0);
@@ -30,4 +37,20 @@ public class FoldCommand extends Command {
         return "FOLD";
     }
 
+    @Override
+    protected int getCommandIdentifier(){
+        return GameType.FOLD;
+    }
+    
+    @Override
+    public Command create(int codePlay, Player p) throws IOException {
+        //TODO controlar exception
+        if(!correctCode(codePlay)) throw null;
+        return new FoldCommand(p);
+    }
+
+    @Override
+    protected boolean correctCode(int codePlay) {
+        return codePlay == GameType.FOLD;
+    }
 }

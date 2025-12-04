@@ -133,7 +133,7 @@ public class Game {
                 int codePlay = player.makePlay();
 
                 // Command receives all necessary info
-                Command play = infoPlay(codePlay, player);
+                Command play = Command.parse(codePlay, player);
         
                 // Execute command
                 CommandResult result = play.execute(_currentSB, _currentBB, maxBet);
@@ -241,28 +241,4 @@ public class Game {
         }
         System.out.print("\n");
     }
-
-    private Command infoPlay(int codePlay, Player player){
-        
-        switch (codePlay) {
-            case GameType.FOLD:
-                return new FoldCommand(player);
-
-            case GameType.CHECK:
-                return new CheckCommand(player);
-
-            case GameType.ALL_IN:
-                return new AllInCommand(player, player.getMoney(), player.getPocketMoney());
-
-            case GameType.CALL:
-                return new CallCommand(player, player.getMoney(), player.getPocketMoney());
-
-            case GameType.RAISE:
-                return new RaiseCommand(player, player.getMoney(), player.getPocketMoney());
-                
-            default:
-                return null;
-        }
-    }
-
 }
