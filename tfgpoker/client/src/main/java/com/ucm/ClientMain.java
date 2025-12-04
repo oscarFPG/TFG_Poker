@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.*;
 import java.util.Arrays;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class ClientMain extends Application {
@@ -22,6 +23,8 @@ public class ClientMain extends Application {
     private static int Cards[] = new int[4];
     private static int Board_Cards[] = new int[10];
     private static String _playerName = "User";
+
+    private static Socket _socket;
 
     /*
      * Desde la ruta TFGPOKER/tfgpoker
@@ -33,17 +36,78 @@ public class ClientMain extends Application {
      *      .\mvnw.cmd test
      */
     public static void main(String[] args) {
-        preGame();
+
+        // Connect to server
+        try{
+            _socket = new Socket(host, GameType.PORT);
+            System.out.printf("Socket cliente creado en el puerto %d\n", GameType.PORT);
+        }
+        catch(IOException e){
+            System.out.printf("ERROR: %s\n", e.getMessage());
+            System.out.printf("Terminating program!\n");
+            return;
+        }
+        
+        // Get user petition to the server
+        Scanner scanner = new Scanner(System.in);
+        boolean opcionValida = false;
+        int opcion = -1;
+        while(!opcionValida){
+
+            System.out.flush();
+            System.out.printf("Seleccione que desea hacer: \n");
+            System.out.printf("0: Crear una nueva partida\n");
+            System.out.printf("1: Unirme a una nueva partida\n");
+            System.out.printf("2: Reconectarme a una partida en curso\n");
+
+            opcion = -1;
+            try{
+                opcion = scanner.nextInt();
+            }
+            catch(InputMismatchException e){
+                System.out.printf("ERROR: introduzca un numero valido\n");
+            }
+
+            opcionValida = (0 <= opcion && opcion <= 2); 
+        }
+        scanner.close();
+
+        boolean success = false;
+        if(opcion == 0){
+            success = sendPetitionCode(GameType.PETITION_CREATE_MATCH);
+            createPokerRoom();
+        }
+        else if(opcion == 1){
+            success = sendPetitionCode(GameType.PETITION_JOIN_MATCH);
+            joinPokerRoom();
+        }
+        else if(opcion == 2){
+            success = sendPetitionCode(GameType.PETITION_RECONNECT_MATCH);
+            reconnectPokerRoom();
+        }
+
+        cleanup();
     }
 
-    public static void preGame(){
-        
-        // launch(args);
+    private static boolean sendPetitionCode(final int code){
+
+        // Send petition code to server
+        try{
+            SocketUtils.sendInteger(_socket.getOutputStream(), code);
+        }
+        catch(IOException e){
+            return false;
+        }
+
+        return true;
+    }
+
+    private static void createPokerRoom(){
+
         int isAdmin = -1;
         int gameStart = -1;
 
         Scanner scanner = new Scanner(System.in);
-
         try {
 
             Socket socket = new Socket(host, GameType.PORT);                                     
@@ -76,7 +140,7 @@ public class ClientMain extends Application {
             gameStart = SocketUtils.receiveInt(socket.getInputStream());
             System.out.printf("Comenzando partida!\n");
 
-            // La partida comienza
+            // Match starts
 
             scanner.close();
             socket.close();
@@ -86,13 +150,34 @@ public class ClientMain extends Application {
 
     }
 
+    private static void joinPokerRoom(){
+        // TODO
+    }
+
+    private static void reconnectPokerRoom(){
+        // TODO
+    }
+
+    private static void cleanup(){
+
+        // Shut down server
+        try{
+            if(_socket != null && !_socket.isClosed()){
+                _socket.close();
+            }
+        }
+        catch(IOException e){
+            System.out.printf("Shutting down server!\n");
+        }
+    }
+
+
     private void logic(){
         
         //launch(args);
         try{
 
             Socket socket = new Socket(host, GameType.PORT);
-            System.out.printf("Socket cliente creado en el puerto %d\n", GameType.PORT);
 
             OutputStream output = socket.getOutputStream(); // Send buffer
             InputStream input = socket.getInputStream();    // Receive buffer

@@ -4,6 +4,7 @@ package com.ucm;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.UUID;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -11,6 +12,7 @@ import java.net.Socket;
 // Poker Game
 import com.ucm.control.Controller;
 import com.ucm.evaluator.Evaluator;
+import com.ucm.game.PokerRoom;
 import com.ucm.middleclasses.DTOClient;
 import com.ucm.logic.Game;
 import com.ucm.SocketUtils;
@@ -18,9 +20,10 @@ import com.ucm.SocketUtils;
 
 public class ServerMain {
 
-    private static int MAX_PLAYERS = Game.NUM_MAX_PLAYERS;
+    public static int MAX_PLAYERS = Game.NUM_MAX_PLAYERS;
 
     private static ServerSocket _serverSocket;
+    private static List<PokerRoom> _gamesList;
 
     /*
      * Desde la ruta TFGPOKER/tfgpoker
@@ -38,24 +41,56 @@ public class ServerMain {
         try{
 
             Evaluator ev = Evaluator.getInstance();
-            _serverSocket = new ServerSocket(GameType.PORT);
-            System.out.printf("Socket servidor creado en el puerto %d\n", GameType.PORT);
 
+            _serverSocket = new ServerSocket(GameType.PORT);
+            _gamesList = new ArrayList<PokerRoom>();
+
+            System.out.printf("Socket servidor creado en el puerto %d\n", GameType.PORT);
             while(true){
 
-                List<DTOClient> clientList = preGame();
+                Socket newClient = _serverSocket.accept();
+                int clientPetition = SocketUtils.receiveInt( newClient.getInputStream() );
 
-                if(!clientList.isEmpty())
-                    game(clientList);
+                if(clientPetition == GameType.PETITION_CREATE_MATCH){
+                    createPokerRoom();
+                }
+                else if(clientPetition == GameType.PETITION_JOIN_MATCH){
+                    joinPokerRoom();
+                }
+                else if(clientPetition == GameType.PETITION_RECONNECT_MATCH){
+                    reconnectPokerRoom();
+                }
+                else{
+                    SocketUtils.sendInteger(newClient.getOutputStream(), GameType.PETITION_UNKNOWN);
+                    newClient.close();
+                }
+            }
+
+        }
+        catch(IOException e){   // Handle errors when creating main Server Socket or Evaluator -> Terminate program
+            System.out.printf("ERROR: %s\n", e.getMessage() );
+        }
+
+        cleanup();
+    }
+
+    private static void createPokerRoom() throws IOException{
+        
+        List<DTOClient> clientList = preGame();
+
+        String uniqueID = UUID.randomUUID().toString();
+        ServerSocket newServerSocket = new ServerSocket(0);
+        try{
+            if(!clientList.isEmpty()){
+                _gamesList.add( new PokerRoom(uniqueID, newServerSocket, clientList) );
             }
         }
         catch(IOException e){
             System.out.printf("ERROR: %s\n", e.getMessage());
         }
-
     }
 
-    public static List<DTOClient> preGame(){
+    private static List<DTOClient> preGame(){
 
         List<DTOClient> _sockets = new ArrayList<>();
         Random rand = new Random();
@@ -73,7 +108,6 @@ public class ServerMain {
 
                 _sockets.add( newClient );
             }
-
 
             // Notify all players if they are or not the admin player -> Always the first connected, first on the list
             System.out.printf("Mandando permisos de clientes\n");
@@ -107,11 +141,25 @@ public class ServerMain {
         return _sockets;
     }
 
-    public static void game(final List<DTOClient> clients) throws IOException{
+    private static void joinPokerRoom(){
 
-        Game game = new Game(clients);
-        Controller controller = new Controller(game);
-        controller.run();
+    }
+
+    private static void reconnectPokerRoom(){
+
+    }
+
+    private static void cleanup(){
+
+        // Shut down server
+        try{
+            if(_serverSocket != null && !_serverSocket.isClosed()){
+                _serverSocket.close();
+            }
+        }
+        catch(IOException e){
+            System.out.printf("Shutting down server!\n");
+        }
     }
 
 }
