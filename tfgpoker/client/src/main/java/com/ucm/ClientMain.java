@@ -26,11 +26,11 @@ public class ClientMain extends Application {
     /*
      * Desde la ruta TFGPOKER/tfgpoker
      * Run:
-     * .\mvnw.cmd -pl client -Prun exec:java
+     *      .\mvnw.cmd -pl client -Prun exec:java
      * Debug:
-     * .\mvnwDebug.cmd -pl client -Pdebug exec:java
+     *      .\mvnwDebug.cmd -pl client -Pdebug exec:java
      * Run the Tests
-     * .\mvnw.cmd test
+     *      .\mvnw.cmd test
      */
     public static void main(String[] args) {
         preGame();

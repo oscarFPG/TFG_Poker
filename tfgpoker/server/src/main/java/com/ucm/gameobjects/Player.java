@@ -60,6 +60,9 @@ public class Player {
     }
 
     public int makePlay() throws IOException{
+
+        menuMakePlay();
+
         return SocketUtils.receiveInt( _socket.getInputStream() );
     }
 

@@ -47,6 +47,7 @@ public class Game {
     private int _currentSB;
     private int _currentBB;
 
+
     public Game(final List<DTOClient> sockets) {
 
         _initialSmallBlind = Game.INITIAL_SB;
@@ -149,10 +150,11 @@ public class Game {
 
                 // Update remaining players loop
                 playsToMake = result.raises() ? (_playerList.activePlayersCounter() - 1) : (playsToMake - 1);
+
                 // Update maxBet and get next player
                 currentBet = result.bet();
                 maxBet = Integer.max(maxBet, currentBet);
-                Player nextPlayer = _playerList.getNextPlayerActive(player);
+                player = _playerList.getNextPlayerActive(player);
             }
 
         }
@@ -247,17 +249,17 @@ public class Game {
                 return new FoldCommand(player);
 
             case GameType.CHECK:
-                
                 return new CheckCommand(player);
+
             case GameType.ALL_IN:
-                
                 return new AllInCommand(player, player.getMoney(), player.getPocketMoney());
+
             case GameType.CALL:
-                
                 return new CallCommand(player, player.getMoney(), player.getPocketMoney());
+
             case GameType.RAISE:
-                
                 return new RaiseCommand(player, player.getMoney(), player.getPocketMoney());
+                
             default:
                 return null;
         }
