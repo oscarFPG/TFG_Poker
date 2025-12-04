@@ -115,26 +115,32 @@ public class Game {
         _playerList.passTurn();
     }
 
-    public void playHand() throws OnlyOnePlayerLeftException, IOException {
+    public void playHand() throws OnlyOnePlayerLeftException {
 
         int pot = 0;
         try {
 
-            int currentBet = 0, maxBet = 0;
+            int currentBet = 0;
+            int maxBet = _currentBB;
             int playsToMake = (_isPreflop) ? _playerList.activePlayersCounter() - 1 : _playerList.activePlayersCounter();
             int playerRemaining = playsToMake + 1;
+            Player player = (_isPreflop) ? _playerList.smallBlindAndBigBlindPlays(_currentSB, _currentBB, playsToMake) : _playerList.getFirst();
 
-            Player player = (_isPreflop) ? _playerList.smallBlindAndBigBlindPlays(_currentSB, _currentBB, playsToMake) : _playerList.getFirst(); 
             // Keep players betting until all have reach the same bet or only one player is left
-            maxBet = _currentBB;
-            while( !(playsToMake == 0) ){// If all players remaining have checked -> Exit loop
+            while( !(playsToMake == 0) ){   // If all players remaining have checked -> Exit loop
 
-                // Player executes a command
-                int codePlay = player.makePlay();
+                int codePlay = -1;
+                try{
+                    // Player executes a command
+                    codePlay = player.makePlay();
+                }
+                catch(IOException e){   // Problems with socket -> Ignore player but keep in match
+                    player.fold();
+                }
 
                 // Command receives all necessary info
                 Command play = infoPlay(codePlay, player);
-        
+
                 // Execute command
                 CommandResult result = play.execute(_currentSB, _currentBB, maxBet);
 
@@ -158,8 +164,8 @@ public class Game {
             }
 
         }
-        // Collect remaining bets only if the round ended because all players folded in their turn and there is only one left
-        catch (OnlyOnePlayerLeftException e) {
+        
+        catch (OnlyOnePlayerLeftException e) { 
             _isPreflop = false;
             _showdownSkipped = true;
             pot = _playerList.collectAllBets();
@@ -259,7 +265,7 @@ public class Game {
 
             case GameType.RAISE:
                 return new RaiseCommand(player, player.getMoney(), player.getPocketMoney());
-                
+
             default:
                 return null;
         }

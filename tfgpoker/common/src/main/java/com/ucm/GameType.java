@@ -4,11 +4,16 @@ public class GameType {
     
     private GameType(){}
 
+    // PETITIONS
+    public static final int PETITION_CREATE_MATCH = 1001;
+    public static final int PETITION_JOIN_MATCH = 1002;
+    public static final int PETITION_RECONNECT_MATCH = 1003;
+    public static final int PETITION_UNKNOWN = 1004;
 
-    // PORT
+    // GENERAL SERVER PORT
     public static final int PORT = 5005;
 
-    // JUGADAS
+    // HAND TYPE
     public static final int FOLD = 1;
     public static final int CHECK = 2;
     public static final int ALL_IN = 3;
@@ -17,11 +22,9 @@ public class GameType {
     public static final int PRE_FLOP = 6;
     public static final int NO_PRE_FLOP = 6;
    
-    // SOLICITAR CONEXION 
+    // CONNECTION STATUS
     public static final int ESTABLISH_CONECTION = 10;
-    //  ACEPTAR CONEXION
     public static final int CONECTION_ACEPTED = 11;
-    //  DENEGAR CONEXION 
     public static final int CONECTION_DECLINE = 12;
 
     // TURN_MOVE

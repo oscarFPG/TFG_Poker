@@ -64,9 +64,6 @@ public class Controller {
                 if (Game.DEBUG)
                     _game.showStateDEBUG();
             }
-            catch(IOException e){
-                // TODO : Revisar bien esto, es un problema serio
-            }
             catch (OnlyOnePlayerLeftException e) {
                 _game.giveRewardToWinner();
             }
