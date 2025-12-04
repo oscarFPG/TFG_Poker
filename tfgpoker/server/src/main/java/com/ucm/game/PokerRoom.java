@@ -22,9 +22,11 @@ public class PokerRoom{
         _ID = ID;
         _roomSocket = socket;
         _clients = clients;
+
+        System.out.printf("Nueva partida creada con exito");
     }
 
-    
+
     public void start(){
 
         Game game = new Game(_clients);
