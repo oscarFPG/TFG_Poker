@@ -115,7 +115,7 @@ public class Game {
         _playerList.passTurn();
     }
 
-    public void playHand() throws OnlyOnePlayerLeftException {
+    public void playHand() throws OnlyOnePlayerLeftException, IOException {
 
         int pot = 0;
         try {
@@ -162,7 +162,6 @@ public class Game {
                 maxBet = Integer.max(maxBet, currentBet);
                 player = _playerList.getNextPlayerActive(player);
             }
-
         }
         
         catch (OnlyOnePlayerLeftException e) { 
