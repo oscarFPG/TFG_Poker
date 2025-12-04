@@ -115,7 +115,7 @@ public class Game {
         _playerList.passTurn();
     }
 
-    public void playHand() throws OnlyOnePlayerLeftException, IOException {
+    public void playHand() throws OnlyOnePlayerLeftException {
 
         int pot = 0;
         try {
@@ -129,17 +129,18 @@ public class Game {
             // Keep players betting until all have reach the same bet or only one player is left
             while( !(playsToMake == 0) ){   // If all players remaining have checked -> Exit loop
 
+                Command play = null;
                 int codePlay = -1;
                 try{
                     // Player executes a command
                     codePlay = player.makePlay();
+
+                    // Command receives all necessary info
+                    play = Command.parse(codePlay, player);
                 }
                 catch(IOException e){   // Problems with socket -> Ignore player but keep in match
                     player.fold();
                 }
-
-                // Command receives all necessary info
-                Command play = Command.parse(codePlay, player);
         
                 // Execute command
                 CommandResult result = play.execute(_currentSB, _currentBB, maxBet);
@@ -163,7 +164,6 @@ public class Game {
                 player = _playerList.getNextPlayerActive(player);
             }
         }
-        
         catch (OnlyOnePlayerLeftException e) { 
             _isPreflop = false;
             _showdownSkipped = true;
