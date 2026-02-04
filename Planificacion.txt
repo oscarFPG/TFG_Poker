@@ -46,7 +46,7 @@ Dudas/Cuestiones:
 
 Planificación:
 1. Documentar todo el código actual + documentar nuevo código al momento
-2. Dividir las tareas del  servidor con múltiples threads -> Óscar
+2. Dividir las tareas de la estructura cliente-servidor -> Óscar
 3. Dividir las tareas del interfaz(cliente) -> Carla
 4. Dividir las tareas de los tests -> Carla
 5. Dividir las tareas del módulo de estadísticas -> Valeria
