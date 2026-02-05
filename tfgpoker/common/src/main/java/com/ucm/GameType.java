@@ -5,6 +5,8 @@ public class GameType {
     private GameType(){}
 
 
+    public static final int PORT = 5005;
+
     //JUGADAS
     //FOLD
     public static final int FOLD = 1;
@@ -29,20 +31,20 @@ public class GameType {
     public static final int CONECTION_DECLINE = 12;
 
     //TURN_MOVE
-     public static final int TURN_PLAY = 20;
+    public static final int TURN_PLAY = 20;
     //TURN_WAIT
-     public static final int TURN_WAIT = 21;
+    public static final int TURN_WAIT = 21;
     //TURN_OTHER_PLAYER
-     public static final int TURN_OTHER_PLAYER = 22;
+    public static final int TURN_OTHER_PLAYER = 22;
     //END_OF_ROUND (PRE-FLOP, FLOP, RIVER, ETC)
-     public static final int END_OF_ROUND = 23;
+    public static final int END_OF_ROUND = 23;
     //END_OF_HAND (SHOW_DOWN)
-     public static final int END_OF_HAND= 24;
+    public static final int END_OF_HAND= 24;
 
     //END_OF_GAME (SE ACABA TODO EL JUEGO)
-     public static final int END_OF_GAME= 25;
+    public static final int END_OF_GAME= 25;
 
-     public static final int GAME_STARTS= 26;
+    public static final int GAME_STARTS= 26;
     
 
 
