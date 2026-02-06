@@ -4,24 +4,20 @@ package com.ucm;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
-import java.nio.charset.StandardCharsets;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 import com.ucm.control.Controller;
 import com.ucm.evaluator.Evaluator;
 import com.ucm.logic.Game;
 import com.ucm.SocketUtils;
 
-
 public class ServerMain {
 
     private static int MAX_PLAYERS = 3;
+    private static int port = 5005;
 
-    private static ServerSocketChannel _serverSocket;
-    private static ByteBuffer _buffer;
+    private static ServerSocket _serverSocket;
 
     /*
      * Desde la ruta TFGPOKER/tfgpoker
@@ -36,14 +32,11 @@ public class ServerMain {
      */
     public static void main(String[] args) {
 
+        /*
         try{
 
-            _serverSocket = ServerSocketChannel.open();
-            _serverSocket.bind( new InetSocketAddress("localhost", GameType.PORT) );
-            System.out.printf("Socket servidor creado en el puerto %d\n", GameType.PORT);
-
-            SocketChannel client = _serverSocket.accept();
-            System.out.print("Nuevo cliente aceptado!\n");
+            _serverSocket = new ServerSocket(port);
+            System.out.printf("Socket servidor creado en el puerto %d\n", port);
 
             while(true){
                 preGame();
@@ -51,7 +44,7 @@ public class ServerMain {
             }
         }
         catch(IOException e){
-            System.out.printf("Error creating ServerSocketChannel: %s\n", e.getMessage());
+            
         }
 
 
@@ -69,7 +62,7 @@ public class ServerMain {
 
     public static void preGame(){
 
-        SocketChannel socketList[] = new SocketChannel[3];
+        Socket socketList[] = new Socket[3];
         int socketCounter = 0;
 
         try {
@@ -85,33 +78,34 @@ public class ServerMain {
              * 
              * IMPORTANTE: SOLO PREPARTIDA
              */
+
             while (socketCounter < MAX_PLAYERS) {
                 socketList[socketCounter] = _serverSocket.accept();
                 socketCounter++;
             }
 
-            SocketChannel adminSocket = socketList[0];
+            Socket adminSocket = socketList[0];
             int code = 0;
 
             // Avisar a los jugadores si son admin o no
             System.out.printf("Mandando permisos de clientes\n");
             for(int i = 0; i < MAX_PLAYERS; i++){
-                if(socketList[i] == adminSocket){}
-                    //SocketUtils.sendInteger(socketList[i].getOutputStream(), GameType.PLAYER_IS_ADMIN);
-                //else
-                    //SocketUtils.sendInteger(socketList[i].getOutputStream(), GameType.PLAYER_NOT_ADMIN);
+                if(socketList[i] == adminSocket)
+                    SocketUtils.sendInteger(socketList[i].getOutputStream(), GameType.PLAYER_IS_ADMIN);
+                else
+                    SocketUtils.sendInteger(socketList[i].getOutputStream(), GameType.PLAYER_NOT_ADMIN);
             }
 
             // Esperar a que el administrador empiece la partida
             System.out.printf("Esperando al admin para comenzar\n");
             do {
-                //code = SocketUtils.receiveInt(adminSocket.getInputStream());
+                code = SocketUtils.receiveInt(adminSocket.getInputStream());
             } while (code != GameType.GAME_START_ADMINISTRATOR);
             System.out.printf("Admin ha comenzado la partida!\n");
 
             // Avisar a todos los clientes de que la partida ha comenzado
             for(int i = 0; i < MAX_PLAYERS; i++){
-                //SocketUtils.sendInteger(socketList[i].getOutputStream(), GameType.START_GAME);
+                SocketUtils.sendInteger(socketList[i].getOutputStream(), GameType.START_GAME);
             }
 
             // Empezar partida

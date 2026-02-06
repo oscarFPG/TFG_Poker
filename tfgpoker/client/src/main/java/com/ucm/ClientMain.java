@@ -4,11 +4,7 @@ package com.ucm;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketAddress;
-import java.nio.ByteBuffer;
-import java.nio.channels.SocketChannel;
 import java.util.Arrays;
 
 import javafx.application.Application;
@@ -19,7 +15,10 @@ import javafx.stage.Stage;
 
 public class ClientMain extends Application {
     
-    private static ByteBuffer _buffer;
+    public static String host = "localhost";
+    public static int port = 5005;
+    private static int Cards[] = new int[4];
+    private static int Board_Cards[] = new int[10];
 
     /*
      * Desde la ruta TFGPOKER/tfgpoker
@@ -33,17 +32,6 @@ public class ClientMain extends Application {
     public static void main(String[] args) {
 
         //launch(args);
-        try{
-            SocketChannel socket = SocketChannel.open( new InetSocketAddress("localhost", GameType.PORT) );
-            System.out.printf("SocketChannel creado en el puerto %d\n", GameType.PORT);
-
-            socket.close();
-        }
-        catch(IOException e){
-            System.out.printf("Error creating SocketChannel: %s\n", e.getMessage());
-        }
-
-        /*
         try{
 
             Socket socket = new Socket(host, port);
@@ -157,7 +145,13 @@ public class ClientMain extends Application {
         catch(IOException e){
             System.out.printf("ERROR: %s\n", e.getMessage());
         }
-        */
+        
+    }
+
+
+    private void recieveCards(){
+
+
     }
 
 
