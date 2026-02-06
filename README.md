@@ -2,7 +2,7 @@
 
 # Indice
 Seccion [integrantes](#integrantes)\
-Seccion [eequisitos del proyecto](#requisitos-del-proyecto)\
+Seccion [requisitos del proyecto](#requisitos-del-proyecto)\
 Seccion [guía de instalación](#guia-instalación)\
 Seccion [modos de uso](#modos-de-uso)\
 Seccion [diagramas(HACER)](#diagramas)\
