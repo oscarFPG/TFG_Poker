@@ -1,23 +1,17 @@
 package com.ucm;
 
-// Poker Game
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.ServerSocket;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.ucm.control.Controller;
-import com.ucm.evaluator.Evaluator;
-import com.ucm.logic.Game;
-import com.ucm.SocketUtils;
 
 public class ServerMain {
 
-    private static int MAX_PLAYERS = 3;
-    private static int port = 5005;
-
-    private static ServerSocket _serverSocket;
+    public static int MAX_PLAYERS = 9;
 
     /*
      * Desde la ruta TFGPOKER/tfgpoker
@@ -32,34 +26,58 @@ public class ServerMain {
      */
     public static void main(String[] args) {
 
-        /*
+        ServerSocketChannel serverSocket;
+        List<SocketChannel> clientList = new ArrayList<>();
+        Thread clientThreads[] = new Thread[MAX_PLAYERS];
         try{
+            serverSocket = ServerSocketChannel.open();
+            serverSocket.configureBlocking(false);
+            serverSocket.bind( new InetSocketAddress(GameType.PORT) );
+            System.out.printf("Servidor esperando cliente...\n");
 
-            _serverSocket = new ServerSocket(port);
-            System.out.printf("Socket servidor creado en el puerto %d\n", port);
-
-            while(true){
-                preGame();
-                //game();
+            // Wait for host client -> Client who created the match
+            SocketChannel hostClient = null;
+            while( hostClient == null ){
+               hostClient = serverSocket.accept();
             }
+            System.out.printf("Cliente conectado!\n");
+            clientList.add(hostClient);
+
+            // Wait for up to 8 more clients
+            clientThreads[0] = new Thread(() -> {
+                System.out.printf("Host\n");
+            });
+
+            clientThreads[0].start();
+            for(int i = 1; i < MAX_PLAYERS; i++){
+
+                final int id = i;
+                clientThreads[i] = new Thread( () -> {
+                        
+                    SocketChannel newClient = waitPlayer(id);
+                    if(newClient != null){
+                        clientList.add(newClient);
+                    }
+
+                });
+                clientThreads[i].start();
+            }
+
         }
-        catch(IOException e){
-            
+        catch(IOException exception){
+            System.out.printf("ERROR: %s\n", exception.getMessage());
         }
 
-
-        /*
-         * try {
-         * Evaluator ev = Evaluator.getInstance();
-         * Game game = new Game();
-         * Controller controller = new Controller(game);
-         * controller.run();
-         * } catch (IOException e) {
-         * System.out.printf("Evaluator class failed on instaciating\n");
-         * }
-         */
     }
 
+    private static SocketChannel waitPlayer(final int threadID){
+
+        System.out.printf("Esperando cliente desde el thread con id %d...\n", threadID);
+
+        return null;
+    }
+
+    /* 
     public static void preGame(){
 
         Socket socketList[] = new Socket[3];
@@ -67,17 +85,10 @@ public class ServerMain {
 
         try {
 
-            /*
-             * 1. Guardar cada conexion en una lista
-             * 2. Mientras se pueda aceptar más jugadores, esperar a un jugador nuevo
-             * 3. Si la partida está llena, esperar al cliente administrar que quiera
-             * empezar
-             * 4. Si el código de empezar coincide con START_GAME
-             * -> Hacer llegar el socket a playerList
-             * -> controller.run
-             * 
-             * IMPORTANTE: SOLO PREPARTIDA
-             */
+            // 1. Guardar cada conexion en una lista
+            // 2. Mientras se pueda aceptar más jugadores, esperar a un jugador nuevo
+            // 3. Si la partida está llena, esperar al cliente administrar que quiera empezar
+            // 4. Si el código de empezar coincide con START_GAME
 
             while (socketCounter < MAX_PLAYERS) {
                 socketList[socketCounter] = _serverSocket.accept();
@@ -115,5 +126,6 @@ public class ServerMain {
             System.out.printf("ERROR: %s\n", e.getMessage());
         }
     }
+    */
 
 }

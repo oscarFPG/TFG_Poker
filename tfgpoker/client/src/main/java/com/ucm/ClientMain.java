@@ -1,12 +1,12 @@
 package com.ucm;
 
-// GUI
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Socket;
-import java.util.Arrays;
 
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.channels.SocketChannel;
+
+// GUI
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -14,11 +14,8 @@ import javafx.stage.Stage;
 
 
 public class ClientMain extends Application {
-    
-    public static String host = "localhost";
-    public static int port = 5005;
-    private static int Cards[] = new int[4];
-    private static int Board_Cards[] = new int[10];
+
+    private static String hostname = "localhost";
 
     /*
      * Desde la ruta TFGPOKER/tfgpoker
@@ -31,7 +28,23 @@ public class ClientMain extends Application {
      */
     public static void main(String[] args) {
 
-        //launch(args);
+        SocketChannel socket;
+        try{
+            socket = SocketChannel.open();
+            socket.configureBlocking(false);
+            
+            socket.connect( new InetSocketAddress(hostname, GameType.PORT) );
+            System.out.printf("Cliente conectado\n");
+            
+        }
+        catch(IOException e){
+            System.out.printf("ERROR: %d\n", e.getMessage());
+        }
+        
+        
+
+        /*
+        launch(args);
         try{
 
             Socket socket = new Socket(host, port);
@@ -145,13 +158,7 @@ public class ClientMain extends Application {
         catch(IOException e){
             System.out.printf("ERROR: %s\n", e.getMessage());
         }
-        
-    }
-
-
-    private void recieveCards(){
-
-
+        */
     }
 
 
@@ -163,4 +170,3 @@ public class ClientMain extends Application {
         stage.show();
     }
 }
- 
