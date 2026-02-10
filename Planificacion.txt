@@ -1,0 +1,55 @@
+Que tenemos hecho:
+- Core del juego de póker completo
+- Cliente/Servidor que es capaz de haz:
+	- Acepta clientes
+	- Crea salas de juego es parcialmente funcional
+	- Unirse a salas es funcional
+	- Jugadores en prepartida y comienza la partida
+- Diseño de las interfaces del juego(Bocetos)
+- Configuración de dependencias de JavaFX
+- Hemos comenzado a implementar tests(Solo con el algoritmo de jugadas)
+- Patrones de diseño utilizados hasta el momento: Command, Singleton
+- Diagrama de clase de la aplicación
+- Diagrama de secuencia del servidor/cliente
+
+
+Organización:
+- Uso de GitHub y backlog
+- Uso de un Wrapper de Maven como gestor de dependencias
+- Dos reuniones semanales
+
+
+Que nos queda por hacer:
+- Javadoc
+- Memoria
+- Implementar servidor con multiples threads
+- Módulo Bots
+- Implementar módulo interfaz(cliente)
+- Módulo de estadísticas
+- Módulo de tests
+- Implementar más patrones de diseño(Observer, Iterator)
+- Implementar CI/CD pipelines
+- Refactorizar código
+- Funciones para reproducir el historial de una partida(Tipo Chess.com)
+
+
+Dudas/Cuestiones:
+- Como ejecutar tests para servidor con proyecto con módulos
+- Usar ThreadPools ¿?
+- Usar SocketChannel, UDP u otro tipo de socket(Para hacer que en una prepartida, estemos esperando a nuevos jugadores mientras el admin lo admita y evitar el bloqueo del programa al hacer accept() sin tener que cerrar el Socket)
+- ¿Usar un hilo por jugador?
+- Qué otros patrones podríamos usar
+- Aplicaciones/páginas para hacer diagramas de clase/secuencia
+- Implementar CI/CD pipelines
+- Formato memoria y presentación
+
+
+Planificación:
+1. Documentar todo el código actual + documentar nuevo código al momento
+2. Dividir las tareas de la estructura cliente-servidor -> Óscar
+3. Dividir las tareas del interfaz(cliente) -> Carla
+4. Dividir las tareas de los tests -> Carla
+5. Dividir las tareas del módulo de estadísticas -> Valeria
+6. Dividir las tareas del módulo de bots -> Óscar
+7. Dividir las tareas del historial(Tipo Chess.com) -> Valeria
+8. Planificar y dividir secciones de la memoria -> Todos

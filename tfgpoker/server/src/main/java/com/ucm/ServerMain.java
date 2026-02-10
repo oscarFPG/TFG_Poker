@@ -1,179 +1,131 @@
 package com.ucm;
 
-
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.UUID;
 import java.io.IOException;
-import java.net.ServerSocket;
+import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.rmi.server.ServerRef;
-
-// Poker Game
-import com.ucm.control.Controller;
-import com.ucm.evaluator.Evaluator;
-import com.ucm.game.PokerRoom;
-import com.ucm.middleclasses.DTOClient;
-import com.ucm.logic.Game;
-import com.ucm.SocketUtils;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ServerMain {
 
-    public static int MAX_PLAYERS = Game.NUM_MAX_PLAYERS;
-
-    private static ServerSocket _serverSocket;
-    private static List<PokerRoom> _gamesList;
+    public static int MAX_PLAYERS = 9;
 
     /*
      * Desde la ruta TFGPOKER/tfgpoker
-     *      .\mvnw.cmd clean install
+     * .\mvnw.cmd clean install
      * Run:
-     *      .\mvnw.cmd -pl server -Prun exec:java
+     * .\mvnw.cmd -pl server -Prun exec:java
      * Debug:
-     *      .\mvnwDebug.cmd -pl server -Pdebug exec:java
+     * .\mvnwDebug.cmd -pl server -Pdebug exec:java
      * 
      * Run the Tests
-     *      .\mvnw.cmd test
+     * .\mvnw.cmd test
      */
     public static void main(String[] args) {
 
+        ServerSocketChannel serverSocket;
+        List<SocketChannel> clientList = new ArrayList<>();
+        Thread clientThreads[] = new Thread[MAX_PLAYERS];
         try{
+            serverSocket = ServerSocketChannel.open();
+            serverSocket.configureBlocking(false);
+            serverSocket.bind( new InetSocketAddress(GameType.PORT) );
+            System.out.printf("Servidor esperando cliente...\n");
 
-            Evaluator ev = Evaluator.getInstance();
+            // Wait for host client -> Client who created the match
+            SocketChannel hostClient = null;
+            while( hostClient == null ){
+               hostClient = serverSocket.accept();
+            }
+            System.out.printf("Cliente conectado!\n");
+            clientList.add(hostClient);
 
-            _serverSocket = new ServerSocket(GameType.PORT);
-            _gamesList = new ArrayList<PokerRoom>();
+            // Wait for up to 8 more clients
+            clientThreads[0] = new Thread(() -> {
+                System.out.printf("Host\n");
+            });
 
-            System.out.printf("Socket server created on port %d\n", GameType.PORT);
-            while(true){
+            clientThreads[0].start();
+            for(int i = 1; i < MAX_PLAYERS; i++){
 
-                Socket newClient = _serverSocket.accept();
-                int clientPetition = SocketUtils.receiveInt( newClient.getInputStream() );
+                final int id = i;
+                clientThreads[i] = new Thread( () -> {
+                        
+                    SocketChannel newClient = waitPlayer(id);
+                    if(newClient != null){
+                        clientList.add(newClient);
+                    }
 
-                if(clientPetition == GameType.PETITION_CREATE_MATCH){
-                    ServerSocket newServerSocket = new ServerSocket(0);
-                    SocketUtils.sendInteger(newClient.getOutputStream(), newServerSocket.getLocalPort());
-                    
-                    System.out.printf("Sending port %d\n", newServerSocket.getLocalPort());
-                    createPokerRoom(newServerSocket);
-                    break;
-                }
-                else if(clientPetition == GameType.PETITION_JOIN_MATCH){
-                    joinPokerRoom(newClient);
-                }
-                else if(clientPetition == GameType.PETITION_RECONNECT_MATCH){
-                    reconnectPokerRoom(newClient);
-                }
-                else{
-                    SocketUtils.sendInteger(newClient.getOutputStream(), GameType.PETITION_UNKNOWN);
-                    newClient.close();
-                }
+                });
+                clientThreads[i].start();
             }
 
         }
-        catch(IOException e){   // Handle errors when creating main Server Socket or Evaluator -> Terminate program
-            System.out.printf("ERROR: %s\n", e.getMessage() );
+        catch(IOException exception){
+            System.out.printf("ERROR: %s\n", exception.getMessage());
         }
 
-        cleanup();
     }
 
-    private static void createPokerRoom(ServerSocket server) throws IOException{
-        
-        String uniqueID = UUID.randomUUID().toString();
-        //List<DTOClient> clientList = preGame(server);
+    private static SocketChannel waitPlayer(final int threadID){
 
-        Socket client = server.accept();
-        SocketUtils.sendString(client.getOutputStream(), "Partida creada");
-        server.close();
-        client.close();
+        System.out.printf("Esperando cliente desde el thread con id %d...\n", threadID);
 
-        /*
-        try{
-            if(!clientList.isEmpty()){
-                _gamesList.add( new PokerRoom(uniqueID, server, clientList) );
-            }
-            else
-                System.out.printf("Partida creada!\n");
-        }
-        catch(IOException e){
-            System.out.printf("ERROR: %s\n", e.getMessage());
-        }
-        */
+        return null;
     }
 
-    private static List<DTOClient> preGame(ServerSocket server){
+    /* 
+    public static void preGame(){
 
-        List<DTOClient> clientSocketList = new ArrayList<>();
-        Random rand = new Random();
-        int matchID = rand.nextInt();
+        Socket socketList[] = new Socket[3];
+        int socketCounter = 0;
 
         try {
 
-            // Keep waiting for more players while limit not reached
-            while (clientSocketList.size() < MAX_PLAYERS) {
+            // 1. Guardar cada conexion en una lista
+            // 2. Mientras se pueda aceptar más jugadores, esperar a un jugador nuevo
+            // 3. Si la partida está llena, esperar al cliente administrar que quiera empezar
+            // 4. Si el código de empezar coincide con START_GAME
 
-                Socket clientSocket = server.accept();
-
-                String playerName = SocketUtils.receiveString( clientSocket.getInputStream() );
-                DTOClient newClient = new DTOClient(clientSocketList.size(), matchID, playerName, clientSocket);
-
-                clientSocketList.add( newClient );
+            while (socketCounter < MAX_PLAYERS) {
+                socketList[socketCounter] = _serverSocket.accept();
+                socketCounter++;
             }
 
-            // Notify all players if they are or not the admin player -> Always the first connected, first on the list
-            System.out.printf("Mandando permisos de clientes\n");
-            Socket adminSocket = clientSocketList.get(0).socket();
-            for(DTOClient client : clientSocketList){
-
-                Socket currentSocket = client.socket();
-                if(currentSocket == adminSocket)
-                    SocketUtils.sendInteger(currentSocket.getOutputStream(), GameType.PLAYER_IS_ADMIN);
-                else
-                    SocketUtils.sendInteger(currentSocket.getOutputStream(), GameType.PLAYER_NOT_ADMIN);
-            }
-
-            // Wait for administrator to start the match
-            System.out.printf("Esperando al admin para comenzar\n");
+            Socket adminSocket = socketList[0];
             int code = 0;
+
+            // Avisar a los jugadores si son admin o no
+            System.out.printf("Mandando permisos de clientes\n");
+            for(int i = 0; i < MAX_PLAYERS; i++){
+                if(socketList[i] == adminSocket)
+                    SocketUtils.sendInteger(socketList[i].getOutputStream(), GameType.PLAYER_IS_ADMIN);
+                else
+                    SocketUtils.sendInteger(socketList[i].getOutputStream(), GameType.PLAYER_NOT_ADMIN);
+            }
+
+            // Esperar a que el administrador empiece la partida
+            System.out.printf("Esperando al admin para comenzar\n");
             do {
                 code = SocketUtils.receiveInt(adminSocket.getInputStream());
             } while (code != GameType.GAME_START_ADMINISTRATOR);
-
-            // Notify all players the game started
             System.out.printf("Admin ha comenzado la partida!\n");
+
+            // Avisar a todos los clientes de que la partida ha comenzado
             for(int i = 0; i < MAX_PLAYERS; i++){
-                SocketUtils.sendInteger(clientSocketList.get(i).socket().getOutputStream(), GameType.START_GAME);
+                SocketUtils.sendInteger(socketList[i].getOutputStream(), GameType.START_GAME);
             }
+
+            // Empezar partida
+            // ...
 
         } catch (IOException e) {
             System.out.printf("ERROR: %s\n", e.getMessage());
         }
-
-        return clientSocketList;
     }
-
-    private static void joinPokerRoom(Socket client){
-
-    }
-
-    private static void reconnectPokerRoom(Socket client){
-
-    }
-
-    private static void cleanup(){
-
-        // Shut down server
-        try{
-            if(_serverSocket != null && !_serverSocket.isClosed()){
-                _serverSocket.close();
-            }
-        }
-        catch(IOException e){
-            System.out.printf("Shutting down server!\n");
-        }
-    }
+    */
 
 }

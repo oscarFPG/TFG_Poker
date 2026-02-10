@@ -1,8 +1,5 @@
 package com.ucm.gameobjects;
 
-import java.io.IOException;
-import java.net.Socket;
-import com.ucm.SocketUtils;
 import com.ucm.commands.AllInCommand;
 import com.ucm.commands.CallCommand;
 import com.ucm.commands.CheckCommand;
@@ -14,37 +11,19 @@ import java.util.Scanner;
 
 public class Player {
 
-    /**
-     * 
-     */
     private int _id;
-
-    /**
-     * 
-     */
     private String _name;
-
-    /**
-     * Player's total money that is not on bet
-     */
-    private int _money;
-
-    /** 
-     * Money the play has bet.
-     * It is not lost unless the player folds or loses and it is a portion of all player money
-     */
-    private int _pocketMoney;
-
+    private int _money;         // Player's total money
+    private int _pocketMoney;   // Money the play has bet. It is not lost unless the player folds or loses and
+                                // it is a portion of the remaining of the total
     private PlayerRole _role;
     private Card[] _cards;
     private int _numCards;
     private boolean _fold;
     private boolean _hasLost;
 
-    private Socket _socket;
 
-
-    public Player(int id, String name, int money, Socket socket) {
+    public Player(int id, String name, int money) {
         _id = id;
         _name = name;
         _money = money;
@@ -55,25 +34,102 @@ public class Player {
         _numCards = 0;
         _fold = false;
         _hasLost = false;
-
-        _socket = socket;
     }
 
-    public int makePlay() throws IOException{
+    public Command makePlay() {
 
-        menuMakePlay();
-        return SocketUtils.receiveInt( _socket.getInputStream() );
+        Scanner sc = new Scanner(System.in);
+        int jugada = -1;
+
+        do {
+
+            menuMakePlay();
+            jugada = sc.nextInt();  // Suponemos que la entrada siempre es un numero
+            sc.close();
+
+            switch (jugada) {
+            case 0:
+                return new FoldCommand(this);
+            
+            case 1:
+                return new CheckCommand(this);
+            
+            case 2:
+                return new CallCommand(this, _money, _pocketMoney);
+
+            case 3:
+                Scanner scanner = new Scanner(System.in);
+                int nuevaApuesta = 0;
+                System.out.printf("Introduzca la cantidad a apostar: ");
+                nuevaApuesta = scanner.nextInt();
+                System.out.printf("\n");
+
+                return new RaiseCommand(this, nuevaApuesta, _money, _pocketMoney);
+
+            case 4:
+                return new AllInCommand(this, _money + _pocketMoney);
+
+            default:
+                return null;
+            }
+
+            /*
+            switch (jugada) {
+                case 0:
+                    return new FoldCommand(this, _pocketMoney);
+
+                case 1:
+                    if (maxBet != 0) { // No puedo hacer check si hay alguna apuesta en juego
+                        System.out.println("You can't do check"); 
+                    }
+                    return new CheckCommand(this, _pocketMoney);
+
+                case 2:
+                    if (!isEnoughMoney(maxBet - _pocketMoney)) { // No puedo igualar porque no tengo suficiente dinero
+                        System.out.println("Not enough money to make a call");
+                        return new FoldCommand(this, _pocketMoney);
+                        // TODO Habrá que preguntarle al jugador si quiere hacer un allIn retirarse.
+                        // Se entiende que no quiere hacer fold
+                    }
+                    return new CallCommand(this, _pocketMoney);
+
+                case 3:
+                    //
+                    // TODO Si no tengo suficiente dinero para subir, ver si tengo suficiente dinero
+                    // para igualar, y si tengo, hago call
+                    // (decidir si hacer call obligatoriamente o preguntar si el jugador quiere
+                    // hacer call u allin), si no,
+                    // tendría que hacer fold u allin
+                    //
+                    if (!isEnoughMoney(10)) {
+                        System.out.println("Not enough money to make a raise");
+                        return new CallCommand(this, _pocketMoney);
+                    }
+                    return new RaiseCommand(this, _pocketMoney);
+
+                case 4:
+                    return new AllInCommand(this, _pocketMoney);
+
+                default:
+                    System.out.println("Opción no válida. Vuelva a intentarlo...");
+                    jugada = -1;
+                    break;
+            }
+            */
+
+        } while (jugada == -1);
+
     }
 
     private void menuMakePlay() {
         System.out.printf("Haz una jugada, %s!\n", getName());
-        System.out.printf("Opciones de jugada: \n");
-        System.out.printf("0: fold \n");
-        System.out.printf("1: check \n");
-        System.out.printf("2: call \n");
-        System.out.printf("3: raise \n");
-        System.out.printf("4: allIn \n");
-        System.out.printf("Introduce tu jugada: ");
+        System.out.println("Opciones de jugada: ");
+        System.out.println("0: fold ");
+        System.out.println("1: check ");
+        System.out.println("2: call ");
+        System.out.println("3: raise ");
+        System.out.println("4: allIn ");
+        System.out.println("Introduce tu jugada: ");
     }
 
     public void makeForcedBet(int sb, int bb) {
@@ -134,7 +190,7 @@ public class Player {
 
     public void call(int maxBet) {
 
-        int resto = maxBet - this._pocketMoney; // dinero que necesita para igualar la apuesta en juego
+        int resto = maxBet - _pocketMoney; // dinero que necesita para igualar la apuesta en juego
         // Aumento la apuesta de mi ronda
         increasePocketMoney(resto);
 
@@ -143,23 +199,21 @@ public class Player {
     }
 
     public void allIn() {
-        increasePocketMoney(this._money);
-        this._money = 0;
+        increasePocketMoney(_money);
+        _money = 0;
     }
 
     public void raise(int maxBet) {
 
         // Si tengo menos dinero de lo que está apostado y quiero subir
         // entonces primero igualo y luego subo lo que sea(max All-in)
-        if (this._pocketMoney < maxBet) {
+        if (_pocketMoney <= maxBet) {
             call(maxBet);
-            // ejemplo: apuesto 10
-            // this._pocketMoney += 10;
             return;
         }
 
         // En cualquier otro caso subo lo que eliga el player(max All-in)
-        this._pocketMoney += 10;
+        _pocketMoney += 10;
     }
 
     public void receivePriceMoney(int money) {
@@ -167,16 +221,16 @@ public class Player {
     }
 
     private void decreaseMoney(int bet) {
-        this._money -= bet;
+        _money -= bet;
     }
 
     private void increasePocketMoney(int bet) {
-        this._pocketMoney += bet;
+        _pocketMoney += bet;
     }
 
     private boolean isEnoughMoney(int bet) {
 
-        if (bet > this._money)
+        if (bet > _money)
             return false;
 
         return true;
@@ -184,8 +238,8 @@ public class Player {
 
     public String toString() {
 
-        String carta1 = (this._cards[0] != null) ? _cards[0].toString() : Card.MissingCardToString();
-        String carta2 = (this._cards[1] != null) ? _cards[1].toString() : Card.MissingCardToString();
+        String carta1 = (_cards[0] != null) ? _cards[0].toString() : Card.MissingCardToString();
+        String carta2 = (_cards[1] != null) ? _cards[1].toString() : Card.MissingCardToString();
 
         return String.format("Player[%d]: %s - %s%s", _id, _name, carta1, carta2);
     }
