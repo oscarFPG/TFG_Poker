@@ -1,10 +1,11 @@
 package com.ucm;
 
-
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.util.Scanner;
+import java.lang.Thread;
 
 // GUI
 import javafx.application.Application;
@@ -29,19 +30,73 @@ public class ClientMain extends Application {
     public static void main(String[] args) {
 
         SocketChannel socket;
+        ByteBuffer buffer;
         try{
             socket = SocketChannel.open();
             socket.configureBlocking(false);
-            
+
             socket.connect( new InetSocketAddress(hostname, GameType.PORT) );
-            System.out.printf("Cliente conectado\n");
+            System.out.printf("Client connected!\n");
             
+            // Check if SocketChannel is already connected and avoid busy wait
+            while(!socket.finishConnect()){
+                Thread.sleep(500);
+            }
+
+            // Get clients petition
+            Scanner scanner = new Scanner(System.in);
+            System.out.printf("1-Create\n2-Join\nWrite option name: ");
+            String input = scanner.next();
+
+            // Send client petition
+            if(input.equalsIgnoreCase("create")){
+
+                buffer = ByteBuffer.allocate( Integer.BYTES );
+                buffer.putInt( GameType.CREATE_PETITION );
+                buffer.flip();
+
+                // Send petition to server
+                while(buffer.hasRemaining()){
+                    socket.write(buffer);
+                }
+            }
+            else if(input.equalsIgnoreCase("join")){
+
+                buffer = ByteBuffer.allocate( Integer.BYTES );
+                buffer.putInt( GameType.JOIN_PETITION );
+                buffer.flip();
+
+                // Send petition to server
+                while(buffer.hasRemaining()){
+                    socket.write(buffer);
+                }
+            }
+            else{
+                System.out.printf("Petition not found\n");
+            }
+
+            socket.close();
+
+            /*
+            // Receive server response
+            int bytesRead = 0;
+            System.out.printf("Client waiting server response\n");
+            while(bytesRead == 0){
+                bytesRead = socket.read(buffer);
+            }
+            buffer.flip();
+
+            // Check response
+            int value = buffer.getInt();
+            System.out.printf("Value read %d\n", value);
+
+            socket.close();
+            */
         }
-        catch(IOException e){
+        catch(IOException | InterruptedException e){
             System.out.printf("ERROR: %d\n", e.getMessage());
         }
-        
-        
+                
 
         /*
         launch(args);

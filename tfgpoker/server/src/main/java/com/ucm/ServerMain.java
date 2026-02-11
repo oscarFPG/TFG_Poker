@@ -2,7 +2,7 @@ package com.ucm;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
@@ -11,7 +11,10 @@ import java.util.List;
 
 public class ServerMain {
 
-    public static int MAX_PLAYERS = 9;
+    public static int MAX_PLAYERS = 2;
+    private static ServerSocketChannel serverSocket;
+    private static boolean hostWantsToStart;
+    private static boolean matchStarts;
 
     /*
      * Desde la ruta TFGPOKER/tfgpoker
@@ -26,9 +29,8 @@ public class ServerMain {
      */
     public static void main(String[] args) {
 
-        ServerSocketChannel serverSocket;
         List<SocketChannel> clientList = new ArrayList<>();
-        Thread clientThreads[] = new Thread[MAX_PLAYERS];
+        List<ByteBuffer> clientBuffers;
         try{
             serverSocket = ServerSocketChannel.open();
             serverSocket.configureBlocking(false);
@@ -36,45 +38,69 @@ public class ServerMain {
             System.out.printf("Servidor esperando cliente...\n");
 
             // Wait for host client -> Client who created the match
-            SocketChannel hostClient = null;
-            while( hostClient == null ){
-               hostClient = serverSocket.accept();
+            SocketChannel client = null;
+            while( client == null ){
+               client = serverSocket.accept();
             }
-            System.out.printf("Cliente conectado!\n");
-            clientList.add(hostClient);
-
-            // Wait for up to 8 more clients
-            clientThreads[0] = new Thread(() -> {
-                System.out.printf("Host\n");
-            });
-
-            clientThreads[0].start();
-            for(int i = 1; i < MAX_PLAYERS; i++){
-
-                final int id = i;
-                clientThreads[i] = new Thread( () -> {
-                        
-                    SocketChannel newClient = waitPlayer(id);
-                    if(newClient != null){
-                        clientList.add(newClient);
-                    }
-
-                });
-                clientThreads[i].start();
+            clientList.add(client);
+            hostWantsToStart = false;
+            matchStarts = false;
+            System.out.printf("New client accepted!\nNumber of players %d\n", clientList.size()); 
+            
+            // Receive client petition
+            int bytesRead = 0;
+            ByteBuffer buffer = ByteBuffer.allocate( Integer.BYTES );
+            System.out.printf("Server waiting for clients petition\n");
+            while(bytesRead == 0){
+                bytesRead = client.read(buffer);
             }
+            buffer.flip();
+
+            // Answer the clients petition
+            int value = buffer.getInt();
+            if(value == GameType.CREATE_PETITION){
+                System.out.printf("Client wants to create a match\n");
+            }
+            else if(value == GameType.JOIN_PETITION){
+                System.out.printf("Client wants to join to a match\n");
+            }
+
+            /*
+            // Wait up to 9 players more
+            while( clientList.size() != MAX_PLAYERS ){
+
+                SocketChannel client = serverSocket.accept();
+                if(client != null){
+                    clientList.add(client);
+                    System.out.printf("New client accepted!\nNumber of players %d\n", clientList.size());
+                }
+            }
+
+            // Create a ByteBuffer to receive/send from/to any client 
+            clientBuffers = new ArrayList<>( clientList.size() );
+            for(int i = 0; i < clientList.size(); i++){
+
+                // Escribir dato en el buffer del cliente
+                clientBuffers.add( ByteBuffer.allocate(256) );
+                ByteBuffer buffer = clientBuffers.get(i);
+                buffer = ByteBuffer.allocate( Integer.BYTES );
+                buffer.putInt( GameType.GAME_STARTS );
+                buffer.flip();
+
+                // Enviar dato al cliente
+                SocketChannel client = clientList.get(i);
+                while(buffer.hasRemaining()){
+                    client.write(buffer);
+                }
+                System.out.printf("Valor %d enviado al cliente %d!\n", GameType.GAME_STARTS, i);
+            }
+            */
 
         }
         catch(IOException exception){
             System.out.printf("ERROR: %s\n", exception.getMessage());
         }
 
-    }
-
-    private static SocketChannel waitPlayer(final int threadID){
-
-        System.out.printf("Esperando cliente desde el thread con id %d...\n", threadID);
-
-        return null;
     }
 
     /* 
