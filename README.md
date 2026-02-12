@@ -90,6 +90,8 @@ Diagrama de secuencia client-servidor: https://lucid.app/lucidchart/f9ab4fa7-572
 ## Carla: https://www.canva.com/design/DAG4-bkXV3g/rrCtnFoGoazWZRvlErGPMg/view?utm_content=DAG4-bkXV3g&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h82762ed43d
 ## Valeria: https://www.canva.com/design/DAG5ozfLFcY/nyCNiNNGe0UVs5OQ7FaYrg/edit
 
+## Plantilla oficial interfaz: https://ucomplutense-my.sharepoint.com/:p:/r/personal/carlatoa_ucm_es/Documents/PLANTILLA%20POKER.pptx?d=w39d7c2dc428d45c79c11ddaaadb6830a&csf=1&web=1&e=xgrq4b
+
 # Ideas
 - Bot que te suguiera la siguiente accion
 - Bot personalizado (parametros que el usuario quiere que tenga el bot)
