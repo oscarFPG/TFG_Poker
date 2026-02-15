@@ -2,11 +2,13 @@ package com.ucm;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -63,45 +65,26 @@ public class ServerMain {
                     SelectionKey key = keys.next();
                     keys.remove();
 
+                    if(!key.isValid())
+                        continue;
+
+
                     if (key.isAcceptable()) {
-                        
+                        handleAccept(key, selector);
                     }
                     else if (key.isReadable()) {
-                        
+                        handleReceive(key);
                     }
                     else if (key.isWritable()) {
-                        
+                        handleSend(key);
                     }
                 }
-
-                // Wait for host client -> Client who created the match
-                SocketChannel client = serverSocket.accept();
-                if(client != null){
-                    clientList.add(client);
-                    System.out.printf("New client accepted!\nNumber of players %d\n", clientList.size()); 
-                }
                 
-                // Receive client petition
-                int bytesRead = 0;
-                ByteBuffer buffer = ByteBuffer.allocate( Integer.BYTES );
-                System.out.printf("Server waiting for clients petition\n");
-                while(bytesRead == 0){
-                    bytesRead = client.read(buffer);
-                }
-                buffer.flip();
-
-                // Answer the clients petition
-                int value = buffer.getInt();
-                if(value == GameType.CREATE_PETITION){
-                    System.out.printf("Client wants to create a match\n");
-                }
-                else if(value == GameType.JOIN_PETITION){
-                    System.out.printf("Client wants to join to a match\n");
-                }
             }
         }
         catch(IOException e) {
             System.out.printf("%s\n", e.getMessage());
+            e.printStackTrace();
         }
         finally {
 
@@ -148,8 +131,81 @@ public class ServerMain {
         
     }
 
-    private static void handleNewClientPetition(SelectionKey key, Selector selector){
 
+    private static void handleAccept(SelectionKey key, Selector selector) throws IOException {
+
+        ServerSocketChannel serverChannel = (ServerSocketChannel) key.channel();
+        SocketChannel client = serverChannel.accept();
+        client.configureBlocking(false);
+
+        client.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE, ByteBuffer.allocate(256));
+        clientList.add(client);
+        System.out.printf("New client connected!\n");
+    }
+
+    /**
+     * Primer elemento  : 1 byte para tipo de dato: INT(0x1) y STRING(0x2)
+     * Segundo elemento : 4 bytes para el tamaño en bytes del dato. INT(4 bytes) y STRING(tantos bytes como caracteres)
+     * Tercer elemento  : Tantos bytes como sean necesarios para los datos
+     * @param key
+     * @throws IOException
+     */
+    private static void handleReceive(SelectionKey key) {
+
+        SocketChannel client = (SocketChannel) key.channel();
+        ByteBuffer buffer = (ByteBuffer) key.attachment();
+
+        try{
+
+            buffer.clear();
+            int bytesRead = client.read(buffer);
+
+            if (bytesRead == -1) {
+                System.out.println("Cliente desconectado\n");
+                client.close();
+                return;
+            }
+
+            buffer.flip();
+            if(buffer.remaining() < 5){
+                buffer.clear();
+                System.out.printf("Datos incompletos\n");
+                client.close(); // Muy restrictivo -> MUY provisional
+                return;
+            }
+
+            byte type = buffer.get();
+            int size = buffer.getInt();
+            if(type == GameType.INTEGER_TYPE){
+                int value = buffer.getInt();
+                System.out.printf("Numero recibido: %d\n", value);
+            }
+            else if(type == GameType.STRING_TYPE){
+                byte value[] = new byte[size];
+                buffer.get(value);
+                String message = new String(value, StandardCharsets.UTF_8);
+                System.out.printf("String recibido: %s\n", message);
+            }
+            else{
+                System.out.printf("Tipo de dato no reconocido\n");
+                client.close(); // Muy restrictivo -> MUY provisional
+            }
+
+        }
+        catch(SocketException e){
+            clientList.remove(client);
+            key.cancel();
+            System.out.printf("Ocurrió algun error con el cliente. Cerrando conexión de forma segura.\n ERROR: %s\n", e.getMessage());
+            System.out.printf("Cantidad %d\n", clientList.size());
+        }
+        catch(IOException e){
+            
+        }
+
+    }
+
+    private static void handleSend(SelectionKey key) throws IOException {
+        
     }
 
 }

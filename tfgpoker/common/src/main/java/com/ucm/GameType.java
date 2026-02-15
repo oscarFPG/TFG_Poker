@@ -7,6 +7,10 @@ public class GameType {
 
     public static final int PORT = 5005;
 
+    // Types
+    public static final byte INTEGER_TYPE = 1;
+    public static final byte STRING_TYPE = 2;
+
     // Clients petitions
     public static final int CREATE_PETITION = 10;
     public static final int JOIN_PETITION = 11;
