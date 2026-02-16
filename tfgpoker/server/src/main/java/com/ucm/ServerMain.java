@@ -12,30 +12,30 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.lang.Thread;
 
 
 public class ServerMain {
 
     public static int MAX_PLAYERS = 2;
-    private static ServerSocketChannel serverSocket;
     private static Selector selector;
-
+    private static ServerSocketChannel serverSocket;
+    private static ServerSocketChannel allowPlayersChannel;
     private static List<SocketChannel> clientList;
-    private static List<ByteBuffer> clientBuffers;
+    private static Thread allowPlayersThread;
 
     private static boolean hostWantsToStart;
     private static boolean matchCanStart;
 
     /*
      * Desde la ruta TFGPOKER/tfgpoker
-     * .\mvnw.cmd clean install
+     *      .\mvnw.cmd clean install
      * Run:
-     * .\mvnw.cmd -pl server -Prun exec:java
+     *      .\mvnw.cmd -pl server -Prun exec:java
      * Debug:
-     * .\mvnwDebug.cmd -pl server -Pdebug exec:java
-     * 
+     *      .\mvnwDebug.cmd -pl server -Pdebug exec:java
      * Run the Tests
-     * .\mvnw.cmd test
+     *      .\mvnw.cmd test
      */
     public static void main(String[] args) {
 
@@ -49,12 +49,11 @@ public class ServerMain {
             serverSocket.register(selector, SelectionKey.OP_ACCEPT);
 
             clientList = new ArrayList<>();
-            clientBuffers = new ArrayList<>();
 
             // Pregame
             hostWantsToStart = false;
             matchCanStart = false;
-            while(!hostWantsToStart || !matchCanStart){
+            while( clientList.size() != MAX_PLAYERS || (false && (!hostWantsToStart || !matchCanStart)) ){
 
                 selector.select();
 
@@ -97,50 +96,24 @@ public class ServerMain {
                 }
             }
         }
-
-        /*
-        // Wait up to 9 players more
-        while( clientList.size() != MAX_PLAYERS ){
-
-            SocketChannel client = serverSocket.accept();
-            if(client != null){
-                clientList.add(client);
-                System.out.printf("New client accepted!\nNumber of players %d\n", clientList.size());
-            }
-        }
-
-        // Create a ByteBuffer to receive/send from/to any client 
-        clientBuffers = new ArrayList<>( clientList.size() );
-        for(int i = 0; i < clientList.size(); i++){
-
-            // Escribir dato en el buffer del cliente
-            clientBuffers.add( ByteBuffer.allocate(256) );
-            ByteBuffer buffer = clientBuffers.get(i);
-            buffer = ByteBuffer.allocate( Integer.BYTES );
-            buffer.putInt( GameType.GAME_STARTS );
-            buffer.flip();
-
-            // Enviar dato al cliente
-            SocketChannel client = clientList.get(i);
-            while(buffer.hasRemaining()){
-                client.write(buffer);
-            }
-            System.out.printf("Valor %d enviado al cliente %d!\n", GameType.GAME_STARTS, i);
-        }
-        */
         
     }
 
-
+    /**
+     * 
+     * @param key
+     * @param selector
+     * @throws IOException
+     */
     private static void handleAccept(SelectionKey key, Selector selector) throws IOException {
 
         ServerSocketChannel serverChannel = (ServerSocketChannel) key.channel();
         SocketChannel client = serverChannel.accept();
         client.configureBlocking(false);
 
-        client.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE, ByteBuffer.allocate(256));
+        client.register(selector, SelectionKey.OP_READ, ByteBuffer.allocate(256));
         clientList.add(client);
-        System.out.printf("New client connected!\n");
+        System.out.printf("Nuevo cliente conectado!\n");
     }
 
     /**
@@ -157,39 +130,51 @@ public class ServerMain {
 
         try{
 
-            buffer.clear();
             int bytesRead = client.read(buffer);
-
             if (bytesRead == -1) {
-                System.out.println("Cliente desconectado\n");
+                System.out.println("Cliente desconectado y eliminado\n");
+                clientList.remove(client);
                 client.close();
                 return;
             }
 
+            // Modo lectura -> Recibir todos los datos del cliente si es posible, si no, salir y reintentar en la siguiente iteracion
             buffer.flip();
-            if(buffer.remaining() < 5){
-                buffer.clear();
-                System.out.printf("Datos incompletos\n");
-                client.close(); // Muy restrictivo -> MUY provisional
-                return;
-            }
+            while(buffer.remaining() >= 5){     // Leer todos los datos si estan disponibles
 
-            byte type = buffer.get();
-            int size = buffer.getInt();
-            if(type == GameType.INTEGER_TYPE){
-                int value = buffer.getInt();
-                System.out.printf("Numero recibido: %d\n", value);
+                buffer.mark();
+
+                byte type = buffer.get();
+                if(type == GameType.INTEGER_TYPE){
+
+                    if (buffer.remaining() < 4) {   // Faltan datos -> Guardar estado y esperar
+                        buffer.reset();
+                        break;
+                    }
+
+                    int petitionCode = buffer.getInt();
+                    handleClientPetition(key, petitionCode);
+                }
+                else if(type == GameType.STRING_TYPE){
+
+                    if (buffer.remaining() < 4) {   // Faltan datos -> Guardar estado y esperar
+                        buffer.reset();
+                        break;
+                    }
+
+                    int size = buffer.getInt();
+                    byte value[] = new byte[size];
+
+                    buffer.get(value);
+                    String message = new String(value, StandardCharsets.UTF_8);
+                    System.out.printf("String recibido: %s\n", message);
+                }
+                else{
+                    System.out.printf("Tipo de dato no reconocido\n");
+                    client.close(); // Muy restrictivo -> MUY provisional
+                }
             }
-            else if(type == GameType.STRING_TYPE){
-                byte value[] = new byte[size];
-                buffer.get(value);
-                String message = new String(value, StandardCharsets.UTF_8);
-                System.out.printf("String recibido: %s\n", message);
-            }
-            else{
-                System.out.printf("Tipo de dato no reconocido\n");
-                client.close(); // Muy restrictivo -> MUY provisional
-            }
+            buffer.compact();
 
         }
         catch(SocketException e){
@@ -199,13 +184,99 @@ public class ServerMain {
             System.out.printf("Cantidad %d\n", clientList.size());
         }
         catch(IOException e){
-            
+            System.out.printf("ERROR: %s\n", e.getMessage());
         }
 
     }
 
-    private static void handleSend(SelectionKey key) throws IOException {
+    /**
+     * 
+     * @param key
+     * @throws IOException
+     */
+    private static void handleSend(SelectionKey key) {
+
+        SocketChannel client = (SocketChannel) key.channel();
+        ByteBuffer buffer = (ByteBuffer) key.attachment();
+
+        try{
+
+            buffer.flip();
+            client.write(buffer);
+            if (buffer.hasRemaining()) {    // Si no todo fue enviado, mantenemos OP_WRITE activo
+                key.interestOps(key.interestOps() | SelectionKey.OP_WRITE);
+            }
+            else {  // Todo enviado, podemos dejar de escuchar OP_WRITE
+                key.interestOps(key.interestOps() & ~SelectionKey.OP_WRITE);
+                buffer.clear();
+            }
+        }
+        catch(IOException e){
+            System.out.printf("ERROR enviando datos al cliente: %s\n", e.getMessage());
+        }
         
+    }
+
+    /**
+     * 
+     * @param key
+     * @param petition
+     */
+    private static void handleClientPetition(SelectionKey key, final int petition){
+
+        SocketChannel client = (SocketChannel) key.channel();
+        ByteBuffer buffer = (ByteBuffer) key.attachment();
+
+        System.out.printf("Peticion recibida: %d\n", petition);
+        switch (petition) {
+        case GameType.CREATE_PETITION:
+
+            if(allowPlayersChannel == null){
+                
+                try{
+                    allowPlayersChannel = ServerSocketChannel.open();
+                    allowPlayersChannel.configureBlocking(false);
+                    allowPlayersChannel.bind(null);     // Create ServerSocketChannel in any port
+                    System.out.printf(
+                        "ServerSocketChannel de host creado en puerto %d\n", 
+                        allowPlayersChannel.socket().getLocalPort()
+                    );
+
+                    // Escribir nuevo puerto en buffer del cliente creador de partida(host)
+                    int port = allowPlayersChannel.socket().getLocalPort();
+                    buffer.clear();
+                    buffer.putInt(port);
+                    buffer.flip();
+
+                    // Solicitar envio de datos
+                    key.interestOps(key.interestOps() | SelectionKey.OP_WRITE);
+                }
+                catch(IOException e){
+                    System.out.printf("ERROR: %s\n", e.getMessage());
+                }
+            }
+            else{
+                System.out.printf("Ya existe una partida. No se puede crear otra\n");
+            }
+
+            break;
+    
+        case GameType.JOIN_PETITION:
+            break;
+        
+        default:
+            
+            System.out.printf("Peticion %d no valida\n", petition);
+            try {
+                clientList.remove(client);
+                client.close();
+                key.cancel();
+            }
+            catch (IOException e) {
+                System.out.printf("ERROR: %s\n", e.getMessage());
+            }
+            break;
+        }
     }
 
 }
