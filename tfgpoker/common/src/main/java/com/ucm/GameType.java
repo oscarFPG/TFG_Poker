@@ -15,6 +15,10 @@ public class GameType {
     public static final int CREATE_PETITION = 10;
     public static final int JOIN_PETITION = 11;
 
+    // Host privacy flag
+    public static final int MATCH_OPEN = 20;
+    public static final int MATCH_CLOSED = 21;
+
     public static final int GAME_STARTS = 10;
 
     // JUGADAS

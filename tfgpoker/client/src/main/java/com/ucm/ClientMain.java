@@ -3,6 +3,7 @@ package com.ucm;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SocketChannel;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -33,7 +34,8 @@ public class ClientMain extends Application {
      */
     public static void main(String[] args) {
 
-        SocketChannel socket;
+        SocketChannel socket = null;
+        SocketChannel hostSocket = null;
         ByteBuffer readBuffer, writeBuffer;
         try{
             socket = SocketChannel.open();
@@ -79,6 +81,43 @@ public class ClientMain extends Application {
             
                 int puerto = readBuffer.getInt();
                 System.out.printf("Nuevo puerto es %d\n", puerto);
+
+                hostSocket = SocketChannel.open();
+                hostSocket.configureBlocking(false);
+                hostSocket.connect( new InetSocketAddress(hostname, puerto) );
+                System.out.printf("Client connected to host socket!\n");
+
+                boolean salaAbierta = false;
+                while(true){
+
+                    scanner = new Scanner(System.in);
+                    System.out.printf("Que desea hacer?\n");
+                    System.out.printf("C - Cerrar/abrir privacidad de la sala\n");
+                    System.out.printf("S - Comenzar partida con los jugadores actuales\n");
+                    System.out.printf("> Opcion: ");
+                    String opcion = scanner.next();
+
+                    if(opcion.equalsIgnoreCase("c")){
+                        
+                        salaAbierta = !salaAbierta;
+
+                        writeBuffer = ByteBuffer.allocate(Integer.BYTES);
+                        if(salaAbierta) {
+                            writeBuffer.putInt(GameType.MATCH_OPEN);
+                        }
+                        else{
+                            writeBuffer.putInt(GameType.MATCH_CLOSED);
+                        }
+
+                        writeBuffer.flip();
+                        socket.write(writeBuffer);
+                    }
+                    else if(opcion.equalsIgnoreCase("s")){
+
+                    }
+
+                }
+
             }
             else if(input.equalsIgnoreCase("join") || input.equalsIgnoreCase("j")){
 
@@ -95,13 +134,21 @@ public class ClientMain extends Application {
             }
 
             while(true){}
-            //socket.close();
         }
         catch(NoSuchElementException e){    // El programa termina mientras se tiene el Scanner abierto y no se escribe nada
             scanner.close();
         }
         catch(IOException | InterruptedException e){
-            System.out.printf("ERROR: %d\n", e.getMessage());
+            System.out.printf("ERROR: %s\n", e.getMessage());
+        }
+        finally{
+
+            try{
+                socket.close();
+            }
+            catch(IOException e){
+                System.out.printf("Error closing socket: %s\n", e.getMessage());
+            }
         }
 
         //launch(args);
@@ -115,4 +162,5 @@ public class ClientMain extends Application {
         stage.setTitle("Poker TFG");
         stage.show();
     }
+
 }

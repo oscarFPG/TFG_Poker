@@ -20,12 +20,49 @@ public class ServerMain {
     public static int MAX_PLAYERS = 2;
     private static Selector selector;
     private static ServerSocketChannel serverSocket;
-    private static ServerSocketChannel allowPlayersChannel;
+    private static ServerSocketChannel allowPlayersServerSocket;
+    private static SocketChannel allowPlayersSocket;
     private static List<SocketChannel> clientList;
+    private static HostPrivacyThread hostPrivacy;
     private static Thread allowPlayersThread;
 
     private static boolean hostWantsToStart;
     private static boolean matchCanStart;
+    private static boolean hostAllowsMorePlayers;
+
+
+    public static class HostPrivacyThread implements Runnable {
+
+        public static ServerSocketChannel server;
+        public static SocketChannel host;
+
+        HostPrivacyThread(ServerSocketChannel s){
+            server = s;
+        }
+
+        @Override
+        public void run() {
+
+            // Connect
+            try{
+
+                System.out.printf("Waiting host...\n");
+                while(host == null)
+                    host = server.accept();
+                
+                host.configureBlocking(false);
+                System.out.printf("Host socket connected succesfully\n");
+                while(true){}
+            }
+            catch(IOException e){
+                System.out.printf("ERROR ON RUN METHOD: %s\n", e.getMessage());
+            }
+            
+            // Listen until match starts
+
+        }
+
+    }
 
     /*
      * Desde la ruta TFGPOKER/tfgpoker
@@ -53,12 +90,18 @@ public class ServerMain {
             // Pregame
             hostWantsToStart = false;
             matchCanStart = false;
-            while( clientList.size() != MAX_PLAYERS || (false && (!hostWantsToStart || !matchCanStart)) ){
+            hostAllowsMorePlayers = true;
+            while( !hostWantsToStart || !matchCanStart ){
 
+                // Check if host wants to allow more players
+                if(allowPlayersSocket != null && allowPlayersSocket.isOpen()){
+
+                    
+                }
+
+                // Accept, receive or send data to current clients
                 selector.select();
-
                 Iterator<SelectionKey> keys = selector.selectedKeys().iterator();
-
                 while (keys.hasNext()) {
 
                     SelectionKey key = keys.next();
@@ -68,13 +111,13 @@ public class ServerMain {
                         continue;
 
 
-                    if (key.isAcceptable()) {
+                    if (key.isAcceptable()) {       // Client connects
                         handleAccept(key, selector);
                     }
-                    else if (key.isReadable()) {
+                    else if (key.isReadable()) {    // Clients send data to server
                         handleReceive(key);
                     }
-                    else if (key.isWritable()) {
+                    else if (key.isWritable()) {    // Send data to clients
                         handleSend(key);
                     }
                 }
@@ -111,9 +154,15 @@ public class ServerMain {
         SocketChannel client = serverChannel.accept();
         client.configureBlocking(false);
 
-        client.register(selector, SelectionKey.OP_READ, ByteBuffer.allocate(256));
-        clientList.add(client);
-        System.out.printf("Nuevo cliente conectado!\n");
+        if(hostAllowsMorePlayers){
+            client.register(selector, SelectionKey.OP_READ, ByteBuffer.allocate(256));
+            clientList.add(client);
+            System.out.printf("Nuevo cliente conectado!\n");
+        }
+        else{
+            client.close();
+            System.out.printf("El host no admite a mas clientes, cerrando conexión entrante...\n");
+        }
     }
 
     /**
@@ -180,8 +229,8 @@ public class ServerMain {
         catch(SocketException e){
             clientList.remove(client);
             key.cancel();
-            System.out.printf("Ocurrió algun error con el cliente. Cerrando conexión de forma segura.\n ERROR: %s\n", e.getMessage());
-            System.out.printf("Cantidad %d\n", clientList.size());
+            System.out.printf("Ocurrió algun error con el cliente.\nCerrando conexión de forma segura.\n>ERROR: %s\n", e.getMessage());
+            System.out.printf("Numero de jugadoes actuales: %d\n", clientList.size());
         }
         catch(IOException e){
             System.out.printf("ERROR: %s\n", e.getMessage());
@@ -214,7 +263,7 @@ public class ServerMain {
         catch(IOException e){
             System.out.printf("ERROR enviando datos al cliente: %s\n", e.getMessage());
         }
-        
+
     }
 
     /**
@@ -231,29 +280,32 @@ public class ServerMain {
         switch (petition) {
         case GameType.CREATE_PETITION:
 
-            if(allowPlayersChannel == null){
+            if(allowPlayersServerSocket == null){
                 
                 try{
-                    allowPlayersChannel = ServerSocketChannel.open();
-                    allowPlayersChannel.configureBlocking(false);
-                    allowPlayersChannel.bind(null);     // Create ServerSocketChannel in any port
-                    System.out.printf(
-                        "ServerSocketChannel de host creado en puerto %d\n", 
-                        allowPlayersChannel.socket().getLocalPort()
-                    );
+                    // Create ServerSocketChannel in any port
+                    allowPlayersServerSocket = ServerSocketChannel.open();
+                    allowPlayersServerSocket.configureBlocking(false);
+                    allowPlayersServerSocket.bind(null);
 
                     // Escribir nuevo puerto en buffer del cliente creador de partida(host)
-                    int port = allowPlayersChannel.socket().getLocalPort();
+                    int port = allowPlayersServerSocket.socket().getLocalPort();
                     buffer.clear();
                     buffer.putInt(port);
                     buffer.flip();
 
                     // Solicitar envio de datos
                     key.interestOps(key.interestOps() | SelectionKey.OP_WRITE);
+
+                    // Listen to accept and send messages from host to allow more players in the match
+                    hostPrivacy = new HostPrivacyThread(allowPlayersServerSocket);
+                    allowPlayersThread = new Thread(hostPrivacy);
+                    allowPlayersThread.start();
                 }
                 catch(IOException e){
-                    System.out.printf("ERROR: %s\n", e.getMessage());
+                    System.out.printf("Error creando host socket: %s\n", e.getMessage());
                 }
+
             }
             else{
                 System.out.printf("Ya existe una partida. No se puede crear otra\n");
