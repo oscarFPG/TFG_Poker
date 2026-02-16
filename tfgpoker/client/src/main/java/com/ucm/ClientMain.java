@@ -15,7 +15,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
-
 public class ClientMain extends Application {
 
     private static String hostname = "localhost";
@@ -24,45 +23,46 @@ public class ClientMain extends Application {
 
     /*
      * Desde la ruta TFGPOKER/tfgpoker
-     *      .\mvnw.cmd clean install
+     * .\mvnw.cmd clean install
      * Run:
-     *      .\mvnw.cmd -pl client -Prun exec:java
+     * .\mvnw.cmd -pl client -Prun exec:java
      * Debug:
-     *      .\mvnwDebug.cmd -pl client -Pdebug exec:java
+     * .\mvnwDebug.cmd -pl client -Pdebug exec:java
      * Run the Tests
-     *      .\mvnw.cmd test
+     * .\mvnw.cmd test
      */
     public static void main(String[] args) {
 
         SocketChannel socket = null;
         SocketChannel hostSocket = null;
         ByteBuffer readBuffer, writeBuffer;
-        try{
+        try {
             socket = SocketChannel.open();
             socket.configureBlocking(false);
 
-            socket.connect( new InetSocketAddress(hostname, GameType.PORT) );
+            socket.connect(new InetSocketAddress(hostname, GameType.PORT));
             System.out.printf("Client connected!\n");
-            
+
             // Check if SocketChannel is already connected and avoid busy wait
-            while(!socket.finishConnect()){
+            while (!socket.finishConnect()) {
                 Thread.sleep(500);
             }
 
-            // Get clients petition
+            // Get client name
             scanner = new Scanner(System.in);
             System.out.printf("Write your username: ");
             name = scanner.next();
 
+            // Get clients petition
             System.out.printf("1-Create(C)\n2-Join(J)\nWrite option name: ");
             String input = scanner.next();
             scanner.close();
 
             // Send client petition
-            if(input.equalsIgnoreCase("create") || input.equalsIgnoreCase("c")){
+            if (input.equalsIgnoreCase("create") || input.equalsIgnoreCase("c")) {
 
-                writeBuffer = ByteBuffer.allocate(1 + Integer.BYTES);   // 1 byte de tipo + 4 bytes de integer(tamaño string) + integer
-
+                // 1 byte de tipo + 4 bytes de integer(tamaño string) + integer
+                writeBuffer = ByteBuffer.allocate(1 + Integer.BYTES);
                 writeBuffer.put(GameType.INTEGER_TYPE);
                 writeBuffer.putInt(GameType.CREATE_PETITION);
 
@@ -74,21 +74,24 @@ public class ClientMain extends Application {
                 readBuffer.clear();
 
                 int bytesRead = 0;
-                while(readBuffer.hasRemaining()){
+                while (readBuffer.hasRemaining()) {
                     bytesRead = socket.read(readBuffer);
                 }
                 readBuffer.flip();
-            
+
                 int puerto = readBuffer.getInt();
                 System.out.printf("Nuevo puerto es %d\n", puerto);
 
                 hostSocket = SocketChannel.open();
                 hostSocket.configureBlocking(false);
-                hostSocket.connect( new InetSocketAddress(hostname, puerto) );
+                hostSocket.connect(new InetSocketAddress(hostname, puerto));
                 System.out.printf("Client connected to host socket!\n");
 
+                readBuffer = ByteBuffer.allocate(Integer.BYTES);
+                readBuffer.clear();
                 boolean salaAbierta = false;
-                while(true){
+                boolean empezarPartida = false;
+                while (!empezarPartida) {
 
                     scanner = new Scanner(System.in);
                     System.out.printf("Que desea hacer?\n");
@@ -97,63 +100,67 @@ public class ClientMain extends Application {
                     System.out.printf("> Opcion: ");
                     String opcion = scanner.next();
 
-                    if(opcion.equalsIgnoreCase("c")){
-                        
+                    if (opcion.equalsIgnoreCase("c")) { // Abrir/cerrar sala
+
                         salaAbierta = !salaAbierta;
+                        writeBuffer = ByteBuffer.allocate(Integer.BYTES);
+                        int code = (salaAbierta) ? GameType.MATCH_OPEN : GameType.MATCH_CLOSED;
+
+                        writeBuffer.putInt(code);
+                        writeBuffer.flip();
+                        hostSocket.write(writeBuffer);
+                    } else if (opcion.equalsIgnoreCase("s")) { // Comenzar partida
 
                         writeBuffer = ByteBuffer.allocate(Integer.BYTES);
-                        if(salaAbierta) {
-                            writeBuffer.putInt(GameType.MATCH_OPEN);
-                        }
-                        else{
-                            writeBuffer.putInt(GameType.MATCH_CLOSED);
-                        }
-
+                        writeBuffer.putInt(GameType.GAME_STARTS);
                         writeBuffer.flip();
                         socket.write(writeBuffer);
-                    }
-                    else if(opcion.equalsIgnoreCase("s")){
 
+                        empezarPartida = true;
                     }
-
                 }
 
-            }
-            else if(input.equalsIgnoreCase("join") || input.equalsIgnoreCase("j")){
+                // Recibir señal de start del servidor
+                while (bytesRead != Integer.BYTES) {
 
-                writeBuffer = ByteBuffer.allocate(1 + Integer.BYTES);   // 1 byte de tipo + 4 bytes de integer(tamaño string) + integer
+                    int bytes = socket.read(readBuffer);
+                    if (bytes == -1) {
+                        System.out.printf("Conexión host cerrada de forma inesperada\n");
+                        hostSocket.close();
+                    }
 
+                    bytesRead += bytes;
+                }
+                System.out.printf("Match starts\n");
+
+            } else if (input.equalsIgnoreCase("join") || input.equalsIgnoreCase("j")) {
+
+                // 1 byte de tipo + 4 bytes de integer(tamaño string) + integer
+                writeBuffer = ByteBuffer.allocate(1 + Integer.BYTES);
                 writeBuffer.put(GameType.INTEGER_TYPE);
                 writeBuffer.putInt(GameType.JOIN_PETITION);
 
                 writeBuffer.flip();
                 socket.write(writeBuffer);
-            }
-            else{
+            } else {
                 System.out.printf("Petition not found\n");
             }
 
-            while(true){}
-        }
-        catch(NoSuchElementException e){    // El programa termina mientras se tiene el Scanner abierto y no se escribe nada
+        } catch (NoSuchElementException e) { // El programa termina mientras se tiene el Scanner abierto
             scanner.close();
-        }
-        catch(IOException | InterruptedException e){
+        } catch (IOException | InterruptedException e) {
             System.out.printf("ERROR: %s\n", e.getMessage());
-        }
-        finally{
+        } finally {
 
-            try{
+            try {
                 socket.close();
-            }
-            catch(IOException e){
+            } catch (IOException e) {
                 System.out.printf("Error closing socket: %s\n", e.getMessage());
             }
         }
 
-        //launch(args);
+        // launch(args);
     }
-
 
     @Override
     public void start(Stage stage) throws Exception {
