@@ -9,7 +9,8 @@ public class GameType {
 
     // Types
     public static final byte INTEGER_TYPE = 1;
-    public static final byte STRING_TYPE = 2;
+    public static final byte PETITION_TYPE = 2;
+    public static final byte NAME_TYPE = 3;
 
     // Clients petitions
     public static final int CREATE_PETITION = 10;
