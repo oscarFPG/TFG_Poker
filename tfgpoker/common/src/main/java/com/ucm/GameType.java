@@ -20,6 +20,10 @@ public class GameType {
     public static final int MATCH_OPEN = 20;
     public static final int MATCH_CLOSED = 21;
 
+    // Host petitions -> Host wants to start game
+    public static final int HOST_START_GAME = 22;
+
+    // Server notifies all players game has started
     public static final int GAME_STARTS = 10;
 
     // JUGADAS
@@ -78,8 +82,6 @@ public class GameType {
     public static final int PLAYER_NOT_ADMIN = 76;
     // GAME START ADMINISTRATOR
     public static final int GAME_START_ADMINISTRATOR = 71;
-    // START GAME
-    public static final int START_GAME = 72;
     // FULL TABLE
     public static final int FULL_TABLE = 73;
     // WAIT_GAME

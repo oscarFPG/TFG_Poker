@@ -27,16 +27,15 @@ public class ServerMain {
         }
     }
 
+
     public static int MAX_PLAYERS = 9;
 
     private static Selector _selector;
     private static ServerSocketChannel _serverSocket;
     private static List<ClientStruct> _roomList;
+    private static SocketChannel host;
 
     private static boolean _hostWantsToStart;
-    
-    
-    
     
     /*
      * Desde la ruta TFGPOKER/tfgpoker
@@ -88,6 +87,8 @@ public class ServerMain {
                 }
 
             }
+            System.out.printf("Host empieza la partida!\n");
+
         } 
         catch (IOException e) {
             System.out.printf("%s\n", e.getMessage());
@@ -211,51 +212,59 @@ public class ServerMain {
         SocketChannel client = (SocketChannel) key.channel();
         ByteBuffer buffer = (ByteBuffer) key.attachment();
 		
-		switch (petition) {
-		case GameType.CREATE_PETITION:
-			System.out.printf("Peticion CREATE del cliente\n");
-			if(_roomList.isEmpty()){
-				System.out.printf("Creando partida!\n");
-				_roomList.add( new ClientStruct(null, client) );
-			}
-			else{
-				System.out.printf("Partida ya existente!\n");
-				try {
-					
-					client.close();
-				}
-				catch (IOException e) {
-					System.out.printf("Error cerrando conexion con el cliente %s\n", e.getMessage());
-				}
-				
-			}
-			break;
+        // Gestionar peticiones del host de forma especial(START GAME)
+        if(client == host){
+            System.out.printf("El host quiere empezar! %d\n", petition);
+            _hostWantsToStart = true;
+        }
+        else{
 
-		case GameType.JOIN_PETITION:
-			System.out.printf("Peticion JOIN del cliente\n");
+            switch (petition) {
+            case GameType.CREATE_PETITION:
+                System.out.printf("Peticion CREATE del cliente\n");
+                if(_roomList.isEmpty()){
 
-			// No esta vacia(No ha sido creada) y no esta llena
-			if(!_roomList.isEmpty() && _roomList.size() < MAX_PLAYERS){
-				_roomList.add( new ClientStruct(null, client) );
-				System.out.printf("Uniendote a partida!\n");
-			}
-			else{
+                    System.out.printf("Creando partida!\n");
+                    _roomList.add( new ClientStruct(null, client) );
+                    host = client;
+                }
+                else{
+                    System.out.printf("Partida ya existente!\n");
+                    try {
+                        client.close();
+                    }
+                    catch (IOException e) {
+                        System.out.printf("Error cerrando conexion con el cliente %s\n", e.getMessage());
+                    }
+                }
+                break;
 
-				System.out.printf("Partida no creada o llena!\n");
-				try {
-					client.close();
-					key.cancel();
-				}
-				catch(IOException e) {
-					System.out.printf("Error intentando cerrar conexión de forma segura: %s\n", e.getMessage());
-				}
-			}
-			break;
-	
-		default:
-			System.out.printf("Peticion desconocida %d\n", petition);
-			break;
-		}
+            case GameType.JOIN_PETITION:
+                System.out.printf("Peticion JOIN del cliente\n");
+
+                // No esta vacia(No ha sido creada) y no esta llena
+                if(!_roomList.isEmpty() && _roomList.size() < MAX_PLAYERS){
+                    _roomList.add( new ClientStruct(null, client) );
+                    System.out.printf("Uniendote a partida!\n");
+                }
+                else{
+
+                    System.out.printf("Partida no creada o llena!\n");
+                    try {
+                        client.close();
+                        key.cancel();
+                    }
+                    catch(IOException e) {
+                        System.out.printf("Error intentando cerrar conexión de forma segura: %s\n", e.getMessage());
+                    }
+                }
+                break;
+        
+            default:
+                System.out.printf("Peticion desconocida %d\n", petition);
+                break;
+            }
+        }
     }
 
 }

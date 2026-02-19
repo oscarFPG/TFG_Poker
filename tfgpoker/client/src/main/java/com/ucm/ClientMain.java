@@ -7,6 +7,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.Scanner;
 
+
 // GUI
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -18,6 +19,7 @@ public class ClientMain extends Application {
 
     private static String hostname = "localhost";
     private static String name;
+	private static boolean hostStartsGame;
 
     /*
      * Desde la ruta TFGPOKER/tfgpoker
@@ -31,6 +33,8 @@ public class ClientMain extends Application {
      */
     public static void main(String[] args) {
 
+		// TODO: Asociar toda esta logica siguiente con el metodo preGame()
+		// Pregame
 		SocketChannel socket = null;
 		ByteBuffer buffer = null;
         Scanner scanner = new Scanner(System.in);
@@ -43,6 +47,7 @@ public class ClientMain extends Application {
             socket.configureBlocking(false);
             socket.connect( new InetSocketAddress(hostname, GameType.PORT) );
 
+			hostStartsGame = false;
             while(!socket.finishConnect()){}    // Wait until connection is finished
 
 			System.out.printf("Que desea hacer?\n");
@@ -53,6 +58,7 @@ public class ClientMain extends Application {
 
 			if(opcion == 1){
 
+				// Enviar peticion de crear partida
 				buffer = ByteBuffer.allocate(1 + Integer.BYTES);
 				buffer.clear();
 				buffer.put(GameType.PETITION_TYPE);			// Tipo de peticion
@@ -75,7 +81,35 @@ public class ClientMain extends Application {
 				while(buffer.hasRemaining()){
 					socket.write(buffer);
 				}
-				System.out.printf("Nombre enviado correctamente\n");
+				System.out.printf("Nombre enviado correctamente!\n");
+				System.out.printf("Esperando a más jugadores...\n");
+
+				// Esperar al host para solicitar el comienzo de partida
+				while(!hostStartsGame){
+
+					System.out.printf("Escribe \'start\' para comenzar la partida...\n");
+					String comando = scanner.next();
+					hostStartsGame = (comando.equalsIgnoreCase("start")) ? true : false;
+				}
+				System.out.printf("Host comienza la partida!\n");
+
+				// Enviar peticion comenzar partida
+				buffer = ByteBuffer.allocate(1 + Integer.BYTES);
+				buffer.clear();
+				buffer.put(GameType.PETITION_TYPE);			// Tipo de peticion
+				buffer.putInt(GameType.HOST_START_GAME);	// Codigo peticion
+				buffer.flip();
+
+				while(buffer.hasRemaining()){
+					socket.write(buffer);
+				}
+				System.out.printf("Peticion HOST START GAME mandada!\n");
+
+				// Esperar a recibir el aviso de comienzo de partida
+				// ...
+
+				// Comenzar partida
+				// ...
 			}
 			else if(opcion == 2){
 
@@ -107,7 +141,6 @@ public class ClientMain extends Application {
 				System.out.printf("Opcion no reconocida\n");
 			}
 
-			while(true){}
         }
         catch(IOException e) {
             System.out.printf("Error: %s\n", e.getMessage());
@@ -120,7 +153,15 @@ public class ClientMain extends Application {
 			catch (IOException e) {}
         }
 
+		// TODO: Asociar todo la logica siguiente al metodo game()
+		// Game
+		// ...
+
     }
+
+	private static void preGame(){}
+
+	private static void game(){}
 
     @Override
     public void start(Stage stage) throws Exception {
