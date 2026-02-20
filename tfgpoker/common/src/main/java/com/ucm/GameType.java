@@ -1,5 +1,6 @@
 package com.ucm;
 
+
 public class GameType {
     
     private GameType(){}
@@ -8,24 +9,26 @@ public class GameType {
     public static final int PORT = 5005;
 
     // Types
-    public static final byte INTEGER_TYPE = 1;
-    public static final byte PETITION_TYPE = 2;
-    public static final byte NAME_TYPE = 3;
+    public static final byte DATA_TYPE_PETITION = 1;    // Flag to send a pregame petition
+    public static final byte DATA_TYPE_NAME = 2;        // Flag to send a name as a string
 
-    // Clients petitions
-    public static final int CREATE_PETITION = 10;
-    public static final int JOIN_PETITION = 11;
+    // Clients and server codes during pregame
+    public static final int CREATE_PETITION = 10;   // Client requests creating a game
+    public static final int CREATE_PETITION_ERROR_ALREADY_A_GAME = 11;  // Server error response to CREATE_PETITION
 
-    // Host privacy flag
-    public static final int MATCH_OPEN = 20;
-    public static final int MATCH_CLOSED = 21;
+    public static final int JOIN_PETITION = 20;     // Client requests joining a game
+    public static final int JOIN_PETITION_ERROR = 21;   // Server error response to JOIN_PETITION
 
-    // Host petitions -> Host wants to start game
-    public static final int HOST_START_GAME = 22;
+    public static final int HOST_START_GAME_PETITION = 30;      // Client requests starting the game
+    public static final int HOST_START_GAME_PETITION_ERROR_NOT_ENOUGH_PLAYERS = 31; // Server error response to HOST_START_GAME_PETITION
+    public static final int HOST_START_GAME_PETITION_ERROR_NOT_HOST = 32;       // Server error response to HOST_START_GAME_PETITION
 
     // Server notifies all players game has started
     public static final int GAME_STARTS = 10;
 
+
+    /*
+    
     // JUGADAS
     // FOLD
     public static final int FOLD = 1;
@@ -109,4 +112,5 @@ public class GameType {
     public static final int NUMBER_K = 213;
     public static final int NUMBER_A = 214;
     
+    */
 }
