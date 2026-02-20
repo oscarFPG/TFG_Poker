@@ -3,6 +3,7 @@ package com.ucm;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -23,8 +24,7 @@ public class ClientMain extends Application {
 
     private static String hostname = "localhost";
     private static String _name;
-	private static boolean hostStartsGame;
-	private static boolean gameStarts;
+	private static boolean _gameStarts;
 
 	private static Scanner _scanner;
     /*
@@ -37,183 +37,17 @@ public class ClientMain extends Application {
      * Run the Tests
      * 		.\mvnw.cmd test
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
 		_scanner = new Scanner(System.in);
-		preGame();
+		Socket socket = preGame();
+
+		System.out.printf("Estamos en GAME\n");
+		SocketUtils.receiveInt(socket.getInputStream());
+		System.out.printf("Despues de GAME\n");
+
 		_scanner.close();
 
-		/*
-		// TODO: Asociar toda esta logica siguiente con el metodo preGame()
-		// Pregame
-		SocketChannel socket = null;
-		ByteBuffer buffer = null;
-		Scanner scanner = new Scanner(System.in);
-       
-        try {
-            socket = SocketChannel.open();
-            socket.configureBlocking(false);
-            socket.connect( new InetSocketAddress(hostname, GameType.PORT) );
-
-			hostStartsGame = false;
-			gameStarts = false;
-            while(!socket.finishConnect()){}    // Wait until connection is finished
-			System.out.printf("Conectado correctamente!\n");
-
-			System.out.printf("Introduzca un nombre: ");
-			name = scanner.next();
-			System.out.printf("Bienvenido %s\n", name);
-
-			System.out.printf("Que desea hacer?\n");
-			System.out.printf("1- Crear partida\n");
-			System.out.printf("2- Unirse a partida\n");
-			System.out.printf("> ");
-			int opcion = scanner.nextInt();
-
-			if(opcion == 1){
-
-				// Enviar peticion de crear partida
-				buffer = ByteBuffer.allocate(1 + Integer.BYTES);
-				buffer.clear();
-				buffer.put(GameType.PETITION_TYPE);			// Tipo de peticion
-				buffer.putInt(GameType.CREATE_PETITION);	// Codigo peticion
-				buffer.flip();
-
-				while(buffer.hasRemaining()){
-					socket.write(buffer);
-				}
-				System.out.printf("Peticion CREATE mandada!\n");
-
-				// Enviar nombre de usuario al servidor
-				buffer = ByteBuffer.allocate(1 + 4 + name.length());
-				buffer.clear();
-				buffer.put(GameType.NAME_TYPE);		// Tipo de dato
-				buffer.putInt(name.length());		// Tamaño en bytes
-				buffer.put(name.getBytes());		// Dato
-				buffer.flip();
-
-				while(buffer.hasRemaining()){
-					socket.write(buffer);
-				}
-				System.out.printf("Nombre enviado correctamente!\n");
-				System.out.printf("Esperando a más jugadores...\n");
-
-				// Esperar al host para solicitar el comienzo de partida
-				while(!hostStartsGame){
-
-					System.out.printf("Escribe \'start\' para comenzar la partida...\n");
-					String comando = scanner.next();
-					hostStartsGame = (comando.equalsIgnoreCase("start")) ? true : false;
-				}
-				System.out.printf("Host comienza la partida!\n");
-
-				// Enviar peticion comenzar partida
-				buffer = ByteBuffer.allocate(1 + Integer.BYTES);
-				buffer.clear();
-				buffer.put(GameType.PETITION_TYPE);			// Tipo de peticion
-				buffer.putInt(GameType.HOST_START_GAME);	// Codigo peticion
-				buffer.flip();
-
-				while(buffer.hasRemaining()){
-					socket.write(buffer);
-				}
-				System.out.printf("Peticion HOST START GAME mandada!\n");
-
-				// Esperar a recibir el aviso de comienzo de partida 
-				int bytesRead;
-				buffer = ByteBuffer.allocate(Integer.BYTES);
-				while(!gameStarts){
-
-					bytesRead = socket.read(buffer);
-					if(bytesRead == -1){
-						System.out.printf("Error esperando datos del servidor");
-						throw new IOException("Waiting on server");
-					}
-
-					if(bytesRead != 0){
-
-						buffer.flip();
-						while (buffer.remaining() >= 4) {
-							int code = buffer.getInt();
-                    		System.out.printf("Peticion recibida %d\n", code);
-							gameStarts = (code == GameType.GAME_STARTS) ? true : false;
-						}
-						buffer.compact();
-					}
-				}
-				System.out.printf("La partida comienza!\n");
-
-				// Comenzar partida
-				// ...
-			}
-			else if(opcion == 2){
-
-				buffer = ByteBuffer.allocate(1 + Integer.BYTES);
-				buffer.clear();
-				buffer.put(GameType.PETITION_TYPE);		// Tipo de peticion
-				buffer.putInt(GameType.JOIN_PETITION);	// Codigo peticion
-				buffer.flip();
-
-				while(buffer.hasRemaining()){
-					socket.write(buffer);
-				}
-				System.out.printf("Peticion JOIN mandada!\n");
-
-				// Enviar nombre de usuario al servidor
-				buffer = ByteBuffer.allocate(1 + 4 + name.length());
-				buffer.clear();
-				buffer.put(GameType.NAME_TYPE);		// Tipo de dato
-				buffer.putInt(name.length());		// Tamaño en bytes
-				buffer.put(name.getBytes());		// Dato
-				buffer.flip();
-
-				while(buffer.hasRemaining()){
-					socket.write(buffer);
-				}
-				System.out.printf("Nombre enviado correctamente\n");
-
-				// Esperar a recibir el aviso de comienzo de partida 
-				int bytesRead;
-				buffer = ByteBuffer.allocate(Integer.BYTES);
-				while(!gameStarts){
-
-					bytesRead = socket.read(buffer);
-					if(bytesRead == -1){
-						System.out.printf("Error esperando datos del servidor");
-						throw new IOException("Waiting on server");
-					}
-
-					if(bytesRead != 0){
-
-						buffer.flip();
-						while (buffer.remaining() >= 4) {
-							int code = buffer.getInt();
-                    		System.out.printf("Peticion recibida %d\n", code);
-							gameStarts = (code == GameType.GAME_STARTS) ? true : false;
-						}
-						buffer.compact();
-					}
-				}
-				System.out.printf("La partida comienza!\n");
-
-			}
-			else{
-				System.out.printf("Opcion no reconocida\n");
-			}
-
-        }
-        catch(IOException e) {
-            System.out.printf("Error: %s\n", e.getMessage());
-        }
-        finally {
-			scanner.close();
-			try {
-				socket.close();
-			}
-			catch (IOException e) {}
-        }
-
-		*/
 
 		// TODO: Asociar todo la logica siguiente al metodo game()
 		// Game
@@ -221,17 +55,19 @@ public class ClientMain extends Application {
 
     }
 
-	private static void preGame(){
+	private static Socket preGame(){
 
+		SocketChannel socket = null;
 		try{
-			SocketChannel socket = SocketChannel.open();
+			socket = SocketChannel.open();
 			socket.configureBlocking(false);
 			socket.connect( new InetSocketAddress(hostname, GameType.PORT) );
 
 			Selector selector = Selector.open();
 			socket.register(selector, SelectionKey.OP_CONNECT);
 
-			while(true){
+			_gameStarts = false;
+			while(!_gameStarts){
 				selector.select();
 				Iterator<SelectionKey> keys = selector.selectedKeys().iterator();
 
@@ -253,10 +89,16 @@ public class ClientMain extends Application {
 					}
 				}
 			}
+
+			System.out.printf("Comienza la partida!\n");
+			selector.close();
+			socket.configureBlocking(true);
 		}
 		catch(IOException e) {
 			System.out.printf("Error: %s\n", e.getMessage());
 		}
+
+		return (socket != null) ? socket.socket() : null;
 	}
 
 	private static void sendString(String msg, SocketChannel socket) throws IOException{
@@ -289,7 +131,6 @@ public class ClientMain extends Application {
 		SocketChannel client = (SocketChannel) key.channel();
 		try {
 			if (client.finishConnect()) {
-
 				System.out.printf("Conectado al servidor!\n");
 				key.interestOps(SelectionKey.OP_WRITE);	// Prepare to send the clients name
 			}
@@ -315,11 +156,27 @@ public class ClientMain extends Application {
 
 			buffer.flip();
 			int code = buffer.getInt();
-			// TODO: HACER
+			switch (code) {
+			case GameType.GAME_STARTS:
+				System.out.printf("Aviso GAME_STARTS recibido!\n");
+				_gameStarts = true;
+				break;
+		
+			default:
+				System.out.printf("Aviso %d desconocido %d\n", code);
+				break;
+			}
 
 		}
 		catch (IOException e) {
 			System.out.printf("Error connecting to server: %s\n", e.getMessage());
+			try{
+				socket.close();
+				key.cancel();
+			}
+			catch(IOException exc){
+				System.out.printf("Error closing the socket: %s\n", exc.getMessage());
+			}
 		}
 	}
 
@@ -355,6 +212,13 @@ public class ClientMain extends Application {
 		}
 		catch(IOException e){
 			System.out.printf("Error enviando el nombre del usuario: %s\n", e.getMessage());
+			try{
+				socket.close();
+				key.cancel();
+			}
+			catch(IOException exc){
+				System.out.printf("Error closing the socket: %s\n", exc.getMessage());
+			}
 		}
 	}
 

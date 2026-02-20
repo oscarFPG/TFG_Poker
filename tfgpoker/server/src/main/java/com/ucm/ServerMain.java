@@ -1,11 +1,10 @@
 package com.ucm;
 
-import java.io.EOFException;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
-import java.nio.channels.Channel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
@@ -22,10 +21,12 @@ public class ServerMain {
 
         public String clientName;
         public SocketChannel clientSocket;
+        public SelectionKey key;
 
-        ClientStruct(final String name, final SocketChannel s){
+        ClientStruct(final String name, final SocketChannel s, final SelectionKey k){
             clientName = name;
             clientSocket = s;
+            key = k;
         }
     }
 
@@ -91,15 +92,35 @@ public class ServerMain {
             }
             System.out.printf("Host empieza la partida!\n");
 
-            System.out.printf("Avisando a todos los jugadores!\n");
-            ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
-            buffer.putInt(GameType.GAME_STARTS);
+            // Notify all players that game has started
+            ByteBuffer broadcastBuffer = ByteBuffer.allocate(Integer.BYTES);
+            broadcastBuffer.putInt(GameType.GAME_STARTS);
             for(ClientStruct cs : _roomList){
-                buffer.rewind();
-                cs.clientSocket.write(buffer);
-                System.out.printf("GAME_STARTS enviado a %s!\n", cs.clientName);
+                try{
+                    broadcastBuffer.rewind();
+                    cs.clientSocket.write(broadcastBuffer);
+                }
+                catch(IOException e){
+                    System.out.printf("Error sending GAME_STARTS flag: %s\n", e.getMessage());
+                    try{
+                        cs.clientSocket.close();
+                    }
+                    catch(IOException exception){
+                        System.out.printf("Error closing socket: %s\n", e.getMessage());
+                    }
+                }
             }
 
+            //  Eliminate all not in-game players
+            for(ClientStruct cs : _clientList){
+                try{
+                    cs.key.cancel();
+                    cs.clientSocket.close();
+                }
+                catch(IOException ignored){}
+            }
+
+            System.out.printf("Comienza la partida!\n");
             while(true){}
 
         } 
@@ -126,23 +147,23 @@ public class ServerMain {
         SocketChannel client = serverChannel.accept();
         client.configureBlocking(false);
 
-        client.register(selector, SelectionKey.OP_READ, ByteBuffer.allocate(256));
+        client.register(selector, SelectionKey.OP_READ, ByteBuffer.allocate(128));
         System.out.printf("Nuevo cliente conectado!\n");
     }
 
     private static void handleReceive(SelectionKey key) {
 
-        SocketChannel client = (SocketChannel) key.channel();
+        SocketChannel socket = (SocketChannel) key.channel();
         ByteBuffer buffer = (ByteBuffer) key.attachment();
         int bytesRead;
         byte tipo;
 
         try{
 
-            bytesRead = client.read(buffer);
+            bytesRead = socket.read(buffer);
             if (bytesRead == -1) {	// Conexion cerrada
                 key.cancel();
-                client.close();
+                socket.close();
                 System.out.printf("Conexion cerrada\n");
                 return;
             }
@@ -155,22 +176,26 @@ public class ServerMain {
             // leer posibles datos adicionales segun el tipo de peticion
             switch (tipo) {
             case GameType.DATA_TYPE_NAME:
+                int size;
+                byte[] strBytes;
 
-                int size = buffer.getInt();
-                byte[] strBytes = new byte[size];
+                // Get string size and string value
+                size = buffer.getInt();
+                strBytes = new byte[size];
                 buffer.get(strBytes);
-
                 String nombre = new String(strBytes, StandardCharsets.UTF_8);
                 System.out.printf("Cliente %s autenticado!\n", nombre);
 
-                // Almacenar nombre para relacionar socket-nombre si esta en la lista de jugadores
+                // Almacenar nombre para relacionar socket-nombre si esta en la cola de jugadores
                 System.out.printf("Cliente %s almacenado en la cola!\n", nombre);
-                _clientList.add( new ClientStruct(nombre, client) );
+                _clientList.add( new ClientStruct(nombre, socket, key) );
 
                 break;
 
             case GameType.DATA_TYPE_PETITION:
-                int code = buffer.getInt();
+                int code;
+
+                code = buffer.getInt();
                 System.out.printf("Petition type received %d\n", code);
                 handleClientPetition(key, code);
                 break;
@@ -180,21 +205,26 @@ public class ServerMain {
             }
         }
 		catch(SocketException e){
-			ClientStruct toRemove = null;
-			for(ClientStruct cs : _roomList)
-				if(cs.clientSocket == client)
-					toRemove = cs;
 
-			if(toRemove != null)
-				_roomList.remove(toRemove);
-			key.cancel();
-			System.out.printf("Cerrando conexion con cliente desconectado: %s\n", e.getMessage());
+            System.out.printf("Cerrando conexion con cliente desconectado: %s\n", e.getMessage());
+			ClientStruct toRemove = _roomList.stream()
+                .filter(c -> c.clientSocket == socket)
+                .findFirst().orElse(null);
+
+			if(toRemove != null){
+                _roomList.remove(toRemove);
+                try{
+                    socket.close();
+                    key.cancel();
+                }
+                catch(IOException ignored){}
+            }
 		}
         catch(IOException e){
             System.out.printf("Error recibiendo datos %s\n", e.getMessage());
 			try {
 				key.cancel();
-				client.close();
+				socket.close();
 			}
 			catch (IOException ignored) {}
         }
@@ -219,6 +249,7 @@ public class ServerMain {
 
             System.out.printf("Peticion CREATE del cliente\n");
             if(_roomList.isEmpty()){
+
                 System.out.printf("Creando partida!\n");
                 ClientStruct hostClient = _clientList.stream()
                     .filter(c -> c.clientSocket == client).findFirst().
@@ -232,6 +263,7 @@ public class ServerMain {
                 }
             }
             else{
+
                 System.out.printf("Partida ya existente!\n");
                 try {
                     client.close();
@@ -274,6 +306,7 @@ public class ServerMain {
 
             // Other client except the tru host tries to start the game
             if(client != host){
+
                 System.out.printf("Only the host can start the game!\n");
                 try{
                     ClientStruct cs = _roomList.stream()
@@ -284,9 +317,7 @@ public class ServerMain {
                     key.cancel();
                     client.close();
                 }
-                catch(IOException e){
-                    System.out.printf("Error closing clients socket %s\n", e.getMessage());
-                }
+                catch(IOException ignored){}
             }
 
             //  If there is at leats 2 players in the game it can start
@@ -296,6 +327,7 @@ public class ServerMain {
             }
             else{
                 System.out.printf("Cannot start the game with less than 2 players!\n");
+                // TODO: Aqui deberia enviar codigo para que el cliente se mantenga esperando y enviandonos el codigo hasta que haya al menos 2 jugadores
             }
             
             break;
