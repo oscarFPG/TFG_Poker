@@ -3,6 +3,7 @@ package com.ucm;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.Scanner;
@@ -20,6 +21,7 @@ public class ClientMain extends Application {
     private static String hostname = "localhost";
     private static String name;
 	private static boolean hostStartsGame;
+	private static boolean gameStarts;
 
     /*
      * Desde la ruta TFGPOKER/tfgpoker
@@ -37,10 +39,7 @@ public class ClientMain extends Application {
 		// Pregame
 		SocketChannel socket = null;
 		ByteBuffer buffer = null;
-        Scanner scanner = new Scanner(System.in);
-        System.out.printf("Introduzca un nombre: ");
-        name = scanner.next();
-        System.out.printf("Bienvenido %s\n", name);
+		Scanner scanner = new Scanner(System.in);
        
         try {
             socket = SocketChannel.open();
@@ -48,7 +47,13 @@ public class ClientMain extends Application {
             socket.connect( new InetSocketAddress(hostname, GameType.PORT) );
 
 			hostStartsGame = false;
+			gameStarts = false;
             while(!socket.finishConnect()){}    // Wait until connection is finished
+			System.out.printf("Conectado correctamente!\n");
+
+			System.out.printf("Introduzca un nombre: ");
+			name = scanner.next();
+			System.out.printf("Bienvenido %s\n", name);
 
 			System.out.printf("Que desea hacer?\n");
 			System.out.printf("1- Crear partida\n");
@@ -105,8 +110,29 @@ public class ClientMain extends Application {
 				}
 				System.out.printf("Peticion HOST START GAME mandada!\n");
 
-				// Esperar a recibir el aviso de comienzo de partida
-				// ...
+				// Esperar a recibir el aviso de comienzo de partida 
+				int bytesRead;
+				buffer = ByteBuffer.allocate(Integer.BYTES);
+				while(!gameStarts){
+
+					bytesRead = socket.read(buffer);
+					if(bytesRead == -1){
+						System.out.printf("Error esperando datos del servidor");
+						throw new IOException("Waiting on server");
+					}
+
+					if(bytesRead != 0){
+
+						buffer.flip();
+						while (buffer.remaining() >= 4) {
+							int code = buffer.getInt();
+                    		System.out.printf("Peticion recibida %d\n", code);
+							gameStarts = (code == GameType.GAME_STARTS) ? true : false;
+						}
+						buffer.compact();
+					}
+				}
+				System.out.printf("La partida comienza!\n");
 
 				// Comenzar partida
 				// ...
@@ -136,6 +162,31 @@ public class ClientMain extends Application {
 					socket.write(buffer);
 				}
 				System.out.printf("Nombre enviado correctamente\n");
+
+				// Esperar a recibir el aviso de comienzo de partida 
+				int bytesRead;
+				buffer = ByteBuffer.allocate(Integer.BYTES);
+				while(!gameStarts){
+
+					bytesRead = socket.read(buffer);
+					if(bytesRead == -1){
+						System.out.printf("Error esperando datos del servidor");
+						throw new IOException("Waiting on server");
+					}
+
+					if(bytesRead != 0){
+
+						buffer.flip();
+						while (buffer.remaining() >= 4) {
+							int code = buffer.getInt();
+                    		System.out.printf("Peticion recibida %d\n", code);
+							gameStarts = (code == GameType.GAME_STARTS) ? true : false;
+						}
+						buffer.compact();
+					}
+				}
+				System.out.printf("La partida comienza!\n");
+
 			}
 			else{
 				System.out.printf("Opcion no reconocida\n");
@@ -146,7 +197,7 @@ public class ClientMain extends Application {
             System.out.printf("Error: %s\n", e.getMessage());
         }
         finally {
-            scanner.close();
+			scanner.close();
 			try {
 				socket.close();
 			}

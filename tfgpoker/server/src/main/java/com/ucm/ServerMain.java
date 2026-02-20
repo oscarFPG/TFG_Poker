@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
+import java.nio.channels.Channel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
@@ -59,7 +60,6 @@ public class ServerMain {
             _serverSocket.register(_selector, SelectionKey.OP_ACCEPT);
 
             _roomList = new ArrayList<>();
-
             _hostWantsToStart = false;
             while (!_hostWantsToStart) {
 
@@ -85,9 +85,29 @@ public class ServerMain {
                         handleSend(key);
                     }
                 }
-
             }
             System.out.printf("Host empieza la partida!\n");
+
+            System.out.printf("Enviando GAME_STARTS a todos los jugadores!\n");
+            ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
+            buffer.putInt(GameType.GAME_STARTS);
+            for (SelectionKey key : _selector.keys()) {
+                
+                if (!key.isValid())
+                    continue;
+
+                Channel channel = key.channel();
+                if (channel instanceof SocketChannel client) {
+                    buffer.rewind();
+                    client.write(buffer);
+
+                    String name = null;
+                    for(ClientStruct cs : _roomList)
+                        if(cs.clientSocket == client)
+                            name = cs.clientName;
+                    System.out.printf("GAME_STARTS enviado a %s!\n", name);
+                }
+            }
 
         } 
         catch (IOException e) {
@@ -121,7 +141,6 @@ public class ServerMain {
 
         SocketChannel client = (SocketChannel) key.channel();
         ByteBuffer buffer = (ByteBuffer) key.attachment();
-
         try{
 
             int bytesRead = client.read(buffer);
@@ -147,7 +166,7 @@ public class ServerMain {
                 switch (tipo) {
                 case GameType.INTEGER_TYPE:
                     int valor = buffer.getInt();
-                    System.out.println("Nombre recibido: " + valor);
+                    System.out.println("Numero recibido: " + valor);
                     break;
 
                 case GameType.NAME_TYPE:
@@ -216,6 +235,9 @@ public class ServerMain {
         if(client == host){
             System.out.printf("El host quiere empezar! %d\n", petition);
             _hostWantsToStart = true;
+
+            
+
         }
         else{
 
