@@ -8,7 +8,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
-import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Scanner;
 
@@ -41,18 +40,9 @@ public class ClientMain extends Application {
 
 		_scanner = new Scanner(System.in);
 		Socket socket = preGame();
-
-		System.out.printf("Estamos en GAME\n");
-		SocketUtils.receiveInt(socket.getInputStream());
-		System.out.printf("Despues de GAME\n");
+		game(socket);
 
 		_scanner.close();
-
-
-		// TODO: Asociar todo la logica siguiente al metodo game()
-		// Game
-		// ...
-
     }
 
 	private static Socket preGame(){
@@ -99,6 +89,10 @@ public class ClientMain extends Application {
 		}
 
 		return (socket != null) ? socket.socket() : null;
+	}
+
+	private static void game(Socket socket){
+
 	}
 
 	private static void sendString(String msg, SocketChannel socket) throws IOException{
