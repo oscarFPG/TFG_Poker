@@ -9,7 +9,6 @@ import com.ucm.middleclasses.CommandResult;
 import com.ucm.middleclasses.HandInfo;
 
 
-
 public class PlayerList {
 
     private class Node {
@@ -58,6 +57,39 @@ public class PlayerList {
         ++_playerCounter;
     }
 
+    public void assignRolesToAllPlayers(){
+
+        int n = activePlayersCounter();
+        Node _current = _first;
+
+        // NO HAY DEALER --> SOLO SB Y BB
+        if ( n == 0 || n == 1 ) return;
+
+        if (n == 2) {
+            _current = getNextPlayerActive(_first);
+            _current._player.setRole(PlayerRole.SMALL_BLIND);
+
+            _current = getNextPlayerActive(_current._next);
+            _current._player.setRole(PlayerRole.BIG_BLIND);
+        }
+        else {
+            _current = getNextPlayerActive(_first);
+            _current._player.setRole(PlayerRole.DEALER);
+
+            _current = getNextPlayerActive(_current._next);
+            _current._player.setRole(PlayerRole.SMALL_BLIND);
+
+            _current = getNextPlayerActive(_current._next);
+            _current._player.setRole(PlayerRole.BIG_BLIND);
+        
+            _current = getNextPlayerActive(_current._next);
+            while (_current != _first){
+                _current._player.setRole(PlayerRole.NO_ROLE);
+                _current = getNextPlayerActive(_current._next);
+            }
+        }
+    }
+
     public void removePlayer(Player p) {
 
         if (isEmpty())
@@ -90,39 +122,6 @@ public class PlayerList {
         }
 
         --_playerCounter;
-    }
-
-    public void assignRolesToAllPlayers(){
-
-        int n = activePlayersCounter();
-        Node _current = _first;
-
-        //NO HAY DEALER --> SOLO SB Y BB
-        if ( n == 0 || n == 1 ) return;
-
-        if (n == 2) {
-            _current = getNextPlayerActive(_first);
-            _current._player.setRole(PlayerRole.SMALL_BLIND);
-
-            _current = getNextPlayerActive(_current._next);
-            _current._player.setRole(PlayerRole.BIG_BLIND);
-        }
-        else {
-            _current = getNextPlayerActive(_first);
-            _current._player.setRole(PlayerRole.DEALER);
-
-            _current = getNextPlayerActive(_current._next);
-            _current._player.setRole(PlayerRole.SMALL_BLIND);
-
-            _current = getNextPlayerActive(_current._next);
-            _current._player.setRole(PlayerRole.BIG_BLIND);
-        
-            _current = getNextPlayerActive(_current._next);
-            while (_current != _first){
-                _current._player.setRole(PlayerRole.NO_ROLE);
-                _current = getNextPlayerActive(_current._next);
-            }
-        }
     }
 
     public void playHand(final int sb, final int bb, final boolean isPreflop) throws OnlyOnePlayerLeftException {
@@ -298,5 +297,4 @@ public class PlayerList {
     public boolean isFull() { return size() == max(); }
     public int size() { return _playerCounter; }
     public int max() { return _maxNumberOfPlayers; }
-
 }

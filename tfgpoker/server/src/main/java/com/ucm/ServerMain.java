@@ -15,6 +15,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.ucm.middleclasses.ClientStructGame;
+import com.ucm.control.Controller;
+import com.ucm.logic.Game;
+
 
 public class ServerMain {
 
@@ -28,17 +32,6 @@ public class ServerMain {
             clientName = name;
             clientSocket = s;
             key = k;
-        }
-    }
-
-    public static class ClientStructGame {
-
-        public String clientName;
-        public Socket clientSocket;
-
-        ClientStructGame(final String name, final Socket s){
-            clientName = name;
-            clientSocket = s;
         }
     }
 
@@ -166,6 +159,12 @@ public class ServerMain {
         }
 
         return roomList;
+    }
+
+    private static void game(List<ClientStructGame> clients){
+        Game game = new Game();
+        Controller controller = new Controller(game, clients);
+        controller.run();
     }
 
     private static void handleAccept(SelectionKey key, Selector selector) throws IOException {
@@ -359,13 +358,6 @@ public class ServerMain {
             System.out.printf("Unknown petition %d\n", petition);
             break;
         }
-        
-    }
-
-
-    // ------------------------ Game phase ------------------------
-
-    private static void game(List<ClientStructGame> clients){
         
     }
 

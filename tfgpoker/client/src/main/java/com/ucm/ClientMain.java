@@ -2,6 +2,8 @@ package com.ucm;
 
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
@@ -93,6 +95,38 @@ public class ClientMain extends Application {
 
 	private static void game(Socket socket){
 
+		System.out.printf("La partida comienza!\n");
+
+		InputStream in;
+		OutputStream out;
+		try {
+			in = socket.getInputStream();
+			out = socket.getOutputStream();
+
+			// Recibir rol de jugador
+			int rol = SocketUtils.receiveInt(in);
+			System.out.printf("Player with name \'%s\' and id %d\n", _name, rol);
+
+			// Recibir cartas
+
+			// Jugar turno/esperar a turno
+
+			// Recibir carta de tablero (1)
+			// Recibir carta de tablero (2)
+			// Recibir carta de tablero (3)
+
+			// Jugar turno/esperar a turno
+			// Recibir carta de tablero (4)
+
+			// Jugar turno/esperar a turno
+			// Recibir carta de tablero (5)
+
+			// Showdown -> Comprobar ganadores y repartir premios
+
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private static void sendString(String msg, SocketChannel socket) throws IOException{

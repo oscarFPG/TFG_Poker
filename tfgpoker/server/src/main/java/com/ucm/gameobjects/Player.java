@@ -6,6 +6,8 @@ import com.ucm.commands.CheckCommand;
 import com.ucm.commands.Command;
 import com.ucm.commands.FoldCommand;
 import com.ucm.commands.RaiseCommand;
+
+import java.net.Socket;
 import java.util.Scanner;
 
 
@@ -21,14 +23,16 @@ public class Player {
     private int _numCards;
     private boolean _fold;
     private boolean _hasLost;
+    private Socket _socket;
 
 
-    public Player(int id, String name, int money) {
+    public Player(int id, String name, Socket socket, int money) {
         _id = id;
         _name = name;
         _money = money;
-        _pocketMoney = 0;
+        _socket = socket;
 
+        _pocketMoney = 0;
         _role = PlayerRole.NO_ROLE;
         _cards = new Card[2];
         _numCards = 0;
@@ -226,14 +230,6 @@ public class Player {
 
     private void increasePocketMoney(int bet) {
         _pocketMoney += bet;
-    }
-
-    private boolean isEnoughMoney(int bet) {
-
-        if (bet > _money)
-            return false;
-
-        return true;
     }
 
     public String toString() {
