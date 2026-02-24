@@ -1,17 +1,21 @@
 package com.ucm.gameobjects;
 
+import com.ucm.SocketUtils;
 import com.ucm.commands.AllInCommand;
 import com.ucm.commands.CallCommand;
 import com.ucm.commands.CheckCommand;
 import com.ucm.commands.Command;
 import com.ucm.commands.FoldCommand;
 import com.ucm.commands.RaiseCommand;
+import com.ucm.control.GameAdapter;
+import com.ucm.interfaces.IPlayer;
 
+import java.io.IOException;
 import java.net.Socket;
 import java.util.Scanner;
 
 
-public class Player {
+public class Player implements IPlayer {
 
     private int _id;
     private String _name;
@@ -29,15 +33,21 @@ public class Player {
     public Player(int id, String name, Socket socket, int money) {
         _id = id;
         _name = name;
-        _money = money;
         _socket = socket;
 
+        _money = money;
         _pocketMoney = 0;
         _role = PlayerRole.NO_ROLE;
         _cards = new Card[2];
         _numCards = 0;
         _fold = false;
         _hasLost = false;
+    }
+
+
+    public void assignRole(PlayerRole r) {
+        _role = r;
+        onReceiveRole(r);
     }
 
     public Command makePlay() {
@@ -76,50 +86,6 @@ public class Player {
             default:
                 return null;
             }
-
-            /*
-            switch (jugada) {
-                case 0:
-                    return new FoldCommand(this, _pocketMoney);
-
-                case 1:
-                    if (maxBet != 0) { // No puedo hacer check si hay alguna apuesta en juego
-                        System.out.println("You can't do check"); 
-                    }
-                    return new CheckCommand(this, _pocketMoney);
-
-                case 2:
-                    if (!isEnoughMoney(maxBet - _pocketMoney)) { // No puedo igualar porque no tengo suficiente dinero
-                        System.out.println("Not enough money to make a call");
-                        return new FoldCommand(this, _pocketMoney);
-                        // TODO Habrá que preguntarle al jugador si quiere hacer un allIn retirarse.
-                        // Se entiende que no quiere hacer fold
-                    }
-                    return new CallCommand(this, _pocketMoney);
-
-                case 3:
-                    //
-                    // TODO Si no tengo suficiente dinero para subir, ver si tengo suficiente dinero
-                    // para igualar, y si tengo, hago call
-                    // (decidir si hacer call obligatoriamente o preguntar si el jugador quiere
-                    // hacer call u allin), si no,
-                    // tendría que hacer fold u allin
-                    //
-                    if (!isEnoughMoney(10)) {
-                        System.out.println("Not enough money to make a raise");
-                        return new CallCommand(this, _pocketMoney);
-                    }
-                    return new RaiseCommand(this, _pocketMoney);
-
-                case 4:
-                    return new AllInCommand(this, _pocketMoney);
-
-                default:
-                    System.out.println("Opción no válida. Vuelva a intentarlo...");
-                    jugada = -1;
-                    break;
-            }
-            */
 
         } while (jugada == -1);
 
@@ -240,10 +206,6 @@ public class Player {
         return String.format("Player[%d]: %s - %s%s", _id, _name, carta1, carta2);
     }
 
-    public void setRole(PlayerRole pr) {
-        _role = pr;
-    }
-
     public void resetCards() {
 
         if (_cards[0] != null)
@@ -272,5 +234,40 @@ public class Player {
     public int getNumCards(){ return _numCards; }
     public boolean hasFolded(){ return _fold; }
     public boolean hasLost(){ return _hasLost; }
+
+
+    @Override
+    public void onReceiveRole(PlayerRole r) {
+        
+        try{
+
+            int role = GameAdapter.playerRoleToCode(r);
+            SocketUtils.sendInteger(_socket.getOutputStream(), role);
+            _role = r;
+
+            System.out.printf("Player %s receives rol %s\n", _name, _role.name());
+        }
+        catch(IOException e){
+            System.out.printf("Error receiving the role for %s player: %s\n", _name, e.getMessage());
+        }
+    }
+
+    @Override
+    public void onReceiveCard(Card c) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'onReceiveCard'");
+    }
+
+    @Override
+    public void onReceiveTableCard(Card c) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'onReceiveTableCard'");
+    }
+
+    @Override
+    public void onReceiveTurn() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'onReceiveTurn'");
+    }
 
 }

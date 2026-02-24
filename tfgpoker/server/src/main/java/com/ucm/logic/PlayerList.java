@@ -1,5 +1,8 @@
 package com.ucm.logic;
 
+import java.io.IOException;
+import java.net.Socket;
+
 import com.ucm.commands.Command;
 import com.ucm.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.gameobjects.Card;
@@ -57,7 +60,7 @@ public class PlayerList {
         ++_playerCounter;
     }
 
-    public void assignRolesToAllPlayers(){
+    public void assignRolesToAllPlayers() {
 
         int n = activePlayersCounter();
         Node _current = _first;
@@ -67,24 +70,24 @@ public class PlayerList {
 
         if (n == 2) {
             _current = getNextPlayerActive(_first);
-            _current._player.setRole(PlayerRole.SMALL_BLIND);
+            _current._player.assignRole(PlayerRole.SMALL_BLIND);
 
             _current = getNextPlayerActive(_current._next);
-            _current._player.setRole(PlayerRole.BIG_BLIND);
+            _current._player.assignRole(PlayerRole.BIG_BLIND);
         }
         else {
             _current = getNextPlayerActive(_first);
-            _current._player.setRole(PlayerRole.DEALER);
+            _current._player.assignRole(PlayerRole.DEALER);
 
             _current = getNextPlayerActive(_current._next);
-            _current._player.setRole(PlayerRole.SMALL_BLIND);
+            _current._player.assignRole(PlayerRole.SMALL_BLIND);
 
             _current = getNextPlayerActive(_current._next);
-            _current._player.setRole(PlayerRole.BIG_BLIND);
+            _current._player.assignRole(PlayerRole.BIG_BLIND);
         
             _current = getNextPlayerActive(_current._next);
             while (_current != _first){
-                _current._player.setRole(PlayerRole.NO_ROLE);
+                _current._player.assignRole(PlayerRole.NO_ROLE);
                 _current = getNextPlayerActive(_current._next);
             }
         }
@@ -207,13 +210,13 @@ public class PlayerList {
         }
     }
     
-    public void passTurn(){
+    public void passTurn() {
         _first = _first._next;
         _last = _last._next;
         assignRolesToAllPlayers();
     }
 
-    public HandInfo[] getPlayerHandsInfo(){
+    public HandInfo[] getPlayerHandsInfo() {
 
         int size = activePlayersCounter();
         HandInfo[] info = new HandInfo[ size ];
@@ -285,7 +288,7 @@ public class PlayerList {
     private Node getNextPlayerActive(Node current){
 
         while ( current._player.hasFolded() ){
-            current._player.setRole(PlayerRole.NO_ROLE);
+            current._player.assignRole(PlayerRole.NO_ROLE);
             current = current._next;
         }
 

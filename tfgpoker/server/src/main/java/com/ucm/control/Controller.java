@@ -1,5 +1,6 @@
 package com.ucm.control;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.ucm.exceptions.OnlyOnePlayerLeftException;
@@ -20,6 +21,7 @@ public class Controller {
         addPlayersToGame(players);
     }
 
+
     private void addPlayersToGame(List<ClientStructGame> players) {
 
         int id = 0;
@@ -27,25 +29,25 @@ public class Controller {
             _game.addPlayer( new Player(id, cs.name(), cs.socket(), 1000) );
             ++id;
         }
-
-        while(true){}
     }
 
     public void run() {
 
-        // Game loop
+        System.out.print("Controller.run() method");
+
+        // Start Game loop (1)
         _game.assignRolesToAllPlayers();
         while (!_game.isGameFinished()) {
 
             try {
                 
-                // Pre-flop
+                // Pre-flop (2)
                 _game.shareOutCardsToAllPlayers();
                 if (Game.DEBUG)
                     _game.showStateDEBUG();
                 _game.playHand();
 
-                // Flop
+                // Flop (3)
                 _game.addCardToTable();
                 _game.addCardToTable();
                 _game.addCardToTable();
@@ -53,19 +55,19 @@ public class Controller {
                     _game.showStateDEBUG();
                 _game.playHand();
 
-                // Turn
+                // Turn (4)
                 _game.addCardToTable();
                 if (Game.DEBUG)
                     _game.showStateDEBUG();
                 _game.playHand();
 
-                // River
+                // River (5)
                 _game.addCardToTable();
                 if (Game.DEBUG)
                     _game.showStateDEBUG();
                 _game.playHand();
 
-                // Showdown
+                // Showdown (6)
                 _game.giveRewardToWinner();
                 if (Game.DEBUG)
                     _game.showStateDEBUG();
