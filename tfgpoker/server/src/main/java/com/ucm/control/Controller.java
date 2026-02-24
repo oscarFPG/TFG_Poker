@@ -1,8 +1,11 @@
 package com.ucm.control;
 
+import java.util.List;
+
 import com.ucm.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.gameobjects.Player;
 import com.ucm.logic.Game;
+import com.ucm.middleclasses.ClientStructGame;
 
 
 public class Controller {
@@ -12,24 +15,27 @@ public class Controller {
      */
     private Game _game;
 
-    public Controller(Game game) {
+    public Controller(Game game, List<ClientStructGame> players) {
         _game = game;
+        addPlayersToGame(players);
     }
 
-    private void configureGame() {
-        _game.addPlayer( new Player(0, "Valeria", 1000) );
-        _game.addPlayer( new Player(1, "Oscar", 1000) );
-        _game.addPlayer( new Player(2, "Carla", 1000) );
+    private void addPlayersToGame(List<ClientStructGame> players) {
+
+        int id = 0;
+        for(ClientStructGame cs : players){
+            _game.addPlayer( new Player(id, cs.name(), cs.socket(), 1000) );
+            ++id;
+        }
+
+        while(true){}
     }
 
     public void run() {
 
-        configureGame();
-
         // Game loop
         _game.assignRolesToAllPlayers();
-        int i = 0;
-        while (i < 5 && !_game.isGameFinished()) {
+        while (!_game.isGameFinished()) {
 
             try {
                 
@@ -72,7 +78,6 @@ public class Controller {
             // etc...
             _game.restartRound();
             _game.passTurn();
-            ++i;
         }
     }
 

@@ -67,6 +67,10 @@ public class Game {
         _playerList.addPlayer(p);
     }
 
+    public void assignRolesToAllPlayers() {
+        _playerList.assignRolesToAllPlayers();
+    }
+
     /**
      * Repartir 2 cartas a todos los jugadores al principio de la partida
      */
@@ -100,10 +104,6 @@ public class Game {
         }
 
         _actualTableCards = 0;
-    }
-
-    public void assignRolesToAllPlayers() {
-        _playerList.assignRolesToAllPlayers();
     }
 
     public void passTurn() {
