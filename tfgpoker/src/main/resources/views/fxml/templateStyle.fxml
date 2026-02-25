@@ -2,10 +2,37 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.SVGPath?>
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="411.0" prefWidth="727.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <Button layoutX="415.0" layoutY="155.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="142.0" text="UNIRSE A PARTIDA" textAlignment="CENTER" />
-      <Button layoutX="187.0" layoutY="155.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="142.0" text="CREAR PARTIDA" textAlignment="CENTER" />
-   </children>
+
+<!--BOTONES -->
+<Button layoutX="416.0" layoutY="168.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="142.0" style="-fx-background-color: linear-gradient(to right, #661076 0%, #691179 30%, #3A0878 65%, #20034F 100%);" text="UNIRSE A PARTIDA" textAlignment="CENTER" />
+<Button layoutX="222.0" layoutY="168.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="142.0" text="CREAR A PARTIDA" textAlignment="CENTER" />
+<!-- FLECHAS -->
+
+   <!-- FLECHA 1 < > -->
+   <Button fx:id="backButton" styleClass="arrow-button">
+      <graphic> <SVGPath content="M 80 10 L 30 50 L 80 90 L 65 105 L 0 50 L 65 -5 Z" styleClass="arrow-shape" /> 
+      </graphic> 
+   </Button>
+
+<!-- CONTENEDORES / LAYOUTS -->
+   <!-- contenedores cuadrados-->
+   <!--contenedores ovalados-->
+   <!--DESPLEGABLE CON SU FLECHITA-->
+
+
+<!--ICONO PERFIL / NOMBRE USUARIO / DINERO -->
+
+<!-- ICONOS GENERALES -->
+   <!--ICONO INFORMACION -->
+   <!-- ICONO AJUSTES -->
+
+
+<!--CAJAS DE TEXTOS -->
+   <!-- titulos -->
+   <!-- descripciones -->
+   <!-- texto pequeño -->
+
 </Pane>

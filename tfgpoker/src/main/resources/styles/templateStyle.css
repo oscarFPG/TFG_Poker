@@ -6,7 +6,9 @@
 
 
 /*FLECHAS*/
-
+.arrow-button{
+   -fx-background-color: purple;
+}
 
 /* CONTENEDORES / LAYOUTS */
     /*contenedores cuadrados*/
