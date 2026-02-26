@@ -241,6 +241,11 @@ public class Player implements IPlayer {
         return money;
     }
 
+    /**
+     * Makes the player fold by setting the {@link #_fold} value to true.
+     * Retrieves the cards in his hands and marks him as 'folded'.
+     * The {@link #_pocketMoney} variable keeps its value
+     */
     public void fold() {
 
         // Devuelvo las cartas
@@ -257,6 +262,10 @@ public class Player implements IPlayer {
         _fold = true;
     }
 
+    /**
+     * The player 'calls' in this round, which means that equals the maximum bet made by other players.
+     * @param maxBet
+     */
     public void call(int maxBet) {
 
         int resto = maxBet - _pocketMoney; // dinero que necesita para igualar la apuesta en juego
@@ -267,11 +276,18 @@ public class Player implements IPlayer {
         decreaseMoney(resto);
     }
 
+    /**
+     * The player bets all his money in the current hand
+     */
     public void allIn() {
         increasePocketMoney(_money);
         _money = 0;
     }
 
+    /**
+     * @deprecated TODO: HAY QUE HACERLO BIEN !!
+     * @param maxBet
+     */
     public void raise(int maxBet) {
 
         // Si tengo menos dinero de lo que está apostado y quiero subir
@@ -285,18 +301,38 @@ public class Player implements IPlayer {
         _pocketMoney += 10;
     }
 
+    /**
+     * The player receives money
+     * @param money received by the player
+     */
     public void receivePriceMoney(int money) {
         _money += money;
     }
 
+    /**
+     * Decrements the {@link #_money} variable by a certain amount.
+     * This avoids negative values
+     * 
+     * @param bet quantity to subtract
+     */
     private void decreaseMoney(int bet) {
-        _money -= bet;
+        _money = Math.clamp(_money - bet, 0, _money);
     }
 
+    /**
+     * Adds to the {@link #_pocketMoney} variable by a certain amount.
+     * @param bet quantity to add
+     */
     private void increasePocketMoney(int bet) {
         _pocketMoney += bet;
     }
 
+    /**
+     * Prints by console the player's status
+     * This includes the player id, name and cards
+     * @see {@link Card} to know more about the Card's toString() method implementation
+     * @return {@link String} representation of the player
+     */
     public String toString() {
 
         String carta1 = (_cards[0] != null) ? _cards[0].toString() : Card.MissingCardToString();
@@ -305,6 +341,9 @@ public class Player implements IPlayer {
         return String.format("Player[%d]: %s - %s%s", _id, _name, carta1, carta2);
     }
 
+    /**
+     * Eliminates the hand cards of the player and set the {@link #_numCards} value to zero.
+     */
     public void resetCards() {
 
         if (_cards[0] != null)
@@ -316,34 +355,68 @@ public class Player implements IPlayer {
         _numCards = 0;
     }
 
+    /**
+     * Sets a value to the {@link #_fold} member variable
+     * @param fold new value
+     */
     public void setFold(boolean fold) {
         _fold = fold;
     }
 
+    /**
+     * Sets a value to the {@link #_hasLost} member variable
+     * @param lost new value
+     */
     public void setHasLost(boolean lost) {
         _hasLost = lost;
     }
 
+    /**
+     * Gets the player cards.
+     * Player could have zero to two cards
+     * @return player cards
+     */
     public Card[] getCards() {
         return _cards;
     }
 
+    /**
+     * Gets the player ID
+     * @return player ID
+     */
     public int getID() {
         return _id;
     }
 
+    /**
+     * Gets the player name
+     * @return player name
+     */
     public String getName() {
         return _name;
     }
 
+    /**
+     * Gets the player money.
+     * This money could be the total money or a part of it, considering the {@link #_pocketMoney} variable.
+     * @return player money
+     */
     public int getMoney() {
         return _money;
     }
 
+    /**
+     * Gets the money the player has bet in the current hand.
+     * @return money the player has bet in the current hand
+     */
     public int getPocketMoney() {
         return _pocketMoney;
     }
 
+    /**
+     * Gets the player role in the current hand.
+     * @return player role
+     */
     public PlayerRole getPlayerRole() {
         return _role;
     }
