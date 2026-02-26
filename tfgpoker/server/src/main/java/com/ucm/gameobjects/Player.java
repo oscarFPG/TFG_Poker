@@ -151,7 +151,7 @@ public class Player implements IPlayer {
                     return new RaiseCommand(this, nuevaApuesta, _money, _pocketMoney);
 
                 case 4:
-                    return new AllInCommand(this, _money + _pocketMoney);
+                    return new AllInCommand(this, _money, _pocketMoney);
 
                 default:
                     return null;
