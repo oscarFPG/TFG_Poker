@@ -3,13 +3,6 @@
     "configurations": [
         {
             "type": "java",
-            "name": "ServerMain",
-            "request": "launch",
-            "mainClass": "com.ucm.ServerMain",
-            "projectName": "server"
-        },
-        {
-            "type": "java",
             "name": "Debug Server",
             "request": "attach",
             "hostName": "localhost",

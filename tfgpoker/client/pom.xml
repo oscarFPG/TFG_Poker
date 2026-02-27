@@ -18,37 +18,32 @@
     <!-- Dependencias -->
     <dependencies>
 
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-base</artifactId>
-            <version>21</version>
-            <classifier>win</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
-            <version>21</version>
-            <classifier>win</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-fxml</artifactId>
-            <version>21</version>
-            <classifier>win</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-
+        <!-- modulo comun -->
         <dependency>
             <groupId>com.ucm</groupId>
             <artifactId>common</artifactId>
             <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <!-- JavaFX -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>21</version>
+        </dependency>
+
+        <!-- JavaFX -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>21</version>
+        </dependency>
+
+        <!-- tests -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
@@ -72,7 +67,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <mainClass>com.ucm.ClientMain</mainClass>
+                    <mainClass>com.ucm.client.ClientMain</mainClass>
                 </configuration>
             </plugin>
 
@@ -80,10 +75,10 @@
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
-                <version>0.0.8</version>
                 <configuration>
-                    <mainClass>com.ucm.ClientMain</mainClass>
+                    <mainClass>com.ucm.client.ClientMain</mainClass>
                 </configuration>
+                <version>0.0.8</version>
             </plugin>
 
             <!-- Compatibilidad con JUnit 5 
@@ -93,11 +88,6 @@
                 <version>3.0.0-M9</version>
             </plugin>
             -->
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-            </plugin>
 
         </plugins>
     </build>
@@ -115,11 +105,12 @@
                         <executions>
                             <execution>
                                 <id>run-app</id>
+                                <phase>compile</phase>
                                 <goals>
                                     <goal>java</goal>
                                 </goals>
                                 <configuration>
-                                    <mainClass>com.ucm.ClientMain</mainClass>
+                                    <mainClass>com.ucm.client.ClientMain</mainClass>
                                 </configuration>
                             </execution>
                         </executions>
@@ -139,11 +130,12 @@
                         <executions>
                             <execution>
                                 <id>debug-app</id>
+                                <phase>compile</phase>
                                 <goals>
                                     <goal>java</goal>
                                 </goals>
                                 <configuration>
-                                    <mainClass>com.ucm.ClientMain</mainClass>
+                                    <mainClass>com.ucm.client.ClientMain</mainClass>
                                     <jvmArg>agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:8000</jvmArg>
                                 </configuration>
                             </execution>
