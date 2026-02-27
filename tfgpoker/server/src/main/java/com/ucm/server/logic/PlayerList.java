@@ -2,7 +2,17 @@ package com.ucm.server.logic;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.List;
 
+import com.ucm.server.commands.Command;
+import com.ucm.server.exceptions.OnlyOnePlayerLeftException;
+import com.ucm.server.gameobjects.Card;
+import com.ucm.server.gameobjects.Player;
+import com.ucm.server.gameobjects.PlayerRole;
+import com.ucm.server.middleclasses.CommandResult;
+import com.ucm.server.middleclasses.HandInfo;
+
+import com.ucm.server.middleclasses.DTOClient;
 import com.ucm.server.commands.Command;
 import com.ucm.server.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.server.gameobjects.Card;
@@ -14,7 +24,7 @@ import com.ucm.server.middleclasses.HandInfo;
 
 public class PlayerList {
 
-    private class Node {
+    public class Node {
         Node _prev;
         Player _player;
         Node _next;
@@ -93,7 +103,8 @@ public class PlayerList {
         }
     }
 
-    public void removePlayer(Player p) {
+
+    private void removePlayer(Player p) {
 
         if (isEmpty())
             return;
@@ -101,11 +112,11 @@ public class PlayerList {
         if (_first._player == p)
             delete(_first);
 
-        Node i = _first._next;
-        while (i._player != p && i != _first && i != null)
-            i = i._next;
+        Node iNode = _first._next;
+        while (iNode._player != p && iNode != _first && iNode != null)
+            iNode = iNode._next;
 
-        delete(i);
+        delete(iNode);
     }
 
     private void delete(Node p) {
@@ -127,7 +138,8 @@ public class PlayerList {
         --_playerCounter;
     }
 
-    public void playHand(final int sb, final int bb, final boolean isPreflop) throws OnlyOnePlayerLeftException {
+    
+     public void playHand(final int sb, final int bb, final boolean isPreflop) throws OnlyOnePlayerLeftException {
 
         Node pNode = null;
         int currentBet = 0, maxBet = 0;
@@ -237,10 +249,10 @@ public class PlayerList {
             return 0;
 
         int cont = _first._player.hasFolded() ? 0 : 1;
-        Node _current = _first._next;
-        while ( _current != _first ){
-           cont += _current._player.hasFolded() ? 0 : 1;
-           _current = _current._next;
+        Node current = _first._next;
+        while ( current != _first ){
+           cont += current._player.hasFolded() ? 0 : 1;
+           current = current._next;
         }
 
         return cont;
@@ -270,7 +282,7 @@ public class PlayerList {
         }
     }
 
-    private Node smallBlindAndBigBlindPlays(final int sb, final int bb, final int playsToMake){
+    public Node smallBlindAndBigBlindPlays(final int sb, final int bb, final int playsToMake){
 
         // Select first player to make a bet when :
         // 1. Only two players left
@@ -285,7 +297,7 @@ public class PlayerList {
         return pNode;
     }
 
-    private Node getNextPlayerActive(Node current){
+     private Node getNextPlayerActive(Node current){
 
         while ( current._player.hasFolded() ){
             current._player.assignRole(PlayerRole.NO_ROLE);
@@ -295,7 +307,7 @@ public class PlayerList {
         return current;
     }
     
-
+    
     public boolean isEmpty() { return size() == 0; }
     public boolean isFull() { return size() == max(); }
     public int size() { return _playerCounter; }
