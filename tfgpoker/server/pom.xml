@@ -53,9 +53,6 @@
                 <version>3.1.0</version>
                 <configuration>
                     <mainClass>com.ucm.server.ServerMain</mainClass>
-                    <arguments>
-                        <argument>-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000</argument>
-                    </arguments>
                 </configuration>
             </plugin>
 
@@ -65,7 +62,7 @@
     <!-- Perfiles de ejecucion y debug -->
     <profiles>
         
-        <!-- Ejecucion -->
+        <!-- Ejecucion sin argumentos -->
         <profile>
             <id>run</id>
             <build>
