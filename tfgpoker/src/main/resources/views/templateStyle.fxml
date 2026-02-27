@@ -12,27 +12,16 @@
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
 
-
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="411.0" prefWidth="727.0" style="-fx-background-image: url('images/fondoPoker.png'); -fx-background-size: cover; -fx-background-repeat: no-repeat; -fx-background-position: center;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="546.0" prefWidth="1008.0" style="-fx-background-image: url('images/fondoPoker.png'); -fx-background-size: cover; -fx-background-repeat: no-repeat; -fx-background-position: center;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
 <!-- FLECHAS -->
 
                      <!-- FLECHA 1 < > -->
-   <Button fx:id="backButton" layoutX="206.0" layoutY="14.0" prefHeight="62.0" prefWidth="51.0" styleClass="arrow-button" />
-   <Button layoutX="257.0" layoutY="109.0" mnemonicParsing="false" prefHeight="62.0" prefWidth="333.0" style="-fx-background-color: linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100%  ), radial-gradient( center 50% 40%,            radius 120%,            #691179 0%,            #661076 25%,            #3A0878 60%,            #20034F 100% ); -fx-background-radius: 10, 9; -fx-background-insets: 0, 2;" styleClass="buttonJoinGame" text="JOIN GAME" textAlignment="CENTER" textFill="#e5e5e5">
+   <Button fx:id="backButton" layoutX="466.0" layoutY="13.0" prefHeight="62.0" prefWidth="51.0" styleClass="arrow-button" />
+   <Button layoutX="466.0" layoutY="167.0" mnemonicParsing="false" prefHeight="62.0" prefWidth="333.0" style="-fx-background-color: linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100%  ), radial-gradient( center 50% 40%,            radius 120%,            #691179 0%,            #661076 25%,            #3A0878 60%,            #20034F 100% ); -fx-background-radius: 10, 9; -fx-background-insets: 0, 2;" styleClass="buttonJoinGame" textAlignment="CENTER" textFill="#e5e5e5">
       <font>
          <Font name="Constantia Bold" size="29.0" />
       </font>
-   </Button>
-   <Button layoutX="257.0" layoutY="192.0" mnemonicParsing="false" prefHeight="62.0" prefWidth="333.0" style="-fx-background-color: linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100%  ), radial-gradient( center 50% 40%,            radius 120%,            #691179 0%,            #661076 25%,            #3A0878 60%,            #20034F 100% ); -fx-background-radius: 10,9; -fx-background-insets: 0, 2;" styleClass="buttonJoinGame" text="CREATE GAME" textAlignment="CENTER" textFill="#e5e5e5">
-      <font>
-         <Font name="Constantia Bold" size="29.0" />
-      </font>
-   </Button>
-   <Button layoutX="261.0" layoutY="331.0" mnemonicParsing="false" prefHeight="53.0" prefWidth="205.0" style="-fx-background-color: linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100%  ), radial-gradient( center 50% 40%,            radius 120%,            #691179 0%,            #661076 25%,            #3A0878 60%,            #20034F 100% ); -fx-background-radius: 10,9; -fx-background-insets: 0, 2;" styleClass="buttonJoinGame" text="START" textAlignment="CENTER" textFill="#e5e5e5">
-      <font>
-         <Font name="Constantia Bold" size="25.0" />
-      </font>
-   </Button> <SVGPath content="M 40 5 L 15 25 L 40 45 L 32.5 52.5 L 0 25 L 32.5 -2.5 Z" layoutX="211.0" layoutY="19.0" strokeWidth="1.5" style="-fx-backgound: linear-gradient(to right,  #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100%  ),   radial-gradient( center 50% 40%,  radius 120%, #661076 0%, #691179 23% , #3A0878 73%,  #291D4C 100%, #20034F 99%);" styleClass="arrow-shape">
+   </Button> <SVGPath content="M 40 5 L 15 25 L 40 45 L 32.5 52.5 L 0 25 L 32.5 -2.5 Z" layoutX="471.0" layoutY="18.0" strokeWidth="1.5" style="-fx-backgound: linear-gradient(to right,  #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100%  ),   radial-gradient( center 50% 40%,  radius 120%, #661076 0%, #691179 23% , #3A0878 73%,  #291D4C 100%, #20034F 99%);" styleClass="arrow-shape">
       <fill>
          <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
             <stops>
@@ -96,20 +85,43 @@
          </LinearGradient>
       </stroke>
    </SVGPath>
-   <AnchorPane id="sideMenu" layoutX="636.0" prefHeight="411.0" prefWidth="91.0" style="-fx-background-color: linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100%  ), radial-gradient( center 50% 40%,            radius 120%,            #691179 0%,            #661076 25%,            #3A0878 60%,            #20034F 100% ); -fx-background-insets: 0, 2;">
+   <AnchorPane layoutX="917.0" prefHeight="546.0" prefWidth="91.0" style="-fx-background-color: linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100%  ), radial-gradient( center 50% 40%,            radius 120%,            #691179 0%,            #661076 25%,            #3A0878 60%,            #20034F 100% ); -fx-background-insets: 0, 2;">
       <children>
-         <Button layoutX="-19.0" layoutY="179.0" mnemonicParsing="false" prefHeight="53.0" prefWidth="0.0" style="-fx-background-color: linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100%  ), radial-gradient( center 50% 40%,            radius 120%,            #691179 0%,            #661076 25%,            #3A0878 60%,            #20034F 100% ); -fx-background-radius: 10,9; -fx-background-insets: 0, 2;" styleClass="buttonJoinGame" text="&lt;" textAlignment="CENTER" textFill="#e5e5e5">
+         <Button layoutX="-19.0" layoutY="247.0" mnemonicParsing="false" prefHeight="53.0" prefWidth="0.0" style="-fx-background-color: linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100%  ), radial-gradient( center 50% 40%,            radius 120%,            #691179 0%,            #661076 25%,            #3A0878 60%,            #20034F 100% ); -fx-background-radius: 10,9; -fx-background-insets: 0, 2;" styleClass="buttonJoinGame" text="&lt;" textAlignment="CENTER" textFill="#e5e5e5">
             <font>
                <Font name="Constantia Bold" size="20.0" />
             </font>
          </Button>
       </children>
    </AnchorPane>
-   <ImageView fitHeight="92.0" fitWidth="83.0" layoutX="16.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+   <ImageView fitHeight="108.0" fitWidth="108.0" layoutX="14.0" layoutY="15.0" pickOnBounds="true" preserveRatio="true">
       <image>
          <Image url="@../images/imagenPerfil.png" />
       </image>
    </ImageView>
+   <Button layoutX="55.0" layoutY="107.0" maxHeight="53.0" maxWidth="38.0" minHeight="24.0" minWidth="15.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="26.0" rotate="90.0" style="-fx-shape: &quot;M 50 0 L 100 25 L 100 75 L 50 100 L 0 75 L 0 25 Z&quot;; -fx-background-color: #896E1D;">
+      <graphic>
+         <ImageView fitHeight="15.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" rotate="-97.4">
+            <image>
+               <Image url="@../images/pencilEditProfile.png" />
+            </image>
+         </ImageView>
+      </graphic>
+   </Button>
+   <Button layoutX="134.0" layoutY="269.0" mnemonicParsing="false" style="-fx-shape: &quot;M50,0 A50,50 0 1,1 49.99,0 Z&quot;; -fx-background-color: linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100%  ), radial-gradient( center 50% 40%,            radius 120%,            #691179 0%,            #661076 25%,            #3A0878 60%,            #20034F 100% ); -fx-background-insets: 0, 2;" styleClass="round-button">
+      <graphic>
+         <ImageView fitHeight="35.0" fitWidth="36.0" pickOnBounds="true" preserveRatio="true" styleClass="round-button">
+            <image>
+               <Image url="@../images/iconoInformacionTarjetasModo.png" />
+            </image>
+         </ImageView>
+      </graphic>
+   </Button>
+   <Button layoutX="141.0" layoutY="33.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="126.0" style="-fx-background-color: rgba(162, 130, 190, 0.38); -fx-background-radius: 10, 9;" styleClass="buttonJoinGame" textAlignment="CENTER" textFill="#e5e5e5">
+      <font>
+         <Font name="Constantia Bold" size="29.0" />
+      </font>
+   </Button>
 
             <!-- CONTENEDORES / LAYOUTS -->
    <!-- contenedores cuadrados-->
