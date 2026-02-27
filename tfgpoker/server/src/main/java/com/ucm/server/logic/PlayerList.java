@@ -12,15 +12,6 @@ import com.ucm.server.gameobjects.PlayerRole;
 import com.ucm.server.middleclasses.CommandResult;
 import com.ucm.server.middleclasses.HandInfo;
 
-import com.ucm.server.middleclasses.DTOClient;
-import com.ucm.server.commands.Command;
-import com.ucm.server.exceptions.OnlyOnePlayerLeftException;
-import com.ucm.server.gameobjects.Card;
-import com.ucm.server.gameobjects.Player;
-import com.ucm.server.gameobjects.PlayerRole;
-import com.ucm.server.middleclasses.CommandResult;
-import com.ucm.server.middleclasses.HandInfo;
-
 
 public class PlayerList {
 
@@ -104,7 +95,7 @@ public class PlayerList {
     }
 
 
-    private void removePlayer(Player p) {
+    public void removePlayer(Player p) {
 
         if (isEmpty())
             return;
@@ -282,7 +273,7 @@ public class PlayerList {
         }
     }
 
-    public Node smallBlindAndBigBlindPlays(final int sb, final int bb, final int playsToMake){
+    private Node smallBlindAndBigBlindPlays(final int sb, final int bb, final int playsToMake){
 
         // Select first player to make a bet when :
         // 1. Only two players left

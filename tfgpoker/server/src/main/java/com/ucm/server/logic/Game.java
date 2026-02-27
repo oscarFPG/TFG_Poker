@@ -38,8 +38,8 @@ public class Game {
 
     private int _currentSB;
     private int _currentBB;
-
-
+    
+    
     public Game() {
 
         _initialSmallBlind = Game.INITIAL_SB;

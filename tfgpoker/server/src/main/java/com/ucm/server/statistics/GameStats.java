@@ -1,4 +1,4 @@
-package com.ucm.statistics;
+package com.ucm.server.statistics;
 
 public record GameStats (
     double equity,

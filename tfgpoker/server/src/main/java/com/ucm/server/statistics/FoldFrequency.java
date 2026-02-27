@@ -1,5 +1,5 @@
 
-package com.ucm.statistics;
+package com.ucm.server.statistics;
 
 import java.util.EnumMap;
 import java.util.Map;

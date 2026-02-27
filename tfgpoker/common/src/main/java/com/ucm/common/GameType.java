@@ -34,8 +34,7 @@ public class GameType {
     public static final int PLAYER_ROLE_UNDER_THE_GUN = 54;
     public static final int PLAYER_ROLE_MIDDLE_POSITION = 55;
     public static final int PLAYER_ROLE_CUT_OFF = 56;
-
-    /*    
+  
     // JUGADAS
     // FOLD
     public static final int FOLD = 1;
@@ -118,6 +117,5 @@ public class GameType {
     public static final int NUMBER_Q = 212;
     public static final int NUMBER_K = 213;
     public static final int NUMBER_A = 214;
-    
-    */
+
 }
