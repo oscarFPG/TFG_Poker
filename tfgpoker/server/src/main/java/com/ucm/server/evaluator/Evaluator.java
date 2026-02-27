@@ -15,7 +15,16 @@ import com.ucm.server.gameobjects.Player;
 import com.ucm.server.gameobjects.Suit;
 import com.ucm.server.middleclasses.HandInfo;
 
-
+/**
+ * Utility class responsible for evaluating poker hands.
+ * <p>
+ * This implementation is based on a fast 5-card poker hand evaluation
+ * algorithm using precomputed lookup tables.
+ * <p>
+ * Adapted from:
+ * Cactus Kev's Poker Hand Evaluator
+ * (http://suffe.cool/poker/evaluator.html)
+ */
 public class Evaluator {
 
     public enum RANK {

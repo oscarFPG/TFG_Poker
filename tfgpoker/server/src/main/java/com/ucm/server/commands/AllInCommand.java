@@ -6,10 +6,11 @@ import com.ucm.server.middleclasses.CommandResult;
 
 public class AllInCommand extends Command {
 
+    
     public AllInCommand(){}
 
-    public AllInCommand(Player p, int money) {
-        super(p, money, 0);
+    public AllInCommand(Player p, int money, int pocketMoney) {
+        super(p, money, pocketMoney);
     }
 
     @Override
