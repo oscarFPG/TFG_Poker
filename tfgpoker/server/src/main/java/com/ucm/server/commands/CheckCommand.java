@@ -3,7 +3,6 @@ package com.ucm.server.commands;
 import com.ucm.server.gameobjects.Player;
 import com.ucm.server.middleclasses.CommandResult;
 import com.ucm.common.GameType;
-import java.io.IOException;
 
 
 public class CheckCommand extends Command {

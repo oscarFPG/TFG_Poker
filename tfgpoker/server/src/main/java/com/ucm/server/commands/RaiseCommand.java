@@ -10,7 +10,13 @@ import com.ucm.server.middleclasses.CommandResult;
  */
 public class RaiseCommand extends Command {
 
+
     protected int _targetBet;
+    
+    public RaiseCommand() {
+        super();
+    }
+        
     /**
      * Constructor for the RaiseCommand class.
      * @param p the player who is raising
@@ -22,6 +28,8 @@ public class RaiseCommand extends Command {
         super(p, money, pocketMoney);
         _targetBet = newBet;
     }
+    
+
     /**
     * {@inheritDoc}
     */
