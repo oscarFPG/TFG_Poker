@@ -2,21 +2,54 @@ package com.ucm.gameobjects;
 
 import java.util.Random;
 
-
+/**
+ * This class is the responsible of managing all the {@link Card} objects of the
+ * game.
+ * Every interacting with the cards of the game should be done through this
+ * class, such as taking a card or retrieving it.
+ */
 public class Deck {
 
+    /**
+     * Number of different values in the deck (2, 3, 4, 5, 6, 7, 8, 9, 10, J, Q, K,
+     * A)
+     */
     private static int NUM_VALUES = 12;
+
+    /**
+     * Number of different suits in the deck (Hearts, Diamonds, Clubs, Spades)
+     */
     private static int NUM_SUITS = Suit.values().length;
+
+    /**
+     * Array containing all the suits in the deck.
+     * Check {@link Suit} enum for more information
+     */
     private static Suit[] SUITS = Suit.values();
 
+    /**
+     * Bidimensional array representing the deck of cards.
+     * First dimension represents the suits, second dimension represents the values.
+     */
     private Card[][] _deck;
+
+    /**
+     * {@link Random} object used to take random cards from the deck.
+     */
     private Random _random;
 
+    /**
+     * Class constructor, initializes the deck and the random object.
+     */
     public Deck() {
         _random = new Random();
         initializeDeck();
     }
 
+    /**
+     * Initializes the deck of cards.
+     * Creates a new {@link Card} object for each combination of suit and value.
+     */
     private void initializeDeck() {
 
         _deck = new Card[NUM_SUITS][NUM_VALUES];
@@ -31,8 +64,18 @@ public class Deck {
         }
     }
 
+    /**
+     * Takes a random card from the deck.
+     * This method never retrieves a Card that has already been taken.
+     * 'Picking' a card from the deck is done by setting its availability to false,
+     * it is <b>never</b> removed from the deck.
+     * Check {@link Card} class for more information about the availability of a
+     * card and the methods related to it.
+     * 
+     * @return
+     */
     public Card takeRandomCard() {
-        
+
         int suit = _random.nextInt(SUITS.length);
         int value = _random.nextInt(NUM_VALUES);
 
@@ -45,6 +88,9 @@ public class Deck {
         return taken;
     }
 
+    /**
+     * Prints the current state of the deck in the console.
+     */
     public void printAllDeck() {
 
         for (int i = 0; i < SUITS.length; i++) {
@@ -52,15 +98,21 @@ public class Deck {
             for (int j = 0; j < NUM_VALUES; j++) {
                 if (_deck[i][j] == null) {
                     System.out.print("[xx]");
-                }
-                else {
-                    System.out.print( _deck[i][j].toString() );
+                } else {
+                    System.out.print(_deck[i][j].toString());
                 }
             }
             System.out.println();
         }
     }
 
+    /**
+     * Retrieves a card to the deck, making it available again.
+     * It must be taken previously from the deck using {@link #takeRandomCard()}
+     * method, otherwise it may cause inconsistencies in the deck.
+     * 
+     * @param card to be retrieved to the deck.
+     */
     public void retrieveCard(Card card) {
 
         int suitIndex = card.getSuit().getIndex();
@@ -69,7 +121,13 @@ public class Deck {
         _deck[suitIndex][valueIndex].setAvailable(true); // la devolvemos al mazo --> indicamos que esta disponible
     }
 
-    public void resetDeck(){
+    /**
+     * Resets the deck to its initial state, making all the cards available again.
+     * All cards must be retrieved before calling this method to avoid
+     * inconsistencies in the deck.
+     * Check {@link #retrieveCard(Card)} method of more information.
+     */
+    public void resetDeck() {
 
         for (int i = 0; i < NUM_SUITS; i++) {
             for (int j = 0; j < NUM_VALUES; j++) {
@@ -77,6 +135,5 @@ public class Deck {
             }
         }
     }
-    
-}
 
+}
