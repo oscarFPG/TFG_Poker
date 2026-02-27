@@ -1,16 +1,22 @@
 package com.ucm.server.commands;
 
-import com.ucm.common.GameType;
 import com.ucm.server.gameobjects.Player;
 import com.ucm.server.middleclasses.CommandResult;
 
 
+/**
+ * Class that represents the fold command in the poker game. This command allows a player to fold and stop playing in the current hand.
+ */
 public class FoldCommand extends Command {
 
     public FoldCommand(){
         super();
     }
 
+    /**
+     * Constructor method that creates a FoldCommand.
+     * @param p the player that is making the fold play.
+     */
     public FoldCommand(Player p) {
         super(p, 0, 0);
     }
@@ -26,29 +32,24 @@ public class FoldCommand extends Command {
     }
 
     @Override
-    public boolean checkCommand() {
-        return true;
-    }
-
-    @Override
     public String getCommandName() {
         return "FOLD";
     }
 
     @Override
-    protected int getCommandIdentifier(){
-        return GameType.FOLD;
-    }
-    
-    @Override
-    public Command create(int codePlay, Player p) {
-        //TODO controlar exception
-        if(!correctCode(codePlay)) throw null;
-        return new FoldCommand(p);
+    public boolean matchCommand(String command) {
+        return  command.equalsIgnoreCase("fold") || 
+                command.equalsIgnoreCase("f");
     }
 
     @Override
-    protected boolean correctCode(int codePlay) {
-        return codePlay == GameType.FOLD;
+    public boolean checkAttributes(String[] fullCommand) {
+        return fullCommand.length == 1;
     }
+
+    @Override
+    public Command create(String[] fullCommand, Player p) {
+        return new FoldCommand(p);
+    }
+
 }

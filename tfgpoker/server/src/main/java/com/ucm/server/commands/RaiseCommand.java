@@ -36,9 +36,6 @@ public class RaiseCommand extends Command {
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
 
-        if(!checkCommand())
-            return null;
-
         if (_targetBet == _money + _pocketMoney) {
             AllInCommand command = new AllInCommand(_player, _money,_pocketMoney);
             return command.execute(sb, bb, maxBet);
@@ -47,13 +44,7 @@ public class RaiseCommand extends Command {
         _player.raise(_targetBet);
         return CommandResult.continuePlaying(_targetBet, true);
     }
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean checkCommand() {
-        return _money + _pocketMoney >= _targetBet;
-    }
+
     /**
      * {@inheritDoc}
      */
@@ -63,20 +54,30 @@ public class RaiseCommand extends Command {
     }
 
     @Override
-    protected int getCommandIdentifier() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getCommandIdentifier'");
+    public boolean matchCommand(String command) {
+        return  command.equalsIgnoreCase("raise") || 
+                command.equalsIgnoreCase("r");
     }
 
     @Override
-    protected boolean correctCode(int codePlay) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'correctCode'");
+    public boolean checkAttributes(String[] fullCommand) {
+
+        if(fullCommand.length != 2)
+            return false;
+        
+        try {
+            int bet = Integer.parseInt(fullCommand[1]);
+            return bet > 0;
+        }
+        catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     @Override
-    public Command create(int codePlay, Player p) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'create'");
+    public Command create(String[] fullCommand, Player p) {
+        int bet = Integer.parseInt(fullCommand[1]);
+        return new RaiseCommand(p, bet, p.getMoney(), p.getPocketMoney());
     }
+
 }

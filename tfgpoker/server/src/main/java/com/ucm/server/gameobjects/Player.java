@@ -123,42 +123,20 @@ public class Player implements IPlayer {
     public Command makePlay() {
 
         Scanner sc = new Scanner(System.in);
-        int jugada = -1;
+        Command command = null;
+        String[] userInput = null;
+
 
         do {
 
             menuMakePlay();
-            jugada = sc.nextInt(); // Suponemos que la entrada siempre es un numero
-            sc.close();
+            userInput = sc.nextLine().trim().split(" ");
+            command = Command.parseCommand(userInput, this);
+        }
+        while (command == null);
 
-            switch (jugada) {
-                case 0:
-                    return new FoldCommand(this);
-
-                case 1:
-                    return new CheckCommand(this);
-
-                case 2:
-                    return new CallCommand(this, _money, _pocketMoney);
-
-                case 3:
-                    Scanner scanner = new Scanner(System.in);
-                    int nuevaApuesta = 0;
-                    System.out.printf("Introduzca la cantidad a apostar: ");
-                    nuevaApuesta = scanner.nextInt();
-                    System.out.printf("\n");
-
-                    return new RaiseCommand(this, nuevaApuesta, _money, _pocketMoney);
-
-                case 4:
-                    return new AllInCommand(this, _money, _pocketMoney);
-
-                default:
-                    return null;
-            }
-
-        } while (jugada == -1);
-
+        sc.close();
+        return command;
     }
 
     /**
@@ -167,11 +145,7 @@ public class Player implements IPlayer {
     private void menuMakePlay() {
         System.out.printf("Haz una jugada, %s!\n", getName());
         System.out.println("Opciones de jugada: ");
-        System.out.println("0: fold ");
-        System.out.println("1: check ");
-        System.out.println("2: call ");
-        System.out.println("3: raise ");
-        System.out.println("4: allIn ");
+        System.out.println( Command.showAvailableCommands() );
         System.out.println("Introduce tu jugada: ");
     }
 
@@ -285,7 +259,7 @@ public class Player implements IPlayer {
     }
 
     /**
-     * @deprecated TODO: HAY QUE HACERLO BIEN !!
+     * TODO: HAY QUE HACERLO BIEN !!
      * @param maxBet
      */
     public void raise(int maxBet) {

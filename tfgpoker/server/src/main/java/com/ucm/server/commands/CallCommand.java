@@ -24,14 +24,12 @@ public class CallCommand extends Command {
     public CallCommand(Player p, int money, int pocketMoney) {
         super(p, money, pocketMoney);
     }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
-
-        if(!checkCommand())
-            return null;
 
         if(_currentBet == _money + _pocketMoney){
             AllInCommand allIn = new AllInCommand(_player, _money, _pocketMoney);
@@ -41,13 +39,7 @@ public class CallCommand extends Command {
         _player.call(maxBet);
         return CommandResult.continuePlaying(_money, false);
     }
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean checkCommand() {
-        return _currentBet <= _money + _pocketMoney;
-    }
+
     /**
      * {@inheritDoc}
      */
@@ -56,24 +48,28 @@ public class CallCommand extends Command {
         return "CALL";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected int getCommandIdentifier(){
-        return GameType.CALL;
+    public boolean matchCommand(String command) {
+        return  command.equalsIgnoreCase("call") || 
+                command.equalsIgnoreCase("c");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Command create(int codePlay, Player p) {
-        //TODO controlar exception
-        if(!correctCode(codePlay))
-            return null;
-        
+    public boolean checkAttributes(String[] fullCommand) {
+        return fullCommand.length == 1;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Command create(String[] fullCommand, Player p) {
         return new CallCommand(p, p.getMoney(), p.getPocketMoney());
     }
-
-    @Override
-    protected boolean correctCode(int codePlay) {
-         return codePlay == GameType.CALL;
-    }
-
-    
 }
