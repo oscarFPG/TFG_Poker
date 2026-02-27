@@ -378,11 +378,11 @@ public class PlayerList {
     }
 
     /**
-     * This method forces 
-     * @param sb
-     * @param bb
-     * @param playsToMake
-     * @return
+     * This method forces the small blind and big blind players to make their corresponding bets.
+     * @param sb The value of the small blind for this hand
+     * @param bb The value of the big blind for this hand
+     * @param playsToMake The number of plays that have to take place in this round to end it.
+     * @return The node of the next player to play after the big blind
      */
     private Node smallBlindAndBigBlindPlays(final int sb, final int bb, final int playsToMake){
 
@@ -399,7 +399,13 @@ public class PlayerList {
         return pNode;
     }
 
-     private Node getNextPlayerActive(Node current){
+    /**
+     * Returns the next active player in the list starting from the given node.
+     * An active player is one that has not folded in the current hand.
+     * @param current The node of the current player
+     * @return The node of the next active player, or null if no active players are left
+     */
+    private Node getNextPlayerActive(Node current){
 
         while ( current._player.hasFolded() ){
             current._player.assignRole(PlayerRole.NO_ROLE);
@@ -409,9 +415,27 @@ public class PlayerList {
         return current;
     }
     
-    
+    /**
+     * Checks if the list is empty
+     * @return true if the list is empty, false otherwise
+     */
     public boolean isEmpty() { return size() == 0; }
+
+    /**
+     * Checks if the list is full
+     * @return true if the list is full, false otherwise
+     */
     public boolean isFull() { return size() == max(); }
+
+    /**
+     * Returns the number of players introduced originally in the game
+     * @return 
+     */
     public int size() { return _playerCounter; }
+
+    /**
+     * Returns the maximum number of players allowed in the list
+     * @return
+     */
     public int max() { return _maxNumberOfPlayers; }
 }
