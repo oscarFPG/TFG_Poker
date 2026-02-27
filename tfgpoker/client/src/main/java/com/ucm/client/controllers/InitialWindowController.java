@@ -1,4 +1,4 @@
-package com.ucm.client.views.controllers;
+package com.ucm.client.controllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
