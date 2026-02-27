@@ -96,45 +96,33 @@ public class ClientMain extends Application {
 	private static void game(Socket socket){
 
 		System.out.printf("La partida comienza!\n");
-		int roleCode;
-		// int cardValues[] = new int[2];
-		// int cardSuits[] = new int[2];
-		// int tableCardValues[] = new int[5];
-		// int tableCardSuits[] = new int[5];
 
+		InputStream in;
+		OutputStream out;
 		try {
-			InputStream in = socket.getInputStream();
-			OutputStream out = socket.getOutputStream();
+			in = socket.getInputStream();
+			out = socket.getOutputStream();
 
 			// Recibir rol de jugador
-			roleCode = SocketUtils.receiveInt(in);
-			System.out.printf("Player with name \'%s\' and rol code %d\n", _name, roleCode);
+			int rol = SocketUtils.receiveInt(in);
+			System.out.printf("Player with name \'%s\' and id %d\n", _name, rol);
 
 			// Recibir cartas
-			int cartas = SocketUtils.receiveInt(in);
 
 			// Jugar turno/esperar a turno
-			int turno1 = SocketUtils.receiveInt(in);
 
 			// Recibir carta de tablero (1)
 			// Recibir carta de tablero (2)
 			// Recibir carta de tablero (3)
-			int cartaMesa1 = SocketUtils.receiveInt(in);
-			int cartaMesa2 = SocketUtils.receiveInt(in);
-			int cartaMesa3 = SocketUtils.receiveInt(in);
 
 			// Jugar turno/esperar a turno
-			int turno2 = SocketUtils.receiveInt(in);
 			// Recibir carta de tablero (4)
-			int cartaMesa4 = SocketUtils.receiveInt(in);
 
 			// Jugar turno/esperar a turno
-			int turno3 = SocketUtils.receiveInt(in);
 			// Recibir carta de tablero (5)
-			int cartaMesa5 = SocketUtils.receiveInt(in);
 
 			// Showdown -> Comprobar ganadores y repartir premios
-			int showdown = SocketUtils.receiveInt(in);
+
 		}
 		catch (IOException e) {
 			e.printStackTrace();

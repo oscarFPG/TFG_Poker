@@ -1,102 +1,37 @@
 package com.ucm.gameobjects;
 
-import com.ucm.SocketUtils;
 import com.ucm.commands.AllInCommand;
 import com.ucm.commands.CallCommand;
 import com.ucm.commands.CheckCommand;
 import com.ucm.commands.Command;
 import com.ucm.commands.FoldCommand;
 import com.ucm.commands.RaiseCommand;
-import com.ucm.control.GameAdapter;
-import com.ucm.interfaces.IPlayer;
 
-import java.io.IOException;
 import java.net.Socket;
 import java.util.Scanner;
 
-/**
- * This class represents any king of player in the game, whether its a human
- * player or and AI player.
- * It works as a representation of the player entity in the server side.
- */
-public class Player implements IPlayer {
 
-    /**
-     * Player's unique identifier
-     */
+public class Player {
+
     private int _id;
-
-    /**
-     * Player's name
-     */
     private String _name;
-
-    /**
-     * Player's total money.
-     * This is money that the player has not bet yet.
-     * The bet money is transfer to the {@link #_pocketMoney} when the player places
-     * a bet.
-     */
-    private int _money;
-
-    /**
-     * Money the player has bet.
-     * It is only truly lost only when a round ends and the player has lost,
-     * otherwise it is returned to the player.
-     */
-    private int _pocketMoney;
-
-    /**
-     * Player's role during the current hand.
-     * This role is assigned at the beginning of the game and it is reassigned at
-     * the end of each hand.
-     * Check {@link PlayerRole} for more information about the possible roles.
-     */
+    private int _money;         // Player's total money
+    private int _pocketMoney;   // Money the play has bet. It is not lost unless the player folds or loses and
+                                // it is a portion of the remaining of the total
     private PlayerRole _role;
-
-    /**
-     * Represents the cards that the player has in his hand.it can only hold zero or
-     * two cards.
-     */
     private Card[] _cards;
-
-    /**
-     * Number of cards the player currently has in hand.
-     * It can only be 0, 1 or 2, but it should never be 1 since the player should
-     * always have two cards or none.
-     */
     private int _numCards;
-
-    /**
-     * Indicates whether the player has folded in the current hand.
-     */
     private boolean _fold;
-
-    /**
-     * Indicates whether the player has lost the game.
-     */
     private boolean _hasLost;
-
-    /**
-     * Socket used for communication with the player.
-     * Check {@link Socket} and {@link SocketUtils}.
-     */
     private Socket _socket;
 
-    /**
-     * Constructor for the Player class.
-     * 
-     * @param id     assignated to the player, it must be unique
-     * @param name   of the player, it does not have to be unique
-     * @param socket used for communicating with the real player
-     * @param money  received at the beginning of the game
-     */
+
     public Player(int id, String name, Socket socket, int money) {
         _id = id;
         _name = name;
+        _money = money;
         _socket = socket;
 
-        _money = money;
         _pocketMoney = 0;
         _role = PlayerRole.NO_ROLE;
         _cards = new Card[2];
@@ -105,21 +40,6 @@ public class Player implements IPlayer {
         _hasLost = false;
     }
 
-    /**
-     * Assigns a role to the player.
-     * 
-     * @param r
-     */
-    public void assignRole(PlayerRole r) {
-        _role = r;
-        onReceiveRole(r);
-    }
-
-    /**
-     * Makes a play based on the player's input by console
-     * 
-     * @return {@link Command} representing the play the player has made
-     */
     public Command makePlay() {
 
         Scanner sc = new Scanner(System.in);
@@ -128,42 +48,83 @@ public class Player implements IPlayer {
         do {
 
             menuMakePlay();
-            jugada = sc.nextInt(); // Suponemos que la entrada siempre es un numero
+            jugada = sc.nextInt();  // Suponemos que la entrada siempre es un numero
             sc.close();
 
             switch (jugada) {
+            case 0:
+                return new FoldCommand(this);
+            
+            case 1:
+                return new CheckCommand(this);
+            
+            case 2:
+                return new CallCommand(this, _money, _pocketMoney);
+
+            case 3:
+                Scanner scanner = new Scanner(System.in);
+                int nuevaApuesta = 0;
+                System.out.printf("Introduzca la cantidad a apostar: ");
+                nuevaApuesta = scanner.nextInt();
+                System.out.printf("\n");
+
+                return new RaiseCommand(this, nuevaApuesta, _money, _pocketMoney);
+
+            case 4:
+                return new AllInCommand(this, _money + _pocketMoney);
+
+            default:
+                return null;
+            }
+
+            /*
+            switch (jugada) {
                 case 0:
-                    return new FoldCommand(this);
+                    return new FoldCommand(this, _pocketMoney);
 
                 case 1:
-                    return new CheckCommand(this);
+                    if (maxBet != 0) { // No puedo hacer check si hay alguna apuesta en juego
+                        System.out.println("You can't do check"); 
+                    }
+                    return new CheckCommand(this, _pocketMoney);
 
                 case 2:
-                    return new CallCommand(this, _money, _pocketMoney);
+                    if (!isEnoughMoney(maxBet - _pocketMoney)) { // No puedo igualar porque no tengo suficiente dinero
+                        System.out.println("Not enough money to make a call");
+                        return new FoldCommand(this, _pocketMoney);
+                        // TODO Habrá que preguntarle al jugador si quiere hacer un allIn retirarse.
+                        // Se entiende que no quiere hacer fold
+                    }
+                    return new CallCommand(this, _pocketMoney);
 
                 case 3:
-                    Scanner scanner = new Scanner(System.in);
-                    int nuevaApuesta = 0;
-                    System.out.printf("Introduzca la cantidad a apostar: ");
-                    nuevaApuesta = scanner.nextInt();
-                    System.out.printf("\n");
-
-                    return new RaiseCommand(this, nuevaApuesta, _money, _pocketMoney);
+                    //
+                    // TODO Si no tengo suficiente dinero para subir, ver si tengo suficiente dinero
+                    // para igualar, y si tengo, hago call
+                    // (decidir si hacer call obligatoriamente o preguntar si el jugador quiere
+                    // hacer call u allin), si no,
+                    // tendría que hacer fold u allin
+                    //
+                    if (!isEnoughMoney(10)) {
+                        System.out.println("Not enough money to make a raise");
+                        return new CallCommand(this, _pocketMoney);
+                    }
+                    return new RaiseCommand(this, _pocketMoney);
 
                 case 4:
-                    return new AllInCommand(this, _money + _pocketMoney);
+                    return new AllInCommand(this, _pocketMoney);
 
                 default:
-                    return null;
+                    System.out.println("Opción no válida. Vuelva a intentarlo...");
+                    jugada = -1;
+                    break;
             }
+            */
 
         } while (jugada == -1);
 
     }
 
-    /**
-     * Prints the menu for the player to make a play by console.
-     */
     private void menuMakePlay() {
         System.out.printf("Haz una jugada, %s!\n", getName());
         System.out.println("Opciones de jugada: ");
@@ -175,14 +136,6 @@ public class Player implements IPlayer {
         System.out.println("Introduce tu jugada: ");
     }
 
-    /**
-     * Forces the player to make the small-blind or big-blind bet if its role is the
-     * corresponding one.
-     * Check {@link PlayerRole}
-     * 
-     * @param sb
-     * @param bb
-     */
     public void makeForcedBet(int sb, int bb) {
 
         int bet = 0;
@@ -197,12 +150,6 @@ public class Player implements IPlayer {
         decreaseMoney(bet);
     }
 
-    /**
-     * Adds a card to the player's hand if he has less than two cards.
-     * 
-     * @param c card to be added
-     * @return true if the card was added successfully, false in any other case
-     */
     public boolean receiveCard(Card c) {
 
         if (_numCards == 2)
@@ -212,12 +159,6 @@ public class Player implements IPlayer {
         return true;
     }
 
-    /**
-     * Retrieves a card from the player's hand.
-     * If the player has two card it shoul be called twice to retrieve both cards.
-     * 
-     * @return the card retrieved or null if the player has no cards
-     */
     public Card retrieveCard() {
 
         if (_numCards <= 0)
@@ -228,12 +169,6 @@ public class Player implements IPlayer {
         return c;
     }
 
-    /**
-     * Retrieve the money that it is contained in the {@link #_pocketMoney} and set
-     * it to zero.
-     * 
-     * @return the money retrieved
-     */
     public int placeBet() {
 
         int money = _pocketMoney;
@@ -305,6 +240,10 @@ public class Player implements IPlayer {
         return String.format("Player[%d]: %s - %s%s", _id, _name, carta1, carta2);
     }
 
+    public void setRole(PlayerRole pr) {
+        _role = pr;
+    }
+
     public void resetCards() {
 
         if (_cards[0] != null)
@@ -320,77 +259,18 @@ public class Player implements IPlayer {
         _fold = fold;
     }
 
-    public void setHasLost(boolean lost) {
+    public void setHasLost(boolean lost){
         _hasLost = lost;
     }
 
-    public Card[] getCards() {
-        return _cards;
-    }
-
-    public int getID() {
-        return _id;
-    }
-
-    public String getName() {
-        return _name;
-    }
-
-    public int getMoney() {
-        return _money;
-    }
-
-    public int getPocketMoney() {
-        return _pocketMoney;
-    }
-
-    public PlayerRole getPlayerRole() {
-        return _role;
-    }
-
-    public int getNumCards() {
-        return _numCards;
-    }
-
-    public boolean hasFolded() {
-        return _fold;
-    }
-
-    public boolean hasLost() {
-        return _hasLost;
-    }
-
-    @Override
-    public void onReceiveRole(PlayerRole r) {
-
-        try {
-
-            int role = GameAdapter.playerRoleToCode(r);
-            SocketUtils.sendInteger(_socket.getOutputStream(), role);
-            _role = r;
-
-            System.out.printf("Player %s receives rol %s\n", _name, _role.name());
-        } catch (IOException e) {
-            System.out.printf("Error receiving the role for %s player: %s\n", _name, e.getMessage());
-        }
-    }
-
-    @Override
-    public void onReceiveCard(Card c) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onReceiveCard'");
-    }
-
-    @Override
-    public void onReceiveTableCard(Card c) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onReceiveTableCard'");
-    }
-
-    @Override
-    public void onReceiveTurn() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onReceiveTurn'");
-    }
+    public Card[] getCards(){ return _cards; }
+    public int getID(){ return _id; }
+    public String getName(){ return _name; }
+    public int getMoney(){ return _money; }
+    public int getPocketMoney(){ return _pocketMoney; }
+    public PlayerRole getPlayerRole(){ return _role; }
+    public int getNumCards(){ return _numCards; }
+    public boolean hasFolded(){ return _fold; }
+    public boolean hasLost(){ return _hasLost; }
 
 }

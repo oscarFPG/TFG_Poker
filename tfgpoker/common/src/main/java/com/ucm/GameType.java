@@ -24,18 +24,11 @@ public class GameType {
     public static final int HOST_START_GAME_PETITION_ERROR_NOT_HOST = 32;       // Server error response to HOST_START_GAME_PETITION
 
     // Server notifies all players game has started
-    public static final int GAME_STARTS = 40;
+    public static final int GAME_STARTS = 10;
 
-    // Player rol codes
-    public static final int PLAYER_ROLE_NO_ROLE = 50;
-    public static final int PLAYER_ROLE_DEALER = 51;
-    public static final int PLAYER_ROLE_SMALL_BLIND = 52;
-    public static final int PLAYER_ROLE_BIG_BLIND = 53;
-    public static final int PLAYER_ROLE_UNDER_THE_GUN = 54;
-    public static final int PLAYER_ROLE_MIDDLE_POSITION = 55;
-    public static final int PLAYER_ROLE_CUT_OFF = 56;
 
-    /*    
+    /*
+    
     // JUGADAS
     // FOLD
     public static final int FOLD = 1;

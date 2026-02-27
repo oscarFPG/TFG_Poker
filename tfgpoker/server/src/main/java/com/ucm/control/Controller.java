@@ -1,6 +1,5 @@
 package com.ucm.control;
 
-import java.io.IOException;
 import java.util.List;
 
 import java.io.IOException;
@@ -23,7 +22,6 @@ public class Controller {
         addPlayersToGame(players);
     }
 
-
     private void addPlayersToGame(List<ClientStructGame> players) {
 
         int id = 0;
@@ -31,25 +29,25 @@ public class Controller {
             _game.addPlayer( new Player(id, cs.name(), cs.socket(), 1000) );
             ++id;
         }
+
+        while(true){}
     }
 
     public void run() {
 
-        System.out.print("Controller.run() method");
-
-        // Start Game loop (1)
+        // Game loop
         _game.assignRolesToAllPlayers();
         while (!_game.isGameFinished()) {
 
             try {
                 
-                // Pre-flop (2)
+                // Pre-flop
                 _game.shareOutCardsToAllPlayers();
                 if (Game.DEBUG)
                     _game.showStateDEBUG();
                 _game.playHand();
 
-                // Flop (3)
+                // Flop
                 _game.addCardToTable();
                 _game.addCardToTable();
                 _game.addCardToTable();
@@ -57,19 +55,19 @@ public class Controller {
                     _game.showStateDEBUG();
                 _game.playHand();
 
-                // Turn (4)
+                // Turn
                 _game.addCardToTable();
                 if (Game.DEBUG)
                     _game.showStateDEBUG();
                 _game.playHand();
 
-                // River (5)
+                // River
                 _game.addCardToTable();
                 if (Game.DEBUG)
                     _game.showStateDEBUG();
                 _game.playHand();
 
-                // Showdown (6)
+                // Showdown
                 _game.giveRewardToWinner();
                 if (Game.DEBUG)
                     _game.showStateDEBUG();
