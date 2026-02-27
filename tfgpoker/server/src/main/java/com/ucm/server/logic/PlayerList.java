@@ -1,8 +1,5 @@
 package com.ucm.server.logic;
 
-import java.io.IOException;
-import java.net.Socket;
-import java.util.List;
 
 import com.ucm.server.commands.Command;
 import com.ucm.server.exceptions.OnlyOnePlayerLeftException;
@@ -12,14 +9,39 @@ import com.ucm.server.gameobjects.PlayerRole;
 import com.ucm.server.middleclasses.CommandResult;
 import com.ucm.server.middleclasses.HandInfo;
 
-
+/**
+ * This class represents the list of players in the game in a Circular Double-linked list structure.
+ * This implementation holds the circular form in any game state.
+ * This means that in every moment, the first, last and middle nodes are connected to each other in a circular way.
+ */
 public class PlayerList {
 
+    /**
+     * Inner class to represent each node of the list
+     */
     public class Node {
+
+        /**
+         * The previous node to the current one
+         */
         Node _prev;
+
+        /**
+         * The player that the current node holds
+         */
         Player _player;
+
+        /**
+         * The next node to the current one
+         */
         Node _next;
 
+        /**
+         * Constructor of the Node class
+         * @param prev The previous node to the current one
+         * @param p The player that the current node holds
+         * @param next The next node to the current one
+         */
         public Node(Node prev, Player p, Node next) {
             _prev = prev;
             _player = p;
@@ -27,12 +49,31 @@ public class PlayerList {
         }
     }
 
+    /**
+     * The first node of the list
+     */
     private Node _first;
+
+    /**
+     * The last node of the list
+     */
     private Node _last;
+
+    /**
+     * The number of players currently in the list
+     */
     private int _playerCounter;
+
+    /**
+     * The maximum number of players allowed in the list
+     */
     private int _maxNumberOfPlayers;
 
 
+    /**
+     * Constructor of a empty circular double-linked list of players
+     * @param n The maximum number of players allowed in the list
+     */
     public PlayerList(int n) {
         _first = null;
         _last = null;
@@ -41,7 +82,15 @@ public class PlayerList {
     }
 
 
+    /**
+     * Adds a player to the list.
+     * If the list is full, the player will not be added and this method will not have any effect.
+     * @param p The player to be added
+     */
     public void addPlayer(Player p) {
+
+        if(isFull())
+            return;
 
         Node newNode = new Node(_last, p, _first);
         if (isEmpty()) {
@@ -61,6 +110,11 @@ public class PlayerList {
         ++_playerCounter;
     }
 
+    /**
+     * Assigns the corresponding role to each player in the list according to the rules of the game.
+     * The first player list will be assign the <i>DEALER</i> role.
+     * The {@link #_first} member variable allways has to point to the dealer because it is the reference point to assign the rest of the roles. 
+     */
     public void assignRolesToAllPlayers() {
 
         int n = activePlayersCounter();
@@ -94,7 +148,11 @@ public class PlayerList {
         }
     }
 
-
+    /**
+     * Removes a player from the list.
+     * If the list if empty or the player is not in the list, this method will not have any effect.
+     * @param p The player to be removed
+     */
     public void removePlayer(Player p) {
 
         if (isEmpty())
@@ -110,6 +168,11 @@ public class PlayerList {
         delete(iNode);
     }
 
+    /**
+     * Removes a node from the list.
+     * If the node is null because the player is not found, this method will not have any effect.
+     * @param p The node to be removed
+     */
     private void delete(Node p) {
 
         if (p == null)
@@ -129,8 +192,15 @@ public class PlayerList {
         --_playerCounter;
     }
 
-    
-     public void playHand(final int sb, final int bb, final boolean isPreflop) throws OnlyOnePlayerLeftException {
+    /**
+     * Executes a hand of poker with the current players in the list.
+     * It asks every player to make a play until all players have 
+     * @param sb The value of the small blind for this hand
+     * @param bb The value of the big blind for this hand
+     * @param isPreflop Flag that indicates if this hand to be played is the preflop or not
+     * @throws OnlyOnePlayerLeftException Exception thrown when there is only one player left to play mid round
+     */
+    public void playHand(final int sb, final int bb, final boolean isPreflop) throws OnlyOnePlayerLeftException {
 
         Node pNode = null;
         int currentBet = 0, maxBet = 0;
@@ -174,6 +244,12 @@ public class PlayerList {
         }
     }
 
+    /**
+     * Retrieves the sum of all the players' bets
+     * This method also resets the players pot
+     * @see {@link Player} class for more info about the player's pot
+     * @return The total amount of money in the pot
+     */
     public int collectAllBets(){
 
         int totalPot = 0;
@@ -189,6 +265,12 @@ public class PlayerList {
         return totalPot;
     }
 
+    /**
+     * It gives both cards to the first player wihtout cards in hand.
+     * If the list is empty or all players have cards in hand, this method will not have any effect.
+     * @param c1 The first card to be given
+     * @param c2 The second card to be given
+     */
     public void shareOutAllCardsFromPlayer(Card c1, Card c2) {
 
         if (isEmpty())
@@ -213,12 +295,21 @@ public class PlayerList {
         }
     }
     
+    /**
+     * Passes the turn to the next player in the list.
+     * This is made by setting the role of the next player to the dealer as the new dealer and updating the rest of the roles accordingly.
+     */
     public void passTurn() {
         _first = _first._next;
         _last = _last._next;
         assignRolesToAllPlayers();
     }
 
+    /**
+     * Retrieves the hand information of all active players in the list.
+     * @see {@link HandInfo} class for more info about the hand information
+     * @return a list of all players information
+     */
     public HandInfo[] getPlayerHandsInfo() {
 
         int size = activePlayersCounter();
@@ -234,6 +325,11 @@ public class PlayerList {
         return info;
     }
 
+    /**
+     * Counts the number of active players in the list.
+     * A player is active if it has not folded in the current hand.
+     * @return the number of active players in the list
+     */
     public int activePlayersCounter(){
         
         if(isEmpty())
@@ -249,6 +345,11 @@ public class PlayerList {
         return cont;
     }
 
+    /**
+     * Resets the players in the list for a new hand.
+     * This method only resets the players card pointers and sets the fold status to false.
+     * @see {@link Player} class for more info about the player's cards and fold status
+     */
     public void resetPlayers(){
         
         _first._player.resetCards();
@@ -262,6 +363,9 @@ public class PlayerList {
         }
     }
 
+    /**
+     * Prints the state of all players in the list for debugging purposes in the console.
+     */
     public void showPlayersStateDEBUG(){
         
         Node pNode = _first._next;
@@ -273,6 +377,13 @@ public class PlayerList {
         }
     }
 
+    /**
+     * This method forces 
+     * @param sb
+     * @param bb
+     * @param playsToMake
+     * @return
+     */
     private Node smallBlindAndBigBlindPlays(final int sb, final int bb, final int playsToMake){
 
         // Select first player to make a bet when :

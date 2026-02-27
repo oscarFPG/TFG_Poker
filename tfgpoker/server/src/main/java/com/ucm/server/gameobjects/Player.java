@@ -1,12 +1,7 @@
 package com.ucm.server.gameobjects;
 
 import com.ucm.common.SocketUtils;
-import com.ucm.server.commands.AllInCommand;
-import com.ucm.server.commands.CallCommand;
-import com.ucm.server.commands.CheckCommand;
 import com.ucm.server.commands.Command;
-import com.ucm.server.commands.FoldCommand;
-import com.ucm.server.commands.RaiseCommand;
 import com.ucm.server.control.GameAdapter;
 import com.ucm.server.interfaces.IPlayer;
 
@@ -395,14 +390,26 @@ public class Player implements IPlayer {
         return _role;
     }
 
+    /**
+     * Gets the number of cards the player has in hand.
+     * @return number of cards the player has in hand
+     */
     public int getNumCards() {
         return _numCards;
     }
 
+    /**
+     * Checks if the player has folded in the current hand.
+     * @return true if the player has folded, false otherwise
+     */
     public boolean hasFolded() {
         return _fold;
     }
 
+    /**
+     * Checks if the player has lost the game.
+     * @return true if the player has lost, false otherwise
+     */
     public boolean hasLost() {
         return _hasLost;
     }

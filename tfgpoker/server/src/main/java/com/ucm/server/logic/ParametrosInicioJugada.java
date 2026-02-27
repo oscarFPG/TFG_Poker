@@ -1,5 +1,9 @@
 package com.ucm.server.logic;
 
+/**
+ * ¿?
+ * TODO: definir qué parámetros se necesitan para iniciar una jugada, y cómo se van a pasar al servidor
+ */
 public class ParametrosInicioJugada {
     // Codigo de mesa que ha creado un jugador
     // Nombre Jugador que ha creado la mesa
