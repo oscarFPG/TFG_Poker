@@ -9,10 +9,14 @@ import com.ucm.server.commands.FoldCommand;
 import com.ucm.server.commands.RaiseCommand;
 import com.ucm.server.control.GameAdapter;
 import com.ucm.server.interfaces.IPlayer;
+import com.ucm.server.logic.Game;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Scanner;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * This class represents any king of player in the game, whether its a human
@@ -20,6 +24,8 @@ import java.util.Scanner;
  * It works as a representation of the player entity in the server side.
  */
 public class Player implements IPlayer {
+
+    private static final Logger log = LogManager.getLogger(Player.class);
 
     /**
      * Player's unique identifier
@@ -105,6 +111,7 @@ public class Player implements IPlayer {
         _hasLost = false;
     }
 
+
     /**
      * Assigns a role to the player.
      * 
@@ -143,10 +150,10 @@ public class Player implements IPlayer {
      * Prints the menu for the player to make a play by console.
      */
     private void menuMakePlay() {
-        System.out.printf("Haz una jugada, %s!\n", getName());
-        System.out.println("Opciones de jugada: ");
+        System.out.printf("\tHaz una jugada, %s!\n", getName());
+        System.out.println("\tOpciones de jugada: ");
         System.out.println( Command.showAvailableCommands() );
-        System.out.println("Introduce tu jugada: ");
+        System.out.print("\tIntroduce tu jugada: ");
     }
 
     /**
@@ -410,33 +417,49 @@ public class Player implements IPlayer {
     @Override
     public void onReceiveRole(PlayerRole r) {
 
+        if(Game.DEBUG){
+            return;
+        }
+
         try {
 
             int role = GameAdapter.playerRoleToCode(r);
             SocketUtils.sendInteger(_socket.getOutputStream(), role);
             _role = r;
 
-            System.out.printf("Player %s receives rol %s\n", _name, _role.name());
+            log.debug("Player {} receives role {}", _name, _role.name());
         } catch (IOException e) {
-            System.out.printf("Error receiving the role for %s player: %s\n", _name, e.getMessage());
+            log.error("Error receiving the role for {} player: {}", _name, e.getMessage());
         }
     }
 
     @Override
     public void onReceiveCard(Card c) {
-        // TODO Auto-generated method stub
+
+        if(Game.DEBUG){
+            return;
+        }
+
         throw new UnsupportedOperationException("Unimplemented method 'onReceiveCard'");
     }
 
     @Override
     public void onReceiveTableCard(Card c) {
-        // TODO Auto-generated method stub
+        
+        if(Game.DEBUG){
+            return;
+        }
+
         throw new UnsupportedOperationException("Unimplemented method 'onReceiveTableCard'");
     }
 
     @Override
     public void onReceiveTurn() {
-        // TODO Auto-generated method stub
+        
+        if(Game.DEBUG){
+            return;
+        }
+
         throw new UnsupportedOperationException("Unimplemented method 'onReceiveTurn'");
     }
 

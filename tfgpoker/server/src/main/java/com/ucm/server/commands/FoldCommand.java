@@ -36,6 +36,14 @@ public class FoldCommand extends Command {
         return "FOLD";
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getCommandDescription() {
+        return "";
+    }
+
     @Override
     public boolean matchCommand(String command) {
         return  command.equalsIgnoreCase("fold") || 

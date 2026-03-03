@@ -44,6 +44,14 @@ public class AllInCommand extends Command {
      * {@inheritDoc}
      */
     @Override
+    public String getCommandDescription() {
+        return "";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean matchCommand(String command) {
         return  command.equalsIgnoreCase("all-in") || 
                 command.equalsIgnoreCase("a");
@@ -64,6 +72,5 @@ public class AllInCommand extends Command {
     public Command create(String[] fullCommand, Player p) {
         return new AllInCommand(p, p.getMoney(), p.getPocketMoney());
     }
-
 
 }

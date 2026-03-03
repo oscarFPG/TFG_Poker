@@ -8,8 +8,13 @@ import com.ucm.server.middleclasses.ClientStructGame;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 public class Controller {
+
+    private static final Logger log = LogManager.getLogger(Controller.class);
 
     /**
      * Atributo que referencia la clase Game
@@ -19,6 +24,17 @@ public class Controller {
     public Controller(Game game, List<ClientStructGame> players) {
         _game = game;
         addPlayersToGame(players);
+    }
+
+    /**
+     * Controller constructor only for debugging purposes.
+     * It will be used in the local mode of the server, where no clients are needed.
+     * @param game The game instance to control.
+     * @param numPlayers The number of local players to add to the game.
+     */
+    public Controller(Game game, int numPlayers) {
+        _game = game;
+        addPlayersToGameLocally(numPlayers);
     }
 
 
@@ -31,9 +47,14 @@ public class Controller {
         }
     }
 
-    public void run() {
+    private void addPlayersToGameLocally(int numPlayers) {
 
-        System.out.print("Controller.run() method");
+        for(int i = 0; i < numPlayers; ++i){
+            _game.addPlayer( new Player(i, "Player" + i, null, 1000) );
+        }
+    }
+
+    public void run() {
 
         // Start Game loop (1)
         _game.assignRolesToAllPlayers();
@@ -43,34 +64,24 @@ public class Controller {
                 
                 // Pre-flop (2)
                 _game.shareOutCardsToAllPlayers();
-                if (Game.DEBUG)
-                    _game.showStateDEBUG();
                 _game.playHand();
 
                 // Flop (3)
                 _game.addCardToTable();
                 _game.addCardToTable();
                 _game.addCardToTable();
-                if (Game.DEBUG)
-                    _game.showStateDEBUG();
                 _game.playHand();
 
                 // Turn (4)
                 _game.addCardToTable();
-                if (Game.DEBUG)
-                    _game.showStateDEBUG();
                 _game.playHand();
 
                 // River (5)
                 _game.addCardToTable();
-                if (Game.DEBUG)
-                    _game.showStateDEBUG();
                 _game.playHand();
 
                 // Showdown (6)
                 _game.giveRewardToWinner();
-                if (Game.DEBUG)
-                    _game.showStateDEBUG();
             }
             catch (OnlyOnePlayerLeftException e) {
                 _game.giveRewardToWinner();

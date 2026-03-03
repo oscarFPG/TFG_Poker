@@ -48,8 +48,14 @@ public abstract class Command {
     public static String showAvailableCommands(){
         
         StringBuilder sb = new StringBuilder();
+
+        int i = 1;
         for (Command command : AVAILABLE_COMMANDS) {
-            sb.append(command.getCommandName()).append("\n");
+            if(i == AVAILABLE_COMMANDS.size())
+                sb.append( "\t> " + command.getCommandName() );
+            else
+                sb.append( "\t> " + command.getCommandName() ).append("\n");
+            i++;
         }
         return sb.toString();
     }
@@ -99,6 +105,12 @@ public abstract class Command {
      * @return a string representing the name of the command.
      */
     public abstract String getCommandName();
+
+    /**
+     * Method that returns a description of the command, including its syntax and usage.
+     * @return a string representing the description of the command
+     */
+    public abstract String getCommandDescription();
 
     /**
      * Method that checks if the input command matches the specific command.

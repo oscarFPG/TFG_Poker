@@ -1,8 +1,8 @@
 package com.ucm.server.logic;
 
-import java.io.IOException;
-import java.net.Socket;
-import java.util.List;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.ucm.server.commands.Command;
 import com.ucm.server.exceptions.OnlyOnePlayerLeftException;
@@ -14,6 +14,9 @@ import com.ucm.server.middleclasses.HandInfo;
 
 
 public class PlayerList {
+
+    private static final Logger log = LogManager.getLogger(PlayerList.class);
+
 
     public class Node {
         Node _prev;
@@ -94,7 +97,6 @@ public class PlayerList {
         }
     }
 
-
     public void removePlayer(Player p) {
 
         if (isEmpty())
@@ -129,8 +131,7 @@ public class PlayerList {
         --_playerCounter;
     }
 
-    
-     public void playHand(final int sb, final int bb, final boolean isPreflop) throws OnlyOnePlayerLeftException {
+    public void playHand(final int sb, final int bb, final boolean isPreflop) throws OnlyOnePlayerLeftException {
 
         Node pNode = null;
         int currentBet = 0, maxBet = 0;
@@ -153,9 +154,6 @@ public class PlayerList {
 
             // Execute command
             CommandResult result = command.execute(sb, bb, maxBet);
-            
-            if(Game.DEBUG)
-                System.out.printf("Jugador %s hace %s!\n\n", pNode._player.getName(), command.getCommandName());
 
             // Check number of active players to break normal execution if there is only one left
             if(result.folds()){
@@ -265,10 +263,10 @@ public class PlayerList {
     public void showPlayersStateDEBUG(){
         
         Node pNode = _first._next;
-        System.out.println( _first._player.toString() );
+        log.debug("{}", _first._player.toString());
         
         while(pNode != _first){
-            System.out.println( pNode._player.toString() );
+            log.debug("{}", pNode._player.toString());
             pNode = pNode._next;
         }
     }
@@ -288,7 +286,7 @@ public class PlayerList {
         return pNode;
     }
 
-     private Node getNextPlayerActive(Node current){
+    private Node getNextPlayerActive(Node current){
 
         while ( current._player.hasFolded() ){
             current._player.assignRole(PlayerRole.NO_ROLE);
@@ -297,7 +295,6 @@ public class PlayerList {
 
         return current;
     }
-    
     
     public boolean isEmpty() { return size() == 0; }
     public boolean isFull() { return size() == max(); }

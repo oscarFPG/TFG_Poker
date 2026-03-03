@@ -32,6 +32,14 @@ public class CheckCommand extends Command {
         return "CHECK";
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getCommandDescription() {
+        return "";
+    }
+
     @Override
     public boolean matchCommand(String command) {
         return  command.equalsIgnoreCase("check") || 

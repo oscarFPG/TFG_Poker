@@ -53,6 +53,14 @@ public class RaiseCommand extends Command {
         return "RAISE";
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getCommandDescription() {
+        return "";
+    }
+
     @Override
     public boolean matchCommand(String command) {
         return  command.equalsIgnoreCase("raise") || 

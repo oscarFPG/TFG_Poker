@@ -1,9 +1,10 @@
 package com.ucm.server;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
@@ -22,6 +23,8 @@ import com.ucm.server.logic.Game;
 
 
 public class ServerMain {
+
+    private static final Logger log = LogManager.getLogger(ServerMain.class);
 
     private static class ClientStructPreGame {
 
@@ -44,25 +47,50 @@ public class ServerMain {
     /*
      * Desde la ruta TFGPOKER/tfgpoker
      *      .\mvnw.cmd clean install
-     * Run:
+     * Run server:
      *      .\mvnw.cmd -pl server -Prun exec:java
+     * Run server in local mode (no server, only for testing):
+     *      .\mvnw.cmd -pl server -Prun-local exec:java -Dn=<int>
      * Debug:
      *      .\mvnwDebug.cmd -pl server -Pdebug exec:java
-     * Run the Tests
+     * Run the tests
      *      .\mvnw.cmd test
      */
     public static void main(String[] args) throws IOException {
 
-        List<ClientStructPreGame> joinedClients = preGame();
+        // Local mode for testing without real clients connected by sockets
+        if(args.length > 0 && args[0].equalsIgnoreCase("local")){
+            
+            int n_players = 2;
+            if(args.length > 1){
+                try{
+                    n_players = Integer.parseInt(args[1]);
+                }
+                catch(NumberFormatException e){
+                    log.debug("Invalid number of players!Using default value: {}", n_players);
+                }
+            }
 
-        // Convert from non-blocking SocketChannel to blocking Socket
+            log.debug("Running in local mode...");
+            log.debug("Number of players: {}", n_players);
+
+            Game game = new Game();
+            Controller controller = new Controller(game, n_players);
+            controller.run();
+
+            log.debug("Server finished!");
+            return;
+        }
+
+        log.debug("Running in server mode...");
+        List<ClientStructPreGame> joinedClients = preGame();
         List<ClientStructGame> players = new ArrayList<>();
         for(ClientStructPreGame cs : joinedClients){
             cs.clientSocket.configureBlocking(true);
             players.add( new ClientStructGame(cs.clientName, cs.clientSocket.socket()) );
         }
-
         game(players);
+
     }
 
     // ------------------------ Pregame phase ------------------------
@@ -77,7 +105,7 @@ public class ServerMain {
             serverSocket = ServerSocketChannel.open();
             serverSocket.configureBlocking(false);
             serverSocket.bind( new InetSocketAddress(GameType.PORT) );
-            System.out.printf("Server up, waiting for clients...\n");
+            log.debug("Server up, waiting for clients...");
 
             selector = Selector.open();
             serverSocket.register(selector, SelectionKey.OP_ACCEPT);
@@ -107,7 +135,7 @@ public class ServerMain {
                     }
                 }
             }
-            System.out.printf("Host empieza la partida!\n");
+            log.debug("Host empieza la partida!");
 
             // Cancel all clients keys -> Important!
             for (SelectionKey key : selector.keys()) {
@@ -124,12 +152,12 @@ public class ServerMain {
                     cs.clientSocket.write(broadcastBuffer);
                 }
                 catch(IOException e){
-                    System.out.printf("Error sending GAME_STARTS flag: %s\n", e.getMessage());
+                    log.error("Error sending GAME_STARTS flag: {}", e.getMessage());
                     try{
                         cs.clientSocket.close();
                     }
                     catch(IOException exception){
-                        System.out.printf("Error closing socket: %s\n", e.getMessage());
+                        log.error("Error closing socket: {}", e.getMessage());
                     }
                 }
             }
@@ -144,7 +172,7 @@ public class ServerMain {
             } 
         } 
         catch (IOException e) {
-            System.out.printf("%s\n", e.getMessage());
+            log.error("Ocurrio algun error en el socket {}", e.getMessage());
         } 
         finally {
 
@@ -154,7 +182,7 @@ public class ServerMain {
                     selector.close();
                 }
                 catch (IOException e) {
-                    System.out.printf("Error closing the server socket: %s\n", e.getMessage());
+                    log.error("Error closing the server socket: {}", e.getMessage());
                 }
             }
         }
@@ -175,7 +203,7 @@ public class ServerMain {
         client.configureBlocking(false);
 
         client.register(selector, SelectionKey.OP_READ, ByteBuffer.allocate(128));
-        System.out.printf("Nuevo cliente conectado!\n");
+        log.debug("Nuevo cliente conectado!");
     }
 
     private static void handleReceive(SelectionKey key, List<ClientStructPreGame> clientList, List<ClientStructPreGame> roomList) {
@@ -191,13 +219,13 @@ public class ServerMain {
             if (bytesRead == -1) {
                 key.cancel();
                 socket.close();
-                System.out.printf("Connection closed!\n");
+                log.debug("Connection closed!");
                 return;
             }
 
             buffer.flip();
             tipo = buffer.get();
-            System.out.printf("Tipo de petición %d\n", tipo);
+            log.debug("Tipo de petición {}", tipo);
 
             switch (tipo) {
             case GameType.DATA_TYPE_NAME:
@@ -208,29 +236,29 @@ public class ServerMain {
                 msgBytes = new byte[msgSize];
                 buffer.get(msgBytes);
                 String clientName = new String(msgBytes, StandardCharsets.UTF_8);
-                System.out.printf("Client %s authenticated!\n", clientName);
+                log.debug("Client {} authenticated!", clientName);
 
                 // Almacenar nombre para relacionar socket-nombre si esta en la lista de clientes
                 // Esta lista es distinta a la lista de jugadores que SI que van a entrar a partida
-                System.out.printf("Cliente %s almacenado en la lista de clientes!\n", clientName);
+                log.debug("Cliente {} almacenado en la lista de clientes!", clientName);
                 clientList.add( new ClientStructPreGame(clientName, socket, key) );
 
                 break;
 
             case GameType.DATA_TYPE_PETITION:
                 int code = buffer.getInt();
-                System.out.printf("Petition type received %d\n", code);
+                log.debug("Petition type received {}", code);
                 handleClientPetition(key, code, clientList, roomList);
 
                 break;
 
             default:
-                System.out.println("Tipo desconocido: " + tipo);
+                log.debug("Tipo desconocido: {}", tipo);
             }
         }
 		catch(SocketException e){
 
-            System.out.printf("Cerrando conexion con cliente desconectado: %s\n", e.getMessage());
+            log.debug("Cerrando conexion con cliente desconectado: {}", e.getMessage());
 			ClientStructPreGame toRemove = roomList.stream()
                 .filter(c -> c.clientSocket == socket)
                 .findFirst().orElse(null);
@@ -245,7 +273,7 @@ public class ServerMain {
             }
 		}
         catch(IOException e){
-            System.out.printf("Error recibiendo datos %s\n", e.getMessage());
+            log.error("Error recibiendo datos {}", e.getMessage());
 			try {
 				key.cancel();
 				socket.close();
@@ -270,10 +298,10 @@ public class ServerMain {
         switch (petition) {
         case GameType.CREATE_PETITION:
 
-            System.out.printf("Peticion CREATE del cliente\n");
+            log.debug("Peticion CREATE del cliente");
             if(roomList.isEmpty()){
 
-                System.out.printf("Creando partida!\n");
+                log.debug("Creando partida!");
                 ClientStructPreGame hostClient = clientList.stream()
                     .filter(c -> c.clientSocket == client).findFirst().
                     orElse(null);
@@ -282,24 +310,24 @@ public class ServerMain {
                     clientList.remove(hostClient);
                     roomList.add(hostClient);
                     _host = client;  // Select the host to wait for his petition to start the game
-                    System.out.printf("Client %s selected as host\n", hostClient.clientName);
+                    log.debug("Client {} selected as host", hostClient.clientName);
                 }
             }
             else{
 
-                System.out.printf("Partida ya existente!\n");
+                log.debug("Partida ya existente!");
                 try {
                     client.close();
                 }
                 catch (IOException e) {
-                    System.out.printf("Error cerrando conexion con el cliente %s\n", e.getMessage());
+                    log.error("Error cerrando conexion con el cliente {}", e.getMessage());
                 }
             }
             break;
 
         case GameType.JOIN_PETITION:
 
-            System.out.printf("Peticion JOIN del cliente\n");
+            log.debug("Peticion JOIN del cliente");
             if(!roomList.isEmpty() && roomList.size() < MAX_PLAYERS){     // La partida ha sido creada y ha, al menos, dos jugadores
 
                 ClientStructPreGame joiningClient = clientList.stream()
@@ -309,18 +337,18 @@ public class ServerMain {
                 if(joiningClient != null){
                     roomList.add( joiningClient );
                     clientList.removeIf(c -> c.clientSocket == joiningClient.clientSocket);
-                    System.out.printf("Uniendote a partida!\n");
+                    log.debug("Uniendo jugador a la partida! Jugadores actuales: {}", roomList.size());
                 }
             }
             else{
 
-                System.out.printf("Partida no creada o llena!\n");
+                log.debug("Partida no creada o llena!");
                 try {
                     client.close();
                     key.cancel();
                 }
                 catch(IOException e) {
-                    System.out.printf("Error intentando cerrar conexión de forma segura: %s\n", e.getMessage());
+                    log.error("Error intentando cerrar conexión de forma segura: {}", e.getMessage());
                 }
             }
             break;
@@ -330,7 +358,7 @@ public class ServerMain {
             // Other client except the true host tries to start the game
             if(client != _host){
 
-                System.out.printf("Only the host can start the game!\n");
+                log.debug("Only the host can start the game!");
                 try{
                     ClientStructPreGame cs = roomList.stream()
                         .filter(c -> c.clientSocket == client).findFirst().orElse(null);
@@ -344,11 +372,11 @@ public class ServerMain {
             }
 
             if(roomList.size() >= 2){
-                System.out.printf("Host starts the game succesfully with %d players!\n", roomList.size());
+                log.debug("Host starts the game succesfully with {} players!", roomList.size());
                 _hostWantsToStart = true;
             }
             else{
-                System.out.printf("Cannot start the game with less than 2 players!\n");
+                log.debug("Cannot start the game with less than 2 players!");
                 // TODO: Aqui deberia enviar codigo para que el cliente se mantenga esperando y enviandonos el codigo hasta que haya al menos 2 jugadores
                 // key.interestOps( key.interestOps() | SelectionKey.OP_WRITE );
             }
@@ -356,7 +384,7 @@ public class ServerMain {
             break;
 
         default:
-            System.out.printf("Unknown petition %d\n", petition);
+            log.error("Unknown petition {}", petition);
             break;
         }
         

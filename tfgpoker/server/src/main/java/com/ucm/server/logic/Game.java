@@ -1,9 +1,11 @@
 package com.ucm.server.logic;
 
-import java.io.IOException;
-import java.net.Socket;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.ucm.server.evaluator.Evaluator;
 import com.ucm.server.exceptions.OnlyOnePlayerLeftException;
@@ -14,6 +16,8 @@ import com.ucm.server.middleclasses.HandInfo;
 
 
 public class Game {
+
+    private static final Logger log = LogManager.getLogger(Game.class);
 
     public static final boolean DEBUG = true;
 
@@ -41,7 +45,7 @@ public class Game {
     
     
     public Game() {
-
+        
         _initialSmallBlind = Game.INITIAL_SB;
         _initialBigBlind = Game.INITIAL_BB;
         _handCounter = 1;
@@ -59,13 +63,9 @@ public class Game {
         _currentBB = _initialBigBlind;
     }
 
-
     public void addPlayer(Player p) {
 
-        if (Game.DEBUG) {
-            System.out.printf("Intentando añadir jugador [%s]\n", p.getName());
-        }
-
+        log.debug("Intentando asignar jugador [{}]", p.getName());
         _playerList.addPlayer(p);
     }
 
@@ -73,15 +73,9 @@ public class Game {
         _playerList.assignRolesToAllPlayers();
     }
 
-    /**
-     * Repartir 2 cartas a todos los jugadores al principio de la partida
-     */
     public void shareOutCardsToAllPlayers() {
 
-        if (Game.DEBUG) {
-            System.out.printf("Repartiendo cartas a los jugadores...\n");
-        }
-
+        log.debug("Repartiendo cartas a los jugadores...");
         for (int i = 0; i < _playerList.size(); i++) {
             Card randomCard1 = _deck.takeRandomCard();
             Card randomCard2 = _deck.takeRandomCard();
@@ -110,10 +104,7 @@ public class Game {
 
     public void passTurn() {
 
-        if (Game.DEBUG) {
-            System.out.printf("Pasando turno...\n");
-        }
-
+        log.debug("Pasando turno...");
         _playerList.passTurn();
     }
 
@@ -131,10 +122,7 @@ public class Game {
             _totalPot += pot;
             throw e;
         }
-
-        if (Game.DEBUG) {
-            System.out.printf("Mano numero %d terminada!\n\n", _handCounter);
-        }
+        log.debug("Mano numero {} terminada!", _handCounter);
 
         _isPreflop = false;
         pot = _playerList.collectAllBets();
@@ -155,14 +143,13 @@ public class Game {
             winners = Evaluator.evaluateAllHands(playerHands, _tableCards);
         }
 
-        if (Game.DEBUG && winners.size() == 1) {    
-            System.out.printf("%s ha ganado %d$!\n", winners.get(0).getName(), _totalPot);
+        if (winners.size() == 1) {    
+            log.debug("{} ha ganado {}$!", winners.get(0).getName(), _totalPot);
         }
-        else if(Game.DEBUG && winners.size() > 1){
-            System.out.printf("Empate entre %d jugadores: ", winners.size());
+        else if(winners.size() > 1){
+            log.debug("Empate entre {} jugadores: ", winners.size());
             for(Player p : winners)
-                System.out.printf("%s ", p.getName());
-            System.out.print('\n');
+                log.debug("{} ", p.getName());
         }
 
         int rewardPerPlayer = _totalPot / winners.size();
@@ -174,13 +161,11 @@ public class Game {
 
     public void restartRound() {
 
+        log.debug("------------------------ Reiniciando ronda... ------------------------");
+        
         retrieveCardsFromTable();
         _playerList.resetPlayers();
         _deck.resetDeck();
-
-        if (Game.DEBUG) {
-            System.out.printf("------------------------ Reiniciando ronda... ------------------------\n\n\n");
-        }
 
         _isPreflop = true;
         _showdownSkipped = false;
@@ -199,12 +184,11 @@ public class Game {
         for (int i = 0; i < _tableCards.length; i++) {
 
             if (_tableCards[i] == null) {
-                System.out.print(Card.FlippedDownCardToString());
+                log.debug(Card.FlippedDownCardToString());
             } else {
-                System.out.print(_tableCards[i].toString());
+                log.debug(_tableCards[i].toString());
             }
         }
-        System.out.print("\n");
     }
 
 }
