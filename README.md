@@ -107,6 +107,7 @@ Diagrama de secuencia client-servidor: https://lucid.app/lucidchart/f9ab4fa7-572
 # Formatp historial Poker Star
 
 PokerStars Hand #1234567890:  Hold'em No Limit ($0.50/$1.00 USD) - 2026/03/03 21:15:32 ET
+
 Table 'Alpha III' 6-max Seat #3 is the button
 Seat 1: Player1 ($100.00 in chips)
 Seat 2: Player2 ($120.50 in chips)
