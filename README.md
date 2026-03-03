@@ -104,53 +104,52 @@ Diagrama de secuencia client-servidor: https://lucid.app/lucidchart/f9ab4fa7-572
 - 
 
 
-# Formatp historial Poker Star
+# Formato historial Poker Star
 
-PokerStars Hand #1234567890:  Hold'em No Limit ($0.50/$1.00 USD) - 2026/03/03 21:15:32 ET
+PokerStars Hand #1234567890:  Hold'em No Limit ($0.50/$1.00 USD) - 2026/03/03 21:15:32 ET\
+Table 'Alpha III' 6-max Seat #3 is the button\
+Seat 1: Player1 ($100.00 in chips)\
+Seat 2: Player2 ($120.50 in chips)\
+Seat 3: Hero ($98.75 in chips)\
+Seat 4: Player4 ($101.20 in chips)\
+Seat 5: Player5 ($87.00 in chips)\
+Seat 6: Player6 ($150.00 in chips)\
 
-Table 'Alpha III' 6-max Seat #3 is the button
-Seat 1: Player1 ($100.00 in chips)
-Seat 2: Player2 ($120.50 in chips)
-Seat 3: Hero ($98.75 in chips)
-Seat 4: Player4 ($101.20 in chips)
-Seat 5: Player5 ($87.00 in chips)
-Seat 6: Player6 ($150.00 in chips)
+Player4: posts small blind $0.50\
+Player5: posts big blind $1.00\
 
-Player4: posts small blind $0.50
-Player5: posts big blind $1.00
+*** HOLE CARDS ***\
+Dealt to Hero [Ah Ks]\
 
-*** HOLE CARDS ***
-Dealt to Hero [Ah Ks]
+Player6: folds\
+Player1: raises $2.00 to $3.00\
+Player2: calls $3.00\
+Hero: raises $9.00 to $12.00\
+Player4: folds\
+Player5: folds\
+Player1: calls $9.00\
+Player2: folds\
 
-Player6: folds
-Player1: raises $2.00 to $3.00
-Player2: calls $3.00
-Hero: raises $9.00 to $12.00
-Player4: folds
-Player5: folds
-Player1: calls $9.00
-Player2: folds
+*** FLOP *** [Ad 7c 2h]\
+Player1: checks\
+Hero: bets $15.00\
+Player1: calls $15.00\
 
-*** FLOP *** [Ad 7c 2h]
-Player1: checks
-Hero: bets $15.00
-Player1: calls $15.00
+*** TURN *** [Ad 7c 2h] [Kd]\
+Player1: checks\
+Hero: bets $30.00\
+Player1: calls $30.00\
 
-*** TURN *** [Ad 7c 2h] [Kd]
-Player1: checks
-Hero: bets $30.00
-Player1: calls $30.00
+*** RIVER *** [Ad 7c 2h Kd] [5s]\
+Player1: checks\
+Hero: bets $41.75 and is all-in\
+Player1: folds\
 
-*** RIVER *** [Ad 7c 2h Kd] [5s]
-Player1: checks
-Hero: bets $41.75 and is all-in
-Player1: folds
+Uncalled bet ($41.75) returned to Hero\
+Hero collected $120.50 from pot\
 
-Uncalled bet ($41.75) returned to Hero
-Hero collected $120.50 from pot
-
-*** SUMMARY ***
-Total pot $123.00 | Rake $2.50
-Board [Ad 7c 2h Kd 5s]
-Seat 1: Player1 folded on the River
-Seat 3: Hero collected ($120.50)
+*** SUMMARY ***\
+Total pot $123.00 | Rake $2.50\
+Board [Ad 7c 2h Kd 5s]\
+Seat 1: Player1 folded on the River\
+Seat 3: Hero collected ($120.50)\
