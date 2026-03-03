@@ -57,14 +57,24 @@ public class RaiseCommand extends Command {
      * {@inheritDoc}
      */
     @Override
-    public String getCommandDescription() {
-        return "";
+    public String getCommandText() {
+        return "raise";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public boolean matchCommand(String command) {
-        return  command.equalsIgnoreCase("raise") || 
-                command.equalsIgnoreCase("r");
+    public String getCommandTextShotcut() {
+        return "r";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getCommandDescription() {
+        return "Increase the current bet to a new amount.";
     }
 
     @Override

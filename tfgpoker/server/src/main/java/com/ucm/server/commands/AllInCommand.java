@@ -44,17 +44,24 @@ public class AllInCommand extends Command {
      * {@inheritDoc}
      */
     @Override
-    public String getCommandDescription() {
-        return "";
+    public String getCommandText() {
+        return "all-in";
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean matchCommand(String command) {
-        return  command.equalsIgnoreCase("all-in") || 
-                command.equalsIgnoreCase("a");
+    public String getCommandTextShotcut() {
+        return "a";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getCommandDescription() {
+        return "Bet all of your remaining money on the current hand.";
     }
 
     /**

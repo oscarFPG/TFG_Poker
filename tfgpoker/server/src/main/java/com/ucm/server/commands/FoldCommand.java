@@ -40,14 +40,24 @@ public class FoldCommand extends Command {
      * {@inheritDoc}
      */
     @Override
-    public String getCommandDescription() {
-        return "";
+    public String getCommandText() {
+        return "fold";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public boolean matchCommand(String command) {
-        return  command.equalsIgnoreCase("fold") || 
-                command.equalsIgnoreCase("f");
+    public String getCommandTextShotcut() {
+        return "f";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getCommandDescription() {
+        return "Retire from the current hand. If you have already bet, you will lose the money.";
     }
 
     @Override

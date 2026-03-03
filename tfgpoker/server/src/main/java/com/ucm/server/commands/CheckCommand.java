@@ -27,6 +27,9 @@ public class CheckCommand extends Command {
         return CommandResult.continuePlaying(_money, false);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getCommandName() {
         return "CHECK";
@@ -36,14 +39,24 @@ public class CheckCommand extends Command {
      * {@inheritDoc}
      */
     @Override
-    public String getCommandDescription() {
-        return "";
+    public String getCommandText() {
+        return "check";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public boolean matchCommand(String command) {
-        return  command.equalsIgnoreCase("check") || 
-                command.equalsIgnoreCase("k");
+    public String getCommandTextShotcut() {
+        return "k";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getCommandDescription() {
+        return "If there is no bet just pass your turn without betting.";
     }
 
     @Override

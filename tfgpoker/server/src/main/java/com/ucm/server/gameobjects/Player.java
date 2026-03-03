@@ -26,7 +26,8 @@ import org.apache.logging.log4j.Logger;
 public class Player implements IPlayer {
 
     private static final Logger log = LogManager.getLogger(Player.class);
-
+    private static final Scanner sc = new Scanner(System.in);
+    
     /**
      * Player's unique identifier
      */
@@ -129,10 +130,8 @@ public class Player implements IPlayer {
      */
     public Command makePlay() {
 
-        Scanner sc = new Scanner(System.in);
         Command command = null;
         String[] userInput = null;
-
 
         do {
 
@@ -142,7 +141,6 @@ public class Player implements IPlayer {
         }
         while (command == null);
 
-        sc.close();
         return command;
     }
 

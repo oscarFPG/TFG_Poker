@@ -52,11 +52,12 @@ public abstract class Command {
         int i = 1;
         for (Command command : AVAILABLE_COMMANDS) {
             if(i == AVAILABLE_COMMANDS.size())
-                sb.append( "\t> " + command.getCommandName() );
+                sb.append( "\t> " + command.getCommandName() + " " + command.getCommandSyntax() + " : " + command.getCommandDescription() );
             else
-                sb.append( "\t> " + command.getCommandName() ).append("\n");
+                sb.append( "\t> " + command.getCommandName() + " " + command.getCommandSyntax() + " : " + command.getCommandDescription() ).append("\n");
             i++;
         }
+
         return sb.toString();
     }
     
@@ -92,6 +93,14 @@ public abstract class Command {
     }
 
     /**
+     * Method that returns the syntax of the command, which includes the command text and its shortcut.
+     * @return a string representing the syntax of the command, including the command text and its shortcut.
+     */
+    public final String getCommandSyntax(){
+        return  "(" + getCommandText() +  "/" + getCommandTextShotcut() + ")" ;
+    }
+
+    /**
      * Method that executes the command. This method should be implemented by each specific command to perform the corresponding action in the game.
      * @param sb the small blind value.
      * @param bb the big blind value.
@@ -106,6 +115,10 @@ public abstract class Command {
      */
     public abstract String getCommandName();
 
+    public abstract String getCommandText();
+
+    public abstract String getCommandTextShotcut();
+
     /**
      * Method that returns a description of the command, including its syntax and usage.
      * @return a string representing the description of the command
@@ -117,7 +130,10 @@ public abstract class Command {
      * @param command the input command string to be checked against the specific command.
      * @return true if the input command matches the specific command, false otherwise.
      */
-    public abstract boolean matchCommand(String command);
+    public final boolean matchCommand(String command){
+        return  command.equalsIgnoreCase(getCommandText()) || 
+                command.equalsIgnoreCase(getCommandTextShotcut());
+    }
 
     /**
      * Method that checks if the attributes of the command are valid based on the input command.
@@ -133,6 +149,5 @@ public abstract class Command {
      * @return a new instance of the specific command if the input command is valid, null otherwise.
      */
     public abstract Command create(String[] fullCommand, Player p) ;
- 
     
 }

@@ -52,17 +52,24 @@ public class CallCommand extends Command {
      * {@inheritDoc}
      */
     @Override
-    public String getCommandDescription() {
-        return "";
+    public String getCommandText() {
+        return "call";
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean matchCommand(String command) {
-        return  command.equalsIgnoreCase("call") || 
-                command.equalsIgnoreCase("c");
+    public String getCommandTextShotcut() {
+        return "c";
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getCommandDescription() {
+        return "Call the current bet.";
     }
 
     /**
