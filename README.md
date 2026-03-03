@@ -113,13 +113,13 @@ Seat 2: Player2 ($120.50 in chips)\
 Seat 3: Hero ($98.75 in chips)\
 Seat 4: Player4 ($101.20 in chips)\
 Seat 5: Player5 ($87.00 in chips)\
-Seat 6: Player6 ($150.00 in chips)\
+Seat 6: Player6 ($150.00 in chips)
 
 Player4: posts small blind $0.50\
-Player5: posts big blind $1.00\
+Player5: posts big blind $1.00
 
 *** HOLE CARDS ***\
-Dealt to Hero [Ah Ks]\
+Dealt to Hero [Ah Ks]
 
 Player6: folds\
 Player1: raises $2.00 to $3.00\
@@ -128,28 +128,28 @@ Hero: raises $9.00 to $12.00\
 Player4: folds\
 Player5: folds\
 Player1: calls $9.00\
-Player2: folds\
+Player2: folds
 
 *** FLOP *** [Ad 7c 2h]\
 Player1: checks\
 Hero: bets $15.00\
-Player1: calls $15.00\
+Player1: calls $15.00
 
 *** TURN *** [Ad 7c 2h] [Kd]\
 Player1: checks\
 Hero: bets $30.00\
-Player1: calls $30.00\
+Player1: calls $30.00
 
 *** RIVER *** [Ad 7c 2h Kd] [5s]\
 Player1: checks\
 Hero: bets $41.75 and is all-in\
-Player1: folds\
+Player1: folds
 
 Uncalled bet ($41.75) returned to Hero\
-Hero collected $120.50 from pot\
+Hero collected $120.50 from pot
 
 *** SUMMARY ***\
 Total pot $123.00 | Rake $2.50\
 Board [Ad 7c 2h Kd 5s]\
 Seat 1: Player1 folded on the River\
-Seat 3: Hero collected ($120.50)\
+Seat 3: Hero collected ($120.50)
