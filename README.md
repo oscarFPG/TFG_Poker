@@ -92,6 +92,9 @@ Diagrama de secuencia client-servidor: https://lucid.app/lucidchart/f9ab4fa7-572
 
 ## Plantilla oficial interfaz: https://ucomplutense-my.sharepoint.com/:p:/r/personal/carlatoa_ucm_es/Documents/PLANTILLA%20POKER.pptx?d=w39d7c2dc428d45c79c11ddaaadb6830a&csf=1&web=1&e=xgrq4b
 
+# Dibujar formas 
+https://yqnn.github.io/svg-path-editor/
+
 # Ideas
 - Bot que te suguiera la siguiente accion
 - Bot personalizado (parametros que el usuario quiere que tenga el bot)
