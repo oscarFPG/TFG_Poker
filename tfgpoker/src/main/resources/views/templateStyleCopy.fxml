@@ -5,10 +5,9 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.layout.StackPane?>
-
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="546.0" prefWidth="1008.0" style="-fx-background-image: url('images/fondoPoker.png'); -fx-background-size: cover; -fx-background-repeat: no-repeat; -fx-background-position: center;" stylesheets="@../styles/templateStyleCopy.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
 
@@ -97,10 +96,10 @@
 
    <!-- CONTENEDORES / LAYOUTS -->
       <!-- contenedores cuadrados-->
-      <StackPane fx:id="squareContainer" layoutX="100" layoutY="100" prefWidth="200" prefHeight="100" styleClass="square-pane">
+      <StackPane fx:id="squareContainer" layoutX="622.0" layoutY="273.0" prefHeight="100" prefWidth="200" styleClass="square-pane">
       </StackPane>
       <!--contenedores ovalados-->
-      <StackPane fx:id="ovalContainer" layoutX="100" layoutY="100" prefWidth="200" prefHeight="100" styleClass="oval-pane">
+      <StackPane fx:id="ovalContainer" layoutX="613.0" layoutY="150.0" prefHeight="100" prefWidth="200" styleClass="oval-pane">
       </StackPane>
       <!--DESPLEGABLE CON SU FLECHITA-->
 
@@ -150,6 +149,15 @@
 
    <!-- ICONOS GENERALES -->
       <!--ICONO INFORMACION -->
+       <Button layoutX="204.0" layoutY="269.0" mnemonicParsing="false" style="-fx-shape: &quot;M50,0 A50,50 0 1,1 49.99,0 Z&quot;; -fx-background-color: linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100%  ), radial-gradient( center 50% 40%,            radius 120%,            #691179 0%,            #661076 25%,            #3A0878 60%,            #20034F 100% ); -fx-background-insets: 0, 2;" styleClass="round-button">
+      <graphic>
+         <ImageView fitHeight="35.0" fitWidth="36.0" pickOnBounds="true" preserveRatio="true" styleClass="round-button">
+            <image>
+               <Image url="@../images/iconoConfiguracionIntroduccion.png" />
+            </image>
+         </ImageView>
+      </graphic>
+      </Button>
       <!-- ICONO AJUSTES -->
 
             
