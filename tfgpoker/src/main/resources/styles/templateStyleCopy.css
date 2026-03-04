@@ -1,0 +1,91 @@
+.button{
+     -fx-background-color: transparent;
+}
+
+/*BOTONES*/
+
+/*FLECHAS*/
+.arrow-colors {
+    -fx-fill: radial-gradient(
+        center 50% 50%, radius 50%, 
+        repeat, 
+        #66287a 0%, 
+        #692f79 25.8%, 
+        #3a0878 74.5%, 
+        #1e034f 94.8%, 
+        #201f4f 99.5%, 
+        #201f4f 100%
+    );
+
+    -fx-stroke: linear-gradient(
+        from 91.5% 26.5% to 60.2% 74.9%, 
+        #dc8cfe 0%, 
+        #fff8ff 55.3%, 
+        #fff8ff 74.5%, 
+        #dc8cfe 100%
+    );
+
+    -fx-stroke-width: 1.5;
+    -fx-cursor: hand;
+}
+
+.arrow-colors-black {
+    -fx-fill: radial-gradient(
+        center 50% 50%, radius 50%, 
+        repeat, 
+        #2f1363 94.8%, 
+        #19183c 99.5%, 
+        #201f4f 100%
+    );
+
+    -fx-stroke: linear-gradient(
+        from 91.5% 26.5% to 60.2% 74.9%, 
+        #dc8cfe 0%, 
+        #fff8ff 55.3%, 
+        #fff8ff 74.5%, 
+        #dc8cfe 100%
+    );
+
+    -fx-stroke-width: 1.5;
+    -fx-cursor: hand;
+}
+
+/* CONTENEDORES / LAYOUTS */
+
+.container-colors {
+    -fx-background-color: #1b0359;
+    -fx-border-color: #ffffff;  
+}
+
+/*contenedores cuadrados*/
+.oval-pane {
+    -fx-background-color: #1b0359;
+    -fx-border-color: #ffffff;  
+    -fx-background-radius: 50; 
+    -fx-border-radius: 50;       
+    -fx-border-width: 2;
+    -fx-padding: 10; 
+}    
+
+
+ /*contenedores ovalados*/
+.square-pane {
+    -fx-background-color: #1b0359;
+    -fx-border-color: #ffffff;  
+    -fx-border-width: 2;
+    -fx-padding: 10; 
+}
+
+/*DESPLEGABLE CON SU FLECHITA*/
+
+/*ICONO PERFIL / NOMBRE USUARIO / DINERO */
+
+/*ICONOS GENERALES*/
+   /*ICONO INFORMACION*/
+   /*ICONO AJUSTES*/
+
+
+/*CAJAS DE TEXTOS*/
+   /*titulos*/
+   /*descripciones*/
+   /*texto pequeño */
