@@ -53,6 +53,8 @@ public class ServerMain {
      *      .\mvnw.cmd -pl server -Prun-local exec:java -Dn=<int>
      * Debug:
      *      .\mvnwDebug.cmd -pl server -Pdebug exec:java
+     * Debug server in local mode (no server, only for testing):
+     *      .\mvnwDebug.cmd -pl server -Pdebug-local exec:java -Dn=<int>
      * Run the tests
      *      .\mvnw.cmd test
      */

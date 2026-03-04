@@ -141,21 +141,14 @@ public class PlayerList {
 
         // Forced plays by sb and bb if it is first round(Preflop)
         pNode = (isPreflop) ? smallBlindAndBigBlindPlays(sb, bb, playsToMake) : _first._next._next;
-
-        // Keep players betting until all have reach the same bet or only one player is left
         maxBet = bb;
-        while ( !(playsToMake == 0) ){  // If all players remaining have checked -> Exit loop
+        while ( !(playsToMake == 0) ){
 
-            // Player executes a command
+            log.debug("Current small blind: {}, current big blind: {}, current max bet: {}", sb, bb, maxBet);
             Command command = pNode._player.makePlay();
-
-            // Command receives all necessary info
             command.receiveCurrentBet(maxBet);
-
-            // Execute command
             CommandResult result = command.execute(sb, bb, maxBet);
 
-            // Check number of active players to break normal execution if there is only one left
             if(result.folds()){
                 --playersRemaining;
                 if(playersRemaining == 1)
@@ -195,6 +188,7 @@ public class PlayerList {
         if(_first._player.getNumCards() == 0){
             _first._player.receiveCard(c1);
             _first._player.receiveCard(c2);
+            log.debug("Player {} received the cards {} and {}", _first._player.getName(), c1.toString(), c2.toString());
             return;
         }
 
@@ -204,6 +198,7 @@ public class PlayerList {
             if(index._player.getNumCards() == 0){
                 index._player.receiveCard(c1);
                 index._player.receiveCard(c2);
+                log.debug("Player {} received the cards {} and {}", index._player.getName(), c1.toString(), c2.toString());
                 break;
             }
 

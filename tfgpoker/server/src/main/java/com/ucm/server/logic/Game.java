@@ -112,6 +112,7 @@ public class Game {
 
         int pot = 0;
         try {
+            log.debug("Playing hand number {}...", _handCounter);
             _playerList.playHand(_currentSB, _currentBB, _isPreflop);
         } 
         catch (OnlyOnePlayerLeftException e) {  // Collect remaining bets only if the round ended because all players
@@ -122,7 +123,7 @@ public class Game {
             _totalPot += pot;
             throw e;
         }
-        log.debug("Mano numero {} terminada!", _handCounter);
+        log.debug("Hand number {} finished!", _handCounter);
 
         _isPreflop = false;
         pot = _playerList.collectAllBets();

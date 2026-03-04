@@ -121,6 +121,7 @@ public class Player implements IPlayer {
     public void assignRole(PlayerRole r) {
         _role = r;
         onReceiveRole(r);
+        log.debug("Player {} received role {}", _name, r.toString());
     }
 
     /**
@@ -167,10 +168,14 @@ public class Player implements IPlayer {
         int bet = 0;
 
         // Forced small-blind and big-blind
-        if (_role == PlayerRole.SMALL_BLIND)
+        if (_role == PlayerRole.SMALL_BLIND){
             bet = sb;
-        else if (_role == PlayerRole.BIG_BLIND)
+            log.debug("Player {} forced to bet {} as a small blind", _name, bet);
+        }
+        else if (_role == PlayerRole.BIG_BLIND){
             bet = bb;
+            log.debug("Player {} forced to bet {} as a big blind", _name, bet);
+        }
 
         increasePocketMoney(bet);
         decreaseMoney(bet);

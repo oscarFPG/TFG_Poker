@@ -78,7 +78,7 @@
     <!-- Perfiles de ejecucion y debug -->
     <profiles>
         
-        <!-- Ejecucion sin argumentos -->
+        <!-- Ejecucion modo servidor -->
         <profile>
             <id>run</id>
             <build>
@@ -95,6 +95,27 @@
                                 </goals>
                                 <configuration>
                                     <mainClass>com.ucm.server.ServerMain</mainClass>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Debug modo servidor-->
+        <profile>
+            <id>debug</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <configuration>
+                                    <mainClass>com.ucm.server.ServerMain</mainClass>
+                                    <jvmArg>agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:8000</jvmArg>
                                 </configuration>
                             </execution>
                         </executions>
@@ -123,27 +144,21 @@
             </build>
         </profile>
 
-        <!-- Debug -->
+        <!-- Debug local -->
         <profile>
-            <id>debug</id>
+            <id>debug-local</id>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>debug-app</id>
-                                <phase>compile</phase>
-                                <goals>
-                                    <goal>java</goal>
-                                </goals>
-                                <configuration>
-                                    <mainClass>com.ucm.server.ServerMain</mainClass>
-                                    <jvmArg>agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:8000</jvmArg>
-                                </configuration>
-                            </execution>
-                        </executions>
+                        <configuration>
+                            <mainClass>com.ucm.server.ServerMain</mainClass>
+                            <arguments>
+                                <argument>local</argument>
+                                <argument>${n}</argument>
+                            </arguments>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
