@@ -1,5 +1,8 @@
 package com.ucm.server.commands;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.ucm.server.gameobjects.Player;
 import com.ucm.server.middleclasses.CommandResult;
 
@@ -10,6 +13,7 @@ import com.ucm.server.middleclasses.CommandResult;
  */
 public class CallCommand extends Command {
 
+    private static final Logger log = LogManager.getLogger(CallCommand.class);
 
     public CallCommand(){
         super();
@@ -41,12 +45,14 @@ public class CallCommand extends Command {
     public CommandResult execute(int sb, int bb, int maxBet) {
 
         if(_currentBet == _money + _pocketMoney){
+            log.debug("Transform call command to all-in command");
             AllInCommand allIn = new AllInCommand(_player, _money, _pocketMoney);
             return allIn.execute(sb, bb, maxBet);
         }
         
+        log.debug("Executing the call command with value to bet {}", maxBet);
         _player.call(maxBet);
-        return CommandResult.continuePlaying(_money, false);
+        return CommandResult.continuePlaying(maxBet, false);
     }
 
     /**

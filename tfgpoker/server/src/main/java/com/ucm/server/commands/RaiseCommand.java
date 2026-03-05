@@ -30,14 +30,11 @@ public class RaiseCommand extends Command {
     }
     
     /**
-     *
+     * {@inheritDoc}
      */
     @Override
     public boolean validate(final int onBet, final int totalMoney, final int maxBet){
-
-        // _targetBet; This is the new value that the player wants to bet
-        // New value for maxBet, it must calculate the difference if the player already had money on bet
-        return false;
+        return _targetBet <= onBet + totalMoney;
     }
 
     /**

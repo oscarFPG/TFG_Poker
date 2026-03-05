@@ -249,11 +249,13 @@ public class Player implements IPlayer {
      * The player 'calls' in this round, which means that equals the maximum bet
      * made by other players.
      * 
-     * @param maxBet
+     * @param betCall quantity to bet
      */
-    public void call(int maxBet) {
+    public void call(int betCall) {
 
-        int resto = maxBet - _pocketMoney; // dinero que necesita para igualar la apuesta en juego
+        int resto = betCall - _pocketMoney; // dinero que necesita para igualar la apuesta en juego
+        log.debug("Player {} wants to call to {}$", _name, betCall + _pocketMoney);
+        
         // Aumento la apuesta de mi ronda
         increasePocketMoney(resto);
 

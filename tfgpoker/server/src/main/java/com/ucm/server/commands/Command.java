@@ -5,6 +5,9 @@ import com.ucm.server.middleclasses.CommandResult;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * Abstract class that represents a command in the poker game. This class serves
  * as a base for specific commands such as fold, check, call, raise, and all-in.
@@ -16,6 +19,8 @@ import java.util.List;
  */
 public abstract class Command {
 
+    private static final Logger log = LogManager.getLogger(Command.class);
+
     protected Player _player;
     protected int _money;
     protected int _pocketMoney;
@@ -26,10 +31,11 @@ public abstract class Command {
             new CheckCommand(),
             new FoldCommand(),
             new RaiseCommand(),
-            new AllInCommand());
+            new AllInCommand()
+    );
 
-    public Command() {
-    };
+
+    public Command() {}
 
     /**
      * Constructor method that creates a Command object with the specified player,
@@ -80,8 +86,9 @@ public abstract class Command {
     public static Command parseCommand(String[] input, Player p) {
 
         for (Command command : AVAILABLE_COMMANDS) {
-            if (command.matchCommand(input[0]) && command.checkAttributes(input)) { // Must be called in this particular
-                                                                                    // order
+            // Must be called in this particular order
+            if (command.matchCommand(input[0]) && command.checkAttributes(input)) { 
+                log.debug("Command selected by player {}: {}", p.getName(), command.getCommandName());
                 return command.create(input, p);
             }
         }

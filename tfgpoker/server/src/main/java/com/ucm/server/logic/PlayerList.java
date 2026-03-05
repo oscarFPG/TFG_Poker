@@ -45,16 +45,12 @@ public class PlayerList {
         if (isEmpty()) {
             _first = newNode;
             _last = newNode;
-            _first._next = newNode;
-            _first._prev = newNode;
+        }
+        else {
             _last._next = newNode;
-            _last._prev = newNode;
-        } else {
-            _first._prev = newNode;
-            _last._next = newNode;
-            _last = newNode;
         }
 
+        log.debug("Player {} added!", p.getName());
         ++_playerCounter;
     }
 
@@ -67,26 +63,34 @@ public class PlayerList {
         if (n == 0 || n == 1)
             return;
 
+
         if (n == 2) {
             _current = getNextPlayerActive(_first);
             _current._player.assignRole(PlayerRole.SMALL_BLIND);
+            log.debug("Player {} receives role {}", _current._player.getName(), PlayerRole.SMALL_BLIND.name());
 
             _current = getNextPlayerActive(_current._next);
             _current._player.assignRole(PlayerRole.BIG_BLIND);
-        } else {
+            log.debug("Player {} receives role {}", _current._player.getName(), PlayerRole.BIG_BLIND.name());
+        }
+        else {
             _current = getNextPlayerActive(_first);
             _current._player.assignRole(PlayerRole.DEALER);
+            log.debug("Player {} receives role {}", _current._player.getName(), PlayerRole.DEALER.name());
 
             _current = getNextPlayerActive(_current._next);
             _current._player.assignRole(PlayerRole.SMALL_BLIND);
+            log.debug("Player {} receives role {}", _current._player.getName(), PlayerRole.SMALL_BLIND.name());
 
             _current = getNextPlayerActive(_current._next);
             _current._player.assignRole(PlayerRole.BIG_BLIND);
+            log.debug("Player {} receives role {}", _current._player.getName(), PlayerRole.SMALL_BLIND.name());
 
             _current = getNextPlayerActive(_current._next);
             while (_current != _first) {
                 _current._player.assignRole(PlayerRole.NO_ROLE);
                 _current = getNextPlayerActive(_current._next);
+                log.debug("Player {} receives role {}", _current._player.getName(), PlayerRole.NO_ROLE.name());
             }
         }
     }
@@ -129,16 +133,20 @@ public class PlayerList {
 
         Node pNode = null;
         int currentBet = 0, maxBet = 0;
-        int playsToMake = (isPreflop) ? activePlayersCounter() - 1 : activePlayersCounter(); // Number of players that
-                                                                                             // have to, at least, fold
+        int playsToMake = (isPreflop) ? activePlayersCounter() - 1 : activePlayersCounter();
         int playersRemaining = playsToMake + 1; // Number of players active
 
         // Forced plays by sb and bb if it is first round(Preflop)
         pNode = (isPreflop) ? smallBlindAndBigBlindPlays(sb, bb, playsToMake) : _first._next._next;
-        maxBet = bb;
+        maxBet = (isPreflop) ? bb : currentBet;
         while (!(playsToMake == 0)) {
 
-            log.debug("Current small blind: {}, current big blind: {}, current max bet: {}", sb, bb, maxBet);
+            if(isPreflop)
+                log.debug("Current small blind: {}, current big blind: {}, current max bet: {}", sb, bb, maxBet);
+            else
+                log.debug("Last maximum bet is {}", maxBet);
+
+
             Command command = pNode._player.makePlay(maxBet);
             command.receiveCurrentBet(maxBet);
             CommandResult result = command.execute(sb, bb, maxBet);
@@ -149,15 +157,15 @@ public class PlayerList {
                     throw new OnlyOnePlayerLeftException("Only one player left to play mid round");
             }
 
-            // Update remaining players loop
             playsToMake = result.raises() ? (activePlayersCounter() - 1) : (playsToMake - 1);
-            log.debug("{} plays left", playsToMake);
+            log.debug("{} plays left to play", playsToMake);
 
-            // Update maxBet and get next player
             currentBet = result.bet();
             maxBet = Integer.max(maxBet, currentBet);
-            pNode = getNextPlayerActive(pNode);
             log.debug("Current bet is {} and maximum bet is {}", currentBet, maxBet);
+
+            pNode = getNextPlayerActive(pNode);
+            log.debug("Next player to play is {}", pNode._player.getName());
         }
     }
 
@@ -280,12 +288,19 @@ public class PlayerList {
 
     private Node getNextPlayerActive(Node current) {
 
-        while (current._player.hasFolded()) {
-            current._player.assignRole(PlayerRole.NO_ROLE);
-            current = current._next;
+        Node iNode = current._next;
+        if(!iNode._player.hasFolded())
+            return iNode;
+
+
+        boolean found = false;
+        while (!found && iNode._player != current._player) {
+            iNode = iNode._next;
+            if(!iNode._player.hasFolded())
+                found = true;
         }
 
-        return current;
+        return iNode;
     }
 
     public boolean isEmpty() {
