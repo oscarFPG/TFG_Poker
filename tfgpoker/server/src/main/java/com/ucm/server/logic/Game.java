@@ -1,6 +1,7 @@
 package com.ucm.server.logic;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ucm.server.evaluator.Evaluator;
+import com.ucm.server.exceptions.EvaluatorException;
 import com.ucm.server.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.server.gameobjects.Card;
 import com.ucm.server.gameobjects.Deck;
@@ -44,7 +46,7 @@ public class Game {
     private int _currentBB;
     
     
-    public Game() {
+    public Game() throws EvaluatorException {
         
         _initialSmallBlind = Game.INITIAL_SB;
         _initialBigBlind = Game.INITIAL_BB;
@@ -61,6 +63,14 @@ public class Game {
 
         _currentSB = _initialSmallBlind;
         _currentBB = _initialBigBlind;
+
+        try{
+            Evaluator.getInstance();
+        }
+        catch(IOException e){
+            throw new EvaluatorException("Error creating the evaluator for the game");
+        }
+        
     }
 
     public void addPlayer(Player p) {
@@ -90,6 +100,15 @@ public class Game {
 
         _tableCards[_actualTableCards] = _deck.takeRandomCard();
         _actualTableCards++;
+
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < MAX_CARDS_IN_TABLE; i++){
+            if(_tableCards[i] == null)
+                sb.append(Card.FlippedDownCardToString()).append(" ");
+            else
+                sb.append(_tableCards[i].toString()).append(" ");
+        }
+        log.debug("Cartas en la mesa: {}", sb.toString());
     }
 
     public void retrieveCardsFromTable() {
@@ -147,7 +166,7 @@ public class Game {
         if (winners.size() == 1) {    
             log.debug("{} ha ganado {}$!", winners.get(0).getName(), _totalPot);
         }
-        else if(winners.size() > 1){
+        else {
             log.debug("Empate entre {} jugadores: ", winners.size());
             for(Player p : winners)
                 log.debug("{} ", p.getName());

@@ -10,7 +10,7 @@ import com.ucm.server.gameobjects.Suit;
 
 import java.io.IOException;
 
-public class EvaluatorTest { // TODO Hacer test para chequear datos que deberían dar falso
+public class EvaluatorTest {
 
     private Card[] tableCards2136;
     private Card[] tableCards1;

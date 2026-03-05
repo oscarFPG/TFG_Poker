@@ -116,7 +116,6 @@ public class Player implements IPlayer {
     public void assignRole(PlayerRole r) {
         _role = r;
         onReceiveRole(r);
-        log.debug("Player {} received role {}", _name, r.toString());
     }
 
     /**
@@ -149,7 +148,7 @@ public class Player implements IPlayer {
      * Prints the menu for the player to make a play by console.
      */
     private void menuMakePlay() {
-        System.out.printf("\tHaz una jugada, %s!\n", _name);
+        System.out.printf("\tHaz una jugada, %s! Actualmente ha apostado %d$\n", _name, _pocketMoney);
         System.out.println("\tOpciones de jugada: ");
         System.out.println( Command.showAvailableCommands() );
         System.out.print("\tIntroduce tu jugada: ");
@@ -254,7 +253,8 @@ public class Player implements IPlayer {
     public void call(int betCall) {
 
         int resto = betCall - _pocketMoney; // dinero que necesita para igualar la apuesta en juego
-        log.debug("Player {} wants to call to {}$", _name, betCall + _pocketMoney);
+        log.debug("Player {} wants to call to {}$", _name, betCall);
+        log.debug("Total money on bet: {}$", betCall + _pocketMoney);
         
         // Aumento la apuesta de mi ronda
         increasePocketMoney(resto);

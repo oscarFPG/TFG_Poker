@@ -48,11 +48,6 @@ public class Evaluator {
 
     private static Evaluator instance;
 
-    /**
-     * Evitar instanciamiento desde fuera de esta clase
-     * 
-     * @throws IOException
-     */
     private Evaluator() throws IOException {
         loadEvaluator();
     }
@@ -66,7 +61,7 @@ public class Evaluator {
         return instance;
     }
 
-    public static List<String> getFileResource(String fileName) {
+    private static List<String> getFileResource(String fileName) {
 
         String resourcePath = "/arrays/" + fileName;
 
@@ -89,12 +84,6 @@ public class Evaluator {
         List<String> lineasUnique = getFileResource("unique.txt");
         List<String> lineasHashAdjust = getFileResource("hash_adjust.txt");
         List<String> lineasHashValues = getFileResource("hash_values.txt");
-        /*
-        List<String> lineasFlushes = Files.readAllLines(Path.of("../arrays/flushes.txt"));
-        List<String> lineasUnique = Files.readAllLines(Path.of("../arrays/unique.txt"));
-        List<String> lineasHashAdjust = Files.readAllLines(Path.of("../arrays/hash_adjust.txt"));
-        List<String> lineasHashValues = Files.readAllLines(Path.of("../arrays/hash_values.txt"));
-        */
 
         _flushes = new short[lineasFlushes.size()];
         for (int i = 0; i < lineasFlushes.size(); i++) {
@@ -121,6 +110,9 @@ public class Evaluator {
 
         int encodedPlayerCards[][] = new int[playerHands.length][2];
         int encodedTableCards[] = new int[tableCards.length];
+        short bestHandValue[] = new short[playerHands.length];
+        int encoded7Cards[] = new int[7];
+
 
         for (int i = 0; i < playerHands.length; i++) {
             encodedPlayerCards[i][0] = encodeCard(playerHands[i].cards()[0]);
@@ -130,13 +122,7 @@ public class Evaluator {
             encodedTableCards[i] = encodeCard(tableCards[i]);
         }
 
-        /*
-         * For each player, calculate the best 5 cards hand including the two players
-         * cards + all table cards
-         */
-
-        short bestHandValue[] = new short[playerHands.length];
-        int encoded7Cards[] = new int[7];
+        // For each player, calculate the best 5 cards hand between all 7 cards(player cards + all table cards)
         short tableRank = evaluate5hand(
                 encodedTableCards[0],
                 encodedTableCards[1],
@@ -144,40 +130,37 @@ public class Evaluator {
                 encodedTableCards[3],
                 encodedTableCards[4]
         );
-
         short bestValue = Short.MAX_VALUE;
         short value = 0;
         for (int i = 0; i < playerHands.length; i++) {
 
-            encoded7Cards[0] = encodedPlayerCards[i][0]; // First player card
-            encoded7Cards[1] = encodedPlayerCards[i][1]; // Second player card
-            encoded7Cards[2] = encodedTableCards[0]; // First card on the table
-            encoded7Cards[3] = encodedTableCards[1]; // Second card on the table
-            encoded7Cards[4] = encodedTableCards[2]; // Third card on the table
-            encoded7Cards[5] = encodedTableCards[3]; // Fourth card on the table
-            encoded7Cards[6] = encodedTableCards[4]; // Fifth card on the table
+            encoded7Cards[0] = encodedPlayerCards[i][0];    // First player card
+            encoded7Cards[1] = encodedPlayerCards[i][1];    // Second player card
+            encoded7Cards[2] = encodedTableCards[0];        // First card on the table
+            encoded7Cards[3] = encodedTableCards[1];        // Second card on the table
+            encoded7Cards[4] = encodedTableCards[2];        // Third card on the table
+            encoded7Cards[5] = encodedTableCards[3];        // Fourth card on the table
+            encoded7Cards[6] = encodedTableCards[4];        // Fifth card on the table
 
             // Assign best hand value obtained between:
             // One or both player cards + 3 on the table
             // All 5 on the table
             value = (short) Math.min(tableRank, evaluate7hand(encoded7Cards));
             bestHandValue[i] = value;
-
             bestValue = (short) Math.min(value, bestValue);
         }
 
         // Select all players with the best value hand
-        List<Player> winner = new ArrayList<Player>();
+        List<Player> winners = new ArrayList<Player>();
         for (int i = 0; i < playerHands.length; i++) {
             if (bestHandValue[i] == bestValue)
-                winner.add(playerHands[i].player());
+                winners.add(playerHands[i].player());
         }
 
-        return winner;
+        return winners;
     }
 
-    public static short evaluate5hand(final int card1, final int card2, final int card3, final int card4,
-            final int card5) { // TODO Cambiar a private
+    public static short evaluate5hand(final int card1, final int card2, final int card3, final int card4, final int card5) {
 
         int q = (card1 | card2 | card3 | card4 | card5) >>> 16;
         boolean bIsFlush = (card1 & card2 & card3 & card4 & card5 & 0xF000) != 0;
@@ -280,7 +263,7 @@ public class Evaluator {
             return RANK.STRAIGHT_FLUSH; // 10 straight-flushes
     }
 
-    public static int encodeCard(Card c) { // TODO cambiar a private
+    public static int encodeCard(Card c) {
 
         int prime = Evaluator.PRIME_NUMBERS[c.getNumber() - 2];
         int rank = c.getNumber() - 2;

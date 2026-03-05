@@ -39,15 +39,24 @@ public class PlayerList {
         _maxNumberOfPlayers = n;
     }
 
+    
     public void addPlayer(Player p) {
 
-        Node newNode = new Node(_last, p, _first);
+        Node newNode = new Node(null, p, null);
         if (isEmpty()) {
             _first = newNode;
             _last = newNode;
-        }
+            newNode._next = newNode;
+            newNode._prev = newNode;
+        } 
         else {
+            newNode._prev = _last;
+            newNode._next = _first;
+
             _last._next = newNode;
+            _first._prev = newNode;
+
+            _last = newNode;
         }
 
         log.debug("Player {} added!", p.getName());
@@ -65,31 +74,29 @@ public class PlayerList {
 
 
         if (n == 2) {
-            _current = getNextPlayerActive(_first);
             _current._player.assignRole(PlayerRole.SMALL_BLIND);
             log.debug("Player {} receives role {}", _current._player.getName(), PlayerRole.SMALL_BLIND.name());
 
-            _current = getNextPlayerActive(_current._next);
+            _current = getNextPlayerActive(_current);
             _current._player.assignRole(PlayerRole.BIG_BLIND);
             log.debug("Player {} receives role {}", _current._player.getName(), PlayerRole.BIG_BLIND.name());
         }
         else {
-            _current = getNextPlayerActive(_first);
             _current._player.assignRole(PlayerRole.DEALER);
             log.debug("Player {} receives role {}", _current._player.getName(), PlayerRole.DEALER.name());
 
-            _current = getNextPlayerActive(_current._next);
+            _current = getNextPlayerActive(_current);
             _current._player.assignRole(PlayerRole.SMALL_BLIND);
             log.debug("Player {} receives role {}", _current._player.getName(), PlayerRole.SMALL_BLIND.name());
 
-            _current = getNextPlayerActive(_current._next);
+            _current = getNextPlayerActive(_current);
             _current._player.assignRole(PlayerRole.BIG_BLIND);
             log.debug("Player {} receives role {}", _current._player.getName(), PlayerRole.SMALL_BLIND.name());
 
-            _current = getNextPlayerActive(_current._next);
+            _current = getNextPlayerActive(_current);
             while (_current != _first) {
                 _current._player.assignRole(PlayerRole.NO_ROLE);
-                _current = getNextPlayerActive(_current._next);
+                _current = getNextPlayerActive(_current);
                 log.debug("Player {} receives role {}", _current._player.getName(), PlayerRole.NO_ROLE.name());
             }
         }
@@ -121,7 +128,8 @@ public class PlayerList {
             _first = (previous == _first) ? next : previous;
             _first._prev = null;
             _first._next = null;
-        } else {
+        }
+        else {
             previous._next = next;
             next._prev = previous;
         }

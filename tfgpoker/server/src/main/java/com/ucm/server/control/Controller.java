@@ -6,10 +6,11 @@ import com.ucm.server.gameobjects.Player;
 import com.ucm.server.logic.Game;
 import com.ucm.server.middleclasses.ClientStructGame;
 
-import java.util.List;
-
+import org.apache.logging.log4j.ThreadContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.List;
 
 
 public class Controller {
@@ -56,10 +57,18 @@ public class Controller {
 
     public void run() {
 
+        int handCounter = 0;
+
+        ThreadContext.put("match", "0");
+        ThreadContext.put("hand", String.valueOf(handCounter));
+        log.info("Starting a new game!");
+
+
         // Start Game loop (1)
         _game.assignRolesToAllPlayers();
         while (!_game.isGameFinished()) {
 
+            log.info("Starting {} hand!", handCounter);
             try {
                 
                 // Pre-flop (2)
@@ -86,11 +95,13 @@ public class Controller {
             catch (OnlyOnePlayerLeftException e) {
                 _game.giveRewardToWinner();
             }
-
-            // Devolver todas las cartas al mazo, restablecer jugadores que han 'foldeado',
-            // etc...
             _game.restartRound();
             _game.passTurn();
+
+            // Logger configuration for the next hand -> Write on file match{0}_hand{handCounter}.log
+            log.info("Finishing {} hand!", handCounter);
+            ++handCounter;
+            ThreadContext.put("hand", String.valueOf(handCounter));
         }
     }
 

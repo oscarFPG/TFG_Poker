@@ -19,6 +19,7 @@ import java.util.List;
 import com.ucm.server.middleclasses.ClientStructGame;
 import com.ucm.common.*;
 import com.ucm.server.control.Controller;
+import com.ucm.server.exceptions.EvaluatorException;
 import com.ucm.server.logic.Game;
 
 
@@ -76,11 +77,17 @@ public class ServerMain {
             log.debug("Running in local mode...");
             log.debug("Number of players: {}", n_players);
 
-            Game game = new Game();
-            Controller controller = new Controller(game, n_players);
-            controller.run();
+            try{
+                Game game = new Game();
+                Controller controller = new Controller(game, n_players);
+                controller.run();
 
-            log.debug("Server finished!");
+                log.debug("Server finished!");
+            }
+            catch(EvaluatorException e){
+                log.error("Error initializing the game: {}", e.getMessage());
+            }
+            
             return;
         }
 
@@ -94,8 +101,6 @@ public class ServerMain {
         game(players);
 
     }
-
-    // ------------------------ Pregame phase ------------------------
 
     private static List<ClientStructPreGame> preGame(){
 
@@ -193,9 +198,16 @@ public class ServerMain {
     }
 
     private static void game(List<ClientStructGame> clients){
-        Game game = new Game();
-        Controller controller = new Controller(game, clients);
-        controller.run();
+
+        try{
+            Game game = new Game();
+            Controller controller = new Controller(game, clients);
+            controller.run();
+        }
+        catch(EvaluatorException e){
+            log.error("Error initializing the game: {}", e.getMessage());
+            return;
+        }
     }
 
     private static void handleAccept(SelectionKey key, Selector selector) throws IOException {

@@ -83,7 +83,7 @@ public class Card {
      * @return {@link String} representation of the card
      */
     public String toString() {
-        return String.format("[%c%s]", valueToString(), _suit.getLetra());
+        return String.format("[%c%s]", valueToString(), _suit.getSimbolo());
     }
 
     /**

@@ -1,3 +1,9 @@
 {
-    "java.configuration.updateBuildConfiguration": "disabled"
+    "java.configuration.updateBuildConfiguration": "disabled",
+    "terminal.integrated.profiles.windows": {
+        "Command Prompt UTF8": {
+            "path": "C:\\Windows\\System32\\cmd.exe",
+            "args": ["/k chcp 65001"]   // Cambia el código de página a UTF-8 para ver los iconos de las cartas correctamente
+        }
+    }
 }

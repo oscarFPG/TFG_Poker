@@ -30,11 +30,15 @@ public class RaiseCommand extends Command {
     }
     
     /**
-     * {@inheritDoc}
+     * The target bet must be higher than the current maximum bet and the player must have enough money to cover the new bet amount.
+     * @param onBet the current bet amount that the player has already bet in the current hand.
+     * @param totalMoney the total amount of money that the player has not bet yet.
+     * @param maxBet the current maximum bet that any player has bet in the current hand.
+     * @return true if the raise is valid, false otherwise.
      */
     @Override
     public boolean validate(final int onBet, final int totalMoney, final int maxBet){
-        return _targetBet <= onBet + totalMoney;
+        return _targetBet <= onBet + totalMoney && _targetBet > maxBet;
     }
 
     /**

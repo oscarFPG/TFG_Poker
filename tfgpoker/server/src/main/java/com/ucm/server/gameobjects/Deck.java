@@ -4,6 +4,7 @@ import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import com.ucm.server.logic.Game;
 
 /**
  * This class is the responsible of managing all the {@link Card} objects of the
@@ -14,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 public class Deck {
 
     private static final Logger log = LogManager.getLogger(Deck.class);
+    private static final int DEBUG_SEED = 123;
 
     /**
      * Number of different values in the deck (2, 3, 4, 5, 6, 7, 8, 9, 10, J, Q, K,
@@ -47,7 +49,10 @@ public class Deck {
      * Class constructor, initializes the deck and the random object.
      */
     public Deck() {
-        _random = new Random();
+        if(Game.DEBUG)
+            _random = new Random(DEBUG_SEED);
+        else
+            _random = new Random();
         initializeDeck();
     }
 
