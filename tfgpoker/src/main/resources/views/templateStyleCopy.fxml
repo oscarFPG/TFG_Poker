@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.text.Font?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="546.0" prefWidth="1008.0" style="-fx-background-image: url('images/fondoPoker.png'); -fx-background-size: cover; -fx-background-repeat: no-repeat; -fx-background-position: center;" stylesheets="@../styles/templateStyleCopy.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+
+<!-- FLECHAS -->
+   <!-- ARROW 1 <  -->
+   <SVGPath fx:id="arrowBack" content="M 25 19 L 13 29 L 25 39 L 20 45 L 0 29 L 19 13 Z" layoutX="334.0" layoutY="207.0" scaleX="2.0" scaleY="2.0" styleClass="arrow-colors" />
+   <!-- ARROW 2 <  -->
+   <SVGPath fx:id="arrowNext" content="M10 5 L30 15 L10 25 Z" layoutX="511.0" layoutY="219.0" scaleX="4.0" scaleY="4.0" styleClass="arrow-colors" />
+   <!-- ARROW 3 <  -->
+   <SVGPath fx:id="arrowBackBlack" content="M 25 19 L 13 29 L 25 39 L 20 45 L 0 29 L 19 13 Z" layoutX="402.0" layoutY="206.0" scaleX="1.5" scaleY="1.5" styleClass="arrow-colors-black" />
+  
+   <!--
+   <Button fx:id="btnNext" layoutX="369.0" layoutY="225.0" prefHeight="43.0" prefWidth="33.0" scaleX="2.0" scaleY="2.0" styleClass="arrow-button-2">
+      <graphic>
+      <SVGPath content="M10 5 L30 15 L10 25 Z" layoutX="471.0" layoutY="18.0" scaleX="1.5" scaleY="1.5" scaleZ="0.0" strokeWidth="1.5" style="-fx-backgound: linear-gradient(to right,  #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100%  ),   radial-gradient( center 50% 40%,  radius 120%, #661076 0%, #691179 23% , #3A0878 73%,  #291D4C 100%, #20034F 99%);" styleClass="arrow-shape2">
+         <fill>
+            <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+               <stops>
+                  <Stop>
+                     <color>
+                        <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
+                     </color>
+                  </Stop>
+                  <Stop offset="0.25838926174496646">
+                     <color>
+                        <Color red="0.4117647111415863" green="0.06666667014360428" blue="0.4745098054409027" />
+                     </color>
+                  </Stop>
+                  <Stop offset="0.7449664429530202">
+                     <color>
+                        <Color red="0.22745098173618317" green="0.0313725508749485" blue="0.47058823704719543" />
+                     </color>
+                  </Stop>
+                  <Stop offset="0.948539040759535">
+                     <color>
+                        <Color red="0.11760000139474869" green="0.012000000104308128" blue="0.30000001192092896" />
+                     </color>
+                  </Stop>
+                  <Stop offset="0.9951710590931413">
+                     <color>
+                        <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
+                     </color>
+                  </Stop>
+                  <Stop offset="1.0">
+                     <color>
+                        <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
+                     </color>
+                  </Stop>
+               </stops>
+            </RadialGradient>
+         </fill>
+         <stroke>
+            <LinearGradient endX="0.6018957345971564" endY="0.7488151658767772" startX="0.9146919431279621" startY="0.26540284360189575">
+               <stops>
+                  <Stop>
+                     <color>
+                        <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                     </color>
+                  </Stop>
+                  <Stop offset="0.5536912751677853">
+                     <color>
+                        <Color red="1.0" green="0.9725490212440491" blue="1.0" />
+                     </color>
+                  </Stop>
+                  <Stop offset="0.7449664429530202">
+                     <color>
+                        <Color red="1.0" green="0.9725490212440491" blue="1.0" />
+                     </color>
+                  </Stop>
+                  <Stop offset="1.0">
+                     <color>
+                        <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                     </color>
+                  </Stop>
+               </stops>
+            </LinearGradient>
+         </stroke>
+            <rotationAxis>
+               <Point3D />
+            </rotationAxis>
+      </SVGPath>
+      </graphic>
+   </Button>
+   -->
+
+
+   <!-- CONTENEDORES / LAYOUTS -->
+      <!-- contenedores cuadrados-->
+      <StackPane fx:id="squareContainer" layoutX="622.0" layoutY="273.0" prefHeight="100" prefWidth="200" styleClass="square-pane">
+      </StackPane>
+      <!--contenedores ovalados-->
+      <StackPane fx:id="ovalContainer" layoutX="613.0" layoutY="150.0" prefHeight="100" prefWidth="200" styleClass="oval-pane">
+      </StackPane>
+      <!--DESPLEGABLE CON SU FLECHITA-->
+
+            
+
+
+   <AnchorPane layoutX="917.0" prefHeight="546.0" prefWidth="91.0" style="-fx-background-color: linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100%  ), radial-gradient( center 50% 40%,            radius 120%,            #691179 0%,            #661076 25%,            #3A0878 60%,            #20034F 100% ); -fx-background-insets: 0, 2;">
+      <children>
+         <Button layoutX="-19.0" layoutY="247.0" mnemonicParsing="false" prefHeight="53.0" prefWidth="0.0" style="-fx-background-color: linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100%  ), radial-gradient( center 50% 40%,            radius 120%,            #691179 0%,            #661076 25%,            #3A0878 60%,            #20034F 100% ); -fx-background-radius: 10,9; -fx-background-insets: 0, 2;" styleClass="buttonJoinGame" text="&lt;" textAlignment="CENTER" textFill="#e5e5e5">
+            <font>
+               <Font name="Constantia Bold" size="20.0" />
+            </font>
+         </Button>
+      </children>
+   </AnchorPane>
+   <ImageView fitHeight="108.0" fitWidth="108.0" layoutX="14.0" layoutY="15.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+         <Image url="@../images/imagenPerfil.png" />
+      </image>
+   </ImageView>
+   <Button layoutX="55.0" layoutY="107.0" maxHeight="53.0" maxWidth="38.0" minHeight="24.0" minWidth="15.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="26.0" rotate="90.0" style="-fx-shape: &quot;M 50 0 L 100 25 L 100 75 L 50 100 L 0 75 L 0 25 Z&quot;; -fx-background-color: #896E1D;">
+      <graphic>
+         <ImageView fitHeight="15.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" rotate="-97.4">
+            <image>
+               <Image url="@../images/pencilEditProfile.png" />
+            </image>
+         </ImageView>
+      </graphic>
+   </Button>
+   <Button layoutX="134.0" layoutY="269.0" mnemonicParsing="false" style="-fx-shape: &quot;M50,0 A50,50 0 1,1 49.99,0 Z&quot;; -fx-background-color: linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100%  ), radial-gradient( center 50% 40%,            radius 120%,            #691179 0%,            #661076 25%,            #3A0878 60%,            #20034F 100% ); -fx-background-insets: 0, 2;" styleClass="round-button">
+      <graphic>
+         <ImageView fitHeight="35.0" fitWidth="36.0" pickOnBounds="true" preserveRatio="true" styleClass="round-button">
+            <image>
+               <Image url="@../images/iconoInformacionTarjetasModo.png" />
+            </image>
+         </ImageView>
+      </graphic>
+   </Button>
+   <Button layoutX="141.0" layoutY="33.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="126.0" style="-fx-background-color: rgba(162, 130, 190, 0.38); -fx-background-radius: 10, 9;" styleClass="buttonJoinGame" textAlignment="CENTER" textFill="#e5e5e5">
+      <font>
+         <Font name="Constantia Bold" size="29.0" />
+      </font>
+   </Button>
+
+   
+   <!--ICONO PERFIL / NOMBRE USUARIO / DINERO -->
+
+   <!-- ICONOS GENERALES -->
+      <!--ICONO INFORMACION -->
+       <Button layoutX="204.0" layoutY="269.0" mnemonicParsing="false" style="-fx-shape: &quot;M50,0 A50,50 0 1,1 49.99,0 Z&quot;; -fx-background-color: linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100%  ), radial-gradient( center 50% 40%,            radius 120%,            #691179 0%,            #661076 25%,            #3A0878 60%,            #20034F 100% ); -fx-background-insets: 0, 2;" styleClass="round-button">
+      <graphic>
+         <ImageView fitHeight="35.0" fitWidth="36.0" pickOnBounds="true" preserveRatio="true" styleClass="round-button">
+            <image>
+               <Image url="@../images/iconoConfiguracionIntroduccion.png" />
+            </image>
+         </ImageView>
+      </graphic>
+      </Button>
+      <!-- ICONO AJUSTES -->
+
+            
+   <!--CAJAS DE TEXTOS -->
+      <!-- titulos -->
+      <!-- descripciones -->
+      <!-- texto pequeño -->
+
+
+
+
+</Pane>
