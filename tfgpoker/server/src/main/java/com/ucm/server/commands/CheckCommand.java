@@ -22,6 +22,15 @@ public class CheckCommand extends Command {
         super(p, 0, 0);
     }
 
+    /**
+     * No other player has bet before(maxBet is zero), we have no bet before(onBet is zero) and we have some money(totalMoney is greater than zero).
+     * The last check on the total money avoids executing this command if the player has been eliminated(It has no money left)
+     */
+    @Override
+    public boolean validate(final int onBet, final int totalMoney, final int maxBet){
+        return onBet == 0 && maxBet == 0 && totalMoney > 0;
+    }
+
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
         return CommandResult.continuePlaying(_money, false);

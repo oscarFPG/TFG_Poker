@@ -23,6 +23,14 @@ public class AllInCommand extends Command {
     }
 
     /**
+     * Player can allways bet all the money on his posession if it has some
+     */
+    @Override
+    public boolean validate(final int onBet, final int totalMoney, final int maxBet){
+        return totalMoney > 0;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

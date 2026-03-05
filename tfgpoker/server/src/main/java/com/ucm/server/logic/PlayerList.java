@@ -1,6 +1,5 @@
 package com.ucm.server.logic;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,11 +11,9 @@ import com.ucm.server.gameobjects.PlayerRole;
 import com.ucm.server.middleclasses.CommandResult;
 import com.ucm.server.middleclasses.HandInfo;
 
-
 public class PlayerList {
 
     private static final Logger log = LogManager.getLogger(PlayerList.class);
-
 
     public class Node {
         Node _prev;
@@ -35,14 +32,12 @@ public class PlayerList {
     private int _playerCounter;
     private int _maxNumberOfPlayers;
 
-
     public PlayerList(int n) {
         _first = null;
         _last = null;
         _playerCounter = 0;
         _maxNumberOfPlayers = n;
     }
-
 
     public void addPlayer(Player p) {
 
@@ -54,8 +49,7 @@ public class PlayerList {
             _first._prev = newNode;
             _last._next = newNode;
             _last._prev = newNode;
-        } 
-        else {
+        } else {
             _first._prev = newNode;
             _last._next = newNode;
             _last = newNode;
@@ -70,7 +64,8 @@ public class PlayerList {
         Node _current = _first;
 
         // NO HAY DEALER --> SOLO SB Y BB
-        if ( n == 0 || n == 1 ) return;
+        if (n == 0 || n == 1)
+            return;
 
         if (n == 2) {
             _current = getNextPlayerActive(_first);
@@ -78,8 +73,7 @@ public class PlayerList {
 
             _current = getNextPlayerActive(_current._next);
             _current._player.assignRole(PlayerRole.BIG_BLIND);
-        }
-        else {
+        } else {
             _current = getNextPlayerActive(_first);
             _current._player.assignRole(PlayerRole.DEALER);
 
@@ -88,9 +82,9 @@ public class PlayerList {
 
             _current = getNextPlayerActive(_current._next);
             _current._player.assignRole(PlayerRole.BIG_BLIND);
-        
+
             _current = getNextPlayerActive(_current._next);
-            while (_current != _first){
+            while (_current != _first) {
                 _current._player.assignRole(PlayerRole.NO_ROLE);
                 _current = getNextPlayerActive(_current._next);
             }
@@ -135,44 +129,46 @@ public class PlayerList {
 
         Node pNode = null;
         int currentBet = 0, maxBet = 0;
-        int playsToMake = (isPreflop) ? activePlayersCounter() - 1 : activePlayersCounter();   // Number of players that have to, at least, fold
-        int playersRemaining = playsToMake + 1;         // Number of players active
-
+        int playsToMake = (isPreflop) ? activePlayersCounter() - 1 : activePlayersCounter(); // Number of players that
+                                                                                             // have to, at least, fold
+        int playersRemaining = playsToMake + 1; // Number of players active
 
         // Forced plays by sb and bb if it is first round(Preflop)
         pNode = (isPreflop) ? smallBlindAndBigBlindPlays(sb, bb, playsToMake) : _first._next._next;
         maxBet = bb;
-        while ( !(playsToMake == 0) ){
+        while (!(playsToMake == 0)) {
 
             log.debug("Current small blind: {}, current big blind: {}, current max bet: {}", sb, bb, maxBet);
-            Command command = pNode._player.makePlay();
+            Command command = pNode._player.makePlay(maxBet);
             command.receiveCurrentBet(maxBet);
             CommandResult result = command.execute(sb, bb, maxBet);
 
-            if(result.folds()){
+            if (result.folds()) {
                 --playersRemaining;
-                if(playersRemaining == 1)
+                if (playersRemaining == 1)
                     throw new OnlyOnePlayerLeftException("Only one player left to play mid round");
             }
 
             // Update remaining players loop
             playsToMake = result.raises() ? (activePlayersCounter() - 1) : (playsToMake - 1);
-            
+            log.debug("{} plays left", playsToMake);
+
             // Update maxBet and get next player
             currentBet = result.bet();
             maxBet = Integer.max(maxBet, currentBet);
             pNode = getNextPlayerActive(pNode);
+            log.debug("Current bet is {} and maximum bet is {}", currentBet, maxBet);
         }
     }
 
-    public int collectAllBets(){
+    public int collectAllBets() {
 
         int totalPot = 0;
         Node pNode = _first;
 
         totalPot += pNode._player.placeBet();
         pNode = pNode._next;
-        while(pNode != _first){
+        while (pNode != _first) {
             totalPot += pNode._player.placeBet();
             pNode = pNode._next;
         }
@@ -185,7 +181,7 @@ public class PlayerList {
         if (isEmpty())
             return;
 
-        if(_first._player.getNumCards() == 0){
+        if (_first._player.getNumCards() == 0) {
             _first._player.receiveCard(c1);
             _first._player.receiveCard(c2);
             log.debug("Player {} received the cards {} and {}", _first._player.getName(), c1.toString(), c2.toString());
@@ -193,19 +189,20 @@ public class PlayerList {
         }
 
         Node index = _first._next;
-        while(index != _first){
+        while (index != _first) {
 
-            if(index._player.getNumCards() == 0){
+            if (index._player.getNumCards() == 0) {
                 index._player.receiveCard(c1);
                 index._player.receiveCard(c2);
-                log.debug("Player {} received the cards {} and {}", index._player.getName(), c1.toString(), c2.toString());
+                log.debug("Player {} received the cards {} and {}", index._player.getName(), c1.toString(),
+                        c2.toString());
                 break;
             }
 
             index = index._next;
         }
     }
-    
+
     public void passTurn() {
         _first = _first._next;
         _last = _last._next;
@@ -215,11 +212,11 @@ public class PlayerList {
     public HandInfo[] getPlayerHandsInfo() {
 
         int size = activePlayersCounter();
-        HandInfo[] info = new HandInfo[ size ];
+        HandInfo[] info = new HandInfo[size];
         Node pNode = (!_first._player.hasFolded()) ? _first : getNextPlayerActive(_first);
         int i = 0;
 
-        while(i < size){
+        while (i < size) {
             info[i++] = new HandInfo(pNode._player.getCards(), pNode._player);
             pNode = pNode._next;
         }
@@ -227,72 +224,83 @@ public class PlayerList {
         return info;
     }
 
-    public int activePlayersCounter(){
-        
-        if(isEmpty())
+    public int activePlayersCounter() {
+
+        if (isEmpty())
             return 0;
 
         int cont = _first._player.hasFolded() ? 0 : 1;
         Node current = _first._next;
-        while ( current != _first ){
-           cont += current._player.hasFolded() ? 0 : 1;
-           current = current._next;
+        while (current != _first) {
+            cont += current._player.hasFolded() ? 0 : 1;
+            current = current._next;
         }
 
         return cont;
     }
 
-    public void resetPlayers(){
-        
+    public void resetPlayers() {
+
         _first._player.resetCards();
         _first._player.setFold(false);
 
         Node current = _first._next;
-        while (current != _first){
+        while (current != _first) {
             current._player.resetCards();
             current._player.setFold(false);
             current = current._next;
         }
     }
 
-    public void showPlayersStateDEBUG(){
-        
+    public void showPlayersStateDEBUG() {
+
         Node pNode = _first._next;
         log.debug("{}", _first._player.toString());
-        
-        while(pNode != _first){
+
+        while (pNode != _first) {
             log.debug("{}", pNode._player.toString());
             pNode = pNode._next;
         }
     }
 
-    private Node smallBlindAndBigBlindPlays(final int sb, final int bb, final int playsToMake){
+    private Node smallBlindAndBigBlindPlays(final int sb, final int bb, final int playsToMake) {
 
         // Select first player to make a bet when :
         // 1. Only two players left
         // 2. More than one player left
         Node pNode = (playsToMake == 1) ? _first : _first._next;
 
-        pNode._player.makeForcedBet(sb, bb);    // Small-blind
+        pNode._player.makeForcedBet(sb, bb); // Small-blind
         pNode = pNode._next;
-        pNode._player.makeForcedBet(sb, bb);    // Big-blind
+        pNode._player.makeForcedBet(sb, bb); // Big-blind
         pNode = pNode._next;
 
         return pNode;
     }
 
-    private Node getNextPlayerActive(Node current){
+    private Node getNextPlayerActive(Node current) {
 
-        while ( current._player.hasFolded() ){
+        while (current._player.hasFolded()) {
             current._player.assignRole(PlayerRole.NO_ROLE);
             current = current._next;
         }
 
         return current;
     }
-    
-    public boolean isEmpty() { return size() == 0; }
-    public boolean isFull() { return size() == max(); }
-    public int size() { return _playerCounter; }
-    public int max() { return _maxNumberOfPlayers; }
+
+    public boolean isEmpty() {
+        return size() == 0;
+    }
+
+    public boolean isFull() {
+        return size() == max();
+    }
+
+    public int size() {
+        return _playerCounter;
+    }
+
+    public int max() {
+        return _maxNumberOfPlayers;
+    }
 }

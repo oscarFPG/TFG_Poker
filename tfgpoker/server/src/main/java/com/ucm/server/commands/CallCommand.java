@@ -2,7 +2,7 @@ package com.ucm.server.commands;
 
 import com.ucm.server.gameobjects.Player;
 import com.ucm.server.middleclasses.CommandResult;
-import com.ucm.common.GameType;
+
 
 
 /**
@@ -23,6 +23,15 @@ public class CallCommand extends Command {
      */
     public CallCommand(Player p, int money, int pocketMoney) {
         super(p, money, pocketMoney);
+    }
+
+    /**
+     * If there is some bet on the table(maxBet is greater than zero) and the player has money(totalMoney is greater than zero)
+     * Even if the total money of the player is less than the maxBet, the player can call even if it is a smaller value.
+     */
+    @Override
+    public boolean validate(final int onBet, final int totalMoney, final int maxBet){
+        return maxBet > 0 && totalMoney > 0;
     }
 
     /**

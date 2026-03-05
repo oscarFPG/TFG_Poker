@@ -21,6 +21,14 @@ public class FoldCommand extends Command {
         super(p, 0, 0);
     }
 
+    /**
+     * Player can always fold if it has money available(It is not eliminated)
+     */
+    @Override
+    public boolean validate(final int onBet, final int totalMoney, final int maxBet){
+        return totalMoney > 0;
+    }
+    
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
 

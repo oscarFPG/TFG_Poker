@@ -1,12 +1,8 @@
 package com.ucm.server.gameobjects;
 
 import com.ucm.common.SocketUtils;
-import com.ucm.server.commands.AllInCommand;
-import com.ucm.server.commands.CallCommand;
-import com.ucm.server.commands.CheckCommand;
+
 import com.ucm.server.commands.Command;
-import com.ucm.server.commands.FoldCommand;
-import com.ucm.server.commands.RaiseCommand;
 import com.ucm.server.control.GameAdapter;
 import com.ucm.server.interfaces.IPlayer;
 import com.ucm.server.logic.Game;
@@ -27,7 +23,7 @@ public class Player implements IPlayer {
 
     private static final Logger log = LogManager.getLogger(Player.class);
     private static final Scanner sc = new Scanner(System.in);
-    
+
     /**
      * Player's unique identifier
      */
@@ -112,7 +108,6 @@ public class Player implements IPlayer {
         _hasLost = false;
     }
 
-
     /**
      * Assigns a role to the player.
      * 
@@ -127,9 +122,10 @@ public class Player implements IPlayer {
     /**
      * Makes a play based on the player's input by console
      * 
+     * @param maxBet is the value of the last maximum bet made
      * @return {@link Command} representing the play the player has made
      */
-    public Command makePlay() {
+    public Command makePlay(final int maxBet) {
 
         Command command = null;
         String[] userInput = null;
@@ -139,8 +135,12 @@ public class Player implements IPlayer {
             menuMakePlay();
             userInput = sc.nextLine().trim().split(" ");
             command = Command.parseCommand(userInput, this);
-        }
-        while (command == null);
+            if( !command.validate(_pocketMoney, _money, maxBet) ){
+                command = null;
+                System.out.printf("Cannot execute that command in this context! Try again!\n");
+            }
+
+        } while (command == null);
 
         return command;
     }
@@ -149,7 +149,7 @@ public class Player implements IPlayer {
      * Prints the menu for the player to make a play by console.
      */
     private void menuMakePlay() {
-        System.out.printf("\tHaz una jugada, %s!\n", getName());
+        System.out.printf("\tHaz una jugada, %s!\n", _name);
         System.out.println("\tOpciones de jugada: ");
         System.out.println( Command.showAvailableCommands() );
         System.out.print("\tIntroduce tu jugada: ");
@@ -168,11 +168,10 @@ public class Player implements IPlayer {
         int bet = 0;
 
         // Forced small-blind and big-blind
-        if (_role == PlayerRole.SMALL_BLIND){
+        if (_role == PlayerRole.SMALL_BLIND) {
             bet = sb;
             log.debug("Player {} forced to bet {} as a small blind", _name, bet);
-        }
-        else if (_role == PlayerRole.BIG_BLIND){
+        } else if (_role == PlayerRole.BIG_BLIND) {
             bet = bb;
             log.debug("Player {} forced to bet {} as a big blind", _name, bet);
         }
@@ -247,7 +246,9 @@ public class Player implements IPlayer {
     }
 
     /**
-     * The player 'calls' in this round, which means that equals the maximum bet made by other players.
+     * The player 'calls' in this round, which means that equals the maximum bet
+     * made by other players.
+     * 
      * @param maxBet
      */
     public void call(int maxBet) {
@@ -270,6 +271,7 @@ public class Player implements IPlayer {
 
     /**
      * TODO: HAY QUE HACERLO BIEN !!
+     * 
      * @param maxBet
      */
     public void raise(int maxBet) {
@@ -287,6 +289,7 @@ public class Player implements IPlayer {
 
     /**
      * The player receives money
+     * 
      * @param money received by the player
      */
     public void receivePriceMoney(int money) {
@@ -305,6 +308,7 @@ public class Player implements IPlayer {
 
     /**
      * Adds to the {@link #_pocketMoney} variable by a certain amount.
+     * 
      * @param bet quantity to add
      */
     private void increasePocketMoney(int bet) {
@@ -314,7 +318,9 @@ public class Player implements IPlayer {
     /**
      * Prints by console the player's status
      * This includes the player id, name and cards
-     * @see {@link Card} to know more about the Card's toString() method implementation
+     * 
+     * @see {@link Card} to know more about the Card's toString() method
+     *      implementation
      * @return {@link String} representation of the player
      */
     public String toString() {
@@ -326,7 +332,8 @@ public class Player implements IPlayer {
     }
 
     /**
-     * Eliminates the hand cards of the player and set the {@link #_numCards} value to zero.
+     * Eliminates the hand cards of the player and set the {@link #_numCards} value
+     * to zero.
      */
     public void resetCards() {
 
@@ -341,6 +348,7 @@ public class Player implements IPlayer {
 
     /**
      * Sets a value to the {@link #_fold} member variable
+     * 
      * @param fold new value
      */
     public void setFold(boolean fold) {
@@ -349,6 +357,7 @@ public class Player implements IPlayer {
 
     /**
      * Sets a value to the {@link #_hasLost} member variable
+     * 
      * @param lost new value
      */
     public void setHasLost(boolean lost) {
@@ -358,6 +367,7 @@ public class Player implements IPlayer {
     /**
      * Gets the player cards.
      * Player could have zero to two cards
+     * 
      * @return player cards
      */
     public Card[] getCards() {
@@ -366,6 +376,7 @@ public class Player implements IPlayer {
 
     /**
      * Gets the player ID
+     * 
      * @return player ID
      */
     public int getID() {
@@ -374,6 +385,7 @@ public class Player implements IPlayer {
 
     /**
      * Gets the player name
+     * 
      * @return player name
      */
     public String getName() {
@@ -382,7 +394,9 @@ public class Player implements IPlayer {
 
     /**
      * Gets the player money.
-     * This money could be the total money or a part of it, considering the {@link #_pocketMoney} variable.
+     * This money could be the total money or a part of it, considering the
+     * {@link #_pocketMoney} variable.
+     * 
      * @return player money
      */
     public int getMoney() {
@@ -391,6 +405,7 @@ public class Player implements IPlayer {
 
     /**
      * Gets the money the player has bet in the current hand.
+     * 
      * @return money the player has bet in the current hand
      */
     public int getPocketMoney() {
@@ -399,6 +414,7 @@ public class Player implements IPlayer {
 
     /**
      * Gets the player role in the current hand.
+     * 
      * @return player role
      */
     public PlayerRole getPlayerRole() {
@@ -420,7 +436,7 @@ public class Player implements IPlayer {
     @Override
     public void onReceiveRole(PlayerRole r) {
 
-        if(Game.DEBUG){
+        if (Game.DEBUG) {
             return;
         }
 
@@ -439,7 +455,7 @@ public class Player implements IPlayer {
     @Override
     public void onReceiveCard(Card c) {
 
-        if(Game.DEBUG){
+        if (Game.DEBUG) {
             return;
         }
 
@@ -448,8 +464,8 @@ public class Player implements IPlayer {
 
     @Override
     public void onReceiveTableCard(Card c) {
-        
-        if(Game.DEBUG){
+
+        if (Game.DEBUG) {
             return;
         }
 
@@ -458,8 +474,8 @@ public class Player implements IPlayer {
 
     @Override
     public void onReceiveTurn() {
-        
-        if(Game.DEBUG){
+
+        if (Game.DEBUG) {
             return;
         }
 
