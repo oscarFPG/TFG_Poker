@@ -1,12 +1,7 @@
-.button{
-     -fx-background-color: transparent;
-}
+/*FLECHAS ------------------------------------------------------ */
 
-/*BOTONES*/
-
-/*FLECHAS*/
-.arrow-colors {
-    -fx-fill: radial-gradient(
+.arrow-colors{
+    -fx-background-color:radial-gradient(
         center 50% 50%, radius 50%, 
         repeat, 
         #66287a 0%, 
@@ -16,8 +11,8 @@
         #201f4f 99.5%, 
         #201f4f 100%
     );
-
-    -fx-stroke: linear-gradient(
+    
+    -fx-border-color: linear-gradient(
         from 91.5% 26.5% to 60.2% 74.9%, 
         #dc8cfe 0%, 
         #fff8ff 55.3%, 
@@ -25,20 +20,22 @@
         #dc8cfe 100%
     );
 
-    -fx-stroke-width: 1.5;
-    -fx-cursor: hand;
+    -fx-background-insets: 0;
+    -fx-border-width: 3;
+
 }
 
-.arrow-colors-black {
-    -fx-fill: radial-gradient(
+.arrow-colors-black{
+
+    -fx-background-color: radial-gradient(
         center 50% 50%, radius 50%, 
         repeat, 
         #2f1363 94.8%, 
         #19183c 99.5%, 
         #201f4f 100%
     );
-
-    -fx-stroke: linear-gradient(
+    
+    -fx-border-color: linear-gradient(
         from 91.5% 26.5% to 60.2% 74.9%, 
         #dc8cfe 0%, 
         #fff8ff 55.3%, 
@@ -46,11 +43,23 @@
         #dc8cfe 100%
     );
 
-    -fx-stroke-width: 1.5;
-    -fx-cursor: hand;
+    -fx-background-insets: 0;
+    -fx-border-width: 3;
+
 }
 
-/* CONTENEDORES / LAYOUTS */
+.arrow-back {
+    -fx-shape: "M 25 19 L 13 29 L 25 39 L 20 45 L 0 29 L 19 13 Z";
+}
+
+
+.arrow-next{
+    -fx-shape: "M10 5 L30 15 L10 25 Z";
+}
+
+
+
+/* CONTENEDORES / LAYOUTS ------------------------------------------------------ */
 
 .container-colors {
     -fx-background-color: #1b0359;
@@ -59,8 +68,6 @@
 
 /*contenedores cuadrados*/
 .oval-pane {
-    -fx-background-color: #1b0359;
-    -fx-border-color: #ffffff;  
     -fx-background-radius: 50; 
     -fx-border-radius: 50;       
     -fx-border-width: 2;
@@ -70,19 +77,63 @@
 
  /*contenedores ovalados*/
 .square-pane {
-    -fx-background-color: #1b0359;
-    -fx-border-color: #ffffff;  
     -fx-border-width: 2;
     -fx-padding: 10; 
 }
 
-/*DESPLEGABLE CON SU FLECHITA*/
 
-/*ICONO PERFIL / NOMBRE USUARIO / DINERO */
+/*ICONOS GENERALES ------------------------------------------------------ */
 
-/*ICONOS GENERALES*/
-   /*ICONO INFORMACION*/
-   /*ICONO AJUSTES*/
+
+.icon-colors {
+    -fx-background-color:
+    radial-gradient(
+    center 50% 40%,
+    radius 120%,
+    #691179 0%,
+    #220470 60%,
+    #20034F 100%);
+
+    -fx-border-color: linear-gradient(to top,
+    #DC8CFE 0%,
+    #FFF8FF 50%,
+    #FFF8FF 50%,
+    #DC8CFE 100%);
+
+     -fx-background-insets: 0;
+    
+}
+
+.icon-special-colors {
+   -fx-background-color: linear-gradient( to top right,
+    #310a93,
+    #8500d7 ,
+    #ff1fc2,
+    #220470,
+    );
+
+   -fx-border-color: linear-gradient(to top,
+    #DC8CFE 0%,
+    #FFF8FF 50%,
+    #FFF8FF 50%,
+    #DC8CFE 100%);
+
+    -fx-background-insets: 0;
+     
+}
+
+.round-icon {
+    -fx-shape: "M50,0 A50,50 0 1,1 49.99,0 Z";
+    -fx-border-width: 3;
+}
+
+.square-icon {
+    -fx-background-radius: 15; 
+    -fx-border-radius: 10;
+    -fx-border-width: 3;
+}
+
+   
 
 
 /*CAJAS DE TEXTOS*/
