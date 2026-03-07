@@ -44,20 +44,29 @@ public class ClientMain extends Application {
 
 		_scanner = new Scanner(System.in);
 
+		System.out.printf("Specify the server IP (default: localhost): ");
+		String serverIP = _scanner.nextLine();
+		if (!serverIP.trim().isEmpty()) {
+			hostname = serverIP.trim();
+		}
+		else{
+			serverIP = hostname;
+		}
+
 		// Entrar a aplicacion de poker
-		Socket socket = preGame();
+		Socket socket = preGame(serverIP);
 		game(socket);
 
 		_scanner.close();
     }
 
-	private static Socket preGame(){
+	private static Socket preGame(final String serverIP){
 
 		SocketChannel socket = null;
 		try{
 			socket = SocketChannel.open();
 			socket.configureBlocking(false);
-			socket.connect( new InetSocketAddress(hostname, GameType.PORT) );
+			socket.connect( new InetSocketAddress(serverIP, GameType.PORT) );
 
 			Selector selector = Selector.open();
 			socket.register(selector, SelectionKey.OP_CONNECT);

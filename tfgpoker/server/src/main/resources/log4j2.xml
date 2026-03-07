@@ -19,7 +19,7 @@
         <Routing name="FileRouter">
             <Routes pattern="${ctx:hand}">
                 <Route>
-                    <File name="File-${ctx:hand}" fileName="server/logs/match${ctx:match}_hand${ctx:hand}.log">
+                    <File name="File-${ctx:hand}" fileName="server/logs/match${ctx:match:-0}_hand${ctx:hand:-0}.log">
                         
                         <PatternLayout 
                             pattern="%d{yyyy/MM/dd HH:mm:ss} -> %-5level : %msg%n"/>
@@ -35,7 +35,7 @@
     </Appenders>
 
     <Loggers>
-        <Root level="info">
+        <Root level="debug">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="FileRouter"/>
         </Root>

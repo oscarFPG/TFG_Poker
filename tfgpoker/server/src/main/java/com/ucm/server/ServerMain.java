@@ -6,6 +6,10 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -92,6 +96,26 @@ public class ServerMain {
         }
 
         log.debug("Running in server mode...");
+
+        HttpClient client = null;
+        HttpRequest request = null;
+        HttpResponse<String> response = null;
+        String serverIP = null;
+        try {
+            client = HttpClient.newHttpClient();
+            request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://api.ipify.org"))
+                    .GET()
+                    .build();
+
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        serverIP = response.body();
+        log.debug("Server public IP obtained: {}", serverIP);
         List<ClientStructPreGame> joinedClients = preGame();
         List<ClientStructGame> players = new ArrayList<>();
         for(ClientStructPreGame cs : joinedClients){
@@ -270,24 +294,8 @@ public class ServerMain {
                 log.debug("Tipo desconocido: {}", tipo);
             }
         }
-		catch(SocketException e){
-
-            log.debug("Cerrando conexion con cliente desconectado: {}", e.getMessage());
-			ClientStructPreGame toRemove = roomList.stream()
-                .filter(c -> c.clientSocket == socket)
-                .findFirst().orElse(null);
-
-			if(toRemove != null){
-                roomList.remove(toRemove);
-                try{
-                    socket.close();
-                    key.cancel();
-                }
-                catch(IOException ignored){}
-            }
-		}
         catch(IOException e){
-            log.error("Error recibiendo datos {}", e.getMessage());
+            log.error("Error with the socket: {}", e.getMessage());
 			try {
 				key.cancel();
 				socket.close();
