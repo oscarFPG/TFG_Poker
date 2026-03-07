@@ -1,5 +1,5 @@
-.root-pane {
-   -fx-background-image: url("/images/fondoPoker.png");
+.root {
+   -fx-background-image: url("../images/fondoPoker.png");
    -fx-background-size: cover;
    -fx-background-position: center;
 }
@@ -18,7 +18,7 @@
  * Estilo para botones como "START", "CANCEL" o "SAVE"
  */
 .boton-general {
-   -fx-background-color:#20034F
+   -fx-background-color:
       linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100% ),
       radial-gradient(center 50% 40%, radius 120%,#691179 0%,#661076 25%,#3A0878 60%,#20034F 100% );
    -fx-background-radius: 10, 9;
@@ -56,10 +56,37 @@
 
 }
 
+.boton-menu-desplegable{
+   -fx-background-color:
+   linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100% ),
+   radial-gradient(center 50% 40%, radius 120%,#691179 0%,#661076 25%,#3A0878 60%,#20034F 100% );
+   -fx-background-radius: 7, 6;
+   -fx-background-insets: 0, 2;
+   -fx-text-fill: #e5e5e5;
+   -fx-alignment: center;
+   -fx-font-family: "Constantia Bold";
+   -fx-font-size: 12px; 
+}
+
+/**
+ * Estilo para el botón "code" de "JOIN GAME" en la parte de partida privada
+ */
+.boton-code {
+   -fx-background-color:
+      linear-gradient(to top, #DC8CFE 0%, #FFF8FF 50%, #FFF8FF 50%, #DC8CFE 100%), #1B0359;
+   -fx-background-insets: 0, 2;
+   -fx-background-radius: 6, 5;
+   -fx-text-fill: #e5e5e5;
+   -fx-alignment: center;
+   -fx-font-family: "Constantia";
+   -fx-font-size: 14px; 
+}
+
 /**
  * Estilo para la forma triangular plegable de las secciones de información del menú desplegable de la pantalla principal
  */
-.forma-triangulo-plegable{
+.forma-triangulo-plegable,
+.forma-triangulo-desplegable{
    -fx-fill: radial-gradient(center 52.76% 52.84%, radius 100%, #661076 0%, #691179 30%, #3A0878 64%, #20034F 96%, #20034F 100%);
    -fx-stroke: linear-gradient(to top right, #DC8CFE, #FFF8FF, #DC8CFE );
    -fx-stroke-width: 2;
@@ -129,18 +156,4 @@
    -fx-alignment: center;
    -fx-font-family: "Constantia";
    -fx-font-size: 20px; 
-}
-
-/**
- * Estilo para el botón "code" de "JOIN GAME" en la parte de partida privada
- */
-.boton-code {
-   -fx-background-color:
-      linear-gradient(to top, #DC8CFE 0%, #FFF8FF 50%, #FFF8FF 50%, #DC8CFE 100%), #1B0359;
-   -fx-background-insets: 0, 2;
-   -fx-background-radius: 6, 5;
-   -fx-text-fill: #e5e5e5;
-   -fx-alignment: center;
-   -fx-font-family: "Constantia";
-   -fx-font-size: 14px; 
 }

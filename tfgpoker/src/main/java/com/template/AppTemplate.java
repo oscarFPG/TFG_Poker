@@ -1,4 +1,4 @@
-package com.ucm;
+package com.template;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -12,7 +12,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
-        Parent root = FXMLLoader.load(getClass().getResource("startWindow.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("templateStyle.fxml"));
         Scene scene = new Scene(root);
 
         scene.getStylesheets().add(getClass().getResource("templateStyle.css").toExternalForm());
