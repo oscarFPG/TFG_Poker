@@ -7,30 +7,18 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="546.0" prefWidth="1008.0" style="-fx-background-image: url('images/fondoPoker.png'); -fx-background-size: cover; -fx-background-repeat: no-repeat; -fx-background-position: center;" stylesheets="@../styles/templateStyleCopy.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="546.0" prefWidth="1008.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
 
 <!-- FLECHAS ......................................................... -->
   
    <!-- ARROW 1 BACK  -->
-    <Button id="arrowBack" layoutX="335.0" layoutY="244.0" mnemonicParsing="false" prefHeight="100.0" prefWidth="77.0">
-      <styleClass>
-         <String fx:value="arrow-back" />
-         <String fx:value="arrow-colors" />
-      </styleClass></Button>
+    <Button id="arrowBack" layoutX="335.0" layoutY="244.0" mnemonicParsing="false" prefHeight="100.0" prefWidth="77.0" styleClass="arrow-back-button"></Button>
 
     <!-- ARROW 2 BACK BLACK -->
-   <Button id="arrowBackBlack" layoutX="446.0" layoutY="252.0" mnemonicParsing="false" prefHeight="58.0" prefWidth="51.0">
-      <styleClass>
-         <String fx:value="arrow-back" />
-         <String fx:value="arrow-colors-black" />
-      </styleClass></Button>
+   <Button id="arrowBackBlack" layoutX="446.0" layoutY="252.0" mnemonicParsing="false" prefHeight="58.0" prefWidth="51.0" styleClass="black-arrow-back-button"></Button>
 
    <!-- ARROW 3 NEXT  -->
-     <Button id="arrowNext" layoutX="412.0" layoutY="188.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="44.0">
-      <styleClass>
-         <String fx:value="arrow-next" />
-         <String fx:value="arrow-colors" />
-      </styleClass></Button>
+     <Button id="arrowNext" layoutX="412.0" layoutY="188.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="44.0" styleClass="arrow-next-button"></Button>
 
    <!--
    <Button fx:id="btnNext" layoutX="369.0" layoutY="225.0" prefHeight="43.0" prefWidth="33.0" scaleX="2.0" scaleY="2.0" styleClass="arrow-button-2">
@@ -106,37 +94,18 @@
    </Button>
    -->
 
-
-
-
 <!-- CONTENEDORES / LAYOUTS ......................................................... -->
 
    <!-- contenedores cuadrados-->
-      <StackPane fx:id="squareContainer" layoutX="622.0" layoutY="273.0" prefHeight="100" prefWidth="200">
-      <styleClass>
-         <String fx:value="square-pane" />
-         <String fx:value="container-colors" />
-      </styleClass></StackPane>
+      <StackPane fx:id="squareContainer" layoutX="622.0" layoutY="273.0" prefHeight="100" prefWidth="200" styleClass="square-pane"></StackPane>
 
    <!--contenedores ovalados-->
-      <StackPane fx:id="ovalContainer" layoutX="613.0" layoutY="150.0" prefHeight="100" prefWidth="200">
-      <styleClass>
-         <String fx:value="oval-pane" />
-         <String fx:value="container-colors" />
-      </styleClass></StackPane>
-
-
-
+      <StackPane fx:id="ovalContainer" layoutX="613.0" layoutY="150.0" prefHeight="100" prefWidth="200" styleClass="oval-pane"></StackPane>
 
 <!-- ICONOS GENERALES ........................................................................... -->
    
-
 <!-- ICONO SALIDA -->
-      <Button id="configurationIcon" layoutX="395.0" layoutY="378.0" mnemonicParsing="false" prefHeight="69.0" prefWidth="51.0">
-         <styleClass>
-            <String fx:value="icon-colors" />
-            <String fx:value="square-icon" />
-         </styleClass>
+      <Button id="configurationIcon" layoutX="395.0" layoutY="378.0" mnemonicParsing="false" prefHeight="69.0" prefWidth="51.0" styleClass="configuration-icon-button">
          <graphic>
                <ImageView id="configurationIcon" fitHeight="58.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
                   <image>
@@ -148,11 +117,7 @@
 
 
    <!-- ICONO CONFIGURACION -->
-   <Button id="exitIcon" layoutX="283.0" layoutY="378.0" mnemonicParsing="false" prefHeight="69.0" prefWidth="70.0">
-      <styleClass>
-         <String fx:value="icon-colors" />
-         <String fx:value="square-icon" />
-      </styleClass>
+   <Button id="exitIcon" layoutX="283.0" layoutY="378.0" mnemonicParsing="false" prefHeight="69.0" prefWidth="70.0" styleClass="exit-icon-button">
       <graphic>
          <ImageView fitHeight="58.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true">
             <image>
@@ -164,11 +129,7 @@
 
 
     <!-- ICONO INFORMATION INTRODUCCION -->
-   <Button id="informationIntroductionIcon" layoutX="497.0" layoutY="378.0" mnemonicParsing="false" prefHeight="69.0" prefWidth="24.0">
-      <styleClass>
-         <String fx:value="icon-special-colors" />
-         <String fx:value="square-icon" />
-      </styleClass>
+   <Button id="informationIntroductionIcon" layoutX="497.0" layoutY="378.0" mnemonicParsing="false" prefHeight="69.0" prefWidth="24.0" styleClass="information-introduction-icon-button">
       <graphic>
          <ImageView id="configurationIcon" fitHeight="53.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
             <image>
@@ -180,11 +141,7 @@
      
 
    <!-- ICONO INFORMACION TARJETA-->
-   <Button id="informationCardIcon" layoutX="147.0" layoutY="378.0" mnemonicParsing="false" prefHeight="69.0" prefWidth="70.0">
-      <styleClass>
-         <String fx:value="icon-colors" />
-         <String fx:value="round-icon" />
-      </styleClass>
+   <Button id="informationCardIcon" layoutX="147.0" layoutY="378.0" mnemonicParsing="false" prefHeight="69.0" prefWidth="70.0" styleClass="information-card-icon-button">
       <graphic>
          <ImageView fitHeight="58.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true">
             <image>
@@ -193,14 +150,5 @@
          </ImageView>
       </graphic>
    </Button>
-
-            
-   <!--CAJAS DE TEXTOS -->
-      <!-- titulos -->
-      <!-- descripciones -->
-      <!-- texto pequeño -->
-
-
-
 
 </Pane>
