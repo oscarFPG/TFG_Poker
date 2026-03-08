@@ -126,6 +126,16 @@ public class Player implements IPlayer {
      */
     public Command makePlay(final int maxBet) {
 
+        if(Game.DEBUG){
+            return playLocal(maxBet);
+        }
+        else{
+            return playNetwork(maxBet);
+        }
+    }
+
+    private Command playLocal(final int maxBet){
+
         Command command = null;
         String[] userInput = null;
 
@@ -142,6 +152,10 @@ public class Player implements IPlayer {
         } while (command == null);
 
         return command;
+    }
+
+    private Command playNetwork(final int maxBet){
+        return null;
     }
 
     /**
@@ -164,19 +178,19 @@ public class Player implements IPlayer {
      */
     public void makeForcedBet(int sb, int bb) {
 
-        int bet = 0;
-
         // Forced small-blind and big-blind
         if (_role == PlayerRole.SMALL_BLIND) {
-            bet = sb;
-            log.debug("Player {} forced to bet {} as a small blind", _name, bet);
-        } else if (_role == PlayerRole.BIG_BLIND) {
-            bet = bb;
-            log.debug("Player {} forced to bet {} as a big blind", _name, bet);
+            increasePocketMoney(sb);
+            decreaseMoney(sb);
+            onForcedMove(PlayerRole.SMALL_BLIND, sb, bb);
+            log.debug("Player {} forced to bet {} as a small blind", _name, sb);
         }
-
-        increasePocketMoney(bet);
-        decreaseMoney(bet);
+        else if (_role == PlayerRole.BIG_BLIND) {
+            increasePocketMoney(bb);
+            decreaseMoney(bb);
+            onForcedMove(PlayerRole.BIG_BLIND, sb, bb);
+            log.debug("Player {} forced to bet {} as a big blind", _name, bb);
+        }
     }
 
     /**
@@ -190,7 +204,9 @@ public class Player implements IPlayer {
         if (_numCards == 2)
             return false;
 
+
         _cards[_numCards++] = c;
+        onReceiveCard(c);
         return true;
     }
 
@@ -446,10 +462,9 @@ public class Player implements IPlayer {
 
             int role = GameAdapter.playerRoleToCode(r);
             SocketUtils.sendInteger(_socket.getOutputStream(), role);
-            _role = r;
-
             log.debug("Player {} receives role {}", _name, _role.name());
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             log.error("Error receiving the role for {} player: {}", _name, e.getMessage());
         }
     }
@@ -461,7 +476,18 @@ public class Player implements IPlayer {
             return;
         }
 
-        throw new UnsupportedOperationException("Unimplemented method 'onReceiveCard'");
+        try {
+
+            int value = GameAdapter.cardValueToCode(c);
+            int suit = GameAdapter.cardSuitToCode(c);
+            SocketUtils.sendInteger(_socket.getOutputStream(), value);
+            SocketUtils.sendInteger(_socket.getOutputStream(), suit);
+
+            log.debug("Player {} receives card {}", _name, c.toString());
+        }
+        catch (IOException e) {
+            log.error("Error receiving the role for {} player: {}", _name, e.getMessage());
+        }
     }
 
     @Override
@@ -472,6 +498,27 @@ public class Player implements IPlayer {
         }
 
         throw new UnsupportedOperationException("Unimplemented method 'onReceiveTableCard'");
+    }
+
+    @Override
+    public void onForcedMove(PlayerRole myRole, int sb, int bb) {
+        
+        try{
+
+            if(myRole == PlayerRole.SMALL_BLIND){
+                SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnForcedSBToCode());
+                SocketUtils.sendInteger(_socket.getOutputStream(), sb);
+                log.debug("Player {} receives forced move for role {}", _name, myRole.name());
+            }
+            else if(myRole == PlayerRole.BIG_BLIND){
+                SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnForcedBBToCode());
+                SocketUtils.sendInteger(_socket.getOutputStream(), bb);
+                log.debug("Player {} receives forced move for role {}", _name, myRole.name());
+            }
+        }
+        catch (IOException e) {
+            log.error("Error receiving the role for {} player: {}", _name, e.getMessage());
+        }
     }
 
     @Override

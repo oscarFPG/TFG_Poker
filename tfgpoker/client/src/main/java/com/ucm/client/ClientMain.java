@@ -30,6 +30,8 @@ public class ClientMain extends Application {
 	private static boolean _gameStarts;
 
 	private static Scanner _scanner;
+
+	
     /*
      * Desde la ruta TFGPOKER/tfgpoker
      * 		.\mvnw.cmd clean install
@@ -110,8 +112,8 @@ public class ClientMain extends Application {
 
 		System.out.printf("La partida comienza!\n");
 		int roleCode;
-		// int cardValues[] = new int[2];
-		// int cardSuits[] = new int[2];
+		int cardValues[] = new int[2];
+		int cardSuits[] = new int[2];
 		// int tableCardValues[] = new int[5];
 		// int tableCardSuits[] = new int[5];
 
@@ -121,13 +123,42 @@ public class ClientMain extends Application {
 
 			// Recibir rol de jugador
 			roleCode = SocketUtils.receiveInt(in);
-			System.out.printf("Player with name \'%s\' and rol code %d\n", _name, roleCode);
+			String auxStringRole = (roleCode == GameType.PLAYER_ROLE_DEALER) ? "DEALER" :
+								(roleCode == GameType.PLAYER_ROLE_SMALL_BLIND) ? "SMALL_BLIND" :
+								(roleCode == GameType.PLAYER_ROLE_BIG_BLIND) ? "BIG_BLIND" :
+								(roleCode == GameType.PLAYER_ROLE_UNDER_THE_GUN) ? "UNDER_THE_GUN" :
+								(roleCode == GameType.PLAYER_ROLE_MIDDLE_POSITION) ? "MIDDLE_POSITION" :
+								(roleCode == GameType.PLAYER_ROLE_CUT_OFF) ? "CUT_OFF" : "NO_ROLE";
+			System.out.printf("Player with name \'%s\' and rol code %s\n", _name, auxStringRole);
 
-			// Recibir cartas
-			int cartas = SocketUtils.receiveInt(in);
+			// Recibir primera carta
+			cardValues[0] = SocketUtils.receiveInt(in);
+			cardSuits[0] = SocketUtils.receiveInt(in);
+			System.out.printf("Card1 [%d-%d] received \n", cardValues[0], cardSuits[0]);
+
+			// Recibir segunda carta
+			cardValues[1] = SocketUtils.receiveInt(in);
+			cardSuits[1] = SocketUtils.receiveInt(in);
+			System.out.printf("Card2 [%d-%d] received\n", cardValues[1], cardSuits[1]);
 
 			// Jugar turno/esperar a turno
 			int turno1 = SocketUtils.receiveInt(in);
+			String auxStringTurn1 = (turno1 == GameType.TURN_PLAY) ? "PLAY" :
+								(turno1 == GameType.TURN_FORCED_SB) ? "FORCED_SB" :
+								(turno1 == GameType.TURN_FORCED_BB) ? "FORCED_BB" :
+								(turno1 == GameType.TURN_WAIT) ? "WAIT" : "UNKNOWN";
+
+			if(turno1 == GameType.TURN_FORCED_SB){
+				int cantidadSB = SocketUtils.receiveInt(in);
+				System.out.printf("Forced play as the small blind with %d chips\n", cantidadSB);
+			}
+			else if(turno1 == GameType.TURN_FORCED_BB){
+				int cantidadBB = SocketUtils.receiveInt(in);
+				System.out.printf("Forced play as the big blind with %d chips\n", cantidadBB);
+			}
+			else{
+				System.out.printf("Turn code %s\n", auxStringTurn1);
+			}
 
 			// Recibir carta de tablero (1)
 			// Recibir carta de tablero (2)

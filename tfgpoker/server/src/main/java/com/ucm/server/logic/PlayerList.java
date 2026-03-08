@@ -200,7 +200,6 @@ public class PlayerList {
         if (_first._player.getNumCards() == 0) {
             _first._player.receiveCard(c1);
             _first._player.receiveCard(c2);
-            log.debug("Player {} received the cards {} and {}", _first._player.getName(), c1.toString(), c2.toString());
             return;
         }
 
@@ -210,8 +209,6 @@ public class PlayerList {
             if (index._player.getNumCards() == 0) {
                 index._player.receiveCard(c1);
                 index._player.receiveCard(c2);
-                log.debug("Player {} received the cards {} and {}", index._player.getName(), c1.toString(),
-                        c2.toString());
                 break;
             }
 
@@ -281,9 +278,9 @@ public class PlayerList {
 
     private Node smallBlindAndBigBlindPlays(final int sb, final int bb, final int playsToMake) {
 
-        // Select first player to make a bet when :
-        // 1. Only two players left
-        // 2. More than one player left
+        // Select as small blind:
+        // 1. First player if there is only two players -> playsToMake == 1
+        // 2. Next player from first if there is more than two players -> playsToMake > 1
         Node pNode = (playsToMake == 1) ? _first : _first._next;
 
         pNode._player.makeForcedBet(sb, bb); // Small-blind

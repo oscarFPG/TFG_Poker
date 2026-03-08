@@ -5,7 +5,7 @@ public class GameType {
     
     private GameType(){}
 
-
+    // Server port
     public static final int PORT = 5005;
 
     // Types
@@ -23,10 +23,10 @@ public class GameType {
     public static final int HOST_START_GAME_PETITION_ERROR_NOT_ENOUGH_PLAYERS = 31; // Server error response to HOST_START_GAME_PETITION
     public static final int HOST_START_GAME_PETITION_ERROR_NOT_HOST = 32;       // Server error response to HOST_START_GAME_PETITION
 
-    // Server notifies all players game has started
-    public static final int GAME_STARTS = 40;
+    // Requests between pregame and in-game
+    public static final int GAME_STARTS = 40;   // Server notifies all players game has started
 
-    // Player rol codes
+    // Player roles
     public static final int PLAYER_ROLE_NO_ROLE = 50;
     public static final int PLAYER_ROLE_DEALER = 51;
     public static final int PLAYER_ROLE_SMALL_BLIND = 52;
@@ -34,6 +34,38 @@ public class GameType {
     public static final int PLAYER_ROLE_UNDER_THE_GUN = 54;
     public static final int PLAYER_ROLE_MIDDLE_POSITION = 55;
     public static final int PLAYER_ROLE_CUT_OFF = 56;
+
+    // Player turns
+    public static final int TURN_PLAY = 20;     // Player can play
+    public static final int TURN_FORCED_SB = 21;    // Player is forced to play the small blind
+    public static final int TURN_FORCED_BB = 22;    // Player is forced to play the big blind
+    public static final int TURN_WAIT = 23;     // Player is waiting
+
+
+
+    
+    // Card suits
+    public static final int HEARTS = 100;
+    public static final int DIAMONDS = 101;
+    public static final int CLUBS = 102;
+    public static final int SPADES = 103;
+
+    // Card numbers
+    public static final int NUMBER_ACE = 200;
+    public static final int NUMBER_TWO = 201;
+    public static final int NUMBER_THREE = 202;
+    public static final int NUMBER_FOUR = 203;
+    public static final int NUMBER_FIVE = 204;
+    public static final int NUMBER_SIX = 205;
+    public static final int NUMBER_SEVEN = 206;
+    public static final int NUMBER_EIGHT = 207;
+    public static final int NUMBER_NINE = 208;
+    public static final int NUMBER_TEN = 209;
+    public static final int NUMBER_J = 210;
+    public static final int NUMBER_Q = 211;
+    public static final int NUMBER_K = 212;
+
+    /*
   
     // JUGADAS
     // FOLD
@@ -58,10 +90,7 @@ public class GameType {
     // DENEGAR CONEXION 
     public static final int CONECTION_DECLINE = 12;
 
-    // TURN_MOVE
-    public static final int TURN_PLAY = 20;
-    // TURN_WAIT
-    public static final int TURN_WAIT = 21;
+    
     // TURN_OTHER_PLAYER
     public static final int TURN_OTHER_PLAYER = 22;
     // END_OF_ROUND (PRE-FLOP, FLOP, RIVER, ETC)
@@ -96,26 +125,5 @@ public class GameType {
     // WAIT_GAME
     public static final int WAIT_GAME = 74;
 
-    // SUITS
-    public static final int HEARTS = 100;
-    public static final int DIAMONDS = 101;
-    public static final int CLUBS = 102;
-    public static final int SPADES = 101;
-
-    // NUMBERS
-    public static final int NUMBER_ONE = 200;
-    public static final int NUMBER_TWO = 201;
-    public static final int NUMBER_THREE = 203;
-    public static final int NUMBER_FOUR = 204;
-    public static final int NUMBER_FIVE = 205;
-    public static final int NUMBER_SIX = 206;
-    public static final int NUMBER_SEVEN = 207;
-    public static final int NUMBER_EIGHT = 208;
-    public static final int NUMBER_NINE = 209;
-    public static final int NUMBER_T = 210;
-    public static final int NUMBER_J = 211;
-    public static final int NUMBER_Q = 212;
-    public static final int NUMBER_K = 213;
-    public static final int NUMBER_A = 214;
-
+    */
 }

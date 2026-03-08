@@ -8,6 +8,7 @@ public interface IPlayer {
     public void onReceiveRole(PlayerRole r);
     public void onReceiveCard(Card c);
     public void onReceiveTableCard(Card c);
+    public void onForcedMove(PlayerRole myRole, int sb, int bb);
     public void onReceiveTurn();
 
 }

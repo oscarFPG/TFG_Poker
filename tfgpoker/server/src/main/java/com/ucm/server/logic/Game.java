@@ -21,7 +21,7 @@ public class Game {
 
     private static final Logger log = LogManager.getLogger(Game.class);
 
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
 
     public static final int INITIAL_SB = 1;
     public static final int INITIAL_BB = 2;
