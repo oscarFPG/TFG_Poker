@@ -62,6 +62,106 @@ public class ClientMain extends Application {
 		_scanner.close();
     }
 
+
+	// Pre-game methods
+	private static void handleConnect(SelectionKey key){
+
+		SocketChannel client = (SocketChannel) key.channel();
+		try {
+			if (client.finishConnect()) {
+				System.out.printf("Conectado al servidor!\n");
+				key.interestOps(SelectionKey.OP_WRITE);	// Prepare to send the clients name
+			}
+		}
+		catch (IOException e) {
+			System.out.printf("Error connecting to server: %s\n", e.getMessage());
+		}
+	}
+
+	private static void handleReceive(SelectionKey key){
+
+		SocketChannel socket = (SocketChannel) key.channel();
+		ByteBuffer buffer = ByteBuffer.allocate(128);
+		int bytesRead;
+
+		try {
+			bytesRead = socket.read(buffer);
+			if (bytesRead == -1) {
+				socket.close();
+				key.cancel();
+				return;
+			}
+
+			buffer.flip();
+			int code = buffer.getInt();
+			switch (code) {
+			case GameType.GAME_STARTS:
+				System.out.printf("Aviso GAME_STARTS recibido!\n");
+				_gameStarts = true;
+				break;
+		
+			default:
+				System.out.printf("Aviso %d desconocido %d\n", code);
+				break;
+			}
+
+		}
+		catch (IOException e) {
+			System.out.printf("Error connecting to server: %s\n", e.getMessage());
+			try{
+				socket.close();
+				key.cancel();
+			}
+			catch(IOException exc){
+				System.out.printf("Error closing the socket: %s\n", exc.getMessage());
+			}
+		}
+	}
+
+	private static void handleSend(SelectionKey key){
+		
+		SocketChannel socket = (SocketChannel) key.channel();
+		try{
+
+			// Get users name
+			System.out.printf("Escribe tu nombre: ");
+			_name = _scanner.next();
+
+			// We should validate name before storing it -> minimum and maximum number of caracters, etc...
+			sendString(_name, socket);
+
+			// Stop sending data and waiting for reading data from socket
+			key.interestOps(key.interestOps() & ~SelectionKey.OP_WRITE);
+
+			// Get user petition and send it to the server
+			int opcion = getUserPetition();
+			if(opcion == 1){
+				sendPetition(GameType.CREATE_PETITION, socket);
+				System.out.printf("Petition CREATE sent!\n");
+				sendStartGameByHost(socket);
+			}
+			else if(opcion == 2){
+				sendPetition(GameType.JOIN_PETITION, socket);
+				System.out.printf("Petition JOIN sent!\n");
+			}
+
+			// Prepare to receive server codes
+			key.interestOps(SelectionKey.OP_READ);
+		}
+		catch(IOException e){
+			System.out.printf("Error enviando el nombre del usuario: %s\n", e.getMessage());
+			try{
+				socket.close();
+				key.cancel();
+			}
+			catch(IOException exc){
+				System.out.printf("Error closing the socket: %s\n", exc.getMessage());
+			}
+		}
+	}
+
+
+	// Pregame and in-game methods
 	private static Socket preGame(final String serverIP){
 
 		SocketChannel socket = null;
@@ -185,6 +285,8 @@ public class ClientMain extends Application {
 		}
 	}
 
+
+	// Auxiliar methods to send/receive data
 	private static void sendString(String msg, SocketChannel socket) throws IOException{
 
 		ByteBuffer buffer = ByteBuffer.allocate(1 + Integer.BYTES + msg.length());
@@ -210,101 +312,23 @@ public class ClientMain extends Application {
 		}
 	}
 
-	private static void handleConnect(SelectionKey key){
+	private static void sendStartGameByHost(SocketChannel socket) throws IOException{
 
-		SocketChannel client = (SocketChannel) key.channel();
-		try {
-			if (client.finishConnect()) {
-				System.out.printf("Conectado al servidor!\n");
-				key.interestOps(SelectionKey.OP_WRITE);	// Prepare to send the clients name
+		// Wait for host to start the game
+		String command = null;
+		while(command == null){
+			System.out.printf("Escriba \'start\' para comenzar la partida...\n > ");
+			command = _scanner.next();
+			if(!command.equalsIgnoreCase("start")){
+				System.out.printf("Comando \'%s\' no valido!\n", command);
+				command = null;
 			}
-		}
-		catch (IOException e) {
-			System.out.printf("Error connecting to server: %s\n", e.getMessage());
-		}
-	}
-
-	private static void handleReceive(SelectionKey key){
-
-		SocketChannel socket = (SocketChannel) key.channel();
-		ByteBuffer buffer = ByteBuffer.allocate(128);
-		int bytesRead;
-
-		try {
-			bytesRead = socket.read(buffer);
-			if (bytesRead == -1) {
-				socket.close();
-				key.cancel();
-				return;
-			}
-
-			buffer.flip();
-			int code = buffer.getInt();
-			switch (code) {
-			case GameType.GAME_STARTS:
-				System.out.printf("Aviso GAME_STARTS recibido!\n");
-				_gameStarts = true;
-				break;
-		
-			default:
-				System.out.printf("Aviso %d desconocido %d\n", code);
-				break;
-			}
-
-		}
-		catch (IOException e) {
-			System.out.printf("Error connecting to server: %s\n", e.getMessage());
-			try{
-				socket.close();
-				key.cancel();
-			}
-			catch(IOException exc){
-				System.out.printf("Error closing the socket: %s\n", exc.getMessage());
+			else{
+				sendPetition(GameType.HOST_START_GAME_PETITION, socket);
 			}
 		}
 	}
 
-	private static void handleSend(SelectionKey key){
-		
-		SocketChannel socket = (SocketChannel) key.channel();
-		try{
-
-			// Get users name
-			System.out.printf("Escribe tu nombre: ");
-			_name = _scanner.next();
-
-			// We should validate name before storing it -> minimum and maximum number of caracters, etc...
-			sendString(_name, socket);
-
-			// Stop sending data and waiting for reading data from socket
-			key.interestOps(key.interestOps() & ~SelectionKey.OP_WRITE);
-
-			// Get user petition and send it to the server
-			int opcion = getUserPetition();
-			if(opcion == 1){
-				sendPetition(GameType.CREATE_PETITION, socket);
-				System.out.printf("Petition CREATE sent!\n");
-				sendStartGameByHost(socket);
-			}
-			else if(opcion == 2){
-				sendPetition(GameType.JOIN_PETITION, socket);
-				System.out.printf("Petition JOIN sent!\n");
-			}
-
-			// Prepare to receive server codes
-			key.interestOps(SelectionKey.OP_READ);
-		}
-		catch(IOException e){
-			System.out.printf("Error enviando el nombre del usuario: %s\n", e.getMessage());
-			try{
-				socket.close();
-				key.cancel();
-			}
-			catch(IOException exc){
-				System.out.printf("Error closing the socket: %s\n", exc.getMessage());
-			}
-		}
-	}
 
 	private static int getUserPetition(){
 
@@ -326,22 +350,6 @@ public class ClientMain extends Application {
 		return opcion;
 	}
 
-	private static void sendStartGameByHost(SocketChannel socket) throws IOException{
-
-		// Wait for host to start the game
-		String command = null;
-		while(command == null){
-			System.out.printf("Escriba \'start\' para comenzar la partida...\n > ");
-			command = _scanner.next();
-			if(!command.equalsIgnoreCase("start")){
-				System.out.printf("Comando \'%s\' no valido!\n", command);
-				command = null;
-			}
-			else{
-				sendPetition(GameType.HOST_START_GAME_PETITION, socket);
-			}
-		}
-	}
 
     @Override
     public void start(Stage stage) throws Exception {
