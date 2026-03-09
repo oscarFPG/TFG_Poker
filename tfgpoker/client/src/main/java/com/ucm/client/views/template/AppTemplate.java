@@ -1,4 +1,4 @@
-package com.template;
+package com.ucm.client.views.template;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -7,7 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class App extends Application {
+public class AppTemplate extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {

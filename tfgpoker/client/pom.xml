@@ -76,7 +76,7 @@
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.ucm.client.ClientMain</mainClass>
+                    <mainClass>com.template.AppTemplate</mainClass>
                 </configuration>
                 <version>0.0.8</version>
             </plugin>

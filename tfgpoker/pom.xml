@@ -32,7 +32,6 @@
                 <version>5.10.2</version>
                 <scope>test</scope>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
 
@@ -54,7 +53,6 @@
                         <release>${maven.compiler.release}</release>
                     </configuration>
                 </plugin>
-
             </plugins>
         </pluginManagement>    
     </build>

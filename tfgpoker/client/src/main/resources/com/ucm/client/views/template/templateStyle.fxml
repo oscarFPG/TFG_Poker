@@ -10,11 +10,7 @@
 <?import javafx.scene.text.Font?>
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="546.0" prefWidth="1008.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
-   <Button layoutX="466.0" layoutY="167.0" mnemonicParsing="false" prefHeight="62.0" prefWidth="333.0" styleClass="boton-general">
-      <font>
-         <Font name="Constantia Bold" size="29.0" />
-      </font>
-   </Button>
+   <Button layoutX="466.0" layoutY="167.0" mnemonicParsing="false" prefHeight="62.0" prefWidth="333.0" styleClass="boton-general"></Button>
    <AnchorPane layoutX="917.0" prefHeight="546.0" prefWidth="91.0" styleClass="menu-plegado">
       <children>
          <Button layoutX="-19.0" layoutY="247.0" mnemonicParsing="false" prefHeight="53.0" prefWidth="0.0" styleClass="boton-menu-desplegable" text="&lt;">
