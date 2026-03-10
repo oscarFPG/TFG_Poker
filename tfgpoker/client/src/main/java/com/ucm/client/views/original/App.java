@@ -1,4 +1,4 @@
-package com.ucm.client.views.template;
+package com.ucm.client.views.original;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -7,17 +7,17 @@ import javafx.scene.Scene;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-public class AppTemplate extends Application {
+public class App extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
 
-        Parent root = FXMLLoader.load(getClass().getResource("templateStyle.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/com/ucm/client/views/original/fxml/startWindow.fxml"));
         Scene scene = new Scene(root);
 
-        scene.getStylesheets().add(getClass().getResource("templateStyle.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/com/ucm/client/views/original/css/style.css").toExternalForm());
 
-        stage.setTitle("Test");
+        stage.setTitle("POKER GAME");
         stage.setScene(scene);
         stage.show();
     }
