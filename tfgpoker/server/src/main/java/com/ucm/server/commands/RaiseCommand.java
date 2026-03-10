@@ -1,5 +1,6 @@
 package com.ucm.server.commands;
 
+import com.ucm.common.GameType;
 import com.ucm.server.gameobjects.Player;
 import com.ucm.server.middleclasses.CommandResult;
 
@@ -107,6 +108,11 @@ public class RaiseCommand extends Command {
     public Command create(String[] fullCommand, Player p) {
         int bet = Integer.parseInt(fullCommand[1]);
         return new RaiseCommand(p, bet, p.getMoney(), p.getPocketMoney());
+    }
+
+    @Override
+    protected int getCommandNetworkCode() {
+        return GameType.RAISE_ACTION;
     }
 
 }

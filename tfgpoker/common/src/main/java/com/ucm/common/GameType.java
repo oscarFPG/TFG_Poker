@@ -35,15 +35,6 @@ public class GameType {
     public static final int PLAYER_ROLE_MIDDLE_POSITION = 55;
     public static final int PLAYER_ROLE_CUT_OFF = 56;
 
-    // Player turns
-    public static final int TURN_PLAY = 20;     // Player can play
-    public static final int TURN_FORCED_SB = 21;    // Player is forced to play the small blind
-    public static final int TURN_FORCED_BB = 22;    // Player is forced to play the big blind
-    public static final int TURN_WAIT = 23;     // Player is waiting
-
-
-
-    
     // Card suits
     public static final int HEARTS = 100;
     public static final int DIAMONDS = 101;
@@ -51,46 +42,41 @@ public class GameType {
     public static final int SPADES = 103;
 
     // Card numbers
-    public static final int NUMBER_ACE = 200;
-    public static final int NUMBER_TWO = 201;
-    public static final int NUMBER_THREE = 202;
-    public static final int NUMBER_FOUR = 203;
-    public static final int NUMBER_FIVE = 204;
-    public static final int NUMBER_SIX = 205;
-    public static final int NUMBER_SEVEN = 206;
-    public static final int NUMBER_EIGHT = 207;
-    public static final int NUMBER_NINE = 208;
-    public static final int NUMBER_TEN = 209;
-    public static final int NUMBER_J = 210;
-    public static final int NUMBER_Q = 211;
-    public static final int NUMBER_K = 212;
+    public static final int NUMBER_ACE = 110;
+    public static final int NUMBER_TWO = 111;
+    public static final int NUMBER_THREE = 112;
+    public static final int NUMBER_FOUR = 113;
+    public static final int NUMBER_FIVE = 114;
+    public static final int NUMBER_SIX = 115;
+    public static final int NUMBER_SEVEN = 116;
+    public static final int NUMBER_EIGHT = 117;
+    public static final int NUMBER_NINE = 118;
+    public static final int NUMBER_TEN = 119;
+    public static final int NUMBER_J = 120;
+    public static final int NUMBER_Q = 121;
+    public static final int NUMBER_K = 122;
+
+    // Player turns
+    public static final int TURN_PLAY = 200;
+    public static final int TURN_FORCED_SB = 201;
+    public static final int TURN_FORCED_BB = 202;
+    public static final int TURN_WAIT = 203;
+
+    // Player actions
+    public static final int FOLD_ACTION = 300;
+    public static final int CHECK_ACTION = 301;
+    public static final int ALL_IN_ACTION = 302;
+    public static final int CALL_ACTION = 303;
+    public static final int RAISE_ACTION = 304;
+
+    
 
     /*
-  
-    // JUGADAS
-    // FOLD
-    public static final int FOLD = 1;
-    // CHECK
-    public static final int CHECK = 2;
-    // ALL_IN
-    public static final int ALL_IN = 3;
-    // CALL
-    public static final int CALL = 4;
-    // RAISE
-    public static final int RAISE = 5;
     // ES PREFLOP
     public static final int PRE_FLOP = 6;
     // NO ES PREFLOP
     public static final int NO_PRE_FLOP = 6;
-   
-    // SOLICITAR CONEXION 
-    public static final int ESTABLISH_CONNECTION = 10;
-    // ACEPTAR CONEXION
-    public static final int CONECTION_ACEPTED = 11;
-    // DENEGAR CONEXION 
-    public static final int CONECTION_DECLINE = 12;
 
-    
     // TURN_OTHER_PLAYER
     public static final int TURN_OTHER_PLAYER = 22;
     // END_OF_ROUND (PRE-FLOP, FLOP, RIVER, ETC)

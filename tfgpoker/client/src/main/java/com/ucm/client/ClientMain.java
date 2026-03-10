@@ -234,32 +234,39 @@ public class ClientMain extends Application {
 			// Recibir primera carta
 			cardValues[0] = SocketUtils.receiveInt(in);
 			cardSuits[0] = SocketUtils.receiveInt(in);
-			System.out.printf("Card1 [%d-%d] received \n", cardValues[0], cardSuits[0]);
+			System.out.printf("Card1 %s received \n", translateCardCode(cardValues[0], cardSuits[0]));
 
 			// Recibir segunda carta
 			cardValues[1] = SocketUtils.receiveInt(in);
 			cardSuits[1] = SocketUtils.receiveInt(in);
-			System.out.printf("Card2 [%d-%d] received\n", cardValues[1], cardSuits[1]);
+			System.out.printf("Card2 %s received\n", translateCardCode(cardValues[1], cardSuits[1]));
 
 			// Jugar turno/esperar a turno
 			int turno1 = SocketUtils.receiveInt(in);
-			String auxStringTurn1 = (turno1 == GameType.TURN_PLAY) ? "PLAY" :
-								(turno1 == GameType.TURN_FORCED_SB) ? "FORCED_SB" :
-								(turno1 == GameType.TURN_FORCED_BB) ? "FORCED_BB" :
-								(turno1 == GameType.TURN_WAIT) ? "WAIT" : "UNKNOWN";
+			while(turno1 != GameType.TURN_PLAY){
 
-			if(turno1 == GameType.TURN_FORCED_SB){
-				int cantidadSB = SocketUtils.receiveInt(in);
-				System.out.printf("Forced play as the small blind with %d chips\n", cantidadSB);
-			}
-			else if(turno1 == GameType.TURN_FORCED_BB){
-				int cantidadBB = SocketUtils.receiveInt(in);
-				System.out.printf("Forced play as the big blind with %d chips\n", cantidadBB);
-			}
-			else{
-				System.out.printf("Turn code %s\n", auxStringTurn1);
-			}
+				if(turno1 == GameType.TURN_FORCED_SB){
+					int cantidadSB = SocketUtils.receiveInt(in);
+					System.out.printf("Forced play as the small blind with %d chips\n", cantidadSB);
+				}
+				else if(turno1 == GameType.TURN_FORCED_BB){
+					int cantidadBB = SocketUtils.receiveInt(in);
+					System.out.printf("Forced play as the big blind with %d chips\n", cantidadBB);
+				}
+				else if(turno1 == GameType.TURN_WAIT){
+					System.out.printf("Wait for the other players!\n");
+				}
+				else{
+					System.out.printf("Unknown turn code %d\n", turno1);
+				}
 
+				turno1 = SocketUtils.receiveInt(in);
+			}
+			
+			System.out.printf("It's your turn to play!\n");
+			while(true){}
+
+			/*
 			// Recibir carta de tablero (1)
 			// Recibir carta de tablero (2)
 			// Recibir carta de tablero (3)
@@ -279,6 +286,7 @@ public class ClientMain extends Application {
 
 			// Showdown -> Comprobar ganadores y repartir premios
 			int showdown = SocketUtils.receiveInt(in);
+			*/
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -350,6 +358,29 @@ public class ClientMain extends Application {
 		return opcion;
 	}
 
+	private static String translateCardCode(final int value, final int suit){
+		
+		String valueString = (value == GameType.NUMBER_ACE) ? "A" :
+								(value == GameType.NUMBER_TWO) ? "2" :
+								(value == GameType.NUMBER_THREE) ? "3" :
+								(value == GameType.NUMBER_FOUR) ? "4" :
+								(value == GameType.NUMBER_FIVE) ? "5" :
+								(value == GameType.NUMBER_SIX) ? "6" :
+								(value == GameType.NUMBER_SEVEN) ? "7" :
+								(value == GameType.NUMBER_EIGHT) ? "8" :
+								(value == GameType.NUMBER_NINE) ? "9" :
+								(value == GameType.NUMBER_TEN) ? "10" :
+								(value == GameType.NUMBER_J) ? "J" :
+								(value == GameType.NUMBER_Q) ? "Q" :
+								(value == GameType.NUMBER_K) ? "K" : "?";
+
+		char suitChar = (suit == GameType.HEARTS) ? '\u2665' :
+							(suit == GameType.DIAMONDS) ? '\u2666' :
+							(suit == GameType.CLUBS) ? '\u2663' :
+							(suit == GameType.SPADES) ? '\u2660' : 'x';
+
+		return String.format("[%s%c]", valueString, suitChar);
+	}
 
     @Override
     public void start(Stage stage) throws Exception {

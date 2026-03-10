@@ -1,5 +1,6 @@
 package com.ucm.server.commands;
 
+import com.ucm.common.GameType;
 import com.ucm.server.gameobjects.Player;
 import com.ucm.server.middleclasses.CommandResult;
 
@@ -76,6 +77,11 @@ public class CheckCommand extends Command {
     @Override
     public Command create(String[] fullCommand, Player p) {
         return new CheckCommand(p);
+    }
+
+    @Override
+    protected int getCommandNetworkCode() {
+        return GameType.CHECK_ACTION;
     }
 
 

@@ -3,6 +3,7 @@ package com.ucm.server.commands;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.ucm.common.GameType;
 import com.ucm.server.gameobjects.Player;
 import com.ucm.server.middleclasses.CommandResult;
 
@@ -101,5 +102,10 @@ public class CallCommand extends Command {
     @Override
     public Command create(String[] fullCommand, Player p) {
         return new CallCommand(p, p.getMoney(), p.getPocketMoney());
+    }
+
+    @Override
+    protected int getCommandNetworkCode() {
+        return GameType.CALL_ACTION;
     }
 }

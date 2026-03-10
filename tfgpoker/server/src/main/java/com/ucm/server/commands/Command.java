@@ -2,6 +2,9 @@ package com.ucm.server.commands;
 
 import com.ucm.server.gameobjects.Player;
 import com.ucm.server.middleclasses.CommandResult;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -120,6 +123,19 @@ public abstract class Command {
     }
 
     /**
+     * Method that checks if the input command matches the specific command.
+     * 
+     * @param command the input command string to be checked against the specific
+     *                command.
+     * @return true if the input command matches the specific command, false
+     *         otherwise.
+     */
+    public final boolean matchCommand(String command) {
+        return command.equalsIgnoreCase(getCommandText()) ||
+                command.equalsIgnoreCase(getCommandTextShotcut());
+    }
+
+    /**
      * Checks if the command can be executed correctly based on the context
      * 
      * @param maxBet is the value of the last maximum bet made
@@ -159,19 +175,6 @@ public abstract class Command {
     public abstract String getCommandDescription();
 
     /**
-     * Method that checks if the input command matches the specific command.
-     * 
-     * @param command the input command string to be checked against the specific
-     *                command.
-     * @return true if the input command matches the specific command, false
-     *         otherwise.
-     */
-    public final boolean matchCommand(String command) {
-        return command.equalsIgnoreCase(getCommandText()) ||
-                command.equalsIgnoreCase(getCommandTextShotcut());
-    }
-
-    /**
      * Method that checks if the attributes of the command are valid based on the
      * input command.
      * 
@@ -180,6 +183,8 @@ public abstract class Command {
      * @return true if the attributes of the command are valid, false otherwise.
      */
     public abstract boolean checkAttributes(String[] fullCommand);
+
+    protected abstract int getCommandNetworkCode();
 
     /**
      * Method that creates a new instance of the specific command based on the input

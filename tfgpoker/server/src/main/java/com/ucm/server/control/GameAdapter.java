@@ -61,21 +61,6 @@ public class GameAdapter {
         }
     }
 
-    // Player turns
-    public static int playerTurnPlayToCode(){
-        return GameType.TURN_PLAY;
-    }
-    public static int playerTurnWaitToCode(){
-        return GameType.TURN_WAIT;
-    }
-    public static int playerTurnForcedSBToCode(){
-        return GameType.TURN_FORCED_SB;
-    }
-    public static int playerTurnForcedBBToCode(){
-        return GameType.TURN_FORCED_BB;
-    }
-    
-
     // Cards
     public static int cardValueToCode(Card c){
         switch (c.getNumber()) {
@@ -122,6 +107,37 @@ public class GameAdapter {
         default:
             return -1;
         }
+    }
+
+    // Player turns
+    public static int playerTurnPlayToCode(){
+        return GameType.TURN_PLAY;
+    }
+    public static int playerTurnWaitToCode(){
+        return GameType.TURN_WAIT;
+    }
+    public static int playerTurnForcedSBToCode(){
+        return GameType.TURN_FORCED_SB;
+    }
+    public static int playerTurnForcedBBToCode(){
+        return GameType.TURN_FORCED_BB;
+    }
+    
+    // Commands
+    public static int commandFoldToCode(){
+        return GameType.FOLD_ACTION;
+    }
+    public static int commandCheckToCode(){
+        return GameType.CHECK_ACTION;
+    }
+    public static int commandAllInToCode(){
+        return GameType.ALL_IN_ACTION;
+    }
+    public static int commandCallToCode(){
+        return GameType.CALL_ACTION;
+    }
+    public static int commandRaiseToCode(){
+        return GameType.RAISE_ACTION;
     }
 
 }

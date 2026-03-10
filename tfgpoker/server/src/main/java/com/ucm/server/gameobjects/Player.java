@@ -115,7 +115,6 @@ public class Player implements IPlayer {
      */
     public void assignRole(PlayerRole r) {
         _role = r;
-        onReceiveRole(r);
     }
 
     /**
@@ -182,13 +181,11 @@ public class Player implements IPlayer {
         if (_role == PlayerRole.SMALL_BLIND) {
             increasePocketMoney(sb);
             decreaseMoney(sb);
-            onForcedMove(PlayerRole.SMALL_BLIND, sb, bb);
             log.debug("Player {} forced to bet {} as a small blind", _name, sb);
         }
         else if (_role == PlayerRole.BIG_BLIND) {
             increasePocketMoney(bb);
             decreaseMoney(bb);
-            onForcedMove(PlayerRole.BIG_BLIND, sb, bb);
             log.debug("Player {} forced to bet {} as a big blind", _name, bb);
         }
     }
@@ -462,7 +459,6 @@ public class Player implements IPlayer {
 
             int role = GameAdapter.playerRoleToCode(r);
             SocketUtils.sendInteger(_socket.getOutputStream(), role);
-            log.debug("Player {} receives role {}", _name, _role.name());
         }
         catch (IOException e) {
             log.error("Error receiving the role for {} player: {}", _name, e.getMessage());
@@ -491,6 +487,68 @@ public class Player implements IPlayer {
     }
 
     @Override
+    public void onForcedMove(PlayerRole myRole, int sb, int bb) {
+        
+        try{
+
+            if(myRole == PlayerRole.SMALL_BLIND){
+                SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnForcedSBToCode());
+                SocketUtils.sendInteger(_socket.getOutputStream(), sb);
+            }
+            else if(myRole == PlayerRole.BIG_BLIND){
+                SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnForcedBBToCode());
+                SocketUtils.sendInteger(_socket.getOutputStream(), bb);
+            }
+        }
+        catch (IOException e) {
+            log.error("Error receiving the role for {} player: {}", _name, e.getMessage());
+        }
+    }
+
+    @Override
+    public Command onReceiveTurnPlay(final int maxBet) {
+
+        if (Game.DEBUG) {
+            return null;
+        }
+
+        try{
+
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnPlayToCode());
+            log.debug("Player {} has to play his turn!", _name);
+
+            int commandCode = SocketUtils.receiveInt(_socket.getInputStream());
+            String commandName = (commandCode == GameAdapter.commandFoldToCode()) ? "Fold" :
+                                (commandCode == GameAdapter.commandCheckToCode()) ? "Check" :
+                                (commandCode == GameAdapter.commandAllInToCode()) ? "All-in" :
+                                (commandCode == GameAdapter.commandCallToCode()) ? "Call" :
+                                (commandCode == GameAdapter.commandRaiseToCode()) ? "Raise" : "Unknown";
+            log.debug("Player wants to execute command: {}", commandName);
+        }
+        catch (IOException e) {
+            log.error("Error receiving the role for {} player: {}", _name, e.getMessage());
+        }
+
+        return null;
+    }
+
+    @Override
+    public void onReceiveTurnWait(){
+
+        if (Game.DEBUG) {
+            return;
+        }
+
+        try{
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnWaitToCode());
+            log.debug("Player {} has to wait his turn!", _name);
+        }
+        catch (IOException e) {
+            log.error("Error receiving the role for {} player: {}", _name, e.getMessage());
+        }
+    }
+
+    @Override
     public void onReceiveTableCard(Card c) {
 
         if (Game.DEBUG) {
@@ -500,35 +558,5 @@ public class Player implements IPlayer {
         throw new UnsupportedOperationException("Unimplemented method 'onReceiveTableCard'");
     }
 
-    @Override
-    public void onForcedMove(PlayerRole myRole, int sb, int bb) {
-        
-        try{
-
-            if(myRole == PlayerRole.SMALL_BLIND){
-                SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnForcedSBToCode());
-                SocketUtils.sendInteger(_socket.getOutputStream(), sb);
-                log.debug("Player {} receives forced move for role {}", _name, myRole.name());
-            }
-            else if(myRole == PlayerRole.BIG_BLIND){
-                SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnForcedBBToCode());
-                SocketUtils.sendInteger(_socket.getOutputStream(), bb);
-                log.debug("Player {} receives forced move for role {}", _name, myRole.name());
-            }
-        }
-        catch (IOException e) {
-            log.error("Error receiving the role for {} player: {}", _name, e.getMessage());
-        }
-    }
-
-    @Override
-    public void onReceiveTurn() {
-
-        if (Game.DEBUG) {
-            return;
-        }
-
-        throw new UnsupportedOperationException("Unimplemented method 'onReceiveTurn'");
-    }
 
 }
