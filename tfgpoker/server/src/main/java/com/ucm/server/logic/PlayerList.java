@@ -146,6 +146,50 @@ public class PlayerList {
         }
     }
 
+    public void shareOutAllCardsFromPlayer(Card c1, Card c2) {
+
+        if (isEmpty())
+            return;
+
+        if (_first._player.getNumCards() == 0) {
+            _first._player.receiveCard(c1);
+            _first._player.onSendCard(c1);
+            _first._player.receiveCard(c2);
+            _first._player.onSendCard(c2);
+            return;
+        }
+
+        Node index = _first._next;
+        while (index != _first) {
+
+            if (index._player.getNumCards() == 0) {
+                index._player.receiveCard(c1);
+                index._player.onSendCard(c1);
+                index._player.receiveCard(c2);
+                index._player.onSendCard(c2);
+                break;
+            }
+
+            index = index._next;
+        }
+    }
+
+    private Node smallBlindAndBigBlindPlays(final int sb, final int bb, final int playsToMake) {
+
+        // Select as small blind:
+        // 1. First player if there is only two players -> playsToMake == 1
+        // 2. Next player from first if there is more than two players -> playsToMake > 1
+        Node pNode = (playsToMake == 1) ? _first : _first._next;
+        pNode._player.makeForcedBet(sb, bb); // Small-blind
+        pNode._player.onSendForcedMove(PlayerRole.SMALL_BLIND, sb, bb);
+
+        pNode = pNode._next;
+        pNode._player.makeForcedBet(sb, bb); // Big-blind
+        pNode._player.onSendForcedMove(PlayerRole.BIG_BLIND, sb, bb);
+
+        return pNode._next;
+    }
+
     public void playHand(final int sb, final int bb, final boolean isPreflop) throws OnlyOnePlayerLeftException {
 
         Node pNode = null;
@@ -241,34 +285,6 @@ public class PlayerList {
         return totalPot;
     }
 
-    public void shareOutAllCardsFromPlayer(Card c1, Card c2) {
-
-        if (isEmpty())
-            return;
-
-        if (_first._player.getNumCards() == 0) {
-            _first._player.receiveCard(c1);
-            _first._player.onSendCard(c1);
-            _first._player.receiveCard(c2);
-            _first._player.onSendCard(c2);
-            return;
-        }
-
-        Node index = _first._next;
-        while (index != _first) {
-
-            if (index._player.getNumCards() == 0) {
-                index._player.receiveCard(c1);
-                index._player.onSendCard(c1);
-                index._player.receiveCard(c2);
-                index._player.onSendCard(c2);
-                break;
-            }
-
-            index = index._next;
-        }
-    }
-
     public void passTurn() {
         _first = _first._next;
         _last = _last._next;
@@ -290,7 +306,7 @@ public class PlayerList {
         return info;
     }
 
-    public int activePlayersCounter() {
+    private int activePlayersCounter() {
 
         if (isEmpty())
             return 0;
@@ -329,22 +345,6 @@ public class PlayerList {
         }
     }
 
-    private Node smallBlindAndBigBlindPlays(final int sb, final int bb, final int playsToMake) {
-
-        // Select as small blind:
-        // 1. First player if there is only two players -> playsToMake == 1
-        // 2. Next player from first if there is more than two players -> playsToMake > 1
-        Node pNode = (playsToMake == 1) ? _first : _first._next;
-        pNode._player.makeForcedBet(sb, bb); // Small-blind
-        pNode._player.onSendForcedMove(PlayerRole.SMALL_BLIND, sb, bb);
-
-        pNode = pNode._next;
-        pNode._player.makeForcedBet(sb, bb); // Big-blind
-        pNode._player.onSendForcedMove(PlayerRole.BIG_BLIND, sb, bb);
-
-        return pNode._next;
-    }
-
     private Node getNextPlayerActive(Node current) {
 
         Node iNode = current._next;
@@ -362,6 +362,7 @@ public class PlayerList {
         return iNode;
     }
 
+
     public boolean isEmpty() {
         return size() == 0;
     }
@@ -377,4 +378,5 @@ public class PlayerList {
     public int max() {
         return _maxNumberOfPlayers;
     }
+
 }
