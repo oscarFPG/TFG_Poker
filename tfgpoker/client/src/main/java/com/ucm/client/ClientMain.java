@@ -238,6 +238,7 @@ public class ClientMain extends Application {
 
 		System.out.printf("La partida comienza!\n");
 		int roleCode;
+		boolean status;
 		Card[] playerCards = new Card[2];
 		Card[] tableCardValues = new Card[5];
 
@@ -245,7 +246,6 @@ public class ClientMain extends Application {
 			InputStream in = socket.getInputStream();
 			OutputStream out = socket.getOutputStream();
 
-			// Recibir rol de jugador
 			roleCode = SocketUtils.receiveInt(in);
 			String auxStringRole = (roleCode == GameType.PLAYER_ROLE_DEALER) ? "DEALER" :
 								(roleCode == GameType.PLAYER_ROLE_SMALL_BLIND) ? "SMALL_BLIND" :
@@ -255,45 +255,32 @@ public class ClientMain extends Application {
 								(roleCode == GameType.PLAYER_ROLE_CUT_OFF) ? "CUT_OFF" : "NO_ROLE";
 			System.out.printf("Player with name \'%s\' and rol code %s\n", _name, auxStringRole);
 
-			// Recibir primera carta
-			playerCards[0] = new Card();
-			playerCards[0].numberCode = SocketUtils.receiveInt(in);
-			playerCards[0].suitCode = SocketUtils.receiveInt(in);
+			playerCards[0] = receiveCard(in);
+			playerCards[1] = receiveCard(in);
 			System.out.printf("Card1 %s received \n", translateCardCode(playerCards[0].numberCode, playerCards[0].suitCode));
-
-			// Recibir segunda carta
-			playerCards[1] = new Card();
-			playerCards[1].numberCode = SocketUtils.receiveInt(in);
-			playerCards[1].suitCode = SocketUtils.receiveInt(in);
 			System.out.printf("Card2 %s received\n", translateCardCode(playerCards[1].numberCode, playerCards[1].suitCode) );
 
-			// Jugar turno/esperar a turno
-			boolean status = playRound(playerCards[0], playerCards[1], socket);
+			// Preflop
+			status = playRound(playerCards[0], playerCards[1], socket);
+			tableCardValues[0] = receiveCard(in);
+			tableCardValues[1] = receiveCard(in);
+			tableCardValues[2] = receiveCard(in);
+			showTableCards(tableCardValues);
 			
-			System.out.printf("Waiting card on the table\n");
-			while(true){}
+			// Flop
+			status = playRound(playerCards[0], playerCards[1], socket);
+			tableCardValues[3] = receiveCard(in);
 
-			/*
-			// Recibir carta de tablero (1)
-			// Recibir carta de tablero (2)
-			// Recibir carta de tablero (3)
-			int cartaMesa1 = SocketUtils.receiveInt(in);
-			int cartaMesa2 = SocketUtils.receiveInt(in);
-			int cartaMesa3 = SocketUtils.receiveInt(in);
+			// Turn
+			status = playRound(playerCards[0], playerCards[1], socket);
+			tableCardValues[4] = receiveCard(in);
 
-			// Jugar turno/esperar a turno
-			int turno2 = SocketUtils.receiveInt(in);
-			// Recibir carta de tablero (4)
-			int cartaMesa4 = SocketUtils.receiveInt(in);
+			// River
+			status = playRound(playerCards[0], playerCards[1], socket);
 
-			// Jugar turno/esperar a turno
-			int turno3 = SocketUtils.receiveInt(in);
-			// Recibir carta de tablero (5)
-			int cartaMesa5 = SocketUtils.receiveInt(in);
-
-			// Showdown -> Comprobar ganadores y repartir premios
+			// Showdown
 			int showdown = SocketUtils.receiveInt(in);
-			*/
+
 		}
 		catch (IOException e) {
 			System.out.printf("Error: %s\n", e.getMessage());
@@ -365,82 +352,76 @@ public class ClientMain extends Application {
 	}
 
 	// In-game logic
-	private static boolean playRound(final Card card1, final Card card2, Socket socket){
+	private static Card receiveCard(InputStream in) throws IOException {
+
+		Card c = new Card();
+		c.numberCode = SocketUtils.receiveInt(in);
+		c.suitCode = SocketUtils.receiveInt(in);
+		return c;
+	}
+
+	private static boolean playRound(final Card card1, final Card card2, Socket socket) throws IOException {
 		
-		boolean roundSuccess = true;	// Notify if the round was successful, no errors ocurred
-		try{
+		System.out.printf("Round has started!\n");
 
-			int turn = SocketUtils.receiveInt(socket.getInputStream());
-			while(turn != GameType.ROUND_END){
+		boolean roundSuccess = true;
+		int sb, bb, maxBet;
+		int turn = SocketUtils.receiveInt(socket.getInputStream());
+		while(turn != GameType.ROUND_END){
 
-				if(turn == GameType.TURN_FORCED_SB){
-					int cantidadSB = SocketUtils.receiveInt(socket.getInputStream());
-					System.out.printf("Forced play as the small blind with %d chips\n", cantidadSB);
-				}
-				else if(turn == GameType.TURN_FORCED_BB){
-					int cantidadBB = SocketUtils.receiveInt(socket.getInputStream());
-					System.out.printf("Forced play as the big blind with %d chips\n", cantidadBB);
-				}
-				else if(turn == GameType.TURN_WAIT){
-					System.out.printf("Wait for the other players!\n");
-				}
-				else if(turn ==  GameType.TURN_PLAY){
+			if(turn == GameType.TURN_FORCED_SB){
+				int cantidadSB = SocketUtils.receiveInt(socket.getInputStream());
+				System.out.printf("Forced play as the small blind with %d chips\n", cantidadSB);
+			}
+			else if(turn == GameType.TURN_FORCED_BB){
+				int cantidadBB = SocketUtils.receiveInt(socket.getInputStream());
+				System.out.printf("Forced play as the big blind with %d chips\n", cantidadBB);
+			}
+			else if(turn == GameType.TURN_WAIT){
+				System.out.printf("Wait for the other players!\n");
+			}
+			else if(turn == GameType.TURN_PLAY){
 
-					System.out.printf("It's your turn to play!\n");
+				System.out.printf("It's your turn to play!\n");
 
-					boolean valid = false;
-					while(!valid){
+				boolean valid = false;
+				while(!valid){
 
-						String command = getUserCommand();
-						valid = true;
-						if(command.equalsIgnoreCase("raise") || command.equalsIgnoreCase("r")){
-							System.out.printf("Enter the quantity to raise: ");
-							int quantity = _scanner.nextInt();
-							
-							SocketUtils.sendInteger(socket.getOutputStream(), GameType.RAISE_ACTION);
-							SocketUtils.sendInteger(socket.getOutputStream(), quantity);
-						}
-						else if(command.equalsIgnoreCase("fold") || command.equalsIgnoreCase("f")){
-							SocketUtils.sendInteger(socket.getOutputStream(), GameType.FOLD_ACTION);
-						}
-						else if(command.equalsIgnoreCase("check") || command.equalsIgnoreCase("k")){
-							SocketUtils.sendInteger(socket.getOutputStream(), GameType.CHECK_ACTION);
-						}
-						else if(command.equalsIgnoreCase("call") || command.equalsIgnoreCase("c")){
-							SocketUtils.sendInteger(socket.getOutputStream(), GameType.CALL_ACTION);
-						}
-						else if(command.equalsIgnoreCase("all in") || command.equalsIgnoreCase("a")){
-							SocketUtils.sendInteger(socket.getOutputStream(), GameType.ALL_IN_ACTION);
-						}
-						else{
-							System.out.printf("Command %s not valid!\n", command);
-							valid = false;
-						}
+					String command = getUserCommand();
+					valid = true;
+					if(command.equalsIgnoreCase("raise") || command.equalsIgnoreCase("r")){
+						SocketUtils.sendInteger(socket.getOutputStream(), GameType.RAISE_ACTION);
+
+						System.out.printf("Enter the quantity to raise: ");
+						int quantity = _scanner.nextInt();
+						SocketUtils.sendInteger(socket.getOutputStream(), quantity);
 					}
-					
+					else if(command.equalsIgnoreCase("fold") || command.equalsIgnoreCase("f")){
+						SocketUtils.sendInteger(socket.getOutputStream(), GameType.FOLD_ACTION);
+					}
+					else if(command.equalsIgnoreCase("check") || command.equalsIgnoreCase("k")){
+						SocketUtils.sendInteger(socket.getOutputStream(), GameType.CHECK_ACTION);
+					}
+					else if(command.equalsIgnoreCase("call") || command.equalsIgnoreCase("c")){
+						SocketUtils.sendInteger(socket.getOutputStream(), GameType.CALL_ACTION);
+					}
+					else if(command.equalsIgnoreCase("all in") || command.equalsIgnoreCase("a")){
+						SocketUtils.sendInteger(socket.getOutputStream(), GameType.ALL_IN_ACTION);
+					}
+					else{
+						System.out.printf("Command %s not valid!\n", command);
+						valid = false;
+					}
 				}
-				else{
-					System.out.printf("Unknown turn code %d\n", turn);
-				}
-
-				turn = SocketUtils.receiveInt(socket.getInputStream());
+				
+			}
+			else{
+				System.out.printf("Unknown turn code %d\n", turn);
 			}
 
-			System.out.printf("Round has ended!\n");
+			turn = SocketUtils.receiveInt(socket.getInputStream());
 		}
-		catch(IOException e){
-
-			System.out.printf("Error: %s\n", e.getMessage());
-			try{
-				socket.close();
-				System.out.printf("Socket closed successfully\n");
-				roundSuccess = false;
-			}
-			catch(IOException exc){
-				System.out.printf("Error closing the socket: %s\n", exc.getMessage());
-				roundSuccess = false;
-			}
-		}
+		System.out.printf("Round has ended!\n");
 		
 		return roundSuccess;
 	}
@@ -497,13 +478,23 @@ public class ClientMain extends Application {
 		System.out.printf("2- CHECK(k)\n");
 		System.out.printf("3- CALL(c)\n");
 		System.out.printf("4- ALL IN(a)\n");
-		System.out.printf("5- RAISE(r) <quantity>\n");
+		System.out.printf("5- RAISE(r)\n");
 		System.out.printf("> ");
 
-		String command = _scanner.nextLine();
-		System.out.printf("\n");
-		
+		String command = _scanner.next();
 		return command;
+	}
+
+	private static void showTableCards(final Card tableCards[]){
+
+		for(Card c : tableCards){
+			if(c != null)
+				System.out.printf("[%d%d] ", c.numberCode, c.suitCode);
+			else
+				System.out.printf("[xx] ");
+		}
+		System.out.printf("\n");
+
 	}
 
     @Override

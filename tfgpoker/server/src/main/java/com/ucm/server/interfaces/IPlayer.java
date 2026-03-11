@@ -4,6 +4,7 @@ import com.ucm.server.commands.Command;
 import com.ucm.server.gameobjects.Card;
 import com.ucm.server.gameobjects.PlayerRole;
 
+
 public interface IPlayer {
 
     public void onSendRole(PlayerRole r);

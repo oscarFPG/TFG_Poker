@@ -1,6 +1,10 @@
 package com.ucm.server.commands;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import com.ucm.common.GameType;
+import com.ucm.common.SocketUtils;
 import com.ucm.server.gameobjects.Player;
 import com.ucm.server.middleclasses.CommandResult;
 
@@ -40,6 +44,13 @@ public class RaiseCommand extends Command {
     @Override
     public boolean validate(final int onBet, final int totalMoney, final int maxBet){
         return _targetBet <= onBet + totalMoney && _targetBet > maxBet;
+    }
+
+    @Override
+    public void requireParameters(InputStream in) throws IOException {
+        
+        int quantity = SocketUtils.receiveInt(in);
+        _targetBet = quantity;
     }
 
     /**
@@ -87,21 +98,6 @@ public class RaiseCommand extends Command {
     @Override
     public String getCommandDescription() {
         return "Increase the current bet to a new amount.";
-    }
-
-    @Override
-    public boolean checkAttributes(String[] fullCommand) {
-
-        if(fullCommand.length != 2)
-            return false;
-        
-        try {
-            int bet = Integer.parseInt(fullCommand[1]);
-            return bet > 0;
-        }
-        catch (NumberFormatException e) {
-            return false;
-        }
     }
 
     @Override

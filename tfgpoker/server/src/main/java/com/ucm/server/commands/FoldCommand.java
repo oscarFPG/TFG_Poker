@@ -1,5 +1,7 @@
 package com.ucm.server.commands;
 
+import java.io.InputStream;
+
 import com.ucm.common.GameType;
 import com.ucm.server.gameobjects.Player;
 import com.ucm.server.middleclasses.CommandResult;
@@ -67,11 +69,6 @@ public class FoldCommand extends Command {
     @Override
     public String getCommandDescription() {
         return "Retire from the current hand. If you have already bet, you will lose the money.";
-    }
-
-    @Override
-    public boolean checkAttributes(String[] fullCommand) {
-        return fullCommand.length == 1;
     }
 
     @Override

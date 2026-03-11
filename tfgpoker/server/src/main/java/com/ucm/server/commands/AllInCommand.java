@@ -1,5 +1,7 @@
 package com.ucm.server.commands;
 
+import java.io.InputStream;
+
 import com.ucm.common.GameType;
 import com.ucm.server.gameobjects.Player;
 import com.ucm.server.middleclasses.CommandResult;
@@ -71,14 +73,6 @@ public class AllInCommand extends Command {
     @Override
     public String getCommandDescription() {
         return "Bet all of your remaining money on the current hand.";
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean checkAttributes(String[] fullCommand) {
-        return fullCommand.length == 1;
     }
 
     @Override

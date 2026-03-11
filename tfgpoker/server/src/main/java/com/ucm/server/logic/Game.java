@@ -98,7 +98,10 @@ public class Game {
         if (_actualTableCards >= 5)
             return;
 
-        _tableCards[_actualTableCards] = _deck.takeRandomCard();
+
+        Card c = _deck.takeRandomCard();
+        _playerList.sendTableCardToAllPlayers(c);
+        _tableCards[_actualTableCards] = c;
         _actualTableCards++;
 
         StringBuilder sb = new StringBuilder();

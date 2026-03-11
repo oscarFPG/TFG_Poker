@@ -1,5 +1,7 @@
 package com.ucm.server.commands;
 
+import java.io.InputStream;
+
 import com.ucm.common.GameType;
 import com.ucm.server.gameobjects.Player;
 import com.ucm.server.middleclasses.CommandResult;
@@ -67,11 +69,6 @@ public class CheckCommand extends Command {
     @Override
     public String getCommandDescription() {
         return "If there is no bet just pass your turn without betting.";
-    }
-
-    @Override
-    public boolean checkAttributes(String[] fullCommand) {
-        return fullCommand.length == 1;
     }
 
     @Override

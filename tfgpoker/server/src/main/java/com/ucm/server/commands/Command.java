@@ -3,6 +3,7 @@ package com.ucm.server.commands;
 import com.ucm.server.gameobjects.Player;
 import com.ucm.server.middleclasses.CommandResult;
 
+import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -10,6 +11,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 
 /**
  * Abstract class that represents a command in the poker game. This class serves
@@ -38,6 +40,9 @@ public abstract class Command {
     );
 
 
+    /**
+     * Constructor to create a empty model of any command
+     */
     public Command() {}
 
     /**
@@ -56,6 +61,7 @@ public abstract class Command {
         _pocketMoney = pocketMoney;
         _currentBet = 0;
     }
+
 
     public static String showAvailableCommands() {
 
@@ -89,9 +95,9 @@ public abstract class Command {
     public static Command parseCommand(final int commandNetworkCode, Player p) {
 
         for (Command command : AVAILABLE_COMMANDS) {
-            // Must be called in this particular order
             if (command.matchCommand(commandNetworkCode)) { 
                 log.debug("Command selected by player {}: {}", p.getName(), command.getCommandName());
+                command._player = p;
                 return command;
             }
         }
@@ -135,6 +141,15 @@ public abstract class Command {
     }
 
     /**
+     * Ask for the parameters needed by the command if necessary
+     * @param in input to receive the parameters by the user
+     * @return true if the operation was succesful, false otherwise
+     */
+    public void requireParameters(InputStream in) throws IOException {
+        // Not necesary for most of commands !!!
+    }
+
+    /**
      * Checks if the command can be executed correctly based on the context
      * 
      * @param maxBet is the value of the last maximum bet made
@@ -161,8 +176,16 @@ public abstract class Command {
      */
     public abstract String getCommandName();
 
+    /**
+     * 
+     * @return
+     */
     public abstract String getCommandText();
 
+    /**
+     * 
+     * @return
+     */
     public abstract String getCommandTextShotcut();
 
     /**
@@ -174,15 +197,9 @@ public abstract class Command {
     public abstract String getCommandDescription();
 
     /**
-     * Method that checks if the attributes of the command are valid based on the
-     * input command.
      * 
-     * @param fullCommand the input command array containing the command and its
-     *                    attributes.
-     * @return true if the attributes of the command are valid, false otherwise.
+     * @return
      */
-    public abstract boolean checkAttributes(String[] fullCommand);
-
     protected abstract int getCommandNetworkCode();
 
 }

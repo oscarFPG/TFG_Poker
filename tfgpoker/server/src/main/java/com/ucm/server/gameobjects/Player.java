@@ -421,6 +421,19 @@ public class Player implements IPlayer {
         return _role;
     }
 
+    /**
+     * Gets the player socket
+     * 
+     * @return player socket
+     */
+    public Socket getSocket() {
+        return _socket;
+    }
+
+    /**
+     *  Gets the number of cards in the player's hand
+     * @return number of cards in the player's hand
+     */
     public int getNumCards() {
         return _numCards;
     }
@@ -507,25 +520,25 @@ public class Player implements IPlayer {
             return null;
         }
 
+        Command command = null;
         try{
 
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnPlayToCode());
             log.debug("Player {} has to play his turn!", _name);
 
             int commandCode = SocketUtils.receiveInt(_socket.getInputStream());
-            Command command = Command.parseCommand(commandCode, this);
-
+            command = Command.parseCommand(commandCode, this);
             log.debug("Player wants to execute command: {}", command.getCommandName());
         }
         catch (IOException e) {
             log.error("Error receiving the command for {} player: {}", _name, e.getMessage());
         }
 
-        return null;
+        return command;
     }
 
     @Override
-    public void onSendTurnWait(){
+    public void onSendTurnWait() {
 
         if (Game.DEBUG) {
             return;
@@ -548,7 +561,8 @@ public class Player implements IPlayer {
         }
 
         try{
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnWaitToCode());
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.gameRoundEnded());
+            log.debug("Player {} notified about the end of the round", _name);
         }
         catch (IOException e) {
             log.error("Error receiving the role for {} player: {}", _name, e.getMessage());

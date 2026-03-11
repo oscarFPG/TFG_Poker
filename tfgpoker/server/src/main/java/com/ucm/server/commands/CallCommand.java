@@ -1,5 +1,7 @@
 package com.ucm.server.commands;
 
+import java.io.InputStream;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -86,14 +88,6 @@ public class CallCommand extends Command {
     @Override
     public String getCommandDescription() {
         return "Call the current bet.";
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean checkAttributes(String[] fullCommand) {
-        return fullCommand.length == 1;
     }
 
     @Override
