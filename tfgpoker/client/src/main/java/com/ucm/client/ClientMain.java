@@ -367,7 +367,7 @@ public class ClientMain extends Application {
 		boolean roundSuccess = true;
 		int sb, bb, maxBet;
 		int turn = SocketUtils.receiveInt(socket.getInputStream());
-		while(turn != GameType.ROUND_END){
+		while(turn != GameType.ROUND_ENDS){
 
 			if(turn == GameType.TURN_FORCED_SB){
 				int cantidadSB = SocketUtils.receiveInt(socket.getInputStream());

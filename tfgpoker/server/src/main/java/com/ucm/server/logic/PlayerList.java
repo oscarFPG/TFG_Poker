@@ -199,7 +199,7 @@ public class PlayerList {
                 log.debug("Current bet is {} and maximum bet is {}", currentBet, maxBet);
             }
             catch(IOException e){
-                log.error("Error interacting with the player {}: {}", playerOnTurn.getName(), e.getMessage());
+                log.error("Interacting with the player {}: {}", playerOnTurn.getName(), e.getMessage());
             }
 
             pNode = getNextPlayerActive(pNode);

@@ -1,7 +1,6 @@
 package com.ucm.server.gameobjects;
 
 import com.ucm.common.SocketUtils;
-
 import com.ucm.server.commands.Command;
 import com.ucm.server.control.GameAdapter;
 import com.ucm.server.interfaces.IPlayer;
@@ -9,7 +8,6 @@ import com.ucm.server.logic.Game;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Scanner;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,7 +20,6 @@ import org.apache.logging.log4j.Logger;
 public class Player implements IPlayer {
 
     private static final Logger log = LogManager.getLogger(Player.class);
-    private static final Scanner sc = new Scanner(System.in);
 
     /**
      * Player's unique identifier
@@ -459,7 +456,7 @@ public class Player implements IPlayer {
             SocketUtils.sendInteger(_socket.getOutputStream(), role);
         }
         catch (IOException e) {
-            log.error("Error receiving the role for {} player: {}", _name, e.getMessage());
+            log.error("Receiving the role for {} player: {}", _name, e.getMessage());
         }
     }
 
@@ -480,7 +477,7 @@ public class Player implements IPlayer {
             log.debug("Player {} receives card {}", _name, c.toString());
         }
         catch (IOException e) {
-            log.error("Error giving the card {} to player: {}", c.toString(), _name, e.getMessage());
+            log.error("Giving the card {} to player: {}", c.toString(), _name, e.getMessage());
         }
     }
 
@@ -509,7 +506,7 @@ public class Player implements IPlayer {
             }
         }
         catch (IOException e) {
-            log.error("Error trying to force a move on the player {}: {}", _name, e.getMessage());
+            log.error("Trying to force a move on the player {}: {}", _name, e.getMessage());
         }
     }
 
@@ -531,7 +528,7 @@ public class Player implements IPlayer {
             log.debug("Player wants to execute command: {}", command.getCommandName());
         }
         catch (IOException e) {
-            log.error("Error receiving the command for {} player: {}", _name, e.getMessage());
+            log.error("Receiving the command for {} player: {}", _name, e.getMessage());
         }
 
         return command;
@@ -549,7 +546,7 @@ public class Player implements IPlayer {
             log.debug("Player {} has to wait his turn!", _name);
         }
         catch (IOException e) {
-            log.error("Error receiving the role for {} player: {}", _name, e.getMessage());
+            log.error("Sending the WAIT order to player {}: {}", _name, e.getMessage());
         }
     }
 
@@ -565,7 +562,7 @@ public class Player implements IPlayer {
             log.debug("Player {} notified about the end of the round", _name);
         }
         catch (IOException e) {
-            log.error("Error receiving the role for {} player: {}", _name, e.getMessage());
+            log.error("Notifing ROUND_ENDS to player {}: {}", _name, e.getMessage());
         }
     }
 

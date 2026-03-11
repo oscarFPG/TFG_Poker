@@ -64,10 +64,11 @@ public class Game {
         _currentSB = _initialSmallBlind;
         _currentBB = _initialBigBlind;
 
-        try{
+        try {
             Evaluator.getInstance();
         }
-        catch(IOException e){
+        catch(IOException e) {
+            log.error("Trying to create the evaluator: {}", e.getMessage());
             throw new EvaluatorException("Error creating the evaluator for the game");
         }
         

@@ -63,8 +63,6 @@ public class Controller {
         ThreadContext.put("hand", String.valueOf(handCounter));
         log.info("Starting a new game!");
 
-
-        // Start Game loop (1)
         _game.assignRolesToAllPlayers();
         while (!_game.isGameFinished()) {
 

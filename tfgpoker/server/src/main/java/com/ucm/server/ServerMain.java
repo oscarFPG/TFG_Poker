@@ -74,7 +74,7 @@ public class ServerMain {
                     n_players = Integer.parseInt(args[1]);
                 }
                 catch(NumberFormatException e){
-                    log.debug("Invalid number of players!Using default value: {}", n_players);
+                    log.error("Invalid number of players!Using default value: {}", n_players);
                 }
             }
 
@@ -89,7 +89,7 @@ public class ServerMain {
                 log.debug("Server finished!");
             }
             catch(EvaluatorException e){
-                log.error("Error initializing the game: {}", e.getMessage());
+                log.error("Initializing the game: {}", e.getMessage());
             }
             
             return;
@@ -111,7 +111,7 @@ public class ServerMain {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         }
         catch (Exception e) {
-            e.printStackTrace();
+            log.fatal("Trying to get the serve's public IP");
         }
 
         serverIP = response.body();
@@ -183,12 +183,12 @@ public class ServerMain {
                     cs.clientSocket.write(broadcastBuffer);
                 }
                 catch(IOException e){
-                    log.error("Error sending GAME_STARTS flag: {}", e.getMessage());
+                    log.error("Sending GAME_STARTS flag: {}", e.getMessage());
                     try{
                         cs.clientSocket.close();
                     }
                     catch(IOException exception){
-                        log.error("Error closing socket: {}", e.getMessage());
+                        log.error("Closing socket: {}", e.getMessage());
                     }
                 }
             }
@@ -203,7 +203,7 @@ public class ServerMain {
             } 
         } 
         catch (IOException e) {
-            log.error("Ocurrio algun error en el socket {}", e.getMessage());
+            log.error("Something happend with clients socket {}", e.getMessage());
         } 
         finally {
 
@@ -213,7 +213,7 @@ public class ServerMain {
                     selector.close();
                 }
                 catch (IOException e) {
-                    log.error("Error closing the server socket: {}", e.getMessage());
+                    log.error("Closing the server socket: {}", e.getMessage());
                 }
             }
         }
@@ -229,7 +229,7 @@ public class ServerMain {
             controller.run();
         }
         catch(EvaluatorException e){
-            log.error("Error initializing the game: {}", e.getMessage());
+            log.error("Initializing the game: {}", e.getMessage());
             return;
         }
     }
@@ -295,7 +295,7 @@ public class ServerMain {
             }
         }
         catch(IOException e){
-            log.error("Error with the socket: {}", e.getMessage());
+            log.error("Something strange ocurred with the clients socket: {}", e.getMessage());
 			try {
 				key.cancel();
 				socket.close();
@@ -342,7 +342,7 @@ public class ServerMain {
                     client.close();
                 }
                 catch (IOException e) {
-                    log.error("Error cerrando conexion con el cliente {}", e.getMessage());
+                    log.error("Closing connection with client {}", e.getMessage());
                 }
             }
             break;
@@ -370,7 +370,7 @@ public class ServerMain {
                     key.cancel();
                 }
                 catch(IOException e) {
-                    log.error("Error intentando cerrar conexión de forma segura: {}", e.getMessage());
+                    log.error("Trying to close connection safely: {}", e.getMessage());
                 }
             }
             break;

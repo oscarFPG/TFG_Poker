@@ -9,22 +9,19 @@ public class GameType {
     public static final int PORT = 5005;
 
     // Types
-    public static final byte DATA_TYPE_PETITION = 1;    // Flag to send a pregame petition
-    public static final byte DATA_TYPE_NAME = 2;        // Flag to send a name as a string
+    public static final byte DATA_TYPE_PETITION = 1;   // Flag to send a pregame petition
+    public static final byte DATA_TYPE_NAME = 2;   // Flag to send a name as a string
 
     // Clients and server codes during pregame
     public static final int CREATE_PETITION = 10;   // Client requests creating a game
-    public static final int CREATE_PETITION_ERROR_ALREADY_A_GAME = 11;  // Server error response to CREATE_PETITION
+    public static final int CREATE_PETITION_ERROR_ALREADY_A_GAME = 11;   // Server error response to CREATE_PETITION
 
-    public static final int JOIN_PETITION = 20;     // Client requests joining a game
+    public static final int JOIN_PETITION = 20;   // Client requests joining a game
     public static final int JOIN_PETITION_ERROR = 21;   // Server error response to JOIN_PETITION
 
-    public static final int HOST_START_GAME_PETITION = 30;      // Client requests starting the game
-    public static final int HOST_START_GAME_PETITION_ERROR_NOT_ENOUGH_PLAYERS = 31; // Server error response to HOST_START_GAME_PETITION
-    public static final int HOST_START_GAME_PETITION_ERROR_NOT_HOST = 32;       // Server error response to HOST_START_GAME_PETITION
-
-    // Requests between pregame and in-game
-    public static final int GAME_STARTS = 40;   // Server notifies all players game has started
+    public static final int HOST_START_GAME_PETITION = 30;   // Client requests starting the game
+    public static final int HOST_START_GAME_PETITION_ERROR_NOT_ENOUGH_PLAYERS = 31;   // Server error response to HOST_START_GAME_PETITION
+    public static final int HOST_START_GAME_PETITION_ERROR_NOT_HOST = 32;   // Server error response to HOST_START_GAME_PETITION
 
     // Player roles
     public static final int PLAYER_ROLE_NO_ROLE = 50;
@@ -56,15 +53,21 @@ public class GameType {
     public static final int NUMBER_Q = 121;
     public static final int NUMBER_K = 122;
 
-    // Turns and game states
+    // Turns
     public static final int TURN_PLAY = 200;
     public static final int TURN_FORCED_SB = 201;
     public static final int TURN_FORCED_BB = 202;
     public static final int TURN_WAIT = 203;
-    public static final int ROUND_END = 204;
-    public static final int HAND_END = 205;
-    public static final int GAME_END = 206;
+    public static final int TURN_FOLD = 204;
 
+    // Round, hand and game status
+    public static final int GAME_STARTS = 300;
+    public static final int ROUND_STARTS = 301;
+    public static final int HAND_STARTS = 302;
+    public static final int GAME_ENDS = 303;
+    public static final int ROUND_ENDS = 304;
+    public static final int HAND_ENDS = 305;
+    
     // Player actions
     public static final int FOLD_ACTION = 300;
     public static final int CHECK_ACTION = 301;

@@ -123,13 +123,13 @@ public class GameAdapter {
         return GameType.TURN_FORCED_BB;
     }
     public static int gameRoundEnded(){
-        return GameType.ROUND_END;
+        return GameType.ROUND_ENDS;
     }
     public static int gameHandEnded(){
-        return GameType.HAND_END;
+        return GameType.HAND_ENDS;
     }
     public static int gameGameEnded(){
-        return GameType.GAME_END;
+        return GameType.GAME_ENDS;
     }
 
     // Commands
