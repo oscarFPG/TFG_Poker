@@ -63,4 +63,206 @@
    <Label alignment="CENTER" layoutX="52.0" layoutY="441.0" prefHeight="62.0" prefWidth="362.0" styleClass="label-descripcion-redondeado" />
    <Label alignment="CENTER" layoutX="52.0" layoutY="394.0" prefHeight="26.0" prefWidth="99.0" styleClass="boton-code" text="Code" />
 
+   
+
+<!-- FLECHAS ......................................................... -->
+  
+   <!-- ARROW 1 BACK  -->
+    <Button id="arrowBack" layoutX="335.0" layoutY="244.0" mnemonicParsing="false" prefHeight="100.0" prefWidth="77.0" styleClass="arrow-back-button"></Button>
+
+    <!-- ARROW 2 BACK BLACK -->
+   <Button id="arrowBackBlack" layoutX="446.0" layoutY="252.0" mnemonicParsing="false" prefHeight="58.0" prefWidth="51.0" styleClass="black-arrow-back-button"></Button>
+
+   <!-- ARROW 3 NEXT  -->
+     <Button id="arrowNext" layoutX="412.0" layoutY="188.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="44.0" styleClass="arrow-next-button"></Button>
+
+   <!--
+   <Button fx:id="btnNext" layoutX="369.0" layoutY="225.0" prefHeight="43.0" prefWidth="33.0" scaleX="2.0" scaleY="2.0" styleClass="arrow-button-2">
+      <graphic>
+      <SVGPath content="M10 5 L30 15 L10 25 Z" layoutX="471.0" layoutY="18.0" scaleX="1.5" scaleY="1.5" scaleZ="0.0" strokeWidth="1.5" style="-fx-backgound: linear-gradient(to right,  #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100%  ),   radial-gradient( center 50% 40%,  radius 120%, #661076 0%, #691179 23% , #3A0878 73%,  #291D4C 100%, #20034F 99%);" styleClass="arrow-shape2">
+         <fill>
+            <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+               <stops>
+                  <Stop>
+                     <color>
+                        <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
+                     </color>
+                  </Stop>
+                  <Stop offset="0.25838926174496646">
+                     <color>
+                        <Color red="0.4117647111415863" green="0.06666667014360428" blue="0.4745098054409027" />
+                     </color>
+                  </Stop>
+                  <Stop offset="0.7449664429530202">
+                     <color>
+                        <Color red="0.22745098173618317" green="0.0313725508749485" blue="0.47058823704719543" />
+                     </color>
+                  </Stop>
+                  <Stop offset="0.948539040759535">
+                     <color>
+                        <Color red="0.11760000139474869" green="0.012000000104308128" blue="0.30000001192092896" />
+                     </color>
+                  </Stop>
+                  <Stop offset="0.9951710590931413">
+                     <color>
+                        <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
+                     </color>
+                  </Stop>
+                  <Stop offset="1.0">
+                     <color>
+                        <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
+                     </color>
+                  </Stop>
+               </stops>
+            </RadialGradient>
+         </fill>
+         <stroke>
+            <LinearGradient endX="0.6018957345971564" endY="0.7488151658767772" startX="0.9146919431279621" startY="0.26540284360189575">
+               <stops>
+                  <Stop>
+                     <color>
+                        <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                     </color>
+                  </Stop>
+                  <Stop offset="0.5536912751677853">
+                     <color>
+                        <Color red="1.0" green="0.9725490212440491" blue="1.0" />
+                     </color>
+                  </Stop>
+                  <Stop offset="0.7449664429530202">
+                     <color>
+                        <Color red="1.0" green="0.9725490212440491" blue="1.0" />
+                     </color>
+                  </Stop>
+                  <Stop offset="1.0">
+                     <color>
+                        <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                     </color>
+                  </Stop>
+               </stops>
+            </LinearGradient>
+         </stroke>
+            <rotationAxis>
+               <Point3D />
+            </rotationAxis>
+      </SVGPath>
+      </graphic>
+   </Button>
+   -->
+
+<!-- CONTENEDORES / LAYOUTS ......................................................... -->
+
+   <!-- contenedores cuadrados-->
+      <StackPane id="squareContainer" layoutX="622.0" layoutY="273.0" prefHeight="100" prefWidth="200">
+      <styleClass>
+         <String fx:value="square-pane" />
+         <String fx:value="container-colors" />
+      </styleClass></StackPane>
+
+   <!--contenedores ovalados-->
+      <StackPane id="ovalContainer" layoutX="613.0" layoutY="150.0" prefHeight="100" prefWidth="200">
+      <styleClass>
+         <String fx:value="oval-pane" />
+         <String fx:value="container-colors" />
+      </styleClass></StackPane>
+
+   <!-- contenedores circulares-->
+      <StackPane id="roundContainer" layoutX="664.0" layoutY="397.0" prefHeight="74.0" prefWidth="74.0">
+      <styleClass>
+         <String fx:value="round-pane" />
+         <String fx:value="container-gradiant-colors" />
+      </styleClass></StackPane>
+
+
+
+
+<!-- ICONOS GENERALES ........................................................................... -->
+   
+<!-- ICONO SALIDA -->
+      <Button id="configurationIcon" layoutX="395.0" layoutY="378.0" mnemonicParsing="false" prefHeight="69.0" prefWidth="51.0" styleClass="configuration-icon-button">
+         <graphic>
+               <ImageView id="configurationIcon" fitHeight="58.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                     <Image url="@../images/iconoConfiguracionIntroduccion.png" />
+                  </image>
+               </ImageView>
+         </graphic>
+      </Button>
+
+
+   <!-- ICONO CONFIGURACION -->
+   <Button id="exitIcon" layoutX="283.0" layoutY="378.0" mnemonicParsing="false" prefHeight="69.0" prefWidth="70.0" styleClass="exit-icon-button">
+      <graphic>
+         <ImageView fitHeight="58.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+               <Image url="@../images/iconoExit.png" />
+            </image>
+         </ImageView>
+      </graphic>
+   </Button>
+
+
+    <!-- ICONO INFORMATION INTRODUCCION -->
+   <Button id="informationIntroductionIcon" layoutX="497.0" layoutY="378.0" mnemonicParsing="false" prefHeight="69.0" prefWidth="44.0">
+      <styleClass>
+         <String fx:value="icon-special-colors" />
+         <String fx:value="square-icon" />
+      </styleClass>
+      <graphic>
+         <ImageView id="configurationIcon" fitHeight="53.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+               <Image url="@../images/iconoInformacionIntroduccion.png" />
+            </image>
+         </ImageView>
+      </graphic>
+   </Button>
+     
+
+   <!-- ICONO INFORMACION TARJETA-->
+   <Button id="informationCardIcon" layoutX="147.0" layoutY="378.0" mnemonicParsing="false" prefHeight="69.0" prefWidth="17.0">
+      <styleClass>
+         <String fx:value="icon-colors" />
+         <String fx:value="round-icon" />
+      </styleClass>
+      <graphic>
+         <ImageView fitHeight="58.0" fitWidth="52.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+               <Image url="@../images/iconoInformacionTarjetasModo.png" />
+            </image>
+         </ImageView>
+      </graphic>
+   </Button>
+
+            
+   <!--CAJAS DE TEXTOS -->
+      <!-- titulos -->
+      <!-- descripciones -->
+      <!-- texto pequeño -->
+
+
+<!-- CONTENEDORES ESPECIFICOS........................................................................... -->
+   
+<!--JUADORES BOARD -->
+<AnchorPane id="playerContainer" layoutX="179.0" layoutY="50.0" prefHeight="78.0" prefWidth="227.0">
+   <children>
+      <StackPane fx:id="ovalContainer" layoutX="18.0" layoutY="5.0" prefHeight="67.0" prefWidth="204.0">
+         <styleClass>
+            <String fx:value="oval-pane" />
+            <String fx:value="container-gradiant-colors" />
+         </styleClass>
+      </StackPane>
+
+   <StackPane fx:id="roundContainer" layoutX="162.0" layoutY="4.0" prefHeight="70.0" prefWidth="80.0">
+         <styleClass>
+            <String fx:value="round-pane" />
+            <String fx:value="container-gradiant-colors" />
+         </styleClass>
+      </StackPane>
+   </children>
+</AnchorPane>
+
+
+
+
+
 </Pane>

@@ -4,10 +4,12 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="972.0" prefWidth="1728.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+
 
 <!-- FLECHAS ......................................................... -->
   
@@ -97,10 +99,28 @@
 <!-- CONTENEDORES / LAYOUTS ......................................................... -->
 
    <!-- contenedores cuadrados-->
-      <StackPane fx:id="squareContainer" layoutX="622.0" layoutY="273.0" prefHeight="100" prefWidth="200" styleClass="square-pane"></StackPane>
+      <StackPane id="squareContainer" layoutX="622.0" layoutY="273.0" prefHeight="100" prefWidth="200">
+      <styleClass>
+         <String fx:value="square-pane" />
+         <String fx:value="container-colors" />
+      </styleClass></StackPane>
 
    <!--contenedores ovalados-->
-      <StackPane fx:id="ovalContainer" layoutX="613.0" layoutY="150.0" prefHeight="100" prefWidth="200" styleClass="oval-pane"></StackPane>
+      <StackPane id="ovalContainer" layoutX="613.0" layoutY="150.0" prefHeight="100" prefWidth="200">
+      <styleClass>
+         <String fx:value="oval-pane" />
+         <String fx:value="container-colors" />
+      </styleClass></StackPane>
+
+   <!-- contenedores circulares-->
+      <StackPane id="roundContainer" layoutX="664.0" layoutY="397.0" prefHeight="74.0" prefWidth="74.0">
+      <styleClass>
+         <String fx:value="round-pane" />
+         <String fx:value="container-gradiant-colors" />
+      </styleClass></StackPane>
+
+
+
 
 <!-- ICONOS GENERALES ........................................................................... -->
    
@@ -129,7 +149,11 @@
 
 
     <!-- ICONO INFORMATION INTRODUCCION -->
-   <Button id="informationIntroductionIcon" layoutX="497.0" layoutY="378.0" mnemonicParsing="false" prefHeight="69.0" prefWidth="24.0" styleClass="information-introduction-icon-button">
+   <Button id="informationIntroductionIcon" layoutX="497.0" layoutY="378.0" mnemonicParsing="false" prefHeight="69.0" prefWidth="44.0">
+      <styleClass>
+         <String fx:value="icon-special-colors" />
+         <String fx:value="square-icon" />
+      </styleClass>
       <graphic>
          <ImageView id="configurationIcon" fitHeight="53.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
             <image>
@@ -141,14 +165,46 @@
      
 
    <!-- ICONO INFORMACION TARJETA-->
-   <Button id="informationCardIcon" layoutX="147.0" layoutY="378.0" mnemonicParsing="false" prefHeight="69.0" prefWidth="70.0" styleClass="information-card-icon-button">
+   <Button id="informationCardIcon" layoutX="147.0" layoutY="378.0" mnemonicParsing="false" prefHeight="69.0" prefWidth="17.0">
+      <styleClass>
+         <String fx:value="icon-colors" />
+         <String fx:value="round-icon" />
+      </styleClass>
       <graphic>
-         <ImageView fitHeight="58.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true">
+         <ImageView fitHeight="58.0" fitWidth="52.0" pickOnBounds="true" preserveRatio="true">
             <image>
                <Image url="@../images/iconoInformacionTarjetasModo.png" />
             </image>
          </ImageView>
       </graphic>
    </Button>
+
+            
+   <!--CAJAS DE TEXTOS -->
+      <!-- titulos -->
+      <!-- descripciones -->
+      <!-- texto pequeño -->
+
+
+<!-- CONTENEDORES ESPECIFICOS........................................................................... -->
+   
+<!--JUADORES BOARD -->
+<AnchorPane id="playerContainer" layoutX="179.0" layoutY="50.0" prefHeight="78.0" prefWidth="227.0">
+   <children>
+      <StackPane fx:id="ovalContainer" layoutX="18.0" layoutY="5.0" prefHeight="67.0" prefWidth="204.0">
+         <styleClass>
+            <String fx:value="oval-pane" />
+            <String fx:value="container-gradiant-colors" />
+         </styleClass>
+      </StackPane>
+
+   <StackPane fx:id="roundContainer" layoutX="162.0" layoutY="4.0" prefHeight="70.0" prefWidth="80.0">
+         <styleClass>
+            <String fx:value="round-pane" />
+            <String fx:value="container-gradiant-colors" />
+         </styleClass>
+      </StackPane>
+   </children>
+</AnchorPane>
 
 </Pane>
