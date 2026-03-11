@@ -6,11 +6,13 @@ import com.ucm.server.gameobjects.PlayerRole;
 
 public interface IPlayer {
 
-    public void onReceiveRole(PlayerRole r);
-    public void onReceiveCard(Card c);
-    public void onReceiveTableCard(Card c);
-    public void onForcedMove(PlayerRole myRole, int sb, int bb);
-    public Command onReceiveTurnPlay(final int maxBet);
-    public void onReceiveTurnWait();
+    public void onSendRole(PlayerRole r);
+    public void onSendCard(Card c);
+    public void onSendTableCard(Card c);
+    public void onSendForcedMove(PlayerRole myRole, int sb, int bb);
+    public Command onSendTurnPlay(final int maxBet);
+    public void onSendRoundEnded();
+    public void onSendHandEnded();
+    public void onSendTurnWait();
 
 }

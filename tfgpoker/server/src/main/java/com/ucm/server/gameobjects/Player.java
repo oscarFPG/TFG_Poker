@@ -134,23 +134,9 @@ public class Player implements IPlayer {
     }
 
     private Command playLocal(final int maxBet){
-
-        Command command = null;
-        String[] userInput = null;
-
-        do {
-
-            menuMakePlay();
-            userInput = sc.nextLine().trim().split(" ");
-            command = Command.parseCommand(userInput, this);
-            if( !command.validate(_pocketMoney, _money, maxBet) ){
-                command = null;
-                System.out.printf("Cannot execute that command in this context! Try again!\n");
-            }
-
-        } while (command == null);
-
-        return command;
+        
+        menuMakePlay();
+        return null;
     }
 
     private Command playNetwork(final int maxBet){
@@ -203,7 +189,6 @@ public class Player implements IPlayer {
 
 
         _cards[_numCards++] = c;
-        onReceiveCard(c);
         return true;
     }
 
@@ -449,7 +434,7 @@ public class Player implements IPlayer {
     }
 
     @Override
-    public void onReceiveRole(PlayerRole r) {
+    public void onSendRole(PlayerRole r) {
 
         if (Game.DEBUG) {
             return;
@@ -466,7 +451,7 @@ public class Player implements IPlayer {
     }
 
     @Override
-    public void onReceiveCard(Card c) {
+    public void onSendCard(Card c) {
 
         if (Game.DEBUG) {
             return;
@@ -482,12 +467,22 @@ public class Player implements IPlayer {
             log.debug("Player {} receives card {}", _name, c.toString());
         }
         catch (IOException e) {
-            log.error("Error receiving the role for {} player: {}", _name, e.getMessage());
+            log.error("Error giving the card {} to player: {}", c.toString(), _name, e.getMessage());
         }
     }
 
     @Override
-    public void onForcedMove(PlayerRole myRole, int sb, int bb) {
+    public void onSendTableCard(Card c) {
+
+        if (Game.DEBUG) {
+            return;
+        }
+
+        throw new UnsupportedOperationException("Unimplemented method 'onSendTableCard'");
+    }
+
+    @Override
+    public void onSendForcedMove(PlayerRole myRole, int sb, int bb) {
         
         try{
 
@@ -501,12 +496,12 @@ public class Player implements IPlayer {
             }
         }
         catch (IOException e) {
-            log.error("Error receiving the role for {} player: {}", _name, e.getMessage());
+            log.error("Error trying to force a move on the player {}: {}", _name, e.getMessage());
         }
     }
 
     @Override
-    public Command onReceiveTurnPlay(final int maxBet) {
+    public Command onSendTurnPlay(final int maxBet) {
 
         if (Game.DEBUG) {
             return null;
@@ -518,22 +513,19 @@ public class Player implements IPlayer {
             log.debug("Player {} has to play his turn!", _name);
 
             int commandCode = SocketUtils.receiveInt(_socket.getInputStream());
-            String commandName = (commandCode == GameAdapter.commandFoldToCode()) ? "Fold" :
-                                (commandCode == GameAdapter.commandCheckToCode()) ? "Check" :
-                                (commandCode == GameAdapter.commandAllInToCode()) ? "All-in" :
-                                (commandCode == GameAdapter.commandCallToCode()) ? "Call" :
-                                (commandCode == GameAdapter.commandRaiseToCode()) ? "Raise" : "Unknown";
-            log.debug("Player wants to execute command: {}", commandName);
+            Command command = Command.parseCommand(commandCode, this);
+
+            log.debug("Player wants to execute command: {}", command.getCommandName());
         }
         catch (IOException e) {
-            log.error("Error receiving the role for {} player: {}", _name, e.getMessage());
+            log.error("Error receiving the command for {} player: {}", _name, e.getMessage());
         }
 
         return null;
     }
 
     @Override
-    public void onReceiveTurnWait(){
+    public void onSendTurnWait(){
 
         if (Game.DEBUG) {
             return;
@@ -549,13 +541,24 @@ public class Player implements IPlayer {
     }
 
     @Override
-    public void onReceiveTableCard(Card c) {
-
+    public void onSendRoundEnded() {
+        
         if (Game.DEBUG) {
             return;
         }
 
-        throw new UnsupportedOperationException("Unimplemented method 'onReceiveTableCard'");
+        try{
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnWaitToCode());
+        }
+        catch (IOException e) {
+            log.error("Error receiving the role for {} player: {}", _name, e.getMessage());
+        }
+    }
+
+    @Override
+    public void onSendHandEnded() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'onSendHandEnded'");
     }
 
 

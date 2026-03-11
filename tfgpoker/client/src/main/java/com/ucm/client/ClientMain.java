@@ -1,6 +1,7 @@
 package com.ucm.client;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -13,6 +14,7 @@ import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Scanner;
 
+import javax.smartcardio.Card;
 import com.ucm.common.GameType;
 import com.ucm.common.SocketUtils;
 
@@ -25,10 +27,24 @@ import javafx.stage.Stage;
 
 public class ClientMain extends Application {
 
+	private static class Card {
+		public int numberCode;
+		public int suitCode;
+
+		public Card(){
+			this.numberCode = -1;
+			this.suitCode = -1;
+		}
+		public Card(int number, int suit) {
+			this.numberCode = number;
+			this.suitCode = suit;
+		}
+	}
+
+	public static boolean AUTOMATED_MODE = false;
     private static String hostname = "localhost";
     private static String _name;
 	private static boolean _gameStarts;
-
 	private static Scanner _scanner;
 
 	
@@ -37,6 +53,8 @@ public class ClientMain extends Application {
      * 		.\mvnw.cmd clean install
      * Run:
      * 		.\mvnw.cmd -pl client -Prun exec:java
+	 * Run auto(Siendo 'match' el nombre del archivo de partida a jugar y 'player' el del jugador a imitar):
+	 * 		.\mvnw.cmd -pl client -Prun-auto exec:java -Dmatch="" -Dplayer=""
      * Debug:
      * 		.\mvnwDebug.cmd -pl client -Pdebug exec:java
      * Run the Tests
@@ -44,7 +62,15 @@ public class ClientMain extends Application {
      */
     public static void main(String[] args) throws IOException {
 
-		_scanner = new Scanner(System.in);
+		if(args.length == 2){	// Ejecucion automatizada con archivos de texto para simular el input de multiples jugadores
+			String playerFilePath = "client/tests/" + args[0] + "/" + args[1] + ".txt";
+			System.out.printf("Running in auto mode with player file: %s\n", playerFilePath);
+			_scanner = new Scanner( new File(playerFilePath) );
+			AUTOMATED_MODE = true;
+		}
+		else{
+			_scanner = new Scanner(System.in);
+		}
 
 		System.out.printf("Specify the server IP (default: localhost): ");
 		String serverIP = _scanner.nextLine();
@@ -212,10 +238,8 @@ public class ClientMain extends Application {
 
 		System.out.printf("La partida comienza!\n");
 		int roleCode;
-		int cardValues[] = new int[2];
-		int cardSuits[] = new int[2];
-		// int tableCardValues[] = new int[5];
-		// int tableCardSuits[] = new int[5];
+		Card[] playerCards = new Card[2];
+		Card[] tableCardValues = new Card[5];
 
 		try {
 			InputStream in = socket.getInputStream();
@@ -232,38 +256,21 @@ public class ClientMain extends Application {
 			System.out.printf("Player with name \'%s\' and rol code %s\n", _name, auxStringRole);
 
 			// Recibir primera carta
-			cardValues[0] = SocketUtils.receiveInt(in);
-			cardSuits[0] = SocketUtils.receiveInt(in);
-			System.out.printf("Card1 %s received \n", translateCardCode(cardValues[0], cardSuits[0]));
+			playerCards[0] = new Card();
+			playerCards[0].numberCode = SocketUtils.receiveInt(in);
+			playerCards[0].suitCode = SocketUtils.receiveInt(in);
+			System.out.printf("Card1 %s received \n", translateCardCode(playerCards[0].numberCode, playerCards[0].suitCode));
 
 			// Recibir segunda carta
-			cardValues[1] = SocketUtils.receiveInt(in);
-			cardSuits[1] = SocketUtils.receiveInt(in);
-			System.out.printf("Card2 %s received\n", translateCardCode(cardValues[1], cardSuits[1]));
+			playerCards[1] = new Card();
+			playerCards[1].numberCode = SocketUtils.receiveInt(in);
+			playerCards[1].suitCode = SocketUtils.receiveInt(in);
+			System.out.printf("Card2 %s received\n", translateCardCode(playerCards[1].numberCode, playerCards[1].suitCode) );
 
 			// Jugar turno/esperar a turno
-			int turno1 = SocketUtils.receiveInt(in);
-			while(turno1 != GameType.TURN_PLAY){
-
-				if(turno1 == GameType.TURN_FORCED_SB){
-					int cantidadSB = SocketUtils.receiveInt(in);
-					System.out.printf("Forced play as the small blind with %d chips\n", cantidadSB);
-				}
-				else if(turno1 == GameType.TURN_FORCED_BB){
-					int cantidadBB = SocketUtils.receiveInt(in);
-					System.out.printf("Forced play as the big blind with %d chips\n", cantidadBB);
-				}
-				else if(turno1 == GameType.TURN_WAIT){
-					System.out.printf("Wait for the other players!\n");
-				}
-				else{
-					System.out.printf("Unknown turn code %d\n", turno1);
-				}
-
-				turno1 = SocketUtils.receiveInt(in);
-			}
+			boolean status = playRound(playerCards[0], playerCards[1], socket);
 			
-			System.out.printf("It's your turn to play!\n");
+			System.out.printf("Waiting card on the table\n");
 			while(true){}
 
 			/*
@@ -289,7 +296,14 @@ public class ClientMain extends Application {
 			*/
 		}
 		catch (IOException e) {
-			e.printStackTrace();
+			System.out.printf("Error: %s\n", e.getMessage());
+			try{
+				socket.close();
+				System.out.printf("Socket closed successfully\n");
+			}
+			catch(IOException exc){
+				System.out.printf("Error closing the socket: %s\n", exc.getMessage());
+			}
 		}
 	}
 
@@ -326,6 +340,19 @@ public class ClientMain extends Application {
 		String command = null;
 		while(command == null){
 			System.out.printf("Escriba \'start\' para comenzar la partida...\n > ");
+
+			if(AUTOMATED_MODE){
+				try {
+
+					final int seconds = 6;
+					System.out.printf("Waiting %d seconds for the other players...\n", seconds);
+					Thread.sleep(seconds * 1000); // Esperar a que se unan los demas jugadores
+				}
+				catch (InterruptedException e) {
+					e.printStackTrace();
+				}	
+			}
+
 			command = _scanner.next();
 			if(!command.equalsIgnoreCase("start")){
 				System.out.printf("Comando \'%s\' no valido!\n", command);
@@ -337,7 +364,88 @@ public class ClientMain extends Application {
 		}
 	}
 
+	// In-game logic
+	private static boolean playRound(final Card card1, final Card card2, Socket socket){
+		
+		boolean roundSuccess = true;	// Notify if the round was successful, no errors ocurred
+		try{
 
+			int turn = SocketUtils.receiveInt(socket.getInputStream());
+			while(turn != GameType.ROUND_END){
+
+				if(turn == GameType.TURN_FORCED_SB){
+					int cantidadSB = SocketUtils.receiveInt(socket.getInputStream());
+					System.out.printf("Forced play as the small blind with %d chips\n", cantidadSB);
+				}
+				else if(turn == GameType.TURN_FORCED_BB){
+					int cantidadBB = SocketUtils.receiveInt(socket.getInputStream());
+					System.out.printf("Forced play as the big blind with %d chips\n", cantidadBB);
+				}
+				else if(turn == GameType.TURN_WAIT){
+					System.out.printf("Wait for the other players!\n");
+				}
+				else if(turn ==  GameType.TURN_PLAY){
+
+					System.out.printf("It's your turn to play!\n");
+
+					boolean valid = false;
+					while(!valid){
+
+						String command = getUserCommand();
+						valid = true;
+						if(command.equalsIgnoreCase("raise") || command.equalsIgnoreCase("r")){
+							System.out.printf("Enter the quantity to raise: ");
+							int quantity = _scanner.nextInt();
+							
+							SocketUtils.sendInteger(socket.getOutputStream(), GameType.RAISE_ACTION);
+							SocketUtils.sendInteger(socket.getOutputStream(), quantity);
+						}
+						else if(command.equalsIgnoreCase("fold") || command.equalsIgnoreCase("f")){
+							SocketUtils.sendInteger(socket.getOutputStream(), GameType.FOLD_ACTION);
+						}
+						else if(command.equalsIgnoreCase("check") || command.equalsIgnoreCase("k")){
+							SocketUtils.sendInteger(socket.getOutputStream(), GameType.CHECK_ACTION);
+						}
+						else if(command.equalsIgnoreCase("call") || command.equalsIgnoreCase("c")){
+							SocketUtils.sendInteger(socket.getOutputStream(), GameType.CALL_ACTION);
+						}
+						else if(command.equalsIgnoreCase("all in") || command.equalsIgnoreCase("a")){
+							SocketUtils.sendInteger(socket.getOutputStream(), GameType.ALL_IN_ACTION);
+						}
+						else{
+							System.out.printf("Command %s not valid!\n", command);
+							valid = false;
+						}
+					}
+					
+				}
+				else{
+					System.out.printf("Unknown turn code %d\n", turn);
+				}
+
+				turn = SocketUtils.receiveInt(socket.getInputStream());
+			}
+
+			System.out.printf("Round has ended!\n");
+		}
+		catch(IOException e){
+
+			System.out.printf("Error: %s\n", e.getMessage());
+			try{
+				socket.close();
+				System.out.printf("Socket closed successfully\n");
+				roundSuccess = false;
+			}
+			catch(IOException exc){
+				System.out.printf("Error closing the socket: %s\n", exc.getMessage());
+				roundSuccess = false;
+			}
+		}
+		
+		return roundSuccess;
+	}
+
+	// Auxiliar methods
 	private static int getUserPetition(){
 
 		// Wait for clients petition
@@ -380,6 +488,22 @@ public class ClientMain extends Application {
 							(suit == GameType.SPADES) ? '\u2660' : 'x';
 
 		return String.format("[%s%c]", valueString, suitChar);
+	}
+
+	private static String getUserCommand(){
+
+		System.out.printf("Write your action: \n");
+		System.out.printf("1- FOLD(f)\n");
+		System.out.printf("2- CHECK(k)\n");
+		System.out.printf("3- CALL(c)\n");
+		System.out.printf("4- ALL IN(a)\n");
+		System.out.printf("5- RAISE(r) <quantity>\n");
+		System.out.printf("> ");
+
+		String command = _scanner.nextLine();
+		System.out.printf("\n");
+		
+		return command;
 	}
 
     @Override

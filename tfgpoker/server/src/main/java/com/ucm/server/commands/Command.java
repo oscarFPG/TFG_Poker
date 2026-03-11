@@ -86,13 +86,13 @@ public abstract class Command {
      * @param p
      * @return
      */
-    public static Command parseCommand(String[] input, Player p) {
+    public static Command parseCommand(final int commandNetworkCode, Player p) {
 
         for (Command command : AVAILABLE_COMMANDS) {
             // Must be called in this particular order
-            if (command.matchCommand(input[0]) && command.checkAttributes(input)) { 
+            if (command.matchCommand(commandNetworkCode)) { 
                 log.debug("Command selected by player {}: {}", p.getName(), command.getCommandName());
-                return command.create(input, p);
+                return command;
             }
         }
 
@@ -130,9 +130,8 @@ public abstract class Command {
      * @return true if the input command matches the specific command, false
      *         otherwise.
      */
-    public final boolean matchCommand(String command) {
-        return command.equalsIgnoreCase(getCommandText()) ||
-                command.equalsIgnoreCase(getCommandTextShotcut());
+    public final boolean matchCommand(final int code) {
+        return this.getCommandNetworkCode() == code;
     }
 
     /**
@@ -185,17 +184,5 @@ public abstract class Command {
     public abstract boolean checkAttributes(String[] fullCommand);
 
     protected abstract int getCommandNetworkCode();
-
-    /**
-     * Method that creates a new instance of the specific command based on the input
-     * command and the player.
-     * 
-     * @param fullCommand the input command array containing the command and its
-     *                    attributes.
-     * @param p           the player associated with the command.
-     * @return a new instance of the specific command if the input command is valid,
-     *         null otherwise.
-     */
-    public abstract Command create(String[] fullCommand, Player p);
 
 }

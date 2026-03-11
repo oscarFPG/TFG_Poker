@@ -75,33 +75,33 @@ public class PlayerList {
 
         if (n == 2) {
             _current._player.assignRole(PlayerRole.SMALL_BLIND);
-            _current._player.onReceiveRole(PlayerRole.SMALL_BLIND);
+            _current._player.onSendRole(PlayerRole.SMALL_BLIND);
             log.debug("Player {} receives role {}", _current._player.getName(), PlayerRole.SMALL_BLIND.name());
 
             _current = getNextPlayerActive(_current);
             _current._player.assignRole(PlayerRole.BIG_BLIND);
-            _current._player.onReceiveRole(PlayerRole.BIG_BLIND);
+            _current._player.onSendRole(PlayerRole.BIG_BLIND);
             log.debug("Player {} receives role {}", _current._player.getName(), PlayerRole.BIG_BLIND.name());
         }
         else {
             _current._player.assignRole(PlayerRole.DEALER);
-            _current._player.onReceiveRole(PlayerRole.DEALER);
+            _current._player.onSendRole(PlayerRole.DEALER);
             log.debug("Player {} receives role {}", _current._player.getName(), PlayerRole.DEALER.name());
 
             _current = getNextPlayerActive(_current);
             _current._player.assignRole(PlayerRole.SMALL_BLIND);
-            _current._player.onReceiveRole(PlayerRole.SMALL_BLIND);
+            _current._player.onSendRole(PlayerRole.SMALL_BLIND);
             log.debug("Player {} receives role {}", _current._player.getName(), PlayerRole.SMALL_BLIND.name());
 
             _current = getNextPlayerActive(_current);
             _current._player.assignRole(PlayerRole.BIG_BLIND);
-            _current._player.onReceiveRole(PlayerRole.BIG_BLIND);
+            _current._player.onSendRole(PlayerRole.BIG_BLIND);
             log.debug("Player {} receives role {}", _current._player.getName(), PlayerRole.BIG_BLIND.name());
 
             _current = getNextPlayerActive(_current);
             while (_current != _first) {
                 _current._player.assignRole(PlayerRole.NO_ROLE);
-                _current._player.onReceiveRole(PlayerRole.NO_ROLE);
+                _current._player.onSendRole(PlayerRole.NO_ROLE);
                 _current = getNextPlayerActive(_current);
                 log.debug("Player {} receives role {}", _current._player.getName(), PlayerRole.NO_ROLE.name());
             }
@@ -165,11 +165,12 @@ public class PlayerList {
             Player playerOnTurn = pNode._player;
             Node iNode = (_first._player != playerOnTurn) ? _first : _first._next;
             while (iNode._player != playerOnTurn) {
-                iNode._player.onReceiveTurnWait();
+                iNode._player.onSendTurnWait();
                 iNode = iNode._next;
             }
 
-            Command command = playerOnTurn.onReceiveTurnPlay(maxBet);
+            // Wait for an action by the player to execute
+            Command command = playerOnTurn.onSendTurnPlay(maxBet);
             command.receiveCurrentBet(maxBet);
             CommandResult result = command.execute(sb, bb, maxBet);
 
@@ -189,6 +190,15 @@ public class PlayerList {
             pNode = getNextPlayerActive(pNode);
             log.debug("Next player to play is {}", pNode._player.getName());
         }
+
+        // Notify all players that the betting round has ended
+        _first._player.onSendRoundEnded();
+        Node iNode = _first._next;
+        while (iNode._player != _first._player) {
+            iNode._player.onSendRoundEnded();
+            iNode = iNode._next;
+        }
+
     }
 
     public int collectAllBets() {
@@ -213,7 +223,9 @@ public class PlayerList {
 
         if (_first._player.getNumCards() == 0) {
             _first._player.receiveCard(c1);
+            _first._player.onSendCard(c1);
             _first._player.receiveCard(c2);
+            _first._player.onSendCard(c2);
             return;
         }
 
@@ -222,7 +234,9 @@ public class PlayerList {
 
             if (index._player.getNumCards() == 0) {
                 index._player.receiveCard(c1);
+                index._player.onSendCard(c1);
                 index._player.receiveCard(c2);
+                index._player.onSendCard(c2);
                 break;
             }
 
@@ -297,11 +311,11 @@ public class PlayerList {
         // 2. Next player from first if there is more than two players -> playsToMake > 1
         Node pNode = (playsToMake == 1) ? _first : _first._next;
         pNode._player.makeForcedBet(sb, bb); // Small-blind
-        pNode._player.onForcedMove(PlayerRole.SMALL_BLIND, sb, bb);
+        pNode._player.onSendForcedMove(PlayerRole.SMALL_BLIND, sb, bb);
 
         pNode = pNode._next;
         pNode._player.makeForcedBet(sb, bb); // Big-blind
-        pNode._player.onForcedMove(PlayerRole.BIG_BLIND, sb, bb);
+        pNode._player.onSendForcedMove(PlayerRole.BIG_BLIND, sb, bb);
 
         return pNode._next;
     }

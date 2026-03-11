@@ -105,12 +105,6 @@ public class RaiseCommand extends Command {
     }
 
     @Override
-    public Command create(String[] fullCommand, Player p) {
-        int bet = Integer.parseInt(fullCommand[1]);
-        return new RaiseCommand(p, bet, p.getMoney(), p.getPocketMoney());
-    }
-
-    @Override
     protected int getCommandNetworkCode() {
         return GameType.RAISE_ACTION;
     }

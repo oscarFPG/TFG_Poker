@@ -81,14 +81,6 @@ public class AllInCommand extends Command {
         return fullCommand.length == 1;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Command create(String[] fullCommand, Player p) {
-        return new AllInCommand(p, p.getMoney(), p.getPocketMoney());
-    }
-
     @Override
     protected int getCommandNetworkCode() {
        return GameType.ALL_IN_ACTION; 

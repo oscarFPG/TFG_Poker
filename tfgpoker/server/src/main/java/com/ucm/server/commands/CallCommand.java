@@ -96,14 +96,6 @@ public class CallCommand extends Command {
         return fullCommand.length == 1;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Command create(String[] fullCommand, Player p) {
-        return new CallCommand(p, p.getMoney(), p.getPocketMoney());
-    }
-
     @Override
     protected int getCommandNetworkCode() {
         return GameType.CALL_ACTION;

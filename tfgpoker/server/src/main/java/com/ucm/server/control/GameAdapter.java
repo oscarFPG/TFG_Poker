@@ -109,7 +109,7 @@ public class GameAdapter {
         }
     }
 
-    // Player turns
+    // Player turns and game states
     public static int playerTurnPlayToCode(){
         return GameType.TURN_PLAY;
     }
@@ -122,7 +122,16 @@ public class GameAdapter {
     public static int playerTurnForcedBBToCode(){
         return GameType.TURN_FORCED_BB;
     }
-    
+    public static int gameRoundEnded(){
+        return GameType.ROUND_END;
+    }
+    public static int gameHandEnded(){
+        return GameType.HAND_END;
+    }
+    public static int gameGameEnded(){
+        return GameType.GAME_END;
+    }
+
     // Commands
     public static int commandFoldToCode(){
         return GameType.FOLD_ACTION;

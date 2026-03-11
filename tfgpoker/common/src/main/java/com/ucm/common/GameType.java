@@ -56,11 +56,14 @@ public class GameType {
     public static final int NUMBER_Q = 121;
     public static final int NUMBER_K = 122;
 
-    // Player turns
+    // Turns and game states
     public static final int TURN_PLAY = 200;
     public static final int TURN_FORCED_SB = 201;
     public static final int TURN_FORCED_BB = 202;
     public static final int TURN_WAIT = 203;
+    public static final int ROUND_END = 204;
+    public static final int HAND_END = 205;
+    public static final int GAME_END = 206;
 
     // Player actions
     public static final int FOLD_ACTION = 300;
@@ -68,8 +71,6 @@ public class GameType {
     public static final int ALL_IN_ACTION = 302;
     public static final int CALL_ACTION = 303;
     public static final int RAISE_ACTION = 304;
-
-    
 
     /*
     // ES PREFLOP

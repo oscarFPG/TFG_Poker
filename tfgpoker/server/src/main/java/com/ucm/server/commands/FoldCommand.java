@@ -75,11 +75,6 @@ public class FoldCommand extends Command {
     }
 
     @Override
-    public Command create(String[] fullCommand, Player p) {
-        return new FoldCommand(p);
-    }
-
-    @Override
     protected int getCommandNetworkCode() {
         return GameType.FOLD_ACTION;
     }
