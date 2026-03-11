@@ -167,7 +167,7 @@
 
 /**
  * ARROWS
- */
+
 
 .arrow-back-button {
     -fx-shape: "M 25 19 L 13 29 L 25 39 L 20 45 L 0 29 L 19 13 Z";
@@ -243,12 +243,13 @@
     -fx-shape: "M50,0 A50,50 0 1,1 49.99,0 Z";
     -fx-border-width: 3;
 }
+     */
 
 /*FLECHAS ------------------------------------------------------ */
 
 .arrow-colors{
     -fx-background-color:radial-gradient(
-        center 50% 50%, radius 50%, 
+        center 50% 50%, radius 70%, 
         repeat, 
         #66287a 0%, 
         #692f79 25.8%, 
@@ -309,7 +310,23 @@
 
 .container-colors {
     -fx-background-color: #1b0359;
-    -fx-border-color: #ffffff;  
+   -fx-border-color: linear-gradient(to top,
+    #DC8CFE 0%,
+    #FFF8FF 50%,
+    #FFF8FF 50%,
+    #DC8CFE 100%);
+   -fx-border-width: 2; 
+}
+
+
+.container-softer-colors {
+    -fx-background-color: #480b77;
+   -fx-border-color: linear-gradient(to top,
+    #DC8CFE 0%,
+    #FFF8FF 50%,
+    #FFF8FF 50%,
+    #DC8CFE 100%);
+   -fx-border-width: 2; 
 }
 
 .container-gradiant-colors {
@@ -324,27 +341,66 @@
         #201f4f 100%
     );
     
-    -fx-border-color: #f8f6f8 ;
+    -fx-border-color: linear-gradient(to top,
+    #DC8CFE 0%,
+    #FFF8FF 50%,
+    #FFF8FF 50%,
+    #DC8CFE 100%);
+
     -fx-background-insets: 0;
-    -fx-border-width: 3; 
+    -fx-border-width: 2; 
 }
 
+.container-light-gradiant-colors {
+    -fx-background-color:radial-gradient(
+        center 50% 50%, radius 60%, 
+        repeat, 
+        #a0378e 0%, 
+        #983c93 25.8%, 
+        #843c98 74.5%, 
+        #50046e 94.8%, 
+        
+    );
+    
+    -fx-border-color: linear-gradient(to top,
+    #DC8CFE 0%,
+    #FFF8FF 50%,
+    #FFF8FF 50%,
+    #DC8CFE 100%);
+
+
+    -fx-background-insets: 0;
+    -fx-border-width: 2; 
+}
+
+
 /*contenedores cuadrados*/
+.square-pane {
+    -fx-padding: 10; 
+}
+
+ /*contenedores ovalados*/
 .oval-pane {
     -fx-background-radius: 50; 
     -fx-border-radius: 50;       
     -fx-padding: 10; 
 }    
 
-
- /*contenedores ovalados*/
-.square-pane {
+/*contenedores semi ovalados*/
+.semi-oval-pane {
+    -fx-background-radius: 10; 
+   -fx-border-radius: 10;    
     -fx-padding: 10; 
 }
-
 /*contenedores ciruclares*/
 .round-pane{
     -fx-shape: "M50,0 A50,50 0 1,1 49.99,0 Z";
+}
+
+/*contenedores para texto que introduce el usuario sin borde*/
+.text-container{
+   -fx-border-width: 0; 
+    -fx-background-color: #6c27a0;
 }
 
 /*ICONOS GENERALES ------------------------------------------------------ */
