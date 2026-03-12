@@ -302,7 +302,7 @@
          <Button layoutX="342.0" layoutY="46.0" onAction="#restar" prefHeight="62.0" prefWidth="67.0" text="MIN" textAlignment="CENTER" textFill="WHITE" wrapText="true">
             <styleClass>
                <String fx:value="semi-oval-pane" />
-               <String fx:value="slider-gradiant-colors" />
+               <String fx:value="slider-colors" />
             </styleClass>
             <font>
                <Font name="System Bold" size="13.0" />
@@ -311,7 +311,7 @@
          <Button layoutY="46.0" onAction="#restar" prefHeight="50.0" prefWidth="288.0" text="PREFLOP" textAlignment="CENTER" textFill="WHITE" wrapText="true">
             <styleClass>
                <String fx:value="parallelogram-pane" />
-               <String fx:value="slider-gradiant-colors" />
+               <String fx:value="slider-colors" />
             </styleClass>
             <font>
                <Font name="System Bold" size="20.0" />
@@ -320,7 +320,7 @@
             <Button layoutX="424.0" layoutY="46.0" onAction="#restar" prefHeight="62.0" prefWidth="81.0" text="1/2 POT" textAlignment="CENTER" textFill="WHITE">
                <styleClass>
                   <String fx:value="semi-oval-pane" />
-                  <String fx:value="slider-gradiant-colors" />
+                  <String fx:value="slider-colors" />
                </styleClass>
                <font>
                   <Font name="System Bold" size="13.0" />
@@ -329,7 +329,7 @@
             <Button layoutX="517.0" layoutY="46.0" onAction="#restar" prefHeight="62.0" prefWidth="67.0" text="MAX" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                <styleClass>
                   <String fx:value="semi-oval-pane" />
-                  <String fx:value="slider-gradiant-colors" />
+                  <String fx:value="slider-colors" />
                </styleClass>
                <font>
                   <Font name="System Bold" size="13.0" />
