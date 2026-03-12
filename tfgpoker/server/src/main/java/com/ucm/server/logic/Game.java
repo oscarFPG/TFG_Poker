@@ -177,8 +177,12 @@ public class Game {
         }
 
         int rewardPerPlayer = _totalPot / winners.size();
-        for(Player p : winners)
+        for(Player p : winners){
             p.receivePriceMoney(rewardPerPlayer);
+            p.playerWinsHand();
+        }
+
+        _playerList.notifyRankingsToAllPlayers();
 
         _totalPot = 0;
     }

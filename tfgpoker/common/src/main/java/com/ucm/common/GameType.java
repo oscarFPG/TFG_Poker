@@ -67,13 +67,15 @@ public class GameType {
     public static final int GAME_ENDS = 303;
     public static final int ROUND_ENDS = 304;
     public static final int HAND_ENDS = 305;
-    
+    public static final int PLAYER_WINS = 320;
+    public static final int PLAYER_LOSES = 330;
+
     // Player actions
-    public static final int FOLD_ACTION = 300;
-    public static final int CHECK_ACTION = 301;
-    public static final int ALL_IN_ACTION = 302;
-    public static final int CALL_ACTION = 303;
-    public static final int RAISE_ACTION = 304;
+    public static final int FOLD_ACTION = 400;
+    public static final int CHECK_ACTION = 401;
+    public static final int ALL_IN_ACTION = 402;
+    public static final int CALL_ACTION = 403;
+    public static final int RAISE_ACTION = 404;
 
     /*
     // ES PREFLOP

@@ -212,7 +212,7 @@ public class PlayerList {
             Player playerOnTurn = pNode._player;
             Node iNode = (_first._player != playerOnTurn) ? _first : _first._next;
             while (iNode._player != playerOnTurn) {
-                iNode._player.onSendTurnWait();
+                iNode._player.notifyTurnWait();
                 iNode = iNode._next;
             }
 
@@ -222,7 +222,8 @@ public class PlayerList {
                 Command command = null;
                 boolean valid = false;
                 while(valid == false){
-                    command = playerOnTurn.onSendTurnPlay(maxBet);
+                    playerOnTurn.notifyTurnPlay();
+                    command = playerOnTurn.askPlayerAction(sb, bb, maxBet);
                     command.requireParameters(playerOnTurn.getSocket().getInputStream());
                     valid = command.validate(playerOnTurn.getPocketMoney(), playerOnTurn.getMoney(), maxBet);
                 }
@@ -251,10 +252,10 @@ public class PlayerList {
         }
 
         // Notify all players that the betting round has ended
-        _first._player.onSendRoundEnded();
+        _first._player.notifyRoundEnded();
         Node iNode = _first._next;
         while (iNode != _first) {
-            iNode._player.onSendRoundEnded();
+            iNode._player.notifyRoundEnded();
             iNode = iNode._next;
         }
 
@@ -283,6 +284,30 @@ public class PlayerList {
         }
 
         return totalPot;
+    }
+
+    public void notifyRankingsToAllPlayers(){
+
+        Node i = _first;
+        if(i._player.isWinner())
+            i._player.notifyHandWin();
+        else
+            i._player.notifyHandLose();
+
+        i._player.onSendNewMoney( i._player.getMoney() );
+        i = i._next;
+
+        while(i != _first) {
+
+            if(i._player.isWinner())
+                i._player.notifyHandWin();
+            else
+                i._player.notifyHandLose();
+
+            i._player.onSendNewMoney( i._player.getMoney() );
+            i = i._next;
+        }
+
     }
 
     public void passTurn() {

@@ -3,3 +3,7 @@ P1
 1
 start
 c
+k
+c
+k
+k

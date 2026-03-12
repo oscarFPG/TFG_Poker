@@ -61,12 +61,12 @@ public class Controller {
 
         ThreadContext.put("match", "0");
         ThreadContext.put("hand", String.valueOf(handCounter));
-        log.info("Starting a new game!");
+        log.debug("Starting a new game!");
 
         _game.assignRolesToAllPlayers();
         while (!_game.isGameFinished()) {
 
-            log.info("Starting {} hand!", handCounter);
+            log.debug("Starting {} hand!", handCounter);
             try {
                 
                 // Pre-flop (2)
@@ -93,11 +93,12 @@ public class Controller {
             catch (OnlyOnePlayerLeftException e) {
                 _game.giveRewardToWinner();
             }
+
             _game.restartRound();
             _game.passTurn();
 
             // Logger configuration for the next hand -> Write on file match{0}_hand{handCounter}.log
-            log.info("Finishing {} hand!", handCounter);
+            log.debug("Finishing {} hand!", handCounter);
             ++handCounter;
             ThreadContext.put("hand", String.valueOf(handCounter));
         }

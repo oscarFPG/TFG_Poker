@@ -44,6 +44,7 @@ public class ClientMain extends Application {
 	public static boolean AUTOMATED_MODE = false;
     private static String hostname = "localhost";
     private static String _name;
+	private static int _money = 1000;
 	private static boolean _gameStarts;
 	private static Scanner _scanner;
 
@@ -270,16 +271,27 @@ public class ClientMain extends Application {
 			// Flop
 			status = playRound(playerCards[0], playerCards[1], socket);
 			tableCardValues[3] = receiveCard(in);
+			showTableCards(tableCardValues);
 
 			// Turn
 			status = playRound(playerCards[0], playerCards[1], socket);
 			tableCardValues[4] = receiveCard(in);
+			showTableCards(tableCardValues);
 
 			// River
 			status = playRound(playerCards[0], playerCards[1], socket);
+			showTableCards(tableCardValues);
 
 			// Showdown
-			int showdown = SocketUtils.receiveInt(in);
+			int rankingCode = SocketUtils.receiveInt(in);
+			_money = SocketUtils.receiveInt(in);
+			if(rankingCode == GameType.PLAYER_WINS){
+				System.out.printf("You have won! Current money is %d\n", _money);
+			}
+			else if(rankingCode == GameType.PLAYER_LOSES){
+				System.out.printf("You have lost! Current money is %d\n", _money);
+			}
+
 
 		}
 		catch (IOException e) {
@@ -332,8 +344,10 @@ public class ClientMain extends Application {
 				try {
 
 					final int seconds = 6;
-					System.out.printf("Waiting %d seconds for the other players...\n", seconds);
-					Thread.sleep(seconds * 1000); // Esperar a que se unan los demas jugadores
+					for(int i = 0; i < seconds; i++){
+						System.out.printf("Waiting %d seconds for the other players...\n", seconds - i);
+						Thread.sleep(1000); // Esperar a que se unan los demas jugadores
+					}
 				}
 				catch (InterruptedException e) {
 					e.printStackTrace();
@@ -365,7 +379,7 @@ public class ClientMain extends Application {
 		System.out.printf("Round has started!\n");
 
 		boolean roundSuccess = true;
-		int sb, bb, maxBet;
+		int sb, bb, maxBet, myBet = 0;
 		int turn = SocketUtils.receiveInt(socket.getInputStream());
 		while(turn != GameType.ROUND_ENDS){
 
@@ -384,16 +398,27 @@ public class ClientMain extends Application {
 
 				System.out.printf("It's your turn to play!\n");
 
+				// Receive round info
+				sb = SocketUtils.receiveInt(socket.getInputStream());
+				bb = SocketUtils.receiveInt(socket.getInputStream());
+				maxBet = SocketUtils.receiveInt(socket.getInputStream());
+				System.out.printf("-- Small blind bet: %d\n", sb);
+				System.out.printf("-- Big blind bet: %d\n", bb);
+				System.out.printf("-- Max bet: %d\n", maxBet);
+				System.out.printf("-- Your bet: %d\n\n", myBet);
+
 				boolean valid = false;
 				while(!valid){
 
 					String command = getUserCommand();
 					valid = true;
 					if(command.equalsIgnoreCase("raise") || command.equalsIgnoreCase("r")){
+						
 						SocketUtils.sendInteger(socket.getOutputStream(), GameType.RAISE_ACTION);
 
 						System.out.printf("Enter the quantity to raise: ");
 						int quantity = _scanner.nextInt();
+						myBet += quantity;
 						SocketUtils.sendInteger(socket.getOutputStream(), quantity);
 					}
 					else if(command.equalsIgnoreCase("fold") || command.equalsIgnoreCase("f")){
@@ -421,7 +446,7 @@ public class ClientMain extends Application {
 
 			turn = SocketUtils.receiveInt(socket.getInputStream());
 		}
-		System.out.printf("Round has ended!\n");
+		System.out.printf("Round has ended!\n\n");
 		
 		return roundSuccess;
 	}
@@ -458,7 +483,7 @@ public class ClientMain extends Application {
 								(value == GameType.NUMBER_SEVEN) ? "7" :
 								(value == GameType.NUMBER_EIGHT) ? "8" :
 								(value == GameType.NUMBER_NINE) ? "9" :
-								(value == GameType.NUMBER_TEN) ? "10" :
+								(value == GameType.NUMBER_TEN) ? "T" :
 								(value == GameType.NUMBER_J) ? "J" :
 								(value == GameType.NUMBER_Q) ? "Q" :
 								(value == GameType.NUMBER_K) ? "K" : "?";
@@ -489,9 +514,9 @@ public class ClientMain extends Application {
 
 		for(Card c : tableCards){
 			if(c != null)
-				System.out.printf("[%d%d] ", c.numberCode, c.suitCode);
+				System.out.printf( translateCardCode(c.numberCode, c.suitCode) );
 			else
-				System.out.printf("[xx] ");
+				System.out.printf("[xx]");
 		}
 		System.out.printf("\n");
 

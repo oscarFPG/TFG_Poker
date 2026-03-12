@@ -3,7 +3,6 @@ package com.ucm.server.gameobjects;
 import com.ucm.common.SocketUtils;
 import com.ucm.server.commands.Command;
 import com.ucm.server.control.GameAdapter;
-import com.ucm.server.interfaces.IPlayer;
 import com.ucm.server.logic.Game;
 
 import java.io.IOException;
@@ -17,7 +16,7 @@ import org.apache.logging.log4j.Logger;
  * player or and AI player.
  * It works as a representation of the player entity in the server side.
  */
-public class Player implements IPlayer {
+public class Player {
 
     private static final Logger log = LogManager.getLogger(Player.class);
 
@@ -75,7 +74,7 @@ public class Player implements IPlayer {
     /**
      * Indicates whether the player has lost the game.
      */
-    private boolean _hasLost;
+    private boolean _isWinner;
 
     /**
      * Socket used for communication with the player.
@@ -102,7 +101,7 @@ public class Player implements IPlayer {
         _cards = new Card[2];
         _numCards = 0;
         _fold = false;
-        _hasLost = false;
+        _isWinner = false;
     }
 
     /**
@@ -353,12 +352,17 @@ public class Player implements IPlayer {
     }
 
     /**
-     * Sets a value to the {@link #_hasLost} member variable
-     * 
-     * @param lost new value
+     * Marks the player as the winner of a hand
      */
-    public void setHasLost(boolean lost) {
-        _hasLost = lost;
+    public void playerWinsHand() {
+        _isWinner = true;
+    }
+
+    /**
+     * Marks the player as the loser of a hand
+     */
+    public void playerLosesHand(){
+        _isWinner = false;
     }
 
     /**
@@ -439,11 +443,10 @@ public class Player implements IPlayer {
         return _fold;
     }
 
-    public boolean hasLost() {
-        return _hasLost;
+    public boolean isWinner(){
+        return _isWinner;
     }
 
-    @Override
     public void onSendRole(PlayerRole r) {
 
         if (Game.DEBUG) {
@@ -452,15 +455,13 @@ public class Player implements IPlayer {
 
         try {
 
-            int role = GameAdapter.playerRoleToCode(r);
-            SocketUtils.sendInteger(_socket.getOutputStream(), role);
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerRoleToCode(r));
         }
         catch (IOException e) {
             log.error("Receiving the role for {} player: {}", _name, e.getMessage());
         }
     }
 
-    @Override
     public void onSendCard(Card c) {
 
         if (Game.DEBUG) {
@@ -469,29 +470,32 @@ public class Player implements IPlayer {
 
         try {
 
-            int value = GameAdapter.cardValueToCode(c);
-            int suit = GameAdapter.cardSuitToCode(c);
-            SocketUtils.sendInteger(_socket.getOutputStream(), value);
-            SocketUtils.sendInteger(_socket.getOutputStream(), suit);
-
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.cardValueToCode(c));
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.cardSuitToCode(c));
             log.debug("Player {} receives card {}", _name, c.toString());
         }
         catch (IOException e) {
-            log.error("Giving the card {} to player: {}", c.toString(), _name, e.getMessage());
+            log.error("Giving the card {} to player {}: {}", c.toString(), _name, e.getMessage());
         }
     }
 
-    @Override
     public void onSendTableCard(Card c) {
 
         if (Game.DEBUG) {
             return;
         }
 
-        throw new UnsupportedOperationException("Unimplemented method 'onSendTableCard'");
+        try{
+
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.cardValueToCode(c));
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.cardSuitToCode(c));
+            log.debug("Table card {}", c.toString());
+        }
+        catch(IOException e){
+            log.error("Trying to send a table card to {}: {}", _name,  e.getMessage());
+        }
     }
 
-    @Override
     public void onSendForcedMove(PlayerRole myRole, int sb, int bb) {
         
         try{
@@ -510,18 +514,28 @@ public class Player implements IPlayer {
         }
     }
 
-    @Override
-    public Command onSendTurnPlay(final int maxBet) {
+    public void onSendNewMoney(final int money){
 
-        if (Game.DEBUG) {
-            return null;
+        try{
+
+            SocketUtils.sendInteger(_socket.getOutputStream(), money);
+            log.debug("Players {} new money is {}", _name, money);
         }
+        catch (IOException e) {
+            log.error("Trying to force a move on the player {}: {}", _name, e.getMessage());
+        }
+    }
+
+    public Command askPlayerAction(final int sb, final int bb, final int maxBet){
 
         Command command = null;
         try{
 
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnPlayToCode());
-            log.debug("Player {} has to play his turn!", _name);
+            // Send round info
+            SocketUtils.sendInteger(_socket.getOutputStream(), sb);
+            SocketUtils.sendInteger(_socket.getOutputStream(), bb);
+            SocketUtils.sendInteger(_socket.getOutputStream(), maxBet);
+            log.debug("Round info sent to {}", _name);
 
             int commandCode = SocketUtils.receiveInt(_socket.getInputStream());
             command = Command.parseCommand(commandCode, this);
@@ -534,8 +548,23 @@ public class Player implements IPlayer {
         return command;
     }
 
-    @Override
-    public void onSendTurnWait() {
+    public void notifyTurnPlay() {
+
+        if (Game.DEBUG) {
+            return ;
+        }
+
+        try {
+
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnPlayToCode());
+            log.debug("Player {} has to play his turn!", _name);
+        }
+        catch (IOException e) {
+            log.error("Receiving the command for {} player: {}", _name, e.getMessage());
+        }
+    }
+
+    public void notifyTurnWait() {
 
         if (Game.DEBUG) {
             return;
@@ -550,8 +579,7 @@ public class Player implements IPlayer {
         }
     }
 
-    @Override
-    public void onSendRoundEnded() {
+    public void notifyRoundEnded() {
         
         if (Game.DEBUG) {
             return;
@@ -566,11 +594,34 @@ public class Player implements IPlayer {
         }
     }
 
-    @Override
-    public void onSendHandEnded() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onSendHandEnded'");
+    public void notifyHandWin(){
+
+        if (Game.DEBUG) {
+            return;
+        }
+
+        try{
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerWins());
+            log.debug("Player {} won the hand", _name);
+        }
+        catch (IOException e) {
+            log.error("Notifing ROUND_ENDS to player {}: {}", _name, e.getMessage());
+        }
     }
 
+    public void notifyHandLose(){
+
+        if (Game.DEBUG) {
+            return;
+        }
+
+        try{
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerLoses());
+            log.debug("Player {} lost the hand", _name);
+        }
+        catch (IOException e) {
+            log.error("Notifing ROUND_ENDS to player {}: {}", _name, e.getMessage());
+        }
+    }
 
 }

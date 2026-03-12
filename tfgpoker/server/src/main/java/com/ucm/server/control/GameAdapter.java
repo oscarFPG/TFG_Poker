@@ -131,6 +131,12 @@ public class GameAdapter {
     public static int gameGameEnded(){
         return GameType.GAME_ENDS;
     }
+    public static int playerWins(){
+        return GameType.PLAYER_WINS;
+    }
+    public static int playerLoses(){
+        return GameType.PLAYER_LOSES;
+    }
 
     // Commands
     public static int commandFoldToCode(){
