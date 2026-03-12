@@ -101,7 +101,7 @@
 
          <StackPane id="squareContainer" layoutX="692.0" layoutY="732.0" prefHeight="100" prefWidth="200">
             <styleClass>
-               <String fx:value="square-pane" />
+               <String fx:value="round-pane" />
                <String fx:value="container-gradiant-colors" />
             </styleClass>
          </StackPane>
@@ -217,6 +217,33 @@
             </ImageView>
          </graphic>
       </Button>
+ 
+      
+      <!-- ICONO DADOS -->
+      <Button id="configurationIcon" layoutX="85.0" layoutY="862.0" mnemonicParsing="false" prefHeight="69.0" prefWidth="51.0">
+      <styleClass>
+         <String fx:value="square-icon" />
+         <String fx:value="icon-colors" />
+      </styleClass>
+      <graphic>
+         <ImageView id="configurationIcon" fitHeight="58.0" fitWidth="67.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+               <Image url="@../images/iconoDadosEquity.png" />
+            </image>
+         </ImageView>
+      </graphic>
+      </Button>
+
+
+      <!-- BOT IMAGEN -->
+      <ImageView fitHeight="74.0" fitWidth="70.0" layoutX="314.0" layoutY="864.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/bot.png" />
+         </image>
+      </ImageView>
+
+
+
 
                
       <!--CAJAS DE TEXTOS -->
@@ -245,6 +272,9 @@
          </StackPane>
       </children>
    </AnchorPane>
+
+
+    <!--JUADORES BOARD DARK-->
    <AnchorPane id="playerContainer" layoutX="943.0" layoutY="806.0" prefHeight="78.0" prefWidth="227.0">
       <children>
          <StackPane fx:id="ovalContainer1" layoutX="18.0" layoutY="5.0" prefHeight="67.0" prefWidth="204.0">
@@ -261,10 +291,7 @@
          </StackPane>
       </children>
    </AnchorPane>
-
-
-
-
+   
   
 
 </Pane>
