@@ -312,6 +312,7 @@
             <styleClass>
                <String fx:value="parallelogram-pane" />
                <String fx:value="slider-colors" />
+                  <String fx:value="text-general-font" />
             </styleClass>
             <font>
                <Font name="System Bold" size="20.0" />

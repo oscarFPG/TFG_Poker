@@ -104,6 +104,13 @@
    -fx-font-size: 21px;
 }
 
+.text-general-font{
+    -fx-text-fill: white;
+   -fx-alignment: center;
+   -fx-font-family: "Constantia";
+  
+}
+
 /**
  * Estilo para los títulos de cada escena del juego
  */
