@@ -1,0 +1,142 @@
+package com.ucm.server.history;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+public class HistoryService {
+
+    private static final Logger logger = LogManager.getLogger("handhistory");
+
+   
+    /*HAEDER-------------------------------------------------------- */
+    public void handHeader(long handId,
+                           String smallBlind,
+                           String bigBlind,
+                           String date,
+                           String table,
+                           int buttonSeat) {
+
+        logger.info("PokerPro By VOC Hand #" + handId +
+                ": Hold'em No Limit ($" + smallBlind +
+                "/$" + bigBlind + " USD) - " + date);
+
+        logger.info("Table '" + table +
+                "' 6-max Seat #" + buttonSeat + " is the button");
+    }
+
+
+    public void seat(int seatNumber, String player, double chips) {
+
+        logger.info("Seat " + seatNumber + ": " + player +
+                " ($" + String.format("%.2f", chips) + " in chips)");
+    }
+
+
+    public void postSmallBlind(String player, double amount) {
+
+        logger.info(player + ": posts small blind $" +
+                String.format("%.2f", amount));
+    }
+
+    public void postBigBlind(String player, double amount) {
+
+        logger.info(player + ": posts big blind $" +
+                String.format("%.2f", amount));
+    }
+
+
+    public void holeCards() {
+
+        logger.info("");
+        logger.info("*** HOLE CARDS ***");
+    }
+
+    public void dealtTo(String player, String cards) {
+
+        logger.info("Dealt to " + player + " " + cards);
+    }
+
+
+    public void fold(String player) {
+
+        logger.info(player + ": folds");
+    }
+
+    public void check(String player) {
+
+        logger.info(player + ": checks");
+    }
+
+    public void call(String player, double amount) {
+
+        logger.info(player + ": calls $" +
+                String.format("%.2f", amount));
+    }
+
+    public void bet(String player, double amount) {
+
+        logger.info(player + ": bets $" +
+                String.format("%.2f", amount));
+    }
+
+    public void raise(String player, double raiseAmount, double total) {
+
+        logger.info(player + ": raises $" +
+                String.format("%.2f", raiseAmount) +
+                " to $" + String.format("%.2f", total));
+    }
+
+    public void allIn(String player, double amount) {
+
+        logger.info(player + ": bets $" +
+                String.format("%.2f", amount) + " and is all-in");
+    }
+
+    public void flop(String cards) {
+
+        logger.info("");
+        logger.info("*** FLOP *** " + cards);
+    }
+
+    public void turn(String board, String card) {
+
+        logger.info("");
+        logger.info("*** TURN *** " + board + " [" + card + "]");
+    }
+
+    public void river(String board, String card) {
+
+        logger.info("");
+        logger.info("*** RIVER *** " + board + " [" + card + "]");
+    }
+
+
+    public void uncalledBet(double amount, String player) {
+
+        logger.info("Uncalled bet ($" +
+                String.format("%.2f", amount) +
+                ") returned to " + player);
+    }
+
+    public void collected(String player, double amount) {
+
+        logger.info(player + " collected $" +
+                String.format("%.2f", amount) +
+                " from pot");
+    }
+
+    /* SUMMARY-------------------------------------------------------------- */
+    public void summary(double totalPot, double rake, String board) {
+
+        logger.info("");
+        logger.info("*** SUMMARY ***");
+
+        logger.info("Total pot $" +
+                String.format("%.2f", totalPot) +
+                " | Rake $" +
+                String.format("%.2f", rake));
+
+        logger.info("Board " + board);
+    }
+
+}

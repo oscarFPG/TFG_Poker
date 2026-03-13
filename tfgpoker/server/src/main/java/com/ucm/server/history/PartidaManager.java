@@ -1,4 +1,4 @@
-package com.ucm.server.seriezable;
+package com.ucm.server.history;
 
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;

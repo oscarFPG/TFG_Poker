@@ -32,6 +32,19 @@
                 </Route>
             </Routes>
         </Routing>
+
+        <Routing name="HandHistoryRouter">
+            <Routes pattern="${ctx:hand}">
+                <Route>
+                    <File name="HandHistory-${ctx:hand}"
+                        fileName="server/data/match_${ctx:match}/hand_${ctx:hand}.txt">
+
+                        <PatternLayout pattern="%msg%n"/>
+
+                    </File>
+                </Route>
+            </Routes>
+        </Routing>
     </Appenders>
 
     <Loggers>
@@ -39,6 +52,11 @@
             <AppenderRef ref="Console"/>
             <AppenderRef ref="FileRouter"/>
         </Root>
+
+        <Logger name="handhistory" level="info" additivity="false">
+            <AppenderRef ref="HandHistoryRouter"/>
+        </Logger>
+
     </Loggers>
 
 </Configuration>
