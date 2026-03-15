@@ -14,6 +14,7 @@ import com.ucm.server.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.server.gameobjects.Card;
 import com.ucm.server.gameobjects.Deck;
 import com.ucm.server.gameobjects.Player;
+import com.ucm.server.interfaces.IPokerPlayer;
 import com.ucm.server.middleclasses.HandInfo;
 
 
@@ -36,7 +37,7 @@ public class Game {
     private PlayerList _playerList;
     private Deck _deck;
     private Card[] _tableCards;
-    private int _actualTableCards;
+    private int _tableCardsCounter;
 
     private int _totalPot;
     private boolean _isPreflop;
@@ -55,7 +56,7 @@ public class Game {
         _playerList = new PlayerList(Game.NUM_MAX_PLAYERS);
         _deck = new Deck();
         _tableCards = new Card[MAX_CARDS_IN_TABLE];
-        _actualTableCards = 0;
+        _tableCardsCounter = 0;
 
         _totalPot = 0;
         _isPreflop = true;
@@ -74,9 +75,10 @@ public class Game {
         
     }
 
+
     public void addPlayer(Player p) {
 
-        log.debug("Intentando asignar jugador [{}]", p.getName());
+        log.debug("Intentando asignar jugador [{}]", p.getPlayerName());
         _playerList.addPlayer(p);
     }
 
@@ -96,14 +98,14 @@ public class Game {
 
     public void addCardToTable() {
 
-        if (_actualTableCards >= 5)
+        if (_tableCardsCounter >= 5)
             return;
 
 
         Card c = _deck.takeRandomCard();
         _playerList.sendTableCardToAllPlayers(c);
-        _tableCards[_actualTableCards] = c;
-        _actualTableCards++;
+        _tableCards[_tableCardsCounter] = c;
+        _tableCardsCounter++;
 
         StringBuilder sb = new StringBuilder();
         for(int i = 0; i < MAX_CARDS_IN_TABLE; i++){
@@ -117,18 +119,12 @@ public class Game {
 
     public void retrieveCardsFromTable() {
 
-        for (int i = 0; i < _actualTableCards; i++){
+        for (int i = 0; i < _tableCardsCounter; i++){
             _deck.retrieveCard( _tableCards[i] );
             _tableCards[i] = null;
         }
 
-        _actualTableCards = 0;
-    }
-
-    public void passTurn() {
-
-        log.debug("Pasando turno...");
-        _playerList.passTurn();
+        _tableCardsCounter = 0;
     }
 
     public void playHand() throws OnlyOnePlayerLeftException {
@@ -138,12 +134,13 @@ public class Game {
             log.debug("Playing hand number {}...", _handCounter);
             _playerList.playHand(_currentSB, _currentBB, _isPreflop);
         } 
-        catch (OnlyOnePlayerLeftException e) {  // Collect remaining bets only if the round ended because all players
-                                                // folded in their turn and there is only one left
+        // Collect remaining bets only if the round ended because all players folded
+        catch (OnlyOnePlayerLeftException e) {
             _isPreflop = false;
             _showdownSkipped = true;
             pot = _playerList.collectAllBets();
             _totalPot += pot;
+            ++_handCounter;
             throw e;
         }
         log.debug("Hand number {} finished!", _handCounter);
@@ -157,66 +154,49 @@ public class Game {
     public void giveRewardToWinner() {
 
         HandInfo[] playerHands = _playerList.getPlayerHandsInfo();
-        List<Player> winners = null;
+        List<IPokerPlayer> winners = null;
 
-        if(_showdownSkipped){
-            winners = new ArrayList<Player>();
+        if(_showdownSkipped) {
+            winners = new ArrayList<IPokerPlayer>();
             winners.add( playerHands[0].player() );
         }
-        else{
+        else {
             winners = Evaluator.evaluateAllHands(playerHands, _tableCards);
         }
 
         if (winners.size() == 1) {    
-            log.debug("{} ha ganado {}$!", winners.get(0).getName(), _totalPot);
+            log.debug("{} ha ganado {}$!", winners.get(0).getPlayerName(), _totalPot);
         }
         else {
             log.debug("Empate entre {} jugadores: ", winners.size());
-            for(Player p : winners)
-                log.debug("{} ", p.getName());
+            for(IPokerPlayer p : winners)
+                log.debug("{} ", p.getPlayerName());
         }
 
         int rewardPerPlayer = _totalPot / winners.size();
-        for(Player p : winners){
-            p.receivePriceMoney(rewardPerPlayer);
-            p.playerWinsHand();
+        for(IPokerPlayer p : winners) {
+            //p.receivePriceMoney(rewardPerPlayer);
+            //p.playerWinsHand();
         }
 
         _playerList.notifyRankingsToAllPlayers();
-
         _totalPot = 0;
     }
 
-    public void restartRound() {
+    public void passTurn() {
 
-        log.debug("------------------------ Reiniciando ronda... ------------------------");
-        
         retrieveCardsFromTable();
         _playerList.resetPlayers();
         _deck.resetDeck();
-
+        _playerList.passTurn();
         _isPreflop = true;
         _showdownSkipped = false;
+
+        log.debug("Pasando turno...");
     }
 
     public boolean isGameFinished() {
         return false;
-    }
-
-    public void showStateDEBUG() {
-
-        // Mostrar estado de los jugadores y sus cartas
-        _playerList.showPlayersStateDEBUG();
-
-        // Mostrar estado de las cartas de la mesa
-        for (int i = 0; i < _tableCards.length; i++) {
-
-            if (_tableCards[i] == null) {
-                log.debug(Card.FlippedDownCardToString());
-            } else {
-                log.debug(_tableCards[i].toString());
-            }
-        }
     }
 
 }

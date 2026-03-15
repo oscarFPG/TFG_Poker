@@ -1,9 +1,10 @@
 package com.ucm.server.commands;
 
 import com.ucm.server.gameobjects.Player;
+import com.ucm.server.interfaces.IPokerActions;
+import com.ucm.server.interfaces.IPokerPlayer;
 import com.ucm.server.middleclasses.CommandResult;
 
-import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -26,10 +27,10 @@ public abstract class Command {
 
     private static final Logger log = LogManager.getLogger(Command.class);
 
-    protected Player _player;
-    protected int _money;
-    protected int _pocketMoney;
-    protected int _currentBet;
+    protected IPokerActions _player;
+    protected int _playersOffBetMoney;
+    protected int _playersOnBetMoney;
+    protected int _currentHandBet;
 
     private static final List<Command> AVAILABLE_COMMANDS = Arrays.asList(
             new CallCommand(),
@@ -55,11 +56,11 @@ public abstract class Command {
      * @param pocketMoney the amount of money that the player has already bet in the
      *                    current hand.
      */
-    public Command(Player p, int money, int pocketMoney) {
+    public Command(IPokerActions p, int money, int pocketMoney) {
         _player = p;
-        _money = money;
-        _pocketMoney = pocketMoney;
-        _currentBet = 0;
+        _playersOffBetMoney = money;
+        _playersOnBetMoney = pocketMoney;
+        _currentHandBet = 0;
     }
 
 
@@ -88,15 +89,14 @@ public abstract class Command {
      * CallCommand: "call" or "c"
      * RaiseCommand: "raise <amount>" or "r <amount>"
      * 
-     * @param input
-     * @param p
-     * @return
+     * @param input to identify a command
+     * @param p player that is making the command
+     * @return the command identified by the input, null if the input does not match any command
      */
-    public static Command parseCommand(final int commandNetworkCode, Player p) {
+    public static Command parseCommand(final int commandNetworkCode, IPokerActions p) {
 
         for (Command command : AVAILABLE_COMMANDS) {
-            if (command.matchCommand(commandNetworkCode)) { 
-                log.debug("Command selected by player {}: {}", p.getName(), command.getCommandName());
+            if (command.matchCommand(commandNetworkCode)) {
                 command._player = p;
                 return command;
             }
@@ -114,7 +114,7 @@ public abstract class Command {
      * @param currentBet the current bet value in the game.
      */
     public void receiveCurrentBet(int currentBet) {
-        _currentBet = currentBet;
+        _currentHandBet = currentBet;
     }
 
     /**
@@ -150,12 +150,16 @@ public abstract class Command {
     }
 
     /**
+     * Allows to request additional parameters to the poker player to create a full defined action by the player
+     */
+    public abstract void requestParameters();
+
+    /**
      * Checks if the command can be executed correctly based on the context
      * 
-     * @param maxBet is the value of the last maximum bet made
      * @return true if the command can be executed, false in any other case
      */
-    public abstract boolean validate(final int onBet, final int totalMoney, final int maxBet);
+    public abstract boolean validate();
 
     /**
      * Method that executes the command. This method should be implemented by each

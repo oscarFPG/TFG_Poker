@@ -12,6 +12,7 @@ import com.ucm.server.ServerMain;
 import com.ucm.server.gameobjects.Card;
 import com.ucm.server.gameobjects.Player;
 import com.ucm.server.gameobjects.Suit;
+import com.ucm.server.interfaces.IPokerPlayer;
 import com.ucm.server.middleclasses.HandInfo;
 
 /**
@@ -105,7 +106,7 @@ public class Evaluator {
         }
     }
 
-    public static List<Player> evaluateAllHands(HandInfo[] playerHands, Card[] tableCards) {
+    public static List<IPokerPlayer> evaluateAllHands(HandInfo[] playerHands, Card[] tableCards) {
 
         int encodedPlayerCards[][] = new int[playerHands.length][2];
         int encodedTableCards[] = new int[tableCards.length];
@@ -150,7 +151,7 @@ public class Evaluator {
         }
 
         // Select all players with the best value hand
-        List<Player> winners = new ArrayList<Player>();
+        List<IPokerPlayer> winners = new ArrayList<>();
         for (int i = 0; i < playerHands.length; i++) {
             if (bestHandValue[i] == bestValue)
                 winners.add(playerHands[i].player());

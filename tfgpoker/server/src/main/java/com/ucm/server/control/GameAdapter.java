@@ -128,14 +128,20 @@ public class GameAdapter {
     public static int gameHandEnded(){
         return GameType.HAND_ENDS;
     }
-    public static int gameGameEnded(){
+    public static int gameEnded(){
         return GameType.GAME_ENDS;
     }
-    public static int playerWins(){
-        return GameType.PLAYER_WINS;
+    public static int playerWinsHand(){
+        return GameType.PLAYER_WINS_HAND;
     }
-    public static int playerLoses(){
-        return GameType.PLAYER_LOSES;
+    public static int playerLosesHand(){
+        return GameType.PLAYER_LOSES_HAND;
+    }
+    public static int playerWinsGame(){
+        return GameType.PLAYER_WINS_GAME;
+    }
+    public static int playerLosesGame(){
+        return GameType.PLAYER_LOSES_GAME;
     }
 
     // Commands

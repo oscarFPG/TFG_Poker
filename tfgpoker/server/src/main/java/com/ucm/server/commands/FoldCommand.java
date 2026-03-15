@@ -1,9 +1,8 @@
 package com.ucm.server.commands;
 
-import java.io.InputStream;
 
 import com.ucm.common.GameType;
-import com.ucm.server.gameobjects.Player;
+import com.ucm.server.interfaces.IPokerActions;
 import com.ucm.server.middleclasses.CommandResult;
 
 
@@ -12,26 +11,37 @@ import com.ucm.server.middleclasses.CommandResult;
  */
 public class FoldCommand extends Command {
 
-    public FoldCommand(){
-        super();
-    }
+
+    public FoldCommand() {}
 
     /**
      * Constructor method that creates a FoldCommand.
      * @param p the player that is making the fold play.
      */
-    public FoldCommand(Player p) {
+    public FoldCommand(IPokerActions p) {
         super(p, 0, 0);
     }
 
-    /**
-     * Player can always fold if it has money available(It is not eliminated)
-     */
+    /*
+        Player can always fold if it has money available(It is not eliminated)
     @Override
     public boolean validate(final int onBet, final int totalMoney, final int maxBet){
         return totalMoney > 0;
     }
+    */
     
+    @Override
+    public void requestParameters() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'requestParameters'");
+    }
+
+    @Override
+    public boolean validate() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'validate'");
+    }
+
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
 

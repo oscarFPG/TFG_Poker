@@ -6,6 +6,7 @@ import java.io.InputStream;
 import com.ucm.common.GameType;
 import com.ucm.common.SocketUtils;
 import com.ucm.server.gameobjects.Player;
+import com.ucm.server.interfaces.IPokerActions;
 import com.ucm.server.middleclasses.CommandResult;
 
 /**
@@ -15,13 +16,11 @@ import com.ucm.server.middleclasses.CommandResult;
  */
 public class RaiseCommand extends Command {
 
-
     protected int _targetBet;
     
-    public RaiseCommand() {
-        super();
-    }
-        
+
+    public RaiseCommand() {}
+
     /**
      * Constructor for the RaiseCommand class.
      * @param p the player who is raising
@@ -29,22 +28,22 @@ public class RaiseCommand extends Command {
      * @param money the total amount of money that the player has not bet yet.
      * @param pocketMoney the amount of money that the player has already bet in the current hand.
      */
-    public RaiseCommand(Player p, int newBet, int money, int pocketMoney) {
+    public RaiseCommand(IPokerActions p, int newBet, int money, int pocketMoney) {
         super(p, money, pocketMoney);
         _targetBet = newBet;
     }
     
-    /**
-     * The target bet must be higher than the current maximum bet and the player must have enough money to cover the new bet amount.
-     * @param onBet the current bet amount that the player has already bet in the current hand.
-     * @param totalMoney the total amount of money that the player has not bet yet.
-     * @param maxBet the current maximum bet that any player has bet in the current hand.
-     * @return true if the raise is valid, false otherwise.
-     */
+    /*
+        The target bet must be higher than the current maximum bet and the player must have enough money to cover the new bet amount.
+        * @param onBet the current bet amount that the player has already bet in the current hand.
+        * @param totalMoney the total amount of money that the player has not bet yet.
+        * @param maxBet the current maximum bet that any player has bet in the current hand.
+        * @return true if the raise is valid, false otherwise.
     @Override
     public boolean validate(final int onBet, final int totalMoney, final int maxBet){
         return _targetBet <= onBet + totalMoney && _targetBet > maxBet;
     }
+    */
 
     @Override
     public void requireParameters(InputStream in) throws IOException {
@@ -53,14 +52,26 @@ public class RaiseCommand extends Command {
         _targetBet = quantity;
     }
 
+    @Override
+    public void requestParameters() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'requestParameters'");
+    }
+
+    @Override
+    public boolean validate() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'validate'");
+    }
+
     /**
     * {@inheritDoc}
     */
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
 
-        if (_targetBet == _money + _pocketMoney) {
-            AllInCommand command = new AllInCommand(_player, _money,_pocketMoney);
+        if (_targetBet == _playersOffBetMoney + _playersOnBetMoney) {
+            AllInCommand command = new AllInCommand(_player, _playersOffBetMoney, _playersOnBetMoney);
             return command.execute(sb, bb, maxBet);
         }
 

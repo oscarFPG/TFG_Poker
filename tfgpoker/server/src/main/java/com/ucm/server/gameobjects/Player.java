@@ -1,8 +1,8 @@
 package com.ucm.server.gameobjects;
 
 import com.ucm.common.SocketUtils;
-import com.ucm.server.commands.Command;
 import com.ucm.server.control.GameAdapter;
+import com.ucm.server.interfaces.IPokerPlayer;
 import com.ucm.server.logic.Game;
 
 import java.io.IOException;
@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
  * player or and AI player.
  * It works as a representation of the player entity in the server side.
  */
-public class Player {
+public class Player implements IPokerPlayer {
 
     private static final Logger log = LogManager.getLogger(Player.class);
 
@@ -72,7 +72,8 @@ public class Player {
     private boolean _fold;
 
     /**
-     * Indicates whether the player has lost the game.
+     * Indicates if the player is the winner of a hand or the game.
+     * This flag should only be read at the end of a hand o the game.
      */
     private boolean _isWinner;
 
@@ -81,6 +82,7 @@ public class Player {
      * Check {@link Socket} and {@link SocketUtils}.
      */
     private Socket _socket;
+
 
     /**
      * Constructor for the Player class.
@@ -102,90 +104,6 @@ public class Player {
         _numCards = 0;
         _fold = false;
         _isWinner = false;
-    }
-
-    /**
-     * Assigns a role to the player.
-     * 
-     * @param r
-     */
-    public void assignRole(PlayerRole r) {
-        _role = r;
-    }
-
-    /**
-     * Makes a play based on the player's input by console
-     * 
-     * @param maxBet is the value of the last maximum bet made
-     * @return {@link Command} representing the play the player has made
-     */
-    public Command makePlay(final int maxBet) {
-
-        if(Game.DEBUG){
-            return playLocal(maxBet);
-        }
-        else{
-            return playNetwork(maxBet);
-        }
-    }
-
-    private Command playLocal(final int maxBet){
-        
-        menuMakePlay();
-        return null;
-    }
-
-    private Command playNetwork(final int maxBet){
-        return null;
-    }
-
-    /**
-     * Prints the menu for the player to make a play by console.
-     */
-    private void menuMakePlay() {
-        System.out.printf("\tHaz una jugada, %s! Actualmente ha apostado %d$\n", _name, _pocketMoney);
-        System.out.println("\tOpciones de jugada: ");
-        System.out.println( Command.showAvailableCommands() );
-        System.out.print("\tIntroduce tu jugada: ");
-    }
-
-    /**
-     * Forces the player to make the small-blind or big-blind bet if its role is the
-     * corresponding one.
-     * Check {@link PlayerRole}
-     * 
-     * @param sb
-     * @param bb
-     */
-    public void makeForcedBet(int sb, int bb) {
-
-        // Forced small-blind and big-blind
-        if (_role == PlayerRole.SMALL_BLIND) {
-            increasePocketMoney(sb);
-            decreaseMoney(sb);
-            log.debug("Player {} forced to bet {} as a small blind", _name, sb);
-        }
-        else if (_role == PlayerRole.BIG_BLIND) {
-            increasePocketMoney(bb);
-            decreaseMoney(bb);
-            log.debug("Player {} forced to bet {} as a big blind", _name, bb);
-        }
-    }
-
-    /**
-     * Adds a card to the player's hand if he has less than two cards.
-     * 
-     * @param c card to be added
-     * @return true if the card was added successfully, false in any other case
-     */
-    public boolean receiveCard(Card c) {
-
-        if (_numCards == 2)
-            return false;
-
-
-        _cards[_numCards++] = c;
-        return true;
     }
 
     /**
@@ -215,72 +133,6 @@ public class Player {
         int money = _pocketMoney;
         _pocketMoney = 0;
         return money;
-    }
-
-    /**
-     * Makes the player fold by setting the {@link #_fold} value to true.
-     * Retrieves the cards in his hands and marks him as 'folded'.
-     * The {@link #_pocketMoney} variable keeps its value
-     */
-    public void fold() {
-
-        // Devuelvo las cartas
-        Card c1 = retrieveCard();
-        if (c1 != null)
-            c1.setAvailable(true);
-
-        Card c2 = retrieveCard();
-        if (c2 != null)
-            c2.setAvailable(true);
-
-        // El jugador pierde su apuesta
-        // Ya no tiene derecho a seguir jugando
-        _fold = true;
-    }
-
-    /**
-     * The player 'calls' in this round, which means that equals the maximum bet
-     * made by other players.
-     * 
-     * @param betCall quantity to bet
-     */
-    public void call(int betCall) {
-
-        int resto = betCall - _pocketMoney; // dinero que necesita para igualar la apuesta en juego
-        log.debug("Player {} wants to call to {}$", _name, betCall);
-        log.debug("Total money on bet: {}$", betCall + _pocketMoney);
-        
-        // Aumento la apuesta de mi ronda
-        increasePocketMoney(resto);
-
-        // Quito de mi cartera la diferencia
-        decreaseMoney(resto);
-    }
-
-    /**
-     * The player bets all his money in the current hand
-     */
-    public void allIn() {
-        increasePocketMoney(_money);
-        _money = 0;
-    }
-
-    /**
-     * TODO: HAY QUE HACERLO BIEN !!
-     * 
-     * @param maxBet
-     */
-    public void raise(int maxBet) {
-
-        // Si tengo menos dinero de lo que está apostado y quiero subir
-        // entonces primero igualo y luego subo lo que sea(max All-in)
-        if (_pocketMoney <= maxBet) {
-            call(maxBet);
-            return;
-        }
-
-        // En cualquier otro caso subo lo que eliga el player(max All-in)
-        _pocketMoney += 10;
     }
 
     /**
@@ -343,26 +195,12 @@ public class Player {
     }
 
     /**
-     * Sets a value to the {@link #_fold} member variable
+     * Gets the player ID
      * 
-     * @param fold new value
+     * @return player ID
      */
-    public void setFold(boolean fold) {
-        _fold = fold;
-    }
-
-    /**
-     * Marks the player as the winner of a hand
-     */
-    public void playerWinsHand() {
-        _isWinner = true;
-    }
-
-    /**
-     * Marks the player as the loser of a hand
-     */
-    public void playerLosesHand(){
-        _isWinner = false;
+    public int getID() {
+        return _id;
     }
 
     /**
@@ -376,44 +214,6 @@ public class Player {
     }
 
     /**
-     * Gets the player ID
-     * 
-     * @return player ID
-     */
-    public int getID() {
-        return _id;
-    }
-
-    /**
-     * Gets the player name
-     * 
-     * @return player name
-     */
-    public String getName() {
-        return _name;
-    }
-
-    /**
-     * Gets the player money.
-     * This money could be the total money or a part of it, considering the
-     * {@link #_pocketMoney} variable.
-     * 
-     * @return player money
-     */
-    public int getMoney() {
-        return _money;
-    }
-
-    /**
-     * Gets the money the player has bet in the current hand.
-     * 
-     * @return money the player has bet in the current hand
-     */
-    public int getPocketMoney() {
-        return _pocketMoney;
-    }
-
-    /**
      * Gets the player role in the current hand.
      * 
      * @return player role
@@ -422,39 +222,116 @@ public class Player {
         return _role;
     }
 
-    /**
-     * Gets the player socket
-     * 
-     * @return player socket
-     */
-    public Socket getSocket() {
-        return _socket;
+
+    /// --------------------------------------- IPokerActions ---------------------------------------
+    @Override
+    public boolean call(final int amount) {
+
+        int resto = amount - _pocketMoney; // dinero que necesita para igualar la apuesta en juego
+        log.debug("Player {} wants to call to {}$", _name, amount);
+        log.debug("Total money on bet: {}$", amount + _pocketMoney);
+        
+        // Aumento la apuesta de mi ronda
+        increasePocketMoney(resto);
+
+        // Quito de mi cartera la diferencia
+        decreaseMoney(resto);
+
+        return true;
     }
 
-    /**
-     *  Gets the number of cards in the player's hand
-     * @return number of cards in the player's hand
-     */
-    public int getNumCards() {
+    @Override
+    public boolean check() {
+        return true;
+    }
+
+    @Override
+    public boolean fold() {
+
+        // Devuelvo las cartas
+        Card c1 = retrieveCard();
+        if (c1 != null)
+            c1.setAvailable(true);
+
+        Card c2 = retrieveCard();
+        if (c2 != null)
+            c2.setAvailable(true);
+
+        // El jugador pierde su apuesta
+        // Ya no tiene derecho a seguir jugando
+        _fold = true;
+
+        return true;
+    }
+
+    @Override
+    public boolean allIn() {
+        increasePocketMoney(_money);
+        _money = 0;
+
+        return true;
+    }
+
+    @Override
+    public boolean raise(final int amount) {
+
+        // Si tengo menos dinero de lo que está apostado y quiero subir
+        // entonces primero igualo y luego subo lo que sea(max All-in)
+        if (_pocketMoney <= amount) {
+            call(amount);
+            return false;
+        }
+
+        return true;
+    }
+
+
+    /* --------------------------------------- IPokerPlayer --------------------------------------- */
+    @Override
+    public String getPlayerName() {
+        return _name;
+    }
+
+    @Override
+    public int getMoneyOnBet() {
+        return _pocketMoney;
+    }
+
+    @Override
+    public int getMoneyOffBet() {
+        return _money;
+    }
+
+    @Override
+    public int getCardsCounter() {
         return _numCards;
     }
 
+    @Override
     public boolean hasFolded() {
         return _fold;
     }
 
+    @Override
     public boolean isWinner(){
         return _isWinner;
     }
 
-    public void onSendRole(PlayerRole r) {
+    @Override
+    public Card[] getPlayerCards() {
+        return _cards;
+    }
 
+
+
+    @Override
+    public void receiveRole(PlayerRole r) {
+        
         if (Game.DEBUG) {
             return;
         }
 
         try {
-
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerRoleToCode(r));
         }
         catch (IOException e) {
@@ -462,16 +339,17 @@ public class Player {
         }
     }
 
-    public void onSendCard(Card c) {
+    @Override
+    public void receiveCard(Card c) {
 
-        if (Game.DEBUG) {
-            return;
-        }
+        if (_numCards == 2)
+            return ;
+
 
         try {
-
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.cardValueToCode(c));
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.cardSuitToCode(c));
+            _cards[_numCards++] = c;
             log.debug("Player {} receives card {}", _name, c.toString());
         }
         catch (IOException e) {
@@ -479,14 +357,14 @@ public class Player {
         }
     }
 
-    public void onSendTableCard(Card c) {
-
+    @Override
+    public void receiveTableCard(Card c) {
+        
         if (Game.DEBUG) {
             return;
         }
 
         try{
-
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.cardValueToCode(c));
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.cardSuitToCode(c));
             log.debug("Table card {}", c.toString());
@@ -496,28 +374,10 @@ public class Player {
         }
     }
 
-    public void onSendForcedMove(PlayerRole myRole, int sb, int bb) {
-        
-        try{
+    @Override
+    public void receiveNewMoney(int money) {
 
-            if(myRole == PlayerRole.SMALL_BLIND){
-                SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnForcedSBToCode());
-                SocketUtils.sendInteger(_socket.getOutputStream(), sb);
-            }
-            else if(myRole == PlayerRole.BIG_BLIND){
-                SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnForcedBBToCode());
-                SocketUtils.sendInteger(_socket.getOutputStream(), bb);
-            }
-        }
-        catch (IOException e) {
-            log.error("Trying to force a move on the player {}: {}", _name, e.getMessage());
-        }
-    }
-
-    public void onSendNewMoney(final int money){
-
-        try{
-
+       try{
             SocketUtils.sendInteger(_socket.getOutputStream(), money);
             log.debug("Players {} new money is {}", _name, money);
         }
@@ -526,28 +386,42 @@ public class Player {
         }
     }
 
-    public Command askPlayerAction(final int sb, final int bb, final int maxBet){
-
-        Command command = null;
-        try{
-
-            // Send round info
-            SocketUtils.sendInteger(_socket.getOutputStream(), sb);
-            SocketUtils.sendInteger(_socket.getOutputStream(), bb);
-            SocketUtils.sendInteger(_socket.getOutputStream(), maxBet);
-            log.debug("Round info sent to {}", _name);
-
-            int commandCode = SocketUtils.receiveInt(_socket.getInputStream());
-            command = Command.parseCommand(commandCode, this);
-            log.debug("Player wants to execute command: {}", command.getCommandName());
-        }
-        catch (IOException e) {
-            log.error("Receiving the command for {} player: {}", _name, e.getMessage());
-        }
-
-        return command;
+    @Override
+    public void retrieveCards() {
+        
+        _cards[0] = null;
+        _cards[1] = null;
+        _numCards = 0;
     }
 
+    @Override
+    public void foldPlayer(){
+        _fold = true;
+    }
+
+    @Override
+    public void unfoldPlayer() {
+        _fold = false;
+    }
+
+
+    @Override
+    public void notifyTurnWait() {
+
+        if (Game.DEBUG) {
+            return;
+        }
+
+        try{
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnWaitToCode());
+            log.debug("Player {} has to wait his turn!", _name);
+        }
+        catch (IOException e) {
+            log.error("Sending the WAIT order to player {}: {}", _name, e.getMessage());
+        }
+    }
+
+    @Override
     public void notifyTurnPlay() {
 
         if (Game.DEBUG) {
@@ -564,21 +438,7 @@ public class Player {
         }
     }
 
-    public void notifyTurnWait() {
-
-        if (Game.DEBUG) {
-            return;
-        }
-
-        try{
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnWaitToCode());
-            log.debug("Player {} has to wait his turn!", _name);
-        }
-        catch (IOException e) {
-            log.error("Sending the WAIT order to player {}: {}", _name, e.getMessage());
-        }
-    }
-
+    @Override
     public void notifyRoundEnded() {
         
         if (Game.DEBUG) {
@@ -594,34 +454,123 @@ public class Player {
         }
     }
 
-    public void notifyHandWin(){
-
-        if (Game.DEBUG) {
-            return;
-        }
-
+    @Override
+    public void notifyHandEnded() {
+        
         try{
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerWins());
-            log.debug("Player {} won the hand", _name);
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.gameHandEnded());
+            log.debug("Player {} notified about the end of the hand", _name);
         }
-        catch (IOException e) {
-            log.error("Notifing ROUND_ENDS to player {}: {}", _name, e.getMessage());
+        catch(IOException e){
+            log.error("Notifying HAND_ENDS to player {}: {}", _name, e.getMessage());
         }
     }
 
-    public void notifyHandLose(){
-
-        if (Game.DEBUG) {
-            return;
-        }
+    @Override
+    public void notifyGameEnded() {
 
         try{
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerLoses());
-            log.debug("Player {} lost the hand", _name);
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.gameEnded());
+            log.debug("Player {} notified about the end of the game", _name);
         }
-        catch (IOException e) {
-            log.error("Notifing ROUND_ENDS to player {}: {}", _name, e.getMessage());
+        catch(IOException e){
+            log.error("Notifying GAME_ENDS to player {}: {}", _name, e.getMessage());
         }
     }
 
+    @Override
+    public void notifyHandWinner() {
+
+        try{
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerWinsHand());
+            log.debug("Player {} is then winner of the hand", _name);
+        }
+        catch(IOException e){
+            log.error("Notifying HAND_WINNER to player {}: {}", _name, e.getMessage());
+        }
+    }
+
+    @Override
+    public void notifyHandLoser() {
+
+        try{
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerLosesHand());
+            log.debug("Player {} is the loser of the hand", _name);
+        }
+        catch(IOException e){
+            log.error("Notifying HAND_LOSER to player {}: {}", _name, e.getMessage());
+        }
+    }
+    
+    @Override
+    public void notifyGameWinner() {
+
+        try{
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerWinsGame());
+            log.debug("Player {} is then winner of the game", _name);
+        }
+        catch(IOException e){
+            log.error("Notifying GAME_WINNER to player {}: {}", _name, e.getMessage());
+        }
+    }
+
+    @Override
+    public void notifyGameLoser() {
+
+        try{
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerLosesGame());
+            log.debug("Player {} is the loser of the game", _name);
+        }
+        catch(IOException e){
+            log.error("Notifying GAME_LOSER to player {}: {}", _name, e.getMessage());
+        }
+    }
+
+    @Override
+    public void actionSmallBlindBet(final int sb) {
+        
+        try{
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnForcedSBToCode());
+            SocketUtils.sendInteger(_socket.getOutputStream(), sb);
+        }
+        catch(IOException e){
+            log.error("Player {} making the small blind bet: {}", _name, e.getMessage());
+        }
+    }
+
+    @Override
+    public void actionBigBlindBet(final int bb) {
+        
+        try{
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnForcedSBToCode());
+            SocketUtils.sendInteger(_socket.getOutputStream(), bb);
+        }
+        catch(IOException e){
+            log.error("Player {} making the small blind bet: {}", _name, e.getMessage());
+        }
+    }
+
+    @Override
+    public int actionMakePlay(final int sb, final int bb, final int maxBet) {
+        
+        int commandCode = -1;
+        try{
+
+            // Send round info
+            SocketUtils.sendInteger(_socket.getOutputStream(), sb);
+            SocketUtils.sendInteger(_socket.getOutputStream(), bb);
+            SocketUtils.sendInteger(_socket.getOutputStream(), maxBet);
+            log.debug("Round info sent to {}", _name);
+
+            commandCode = SocketUtils.receiveInt(_socket.getInputStream());
+            log.debug("Command code {} sent by the player {}", commandCode, _name);
+        }
+        catch (IOException e) {
+            log.error("Receiving the command for {} player: {}", _name, e.getMessage());
+        }
+
+        return commandCode;
+    }
+
+    
 }

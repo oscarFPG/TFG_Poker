@@ -94,7 +94,6 @@ public class Controller {
                 _game.giveRewardToWinner();
             }
 
-            _game.restartRound();
             _game.passTurn();
 
             // Logger configuration for the next hand -> Write on file match{0}_hand{handCounter}.log

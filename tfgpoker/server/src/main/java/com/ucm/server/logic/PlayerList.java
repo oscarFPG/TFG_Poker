@@ -10,6 +10,8 @@ import com.ucm.server.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.server.gameobjects.Card;
 import com.ucm.server.gameobjects.Player;
 import com.ucm.server.gameobjects.PlayerRole;
+import com.ucm.server.interfaces.IPokerActions;
+import com.ucm.server.interfaces.IPokerPlayer;
 import com.ucm.server.middleclasses.CommandResult;
 import com.ucm.server.middleclasses.HandInfo;
 
@@ -19,7 +21,7 @@ public class PlayerList {
 
     public class Node {
         Node _prev;
-        Player _player;
+        IPokerPlayer _player;
         Node _next;
 
         public Node(Node prev, Player p, Node next) {
@@ -61,7 +63,7 @@ public class PlayerList {
             _last = newNode;
         }
 
-        log.debug("Player {} added!", p.getName());
+        log.debug("Player {} added!", p.getPlayerName());
         ++_playerCounter;
     }
 
@@ -112,36 +114,30 @@ public class PlayerList {
 
 
         if (n == 2) {
-            _current._player.assignRole(PlayerRole.SMALL_BLIND);
-            _current._player.onSendRole(PlayerRole.SMALL_BLIND);
-            log.debug("Player {} receives role {}", _current._player.getName(), PlayerRole.SMALL_BLIND.name());
+            _current._player.receiveRole(PlayerRole.SMALL_BLIND);
+            log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.SMALL_BLIND.name());
 
             _current = getNextPlayerActive(_current);
-            _current._player.assignRole(PlayerRole.BIG_BLIND);
-            _current._player.onSendRole(PlayerRole.BIG_BLIND);
-            log.debug("Player {} receives role {}", _current._player.getName(), PlayerRole.BIG_BLIND.name());
+            _current._player.receiveRole(PlayerRole.BIG_BLIND);
+            log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.BIG_BLIND.name());
         }
         else {
-            _current._player.assignRole(PlayerRole.DEALER);
-            _current._player.onSendRole(PlayerRole.DEALER);
-            log.debug("Player {} receives role {}", _current._player.getName(), PlayerRole.DEALER.name());
+            _current._player.receiveRole(PlayerRole.DEALER);
+            log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.DEALER.name());
 
             _current = getNextPlayerActive(_current);
-            _current._player.assignRole(PlayerRole.SMALL_BLIND);
-            _current._player.onSendRole(PlayerRole.SMALL_BLIND);
-            log.debug("Player {} receives role {}", _current._player.getName(), PlayerRole.SMALL_BLIND.name());
+            _current._player.receiveRole(PlayerRole.SMALL_BLIND);
+            log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.SMALL_BLIND.name());
 
             _current = getNextPlayerActive(_current);
-            _current._player.assignRole(PlayerRole.BIG_BLIND);
-            _current._player.onSendRole(PlayerRole.BIG_BLIND);
-            log.debug("Player {} receives role {}", _current._player.getName(), PlayerRole.BIG_BLIND.name());
+            _current._player.receiveRole(PlayerRole.BIG_BLIND);
+            log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.BIG_BLIND.name());
 
             _current = getNextPlayerActive(_current);
             while (_current != _first) {
-                _current._player.assignRole(PlayerRole.NO_ROLE);
-                _current._player.onSendRole(PlayerRole.NO_ROLE);
+                _current._player.receiveRole(PlayerRole.NO_ROLE);
                 _current = getNextPlayerActive(_current);
-                log.debug("Player {} receives role {}", _current._player.getName(), PlayerRole.NO_ROLE.name());
+                log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.NO_ROLE.name());
             }
         }
     }
@@ -151,22 +147,18 @@ public class PlayerList {
         if (isEmpty())
             return;
 
-        if (_first._player.getNumCards() == 0) {
+        if (_first._player.getCardsCounter() == 0) {
             _first._player.receiveCard(c1);
-            _first._player.onSendCard(c1);
             _first._player.receiveCard(c2);
-            _first._player.onSendCard(c2);
             return;
         }
 
         Node index = _first._next;
         while (index != _first) {
 
-            if (index._player.getNumCards() == 0) {
+            if (index._player.getCardsCounter() == 0) {
                 index._player.receiveCard(c1);
-                index._player.onSendCard(c1);
                 index._player.receiveCard(c2);
-                index._player.onSendCard(c2);
                 break;
             }
 
@@ -180,12 +172,10 @@ public class PlayerList {
         // 1. First player if there is only two players -> playsToMake == 1
         // 2. Next player from first if there is more than two players -> playsToMake > 1
         Node pNode = (playsToMake == 1) ? _first : _first._next;
-        pNode._player.makeForcedBet(sb, bb); // Small-blind
-        pNode._player.onSendForcedMove(PlayerRole.SMALL_BLIND, sb, bb);
+        pNode._player.actionSmallBlindBet(sb);
 
         pNode = pNode._next;
-        pNode._player.makeForcedBet(sb, bb); // Big-blind
-        pNode._player.onSendForcedMove(PlayerRole.BIG_BLIND, sb, bb);
+        pNode._player.actionBigBlindBet(bb);
 
         return pNode._next;
     }
@@ -209,7 +199,7 @@ public class PlayerList {
 
 
             // Broadcast to all players except to playerOnTurn
-            Player playerOnTurn = pNode._player;
+            IPokerPlayer playerOnTurn = pNode._player;
             Node iNode = (_first._player != playerOnTurn) ? _first : _first._next;
             while (iNode._player != playerOnTurn) {
                 iNode._player.notifyTurnWait();
@@ -217,38 +207,36 @@ public class PlayerList {
             }
 
             // Ask for an action by the player to execute
-            try{
+            Command command = null;
+            boolean valid = false;
+            while (valid == false) {
 
-                Command command = null;
-                boolean valid = false;
-                while(valid == false){
-                    playerOnTurn.notifyTurnPlay();
-                    command = playerOnTurn.askPlayerAction(sb, bb, maxBet);
-                    command.requireParameters(playerOnTurn.getSocket().getInputStream());
-                    valid = command.validate(playerOnTurn.getPocketMoney(), playerOnTurn.getMoney(), maxBet);
-                }
+                log.debug("It's is {} turn to play", pNode._player.getPlayerName());
+                playerOnTurn.notifyTurnPlay();
+                int commandCode = playerOnTurn.actionMakePlay(sb, bb, maxBet);
+
+                command = Command.parseCommand(commandCode, playerOnTurn);  // CAST TEMPORAL, !!!!!!!!!!!!!! CAMBIAR !!!!!!!!!!!!!!
+                command.requestParameters();
                 command.receiveCurrentBet(maxBet);
-
-                CommandResult result = command.execute(sb, bb, maxBet);
-                if (result.folds()) {
-                    --playersRemaining;
-                    if (playersRemaining == 1)
-                        throw new OnlyOnePlayerLeftException("Only one player left to play mid round");
-                }
-
-                playsToMake = result.raises() ? (activePlayersCounter() - 1) : (playsToMake - 1);
-                currentBet = result.bet();
-                maxBet = Integer.max(maxBet, currentBet);
-
-                log.debug("{} plays left to play", playsToMake);
-                log.debug("Current bet is {} and maximum bet is {}", currentBet, maxBet);
+                valid = command.validate();
             }
-            catch(IOException e){
-                log.error("Interacting with the player {}: {}", playerOnTurn.getName(), e.getMessage());
+            command.receiveCurrentBet(maxBet);
+
+            CommandResult result = command.execute(sb, bb, maxBet);
+            if (result.folds()) {
+                --playersRemaining;
+                if (playersRemaining == 1)
+                    throw new OnlyOnePlayerLeftException("Only one player left to play mid round");
             }
+
+            playsToMake = result.raises() ? (activePlayersCounter() - 1) : (playsToMake - 1);
+            currentBet = result.bet();
+            maxBet = Integer.max(maxBet, currentBet);
+
+            log.debug("{} plays left to play", playsToMake);
+            log.debug("Current bet is {} and maximum bet is {}", currentBet, maxBet);
 
             pNode = getNextPlayerActive(pNode);
-            log.debug("Next player to play is {}", pNode._player.getName());
         }
 
         // Notify all players that the betting round has ended
@@ -263,10 +251,10 @@ public class PlayerList {
 
     public void sendTableCardToAllPlayers(final Card card){
 
-        _first._player.onSendTableCard(card);
+        _first._player.receiveTableCard(card);
         Node i = _first._next;
         while (i != _first){
-            i._player.onSendTableCard(card);
+            i._player.receiveTableCard(card);
             i = i._next;
         }
     }
@@ -276,10 +264,10 @@ public class PlayerList {
         int totalPot = 0;
         Node pNode = _first;
 
-        totalPot += pNode._player.placeBet();
+        totalPot += pNode._player.getMoneyOnBet();
         pNode = pNode._next;
         while (pNode != _first) {
-            totalPot += pNode._player.placeBet();
+            totalPot += pNode._player.getMoneyOnBet();
             pNode = pNode._next;
         }
 
@@ -290,21 +278,21 @@ public class PlayerList {
 
         Node i = _first;
         if(i._player.isWinner())
-            i._player.notifyHandWin();
+            i._player.notifyHandWinner();
         else
-            i._player.notifyHandLose();
+            i._player.notifyHandLoser();
 
-        i._player.onSendNewMoney( i._player.getMoney() );
+        i._player.receiveNewMoney( i._player.getMoneyOffBet() );
         i = i._next;
 
         while(i != _first) {
 
             if(i._player.isWinner())
-                i._player.notifyHandWin();
+                i._player.notifyHandWinner();
             else
-                i._player.notifyHandLose();
+                i._player.notifyHandLoser();
 
-            i._player.onSendNewMoney( i._player.getMoney() );
+            i._player.receiveNewMoney( i._player.getMoneyOffBet() );
             i = i._next;
         }
 
@@ -324,7 +312,7 @@ public class PlayerList {
         int i = 0;
 
         while (i < size) {
-            info[i++] = new HandInfo(pNode._player.getCards(), pNode._player);
+            info[i++] = new HandInfo(pNode._player.getPlayerCards(), pNode._player);
             pNode = pNode._next;
         }
 
@@ -348,13 +336,13 @@ public class PlayerList {
 
     public void resetPlayers() {
 
-        _first._player.resetCards();
-        _first._player.setFold(false);
+        _first._player.retrieveCards();
+        _first._player.unfoldPlayer();
 
         Node current = _first._next;
         while (current != _first) {
-            current._player.resetCards();
-            current._player.setFold(false);
+            current._player.retrieveCards();
+            current._player.unfoldPlayer();
             current = current._next;
         }
     }
@@ -388,20 +376,9 @@ public class PlayerList {
     }
 
 
-    public boolean isEmpty() {
-        return size() == 0;
-    }
-
-    public boolean isFull() {
-        return size() == max();
-    }
-
-    public int size() {
-        return _playerCounter;
-    }
-
-    public int max() {
-        return _maxNumberOfPlayers;
-    }
+    public boolean isEmpty() { return size() == 0; }
+    public boolean isFull() { return size() == max(); }
+    public int size() { return _playerCounter; }
+    public int max() { return _maxNumberOfPlayers; }
 
 }

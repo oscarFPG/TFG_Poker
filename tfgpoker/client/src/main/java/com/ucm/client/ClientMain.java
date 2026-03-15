@@ -14,7 +14,7 @@ import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Scanner;
 
-import javax.smartcardio.Card;
+
 import com.ucm.common.GameType;
 import com.ucm.common.SocketUtils;
 
@@ -248,13 +248,8 @@ public class ClientMain extends Application {
 			OutputStream out = socket.getOutputStream();
 
 			roleCode = SocketUtils.receiveInt(in);
-			String auxStringRole = (roleCode == GameType.PLAYER_ROLE_DEALER) ? "DEALER" :
-								(roleCode == GameType.PLAYER_ROLE_SMALL_BLIND) ? "SMALL_BLIND" :
-								(roleCode == GameType.PLAYER_ROLE_BIG_BLIND) ? "BIG_BLIND" :
-								(roleCode == GameType.PLAYER_ROLE_UNDER_THE_GUN) ? "UNDER_THE_GUN" :
-								(roleCode == GameType.PLAYER_ROLE_MIDDLE_POSITION) ? "MIDDLE_POSITION" :
-								(roleCode == GameType.PLAYER_ROLE_CUT_OFF) ? "CUT_OFF" : "NO_ROLE";
-			System.out.printf("Player with name \'%s\' and rol code %s\n", _name, auxStringRole);
+			String playerRole = translatePlayerRoleCode(roleCode);
+			System.out.printf("Player with name \'%s\' and rol code %s\n", _name, playerRole);
 
 			playerCards[0] = receiveCard(in);
 			playerCards[1] = receiveCard(in);
@@ -285,13 +280,12 @@ public class ClientMain extends Application {
 			// Showdown
 			int rankingCode = SocketUtils.receiveInt(in);
 			_money = SocketUtils.receiveInt(in);
-			if(rankingCode == GameType.PLAYER_WINS){
+			if(rankingCode == GameType.PLAYER_WINS_HAND){
 				System.out.printf("You have won! Current money is %d\n", _money);
 			}
-			else if(rankingCode == GameType.PLAYER_LOSES){
+			else if(rankingCode == GameType.PLAYER_LOSES_HAND){
 				System.out.printf("You have lost! Current money is %d\n", _money);
 			}
-
 
 		}
 		catch (IOException e) {
@@ -494,6 +488,27 @@ public class ClientMain extends Application {
 							(suit == GameType.SPADES) ? '\u2660' : 'x';
 
 		return String.format("[%s%c]", valueString, suitChar);
+	}
+
+	private static String translatePlayerRoleCode(final int code){
+		
+		switch (code) {
+			case GameType.PLAYER_ROLE_DEALER:
+				return "DEALER";
+			case GameType.PLAYER_ROLE_SMALL_BLIND:
+				return "SMALL_BLIND";
+			case GameType.PLAYER_ROLE_BIG_BLIND:
+				return "BIG_BLIND";
+			case GameType.PLAYER_ROLE_UNDER_THE_GUN:
+				return "UNDER_THE_GUN";
+			case GameType.PLAYER_ROLE_MIDDLE_POSITION:
+				return "MIDDLE_POSITION";
+			case GameType.PLAYER_ROLE_CUT_OFF:
+				return "CUT_OFF";
+			default:
+				return "NO_ROLE";
+		}
+
 	}
 
 	private static String getUserCommand(){

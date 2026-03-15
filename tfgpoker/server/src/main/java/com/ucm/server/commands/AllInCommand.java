@@ -4,6 +4,8 @@ import java.io.InputStream;
 
 import com.ucm.common.GameType;
 import com.ucm.server.gameobjects.Player;
+import com.ucm.server.interfaces.IPokerActions;
+import com.ucm.server.interfaces.IPokerPlayer;
 import com.ucm.server.middleclasses.CommandResult;
 
 /**
@@ -12,8 +14,7 @@ import com.ucm.server.middleclasses.CommandResult;
  */
 public class AllInCommand extends Command {
 
-    
-    public AllInCommand(){}
+    public AllInCommand() {}
 
     /**
      * Constructor method that creates an AllInCommand.
@@ -21,17 +22,30 @@ public class AllInCommand extends Command {
      * @param money the total amount of money that the player has not bet yet.
      * @param pocketMoney the amount of money that the player has already bet in the current hand.
      */
-    public AllInCommand(Player p, int money, int pocketMoney) {
+    public AllInCommand(IPokerActions p, int money, int pocketMoney) {
         super(p, money, pocketMoney);
     }
 
-    /**
-     * Player can allways bet all the money on his posession if it has some
-     */
+
+    @Override
+    public void requestParameters() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'requestParameters'");
+    }
+
+    @Override
+    public boolean validate() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'validate'");
+    }
+
+    /* 
+        Player can allways bet all the money on his posession if it has some
     @Override
     public boolean validate(final int onBet, final int totalMoney, final int maxBet){
         return totalMoney > 0;
     }
+    */
 
     /**
      * {@inheritDoc}
