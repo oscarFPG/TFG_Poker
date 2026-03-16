@@ -1,8 +1,6 @@
 package com.ucm.server.commands;
 
-import java.io.InputStream;
 
-import com.ucm.common.GameType;
 import com.ucm.server.interfaces.IPokerActions;
 import com.ucm.server.middleclasses.CommandResult;
 
@@ -20,28 +18,18 @@ public class CheckCommand extends Command {
      * @param p the player that is making the check play.
      */
     public CheckCommand(IPokerActions p) {
-        super(p, 0, 0);
+        super(p);
     }
 
-    /*
-        No other player has bet before(maxBet is zero), we have no bet before(onBet is zero) and we have some money(totalMoney is greater than zero).
-        The last check on the total money avoids executing this command if the player has been eliminated(It has no money left)
-    @Override
-    public boolean validate(final int onBet, final int totalMoney, final int maxBet){
-        return onBet == 0 && maxBet == 0 && totalMoney > 0;
-    }
-    */
 
     @Override
-    public void requestParameters() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'requestParameters'");
-    }
+	protected Command createCommand(final String[] commandFormat, final IPokerActions player){
+		return new CheckCommand(player);
+	}
 
     @Override
-    public boolean validate() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'validate'");
+    public boolean validate(final int maxBet) {
+        return _playersOnBetMoney == 0 && maxBet == 0;
     }
 
     @Override
@@ -49,41 +37,24 @@ public class CheckCommand extends Command {
         return CommandResult.continuePlaying(_playersOffBetMoney, false);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getCommandName() {
         return "CHECK";
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getCommandText() {
-        return "check";
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getCommandTextShotcut() {
-        return "k";
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getCommandDescription() {
         return "If there is no bet just pass your turn without betting.";
     }
 
     @Override
-    protected int getCommandNetworkCode() {
-        return GameType.CHECK_ACTION;
+    public String getCommandFormat() {
+        return "check";
+    }
+
+    @Override
+    public String getCommandFormatShortcut() {
+        return "k";
     }
 
 }

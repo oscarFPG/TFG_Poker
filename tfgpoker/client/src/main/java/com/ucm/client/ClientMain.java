@@ -14,11 +14,9 @@ import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Scanner;
 
-
 import com.ucm.common.GameType;
 import com.ucm.common.SocketUtils;
 
-// GUI
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -393,9 +391,9 @@ public class ClientMain extends Application {
 				System.out.printf("It's your turn to play!\n");
 
 				// Receive round info
-				sb = SocketUtils.receiveInt(socket.getInputStream());
-				bb = SocketUtils.receiveInt(socket.getInputStream());
-				maxBet = SocketUtils.receiveInt(socket.getInputStream());
+				sb = SocketUtils.receiveInt( socket.getInputStream() );
+				bb = SocketUtils.receiveInt( socket.getInputStream() );
+				maxBet = SocketUtils.receiveInt( socket.getInputStream() );
 				System.out.printf("-- Small blind bet: %d\n", sb);
 				System.out.printf("-- Big blind bet: %d\n", bb);
 				System.out.printf("-- Max bet: %d\n", maxBet);
@@ -405,29 +403,25 @@ public class ClientMain extends Application {
 				while(!valid){
 
 					String command = getUserCommand();
-					valid = true;
-					if(command.equalsIgnoreCase("raise") || command.equalsIgnoreCase("r")){
-						
-						SocketUtils.sendInteger(socket.getOutputStream(), GameType.RAISE_ACTION);
+					String baseCommand = command.split(" ")[0];
 
-						System.out.printf("Enter the quantity to raise: ");
-						int quantity = _scanner.nextInt();
-						myBet += quantity;
-						SocketUtils.sendInteger(socket.getOutputStream(), quantity);
+					valid = true;
+					if (baseCommand.equalsIgnoreCase("raise") || baseCommand.equalsIgnoreCase("r")) {
+						SocketUtils.sendString(socket.getOutputStream(), command);
 					}
-					else if(command.equalsIgnoreCase("fold") || command.equalsIgnoreCase("f")){
-						SocketUtils.sendInteger(socket.getOutputStream(), GameType.FOLD_ACTION);
+					else if (baseCommand.equalsIgnoreCase("fold") || baseCommand.equalsIgnoreCase("f")) {
+						SocketUtils.sendString(socket.getOutputStream(), command);
 					}
-					else if(command.equalsIgnoreCase("check") || command.equalsIgnoreCase("k")){
-						SocketUtils.sendInteger(socket.getOutputStream(), GameType.CHECK_ACTION);
+					else if (baseCommand.equalsIgnoreCase("check") || baseCommand.equalsIgnoreCase("k")) {
+						SocketUtils.sendString(socket.getOutputStream(), command);
 					}
-					else if(command.equalsIgnoreCase("call") || command.equalsIgnoreCase("c")){
-						SocketUtils.sendInteger(socket.getOutputStream(), GameType.CALL_ACTION);
+					else if (baseCommand.equalsIgnoreCase("call") || baseCommand.equalsIgnoreCase("c")) {
+						SocketUtils.sendString(socket.getOutputStream(), command);
 					}
-					else if(command.equalsIgnoreCase("all in") || command.equalsIgnoreCase("a")){
-						SocketUtils.sendInteger(socket.getOutputStream(), GameType.ALL_IN_ACTION);
+					else if (baseCommand.equalsIgnoreCase("all in") || baseCommand.equalsIgnoreCase("a")) {
+						SocketUtils.sendString(socket.getOutputStream(), command);
 					}
-					else{
+					else {
 						System.out.printf("Command %s not valid!\n", command);
 						valid = false;
 					}
@@ -513,15 +507,22 @@ public class ClientMain extends Application {
 
 	private static String getUserCommand(){
 
+		final int MAX_SIZE = 32;
 		System.out.printf("Write your action: \n");
-		System.out.printf("1- FOLD(f)\n");
-		System.out.printf("2- CHECK(k)\n");
-		System.out.printf("3- CALL(c)\n");
-		System.out.printf("4- ALL IN(a)\n");
-		System.out.printf("5- RAISE(r)\n");
+		System.out.printf("1- fold(f)\n");
+		System.out.printf("2- check(k)\n");
+		System.out.printf("3- call(c)\n");
+		System.out.printf("4- allin(a)\n");
+		System.out.printf("5- raise(r) <amount>\n");
 		System.out.printf("> ");
 
-		String command = _scanner.next();
+		String command = null;
+		while (command == null) { 
+			
+			command = _scanner.nextLine();
+			command = (command.length() < MAX_SIZE) ? command : null;
+		}
+
 		return command;
 	}
 

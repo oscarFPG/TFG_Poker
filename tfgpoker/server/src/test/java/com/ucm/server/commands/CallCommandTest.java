@@ -8,11 +8,10 @@ import com.ucm.server.interfaces.IPokerActions;
 import com.ucm.server.middleclasses.CommandResult;
 
 
-
-public class AllInCommandTest {
- 
-    private static final int INITIAL_MONEY = 1000; 
+public class CallCommandTest {
     
+    private static final int INITIAL_MONEY = 1000;
+
 
     @Test
     public void badFormat(){
@@ -20,7 +19,7 @@ public class AllInCommandTest {
         final int initialBet = 0;
 
         IPokerActions player = new FakePlayer(INITIAL_MONEY - initialBet, initialBet);
-        String input = "alIin";
+        String input = "Cad";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
         
@@ -28,85 +27,69 @@ public class AllInCommandTest {
     }
 
     @Test
-    public void fromZero(){
+    public void badFormat2(){
 
         final int initialBet = 0;
-        int maxBet = 0;
-
 
         IPokerActions player = new FakePlayer(INITIAL_MONEY - initialBet, initialBet);
-        String input = "allin";
+        String input = " c";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
-
-        boolean valid = command.validate(maxBet);
-        CommandResult result = command.execute(1, 2, maxBet);
-
-        Assertions.assertEquals(INITIAL_MONEY, result.bet());
-        Assertions.assertEquals(valid, true);
-        Assertions.assertEquals(INITIAL_MONEY, player.getMoneyOnBet());
-        Assertions.assertEquals(0, player.getMoneyOffBet());
+        
+        Assertions.assertEquals(command, null);
     }
 
     @Test
-    public void fromSome(){
-
-        final int initialBet = 200;
-        int maxBet = 0;
-
-        IPokerActions player = new FakePlayer(INITIAL_MONEY - initialBet, initialBet);
-        String input = "allin";
-        String[] inputFormatted = input.split(" ");
-        Command command = Command.parseCommand(inputFormatted, player);
-
-        boolean valid = command.validate(maxBet);
-        CommandResult result = command.execute(1, 2, maxBet);
-
-        Assertions.assertEquals(INITIAL_MONEY, result.bet());
-        Assertions.assertEquals(valid, true);
-        Assertions.assertEquals(INITIAL_MONEY, player.getMoneyOnBet());
-        Assertions.assertEquals(0, player.getMoneyOffBet());
-    }
-
-    @Test
-    public void fromZero_previousBet(){
+    public void correctFormatMinusAndMayus(){
 
         final int initialBet = 0;
-        int maxBet = 20;
 
         IPokerActions player = new FakePlayer(INITIAL_MONEY - initialBet, initialBet);
-        String input = "allin";
+        String input = "CalL";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
-
-        boolean valid = command.validate(maxBet);
-        CommandResult result = command.execute(1, 2, maxBet);
-
-        Assertions.assertEquals(INITIAL_MONEY, result.bet());
-        Assertions.assertEquals(valid, true);
-        Assertions.assertEquals(INITIAL_MONEY, player.getMoneyOnBet());
-        Assertions.assertEquals(0, player.getMoneyOffBet());
+        
+        Assertions.assertNotEquals(command, null);
     }
 
     @Test
-    public void fromSome_previousBet(){
-
-        final int initialBet = 200;
-        int maxBet = 20;
+    public void correctCallNoPreviousBet(){
+        
+        final int initialBet = 0;
+        int maxBet = 200;
 
         IPokerActions player = new FakePlayer(INITIAL_MONEY - initialBet, initialBet);
-        String input = "allin";
+        String input = "call";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
 
         boolean valid = command.validate(maxBet);
         CommandResult result = command.execute(1, 2, maxBet);
 
-        Assertions.assertEquals(INITIAL_MONEY, result.bet());
-        Assertions.assertEquals(valid, true);
-        Assertions.assertEquals(INITIAL_MONEY, player.getMoneyOnBet());
-        Assertions.assertEquals(0, player.getMoneyOffBet());
+        Assertions.assertEquals(200, result.bet());
+        Assertions.assertEquals(true, valid);
+        Assertions.assertEquals(200, player.getMoneyOnBet());
+        Assertions.assertEquals(INITIAL_MONEY - 200, player.getMoneyOffBet());
     }
 
+    @Test
+    public void correctCallWithPreviousBet(){
+        
+        final int initialBet = 100;
+        int maxBet = 200;
+
+        IPokerActions player = new FakePlayer(INITIAL_MONEY - initialBet, initialBet);
+        String input = "call";
+        String[] inputFormatted = input.split(" ");
+        Command command = Command.parseCommand(inputFormatted, player);
+
+        boolean valid = command.validate(maxBet);
+        CommandResult result = command.execute(1, 2, maxBet);
+
+        Assertions.assertEquals(200, result.bet());
+        Assertions.assertEquals(true, valid);
+        Assertions.assertEquals(200, player.getMoneyOnBet());
+        Assertions.assertEquals(INITIAL_MONEY - 200, player.getMoneyOffBet());
+    }
 
 }

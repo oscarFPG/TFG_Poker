@@ -1,17 +1,13 @@
 package com.ucm.server.commands;
 
-import com.ucm.server.gameobjects.Player;
-import com.ucm.server.interfaces.IPokerActions;
-import com.ucm.server.interfaces.IPokerPlayer;
-import com.ucm.server.middleclasses.CommandResult;
-
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.ucm.server.interfaces.IPokerActions;
+import com.ucm.server.middleclasses.CommandResult;
 
 
 /**
@@ -52,34 +48,15 @@ public abstract class Command {
      * the given parameters and sets the current bet to 0.
      * 
      * @param p           the player associated with the command.
-     * @param money       the total amount of money that the player has not bet yet.
-     * @param pocketMoney the amount of money that the player has already bet in the
-     *                    current hand.
+     * @param offBetMoney the total amount of money that the player has not bet yet.
+     * @param onBetMoney the amount of money that the player has already bet in the
+     *                   current hand.
      */
-    public Command(IPokerActions p, int money, int pocketMoney) {
+    public Command(IPokerActions p) {
         _player = p;
-        _playersOffBetMoney = money;
-        _playersOnBetMoney = pocketMoney;
+        _playersOffBetMoney = p.getMoneyOffBet();
+        _playersOnBetMoney = p.getMoneyOnBet();
         _currentHandBet = 0;
-    }
-
-
-    public static String showAvailableCommands() {
-
-        StringBuilder sb = new StringBuilder();
-
-        int i = 1;
-        for (Command command : AVAILABLE_COMMANDS) {
-            if (i == AVAILABLE_COMMANDS.size())
-                sb.append("\t> " + command.getCommandName() + " " + command.getCommandSyntax() + " : "
-                        + command.getCommandDescription());
-            else
-                sb.append("\t> " + command.getCommandName() + " " + command.getCommandSyntax() + " : "
-                        + command.getCommandDescription()).append("\n");
-            i++;
-        }
-
-        return sb.toString();
     }
 
     /**
@@ -93,39 +70,15 @@ public abstract class Command {
      * @param p player that is making the command
      * @return the command identified by the input, null if the input does not match any command
      */
-    public static Command parseCommand(final int commandNetworkCode, IPokerActions p) {
+    public static Command parseCommand(final String[] input, IPokerActions p) {
 
         for (Command command : AVAILABLE_COMMANDS) {
-            if (command.matchCommand(commandNetworkCode)) {
-                command._player = p;
-                return command;
+            if (command.matchCommand(input[0])) {
+                return command.createCommand(input, p);
             }
         }
 
         return null;
-    }
-
-    /**
-     * Method that receives the current bet value and updates the command's current
-     * bet accordingly.
-     * This method allows the command to keep track of the current bet in the game,
-     * which can be used for validation and execution of the command.
-     * 
-     * @param currentBet the current bet value in the game.
-     */
-    public void receiveCurrentBet(int currentBet) {
-        _currentHandBet = currentBet;
-    }
-
-    /**
-     * Method that returns the syntax of the command, which includes the command
-     * text and its shortcut.
-     * 
-     * @return a string representing the syntax of the command, including the
-     *         command text and its shortcut.
-     */
-    public final String getCommandSyntax() {
-        return "(" + getCommandText() + "/" + getCommandTextShotcut() + ")";
     }
 
     /**
@@ -136,30 +89,35 @@ public abstract class Command {
      * @return true if the input command matches the specific command, false
      *         otherwise.
      */
-    public final boolean matchCommand(final int code) {
-        return this.getCommandNetworkCode() == code;
+    public final boolean matchCommand(final String input) {
+        return getCommandFormat().equalsIgnoreCase(input) ||
+               getCommandFormatShortcut().equalsIgnoreCase(input);
     }
 
     /**
-     * Ask for the parameters needed by the command if necessary
-     * @param in input to receive the parameters by the user
-     * @return true if the operation was succesful, false otherwise
+     * Method that returns the syntax of the command, which includes the command
+     * text and its shortcut.
+     * 
+     * @return a string representing the syntax of the command, including the
+     *         command text and its shortcut.
      */
-    public void requireParameters(InputStream in) throws IOException {
-        // Not necesary for most of commands !!!
+    public final String getCommandSyntax() {
+        return getCommandFormat() + "/" + getCommandFormatShortcut() + getCommandParameters();
     }
 
-    /**
-     * Allows to request additional parameters to the poker player to create a full defined action by the player
-     */
-    public abstract void requestParameters();
+    public String getCommandParameters(){
+        return "";
+    }
+
+
+    protected abstract Command createCommand(final String[] commandFormat, final IPokerActions player);
 
     /**
      * Checks if the command can be executed correctly based on the context
      * 
      * @return true if the command can be executed, false in any other case
      */
-    public abstract boolean validate();
+    public abstract boolean validate(final int maxBet);
 
     /**
      * Method that executes the command. This method should be implemented by each
@@ -184,13 +142,13 @@ public abstract class Command {
      * 
      * @return
      */
-    public abstract String getCommandText();
+    public abstract String getCommandFormat();
 
     /**
      * 
      * @return
      */
-    public abstract String getCommandTextShotcut();
+    public abstract String getCommandFormatShortcut();
 
     /**
      * Method that returns a description of the command, including its syntax and
@@ -200,10 +158,5 @@ public abstract class Command {
      */
     public abstract String getCommandDescription();
 
-    /**
-     * 
-     * @return
-     */
-    protected abstract int getCommandNetworkCode();
 
 }

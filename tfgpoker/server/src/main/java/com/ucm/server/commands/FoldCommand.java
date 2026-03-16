@@ -1,7 +1,6 @@
 package com.ucm.server.commands;
 
 
-import com.ucm.common.GameType;
 import com.ucm.server.interfaces.IPokerActions;
 import com.ucm.server.middleclasses.CommandResult;
 
@@ -19,37 +18,25 @@ public class FoldCommand extends Command {
      * @param p the player that is making the fold play.
      */
     public FoldCommand(IPokerActions p) {
-        super(p, 0, 0);
+        super(p);
     }
 
-    /*
-        Player can always fold if it has money available(It is not eliminated)
-    @Override
-    public boolean validate(final int onBet, final int totalMoney, final int maxBet){
-        return totalMoney > 0;
-    }
-    */
-    
-    @Override
-    public void requestParameters() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'requestParameters'");
-    }
 
     @Override
-    public boolean validate() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'validate'");
+	protected Command createCommand(final String[] commandFormat, final IPokerActions player){
+        return new FoldCommand(player);
+	}
+
+    @Override
+    public boolean validate(final int maxBet) {
+        return true;
     }
 
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
 
-        /*
-         * Player always can fold, no need to call the checkCommand() method
-         */
         _player.fold();
-        return CommandResult.stopPlaying(0);
+        return CommandResult.stopPlaying();
     }
 
     @Override
@@ -57,33 +44,19 @@ public class FoldCommand extends Command {
         return "FOLD";
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getCommandText() {
-        return "fold";
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getCommandTextShotcut() {
-        return "f";
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getCommandDescription() {
         return "Retire from the current hand. If you have already bet, you will lose the money.";
     }
 
     @Override
-    protected int getCommandNetworkCode() {
-        return GameType.FOLD_ACTION;
+    public String getCommandFormat() {
+        return "fold";
+    }
+
+    @Override
+    public String getCommandFormatShortcut() {
+        return "f";
     }
 
 }

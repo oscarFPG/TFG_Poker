@@ -1,15 +1,15 @@
 package com.ucm.server.gameobjects;
 
-import com.ucm.common.SocketUtils;
-import com.ucm.server.control.GameAdapter;
-import com.ucm.server.interfaces.IPokerPlayer;
-import com.ucm.server.logic.Game;
-
 import java.io.IOException;
 import java.net.Socket;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.ucm.common.SocketUtils;
+import com.ucm.server.control.GameAdapter;
+import com.ucm.server.interfaces.IPokerPlayer;
+import com.ucm.server.logic.Game;
 
 /**
  * This class represents any king of player in the game, whether its a human
@@ -550,9 +550,9 @@ public class Player implements IPokerPlayer {
     }
 
     @Override
-    public int actionMakePlay(final int sb, final int bb, final int maxBet) {
+    public String actionMakePlay(final int sb, final int bb, final int maxBet) {
         
-        int commandCode = -1;
+        String commandInput = null;
         try{
 
             // Send round info
@@ -561,14 +561,14 @@ public class Player implements IPokerPlayer {
             SocketUtils.sendInteger(_socket.getOutputStream(), maxBet);
             log.debug("Round info sent to {}", _name);
 
-            commandCode = SocketUtils.receiveInt(_socket.getInputStream());
-            log.debug("Command code {} sent by the player {}", commandCode, _name);
+            commandInput = SocketUtils.receiveString( _socket.getInputStream() );
+            log.debug("Command code {} sent by the player {}", commandInput, _name);
         }
         catch (IOException e) {
             log.error("Receiving the command for {} player: {}", _name, e.getMessage());
         }
 
-        return commandCode;
+        return commandInput;
     }
 
     

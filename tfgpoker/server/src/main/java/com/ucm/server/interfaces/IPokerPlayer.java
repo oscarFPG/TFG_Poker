@@ -6,8 +6,6 @@ import com.ucm.server.gameobjects.PlayerRole;
 public interface IPokerPlayer extends IPokerActions {
     
     public String getPlayerName();
-    public int getMoneyOnBet();
-    public int getMoneyOffBet();
     public int getCardsCounter();
     public boolean hasFolded();
     public boolean isWinner();
@@ -33,6 +31,6 @@ public interface IPokerPlayer extends IPokerActions {
 
     public void actionSmallBlindBet(final int sb);
     public void actionBigBlindBet(final int bb);
-    public int actionMakePlay(final int sb, final int bb, final int maxBet);
+    public String actionMakePlay(final int sb, final int bb, final int maxBet);
 
 }

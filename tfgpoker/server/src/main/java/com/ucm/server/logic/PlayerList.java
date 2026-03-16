@@ -1,7 +1,5 @@
 package com.ucm.server.logic;
 
-import java.io.IOException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,7 +8,6 @@ import com.ucm.server.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.server.gameobjects.Card;
 import com.ucm.server.gameobjects.Player;
 import com.ucm.server.gameobjects.PlayerRole;
-import com.ucm.server.interfaces.IPokerActions;
 import com.ucm.server.interfaces.IPokerPlayer;
 import com.ucm.server.middleclasses.CommandResult;
 import com.ucm.server.middleclasses.HandInfo;
@@ -208,19 +205,17 @@ public class PlayerList {
 
             // Ask for an action by the player to execute
             Command command = null;
-            boolean valid = false;
-            while (valid == false) {
+            while (command == null) {
 
                 log.debug("It's is {} turn to play", pNode._player.getPlayerName());
                 playerOnTurn.notifyTurnPlay();
-                int commandCode = playerOnTurn.actionMakePlay(sb, bb, maxBet);
+                
+                String commandString = playerOnTurn.actionMakePlay(sb, bb, maxBet);
+                String[] commandFormatted = commandString.split(" ");
 
-                command = Command.parseCommand(commandCode, playerOnTurn);  // CAST TEMPORAL, !!!!!!!!!!!!!! CAMBIAR !!!!!!!!!!!!!!
-                command.requestParameters();
-                command.receiveCurrentBet(maxBet);
-                valid = command.validate();
+                command = Command.parseCommand(commandFormatted, playerOnTurn);
+                command = command.validate(maxBet) ? command : null;
             }
-            command.receiveCurrentBet(maxBet);
 
             CommandResult result = command.execute(sb, bb, maxBet);
             if (result.folds()) {
@@ -230,7 +225,7 @@ public class PlayerList {
             }
 
             playsToMake = result.raises() ? (activePlayersCounter() - 1) : (playsToMake - 1);
-            currentBet = result.bet();
+            currentBet = result.folds() ? 0 : result.bet();
             maxBet = Integer.max(maxBet, currentBet);
 
             log.debug("{} plays left to play", playsToMake);

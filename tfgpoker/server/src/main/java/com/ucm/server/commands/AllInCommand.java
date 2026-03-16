@@ -1,7 +1,6 @@
 package com.ucm.server.commands;
 
 
-import com.ucm.common.GameType;
 import com.ucm.server.interfaces.IPokerActions;
 import com.ucm.server.middleclasses.CommandResult;
 
@@ -11,6 +10,7 @@ import com.ucm.server.middleclasses.CommandResult;
  */
 public class AllInCommand extends Command {
 
+
     public AllInCommand() {}
 
     /**
@@ -19,30 +19,20 @@ public class AllInCommand extends Command {
      * @param money the total amount of money that the player has not bet yet.
      * @param pocketMoney the amount of money that the player has already bet in the current hand.
      */
-    public AllInCommand(IPokerActions p, int money, int pocketMoney) {
-        super(p, money, pocketMoney);
+    public AllInCommand(IPokerActions p) {
+        super(p);
     }
 
 
     @Override
-    public void requestParameters() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'requestParameters'");
-    }
+	protected Command createCommand(final String[] commandFormat, final IPokerActions player){
+		return new AllInCommand(player);
+	}
 
     @Override
-    public boolean validate() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'validate'");
+    public boolean validate(final int maxBet) {
+        return true;
     }
-
-    /* 
-        Player can allways bet all the money on his posession if it has some
-    @Override
-    public boolean validate(final int onBet, final int totalMoney, final int maxBet){
-        return totalMoney > 0;
-    }
-    */
 
     /**
      * {@inheritDoc}
@@ -51,7 +41,7 @@ public class AllInCommand extends Command {
     public CommandResult execute(int sb, int bb, int maxBet) {
 
         _player.allIn();
-        return CommandResult.continuePlaying(maxBet, false);
+        return CommandResult.continuePlaying(_player.getMoneyOnBet(), false);
     }
 
     /**
@@ -66,29 +56,19 @@ public class AllInCommand extends Command {
      * {@inheritDoc}
      */
     @Override
-    public String getCommandText() {
-        return "all-in";
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getCommandTextShotcut() {
-        return "a";
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String getCommandDescription() {
         return "Bet all of your remaining money on the current hand.";
     }
 
+
     @Override
-    protected int getCommandNetworkCode() {
-       return GameType.ALL_IN_ACTION; 
+    public String getCommandFormat() {
+        return "allin";
+    }
+
+    @Override
+    public String getCommandFormatShortcut() {
+        return "r";
     }
 
 }

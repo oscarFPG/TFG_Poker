@@ -1,17 +1,14 @@
 package com.ucm.server.evaluator;
 
-import org.junit.jupiter.api.Test;
+import java.io.IOException;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
-import com.ucm.server.evaluator.Evaluator;
 import com.ucm.server.gameobjects.Card;
 import com.ucm.server.gameobjects.Suit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.io.IOException;
 
 public class EvaluatorTest {
 
@@ -179,7 +176,7 @@ public class EvaluatorTest {
         int c4 = Evaluator.encodeCard(tableCards2136[3]);
         int c5 = Evaluator.encodeCard(tableCards2136[4]);
 
-        assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 2136);
+        Assertions.assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 2136);
 
     }
 
