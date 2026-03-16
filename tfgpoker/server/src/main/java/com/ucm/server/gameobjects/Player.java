@@ -265,14 +265,6 @@ public class Player implements IPokerPlayer {
     }
 
     @Override
-    public boolean allIn() {
-        increasePocketMoney(_money);
-        _money = 0;
-
-        return true;
-    }
-
-    @Override
     public boolean raise(final int amount) {
 
         // Si tengo menos dinero de lo que está apostado y quiero subir
@@ -285,6 +277,13 @@ public class Player implements IPokerPlayer {
         return true;
     }
 
+    @Override
+    public boolean allIn() {
+        increasePocketMoney(_money);
+        _money = 0;
+
+        return true;
+    }
 
     /* --------------------------------------- IPokerPlayer --------------------------------------- */
     @Override

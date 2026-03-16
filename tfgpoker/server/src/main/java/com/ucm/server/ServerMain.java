@@ -390,7 +390,7 @@ public class ServerMain {
                     key.cancel();
                     client.close();
                 }
-                catch(IOException ignored){}
+                catch (IOException ignored){}
             }
 
             if(roomList.size() >= 2){

@@ -1,12 +1,15 @@
-package com.ucm.server;
+package com.ucm.server.evaluator;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Assertions.*;
 
 import com.ucm.server.evaluator.Evaluator;
 import com.ucm.server.gameobjects.Card;
 import com.ucm.server.gameobjects.Suit;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
@@ -164,7 +167,7 @@ public class EvaluatorTest {
     public void testEncodeCardNoDevuelveCero() {
         Card carta = new Card(7, Suit.CLUBS);
         int valor = Evaluator.encodeCard(carta);
-        assertTrue(valor > 0, "El valor codificado de la carta debe ser mayor que 0");
+        Assertions.assertTrue(valor > 0, "El valor codificado de la carta debe ser mayor que 0");
     }
 
     // 7 7 7 4 2
@@ -189,7 +192,7 @@ public class EvaluatorTest {
         int c4 = Evaluator.encodeCard(tableCards1[3]);
         int c5 = Evaluator.encodeCard(tableCards1[4]);
 
-        assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 1);
+        Assertions.assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 1);
 
     }
 
@@ -202,7 +205,7 @@ public class EvaluatorTest {
         int c4 = Evaluator.encodeCard(tableCards2[3]);
         int c5 = Evaluator.encodeCard(tableCards2[4]);
 
-        assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 2);
+        Assertions.assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 2);
 
     }
 
@@ -215,7 +218,7 @@ public class EvaluatorTest {
         int c4 = Evaluator.encodeCard(tableCards10[3]);
         int c5 = Evaluator.encodeCard(tableCards10[4]);
 
-        assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 10); // assertFalse(Evaluator.evaluate5hand(c1, c2,
+        Assertions.assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 10); // assertFalse(Evaluator.evaluate5hand(c1, c2,
                                                                        // c3, c4, c5) == 11);
 
     }
@@ -229,7 +232,7 @@ public class EvaluatorTest {
         int c4 = Evaluator.encodeCard(tableCards14[3]);
         int c5 = Evaluator.encodeCard(tableCards14[4]);
 
-        assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 14);
+        Assertions.assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 14);
 
     }
 
@@ -242,7 +245,7 @@ public class EvaluatorTest {
         int c4 = Evaluator.encodeCard(tableCards26[3]);
         int c5 = Evaluator.encodeCard(tableCards26[4]);
 
-        assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 26);
+        Assertions.assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 26);
 
     }
 
@@ -255,7 +258,7 @@ public class EvaluatorTest {
         int c4 = Evaluator.encodeCard(tableCards42[3]);
         int c5 = Evaluator.encodeCard(tableCards42[4]);
 
-        assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 42);
+        Assertions.assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 42);
 
     }
 
@@ -268,7 +271,7 @@ public class EvaluatorTest {
         int c4 = Evaluator.encodeCard(tableCards253[3]);
         int c5 = Evaluator.encodeCard(tableCards253[4]);
 
-        assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 253);
+        Assertions.assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 253);
 
     }
 
@@ -281,7 +284,7 @@ public class EvaluatorTest {
         int c4 = Evaluator.encodeCard(tableCards1565[3]);
         int c5 = Evaluator.encodeCard(tableCards1565[4]);
 
-        assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 1565);
+        Assertions.assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 1565);
 
     }
 
@@ -294,7 +297,7 @@ public class EvaluatorTest {
         int c4 = Evaluator.encodeCard(tableCards1608[3]);
         int c5 = Evaluator.encodeCard(tableCards1608[4]);
 
-        assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 1608);
+        Assertions.assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 1608);
 
     }
 
@@ -307,7 +310,7 @@ public class EvaluatorTest {
         int c4 = Evaluator.encodeCard(tableCards2461[3]);
         int c5 = Evaluator.encodeCard(tableCards2461[4]);
 
-        assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 2461);
+        Assertions.assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 2461);
 
     }
 
@@ -320,7 +323,7 @@ public class EvaluatorTest {
         int c4 = Evaluator.encodeCard(tableCards2934[3]);
         int c5 = Evaluator.encodeCard(tableCards2934[4]);
 
-        assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 2934);
+        Assertions.assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 2934);
 
     }
 
@@ -333,7 +336,7 @@ public class EvaluatorTest {
         int c4 = Evaluator.encodeCard(tableCards5406[3]);
         int c5 = Evaluator.encodeCard(tableCards5406[4]);
 
-        assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 5406);
+        Assertions.assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 5406);
 
     }
 
@@ -346,7 +349,7 @@ public class EvaluatorTest {
         int c4 = Evaluator.encodeCard(tableCards7459[3]);
         int c5 = Evaluator.encodeCard(tableCards7459[4]);
 
-        assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 7459);
+        Assertions.assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 7459);
 
     }
 
