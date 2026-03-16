@@ -7,7 +7,7 @@
 /**
  * Estilo para el menú lateral plegado
  */
-.menu-plegado {
+.folded-menu {
    -fx-background-color:
       linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100% ),
       radial-gradient(center 50% 40%, radius 120%,#691179 0%,#661076 25%,#3A0878 60%,#20034F 100% );
@@ -17,7 +17,7 @@
 /**
  * Estilo para botones como "START", "CANCEL" o "SAVE"
  */
-.boton-general {
+.general-button {
    -fx-background-color:
       linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100% ),
       radial-gradient(center 50% 40%, radius 120%,#691179 0%,#661076 25%,#3A0878 60%,#20034F 100% );
@@ -31,7 +31,7 @@
 /**
  * Estilo para el botón de información de cada modo de juego
  */
-.boton-info-mode {
+.mode-info-button {
    -fx-shape:  "M50,0 A50,50 0 1,1 49.99,0 Z";
    -fx-background-color: 
       linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100% ),
@@ -42,7 +42,7 @@
 /**
  * Estilo para el botón hexagonal de edición de perfil, incluye el la imagen del lápiz
  */
-.boton-edicion-perfil {
+.profile-edit-button {
     -fx-shape: "M 50 0 L 100 25 L 100 75 L 50 100 L 0 75 L 0 25 Z";
     -fx-background-color: #896E1D;
 }
@@ -50,13 +50,13 @@
 /**
  * Estilo para los botones para plegar y desplegar las diferentes secciones de información del menú desplegable de la pantalla principal
  */
-.boton-plegable-intro,
-.boton-desplegable-intro {
+.fold-button-intro,
+.unfold-button-intro {
    -fx-shape: "M0 28.87 L16.67 0 L33.33 28.87 Z";
 
 }
 
-.boton-menu-desplegable{
+.dropdown-menu-button{
    -fx-background-color:
    linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100% ),
    radial-gradient(center 50% 40%, radius 120%,#691179 0%,#661076 25%,#3A0878 60%,#20034F 100% );
@@ -71,7 +71,7 @@
 /**
  * Estilo para el botón "code" de "JOIN GAME" en la parte de partida privada
  */
-.boton-code {
+.code-button {
    -fx-background-color:
       linear-gradient(to top, #DC8CFE 0%, #FFF8FF 50%, #FFF8FF 50%, #DC8CFE 100%), #1B0359;
    -fx-background-insets: 0, 2;
@@ -85,8 +85,9 @@
 /**
  * Estilo para la forma triangular plegable de las secciones de información del menú desplegable de la pantalla principal
  */
-.forma-triangulo-plegable,
-.forma-triangulo-desplegable{
+
+.fold-triangle-shape,
+.unfold-triangle-shape {
    -fx-fill: radial-gradient(center 52.76% 52.84%, radius 100%, #661076 0%, #691179 30%, #3A0878 64%, #20034F 96%, #20034F 100%);
    -fx-stroke: linear-gradient(to top right, #DC8CFE, #FFF8FF, #DC8CFE );
    -fx-stroke-width: 2;
@@ -95,7 +96,7 @@
 /**
  * Estilo para la etiqueta del nombre de usuario
  */
-.label-name {
+.username-label {
    -fx-background-color: rgba(162,130,190,0.38);
    -fx-background-radius: 6, 5;
    -fx-text-fill: white;
@@ -104,17 +105,24 @@
    -fx-font-size: 21px;
 }
 
-.text-general-font{
+.general-text-font {
     -fx-text-fill: white;
    -fx-alignment: center;
    -fx-font-family: "Constantia";
   
 }
 
+.bold-general-text-font {
+    -fx-text-fill: white;
+   -fx-alignment: center;
+   -fx-font-family: "Constantia Bold";
+  
+}
+
 /**
  * Estilo para los títulos de cada escena del juego
  */
-.label-titulos {
+.title-label {
    -fx-background-color:
       linear-gradient(to top, #DC8CFE 0%, #FFF8FF 50%, #FFF8FF 50%, #DC8CFE 100%), #1B0359;
    -fx-background-insets: 0, 2;
@@ -128,7 +136,7 @@
 /**
  * Estilo para los subtítulos de cada escena del juego
  */
-.label-subtitulos {
+.subtitle-label {
    -fx-background-color:
       linear-gradient(to top, #DC8CFE 0%, #FFF8FF 50%, #FFF8FF 50%, #DC8CFE 100%), #1B0359;
    -fx-background-insets: 0, 2;
@@ -141,7 +149,7 @@
 /**
  * Estilo para las descripciones con recuadro rectangular visibles en cada sección de información del menú desplegable de la pantalla principal o en el historial durante el juego
  */
-.label-descripcion-rectangular {
+.rect-description-label {
    -fx-background-color:
       linear-gradient(to top, #DC8CFE 0%, #FFF8FF 50%, #FFF8FF 50%, #DC8CFE 100%), #321B69;
    -fx-background-insets: 0, 2;
@@ -154,7 +162,7 @@
 /**
  * Estilo para las descripciones con recuadro redondeado visible en las ventanas "JOIN GAME"  o "CREATE GAME"
  */
-.label-descripcion-redondeado {
+.rounded-description-label {
    -fx-background-color:
       linear-gradient(to top, #DC8CFE 0%, #FFF8FF 50%, #FFF8FF 50%, #DC8CFE 100%), #321B69;
    -fx-background-insets: 0, 2;
@@ -164,14 +172,6 @@
    -fx-font-family: "Constantia";
    -fx-font-size: 20px; 
 }
-
-
-.root {
-   -fx-background-image: url("../images/fondoPoker.png");
-   -fx-background-size: cover;
-   -fx-background-position: center;
-}
-
 
 /*FLECHAS ----------------------------------------------------------------------------------------------------- */
 
