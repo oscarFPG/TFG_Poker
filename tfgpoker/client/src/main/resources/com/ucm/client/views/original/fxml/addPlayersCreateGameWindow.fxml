@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="706.0" prefWidth="1043.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <BorderPane prefHeight="200.0" prefWidth="200.0">
+         <top>
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+               <children>
+                  <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                     <children>
+                        <Button mnemonicParsing="false" prefHeight="36.0" prefWidth="39.0">
+                           <styleClass>
+                              <String fx:value="arrow-back" />
+                              <String fx:value="arrow-colors" />
+                           </styleClass>
+                        </Button>
+                        <Label styleClass="general-text-font" text="Direction" />
+                     </children>
+                     <VBox.margin>
+                        <Insets left="5.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <Label alignment="CENTER" styleClass="bold-general-text-font" text="CREATE GAME">
+                     <font>
+                        <Font size="58.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+         </top>
+         <center>
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+               <children>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                     <children>
+                        <Button mnemonicParsing="false" prefHeight="44.0" prefWidth="36.0">
+                           <styleClass>
+                              <String fx:value="arrow-back" />
+                              <String fx:value="arrow-colors" />
+                           </styleClass>
+                        </Button>
+                        <Label prefHeight="82.0" prefWidth="493.0" styleClass="title-label" text="Add Players" />
+                        <Button mnemonicParsing="false" prefHeight="44.0" prefWidth="36.0" rotate="180.0">
+                           <styleClass>
+                              <String fx:value="arrow-back" />
+                              <String fx:value="arrow-colors" />
+                           </styleClass>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <VBox alignment="CENTER" prefHeight="270.0" prefWidth="300.0" spacing="4.0" styleClass="rounded-description-label">
+                           <children>
+                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+                                 <children>
+                                    <Label styleClass="bold-general-text-font" text="Players remaining" />
+                                    <Label styleClass="username-label" text="num" />
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets top="10.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../images/iconoPlayerRamaining.png" />
+                                 </image>
+                              </ImageView>
+                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                                 <children>
+                                    <Button mnemonicParsing="false" text="-">
+                                       <styleClass>
+                                          <String fx:value="general-button" />
+                                          <String fx:value="general-text-font" />
+                                       </styleClass>
+                                    </Button>
+                                    <Label prefHeight="25.0" prefWidth="62.0" styleClass="username-label" />
+                                    <Button mnemonicParsing="false" text="+">
+                                       <styleClass>
+                                          <String fx:value="general-button" />
+                                          <String fx:value="general-text-font" />
+                                       </styleClass>
+                                    </Button>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets bottom="5.0" />
+                                 </VBox.margin>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </center>
+         <bottom>
+            <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="40.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="137.0" text="SAVE">
+                     <styleClass>
+                        <String fx:value="general-button" />
+                        <String fx:value="bold-general-text-font" />
+                     </styleClass>
+                     <font>
+                        <Font size="27.0" />
+                     </font>
+                  </Button>
+                  <Button mnemonicParsing="false" prefHeight="45.0" prefWidth="145.0" text="CANCEL">
+                     <styleClass>
+                        <String fx:value="general-button" />
+                        <String fx:value="bold-general-text-font" />
+                     </styleClass>
+                     <font>
+                        <Font size="27.0" />
+                     </font>
+                  </Button>
+               </children>
+            </HBox>
+         </bottom>
+      </BorderPane>
+   </children>
+</StackPane>
