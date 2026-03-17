@@ -20,22 +20,29 @@
                <children>
                   <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                      <children>
-                        <Button mnemonicParsing="false" prefHeight="36.0" prefWidth="39.0">
+                        <Button mnemonicParsing="false" prefHeight="48.0" prefWidth="40.0">
                            <styleClass>
                               <String fx:value="arrow-back" />
                               <String fx:value="arrow-colors" />
                            </styleClass>
                         </Button>
-                        <Label styleClass="general-text-font" text="Direction" />
+                        <Label styleClass="general-text-font" text="Direction">
+                           <font>
+                              <Font size="15.0" />
+                           </font></Label>
                      </children>
                      <VBox.margin>
                         <Insets left="5.0" />
                      </VBox.margin>
                   </HBox>
-                  <Label alignment="CENTER" styleClass="bold-general-text-font" text="CREATE GAME">
+                  <Label alignment="CENTER" text="CREATE GAME">
                      <font>
                         <Font size="58.0" />
                      </font>
+                     <styleClass>
+                        <String fx:value="general-text-font" />
+                        <String fx:value="bold-general-text-font" />
+                     </styleClass>
                   </Label>
                </children>
             </VBox>
@@ -67,7 +74,7 @@
                               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
                                  <children>
                                     <Label styleClass="bold-general-text-font" text="Players remaining" />
-                                    <Label styleClass="username-label" text="num" />
+                                    <Label prefHeight="25.0" prefWidth="39.0" styleClass="username-label" />
                                  </children>
                                  <VBox.margin>
                                     <Insets top="10.0" />

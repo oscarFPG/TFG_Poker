@@ -107,16 +107,15 @@
 
 .general-text-font {
     -fx-text-fill: white;
-   -fx-alignment: center;
-   -fx-font-family: "Constantia";
+    -fx-alignment: center;
+    -fx-font-family: "Constantia";
   
 }
 
 .bold-general-text-font {
     -fx-text-fill: white;
-   -fx-alignment: center;
-   -fx-font-family: "Constantia Bold";
-  
+    -fx-alignment: center;
+    -fx-font-family: "Constantia Bold";
 }
 
 /**
