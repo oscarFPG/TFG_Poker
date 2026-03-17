@@ -1,6 +1,7 @@
 package com.ucm.server.commands;
 
-import org.junit.jupiter.api.Assertions;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import org.junit.jupiter.api.Test;
 
 import com.ucm.server.FakePlayer;
@@ -10,11 +11,13 @@ import com.ucm.server.middleclasses.CommandResult;
 
 public class CallCommandTest {
     
+    private static final int SMALL_BLIND = 1;
+    private static final int BIG_BLIND = SMALL_BLIND * 2;
     private static final int INITIAL_MONEY = 1000;
 
 
     @Test
-    public void badFormat(){
+    public void NotAllowBadFormat(){
 
         final int initialBet = 0;
 
@@ -23,11 +26,11 @@ public class CallCommandTest {
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
         
-        Assertions.assertEquals(command, null);
+        assertEquals(command, null);
     }
 
     @Test
-    public void badFormat2(){
+    public void permitBlankSpacesWithGoodFormat(){
 
         final int initialBet = 0;
 
@@ -36,7 +39,7 @@ public class CallCommandTest {
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
         
-        Assertions.assertEquals(command, null);
+        assertEquals(command, null);
     }
 
     @Test
@@ -49,7 +52,7 @@ public class CallCommandTest {
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
         
-        Assertions.assertNotEquals(command, null);
+        assertNotEquals(command, null);
     }
 
     @Test
@@ -64,12 +67,12 @@ public class CallCommandTest {
         Command command = Command.parseCommand(inputFormatted, player);
 
         boolean valid = command.validate(maxBet);
-        CommandResult result = command.execute(1, 2, maxBet);
+        CommandResult result = command.execute(SMALL_BLIND, BIG_BLIND, maxBet);
 
-        Assertions.assertEquals(200, result.bet());
-        Assertions.assertEquals(true, valid);
-        Assertions.assertEquals(200, player.getMoneyOnBet());
-        Assertions.assertEquals(INITIAL_MONEY - 200, player.getMoneyOffBet());
+        assertEquals(CommandResult.continuePlaying(200, false), result);
+        assertEquals(true, valid);
+        assertEquals(200, player.getMoneyOnBet());
+        assertEquals(INITIAL_MONEY - 200, player.getMoneyOffBet());
     }
 
     @Test
@@ -84,12 +87,12 @@ public class CallCommandTest {
         Command command = Command.parseCommand(inputFormatted, player);
 
         boolean valid = command.validate(maxBet);
-        CommandResult result = command.execute(1, 2, maxBet);
+        CommandResult result = command.execute(SMALL_BLIND, BIG_BLIND, maxBet);
 
-        Assertions.assertEquals(200, result.bet());
-        Assertions.assertEquals(true, valid);
-        Assertions.assertEquals(200, player.getMoneyOnBet());
-        Assertions.assertEquals(INITIAL_MONEY - 200, player.getMoneyOffBet());
+        assertEquals(CommandResult.continuePlaying(200, false), result);
+        assertEquals(true, valid);
+        assertEquals(200, player.getMoneyOnBet());
+        assertEquals(INITIAL_MONEY - 200, player.getMoneyOffBet());
     }
 
 }

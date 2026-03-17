@@ -303,7 +303,7 @@ public class PlayerList {
 
         int size = activePlayersCounter();
         HandInfo[] info = new HandInfo[size];
-        Node pNode = (!_first._player.hasFolded()) ? _first : getNextPlayerActive(_first);
+        Node pNode = (!_first._player.isFolded()) ? _first : getNextPlayerActive(_first);
         int i = 0;
 
         while (i < size) {
@@ -319,10 +319,10 @@ public class PlayerList {
         if (isEmpty())
             return 0;
 
-        int cont = _first._player.hasFolded() ? 0 : 1;
+        int cont = _first._player.isFolded() ? 0 : 1;
         Node current = _first._next;
         while (current != _first) {
-            cont += current._player.hasFolded() ? 0 : 1;
+            cont += current._player.isFolded() ? 0 : 1;
             current = current._next;
         }
 
@@ -356,14 +356,14 @@ public class PlayerList {
     private Node getNextPlayerActive(Node current) {
 
         Node iNode = current._next;
-        if(!iNode._player.hasFolded())
+        if(!iNode._player.isFolded())
             return iNode;
 
 
         boolean found = false;
         while (!found && iNode._player != current._player) {
             iNode = iNode._next;
-            if(!iNode._player.hasFolded())
+            if(!iNode._player.isFolded())
                 found = true;
         }
 

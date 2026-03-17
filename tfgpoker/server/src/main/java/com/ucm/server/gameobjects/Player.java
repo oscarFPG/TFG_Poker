@@ -307,7 +307,7 @@ public class Player implements IPokerPlayer {
     }
 
     @Override
-    public boolean hasFolded() {
+    public boolean isFolded() {
         return _fold;
     }
 

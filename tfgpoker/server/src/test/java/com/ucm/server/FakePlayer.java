@@ -48,8 +48,8 @@ public class FakePlayer implements IPokerPlayer {
 
         int resto = amount - onBetMoney;
         
-        offBetMoney += resto;
-        onBetMoney -= resto;
+        onBetMoney += resto;
+        offBetMoney -= resto;
         return true;
     }
 
@@ -81,7 +81,7 @@ public class FakePlayer implements IPokerPlayer {
     }
 
     @Override
-    public boolean hasFolded() {
+    public boolean isFolded() {
         return isFolded;
     }
 

@@ -89,7 +89,7 @@ public abstract class Command {
      * @return true if the input command matches the specific command, false
      *         otherwise.
      */
-    public final boolean matchCommand(final String input) {
+    protected final boolean matchCommand(final String input) {
         return getCommandFormat().equalsIgnoreCase(input) ||
                getCommandFormatShortcut().equalsIgnoreCase(input);
     }

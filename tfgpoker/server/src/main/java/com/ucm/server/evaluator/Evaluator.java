@@ -39,7 +39,7 @@ public class Evaluator {
         STRAIGHT_FLUSH
     }
 
-    private static int PRIME_NUMBERS[] = { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41 };
+    private static final  int PRIME_NUMBERS[] = { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41 };
 
     private static short _flushes[];
     private static short _unique5[];
@@ -47,6 +47,7 @@ public class Evaluator {
     private static short _hashValues[];
 
     private static Evaluator instance;
+
 
     private Evaluator() throws IOException {
         loadEvaluator();
@@ -60,6 +61,7 @@ public class Evaluator {
 
         return instance;
     }
+
 
     private static List<String> getFileResource(String fileName) {
 

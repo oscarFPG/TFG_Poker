@@ -1,6 +1,6 @@
 package com.ucm.server.commands;
 
-import org.junit.jupiter.api.Assertions;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 import com.ucm.server.FakePlayer;
@@ -10,8 +10,10 @@ import com.ucm.server.middleclasses.CommandResult;
 
 
 public class AllInCommandTest {
- 
-    private static final int INITIAL_MONEY = 1000; 
+
+    private static final int SMALL_BLIND = 1;
+    private static final int BIG_BLIND = SMALL_BLIND * 2;
+    private static final int INITIAL_MONEY = 1000;
     
 
     @Test
@@ -24,7 +26,7 @@ public class AllInCommandTest {
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
         
-        Assertions.assertEquals(command, null);
+        assertEquals(command, null);
     }
 
     @Test
@@ -40,12 +42,12 @@ public class AllInCommandTest {
         Command command = Command.parseCommand(inputFormatted, player);
 
         boolean valid = command.validate(maxBet);
-        CommandResult result = command.execute(1, 2, maxBet);
+        CommandResult result = command.execute(SMALL_BLIND, BIG_BLIND, maxBet);
 
-        Assertions.assertEquals(INITIAL_MONEY, result.bet());
-        Assertions.assertEquals(valid, true);
-        Assertions.assertEquals(INITIAL_MONEY, player.getMoneyOnBet());
-        Assertions.assertEquals(0, player.getMoneyOffBet());
+        assertEquals(CommandResult.continuePlaying(INITIAL_MONEY, false), result);
+        assertEquals(valid, true);
+        assertEquals(INITIAL_MONEY, player.getMoneyOnBet());
+        assertEquals(0, player.getMoneyOffBet());
     }
 
     @Test
@@ -60,12 +62,12 @@ public class AllInCommandTest {
         Command command = Command.parseCommand(inputFormatted, player);
 
         boolean valid = command.validate(maxBet);
-        CommandResult result = command.execute(1, 2, maxBet);
+        CommandResult result = command.execute(SMALL_BLIND, BIG_BLIND, maxBet);
 
-        Assertions.assertEquals(INITIAL_MONEY, result.bet());
-        Assertions.assertEquals(valid, true);
-        Assertions.assertEquals(INITIAL_MONEY, player.getMoneyOnBet());
-        Assertions.assertEquals(0, player.getMoneyOffBet());
+        assertEquals(CommandResult.continuePlaying(INITIAL_MONEY, false), result);
+        assertEquals(valid, true);
+        assertEquals(INITIAL_MONEY, player.getMoneyOnBet());
+        assertEquals(0, player.getMoneyOffBet());
     }
 
     @Test
@@ -80,12 +82,12 @@ public class AllInCommandTest {
         Command command = Command.parseCommand(inputFormatted, player);
 
         boolean valid = command.validate(maxBet);
-        CommandResult result = command.execute(1, 2, maxBet);
+        CommandResult result = command.execute(SMALL_BLIND, BIG_BLIND, maxBet);
 
-        Assertions.assertEquals(INITIAL_MONEY, result.bet());
-        Assertions.assertEquals(valid, true);
-        Assertions.assertEquals(INITIAL_MONEY, player.getMoneyOnBet());
-        Assertions.assertEquals(0, player.getMoneyOffBet());
+        assertEquals(CommandResult.continuePlaying(INITIAL_MONEY, false), result);
+        assertEquals(valid, true);
+        assertEquals(INITIAL_MONEY, player.getMoneyOnBet());
+        assertEquals(0, player.getMoneyOffBet());
     }
 
     @Test
@@ -100,12 +102,12 @@ public class AllInCommandTest {
         Command command = Command.parseCommand(inputFormatted, player);
 
         boolean valid = command.validate(maxBet);
-        CommandResult result = command.execute(1, 2, maxBet);
+        CommandResult result = command.execute(SMALL_BLIND, BIG_BLIND, maxBet);
 
-        Assertions.assertEquals(INITIAL_MONEY, result.bet());
-        Assertions.assertEquals(valid, true);
-        Assertions.assertEquals(INITIAL_MONEY, player.getMoneyOnBet());
-        Assertions.assertEquals(0, player.getMoneyOffBet());
+        assertEquals(CommandResult.continuePlaying(INITIAL_MONEY, false), result);
+        assertEquals(valid, true);
+        assertEquals(INITIAL_MONEY, player.getMoneyOnBet());
+        assertEquals(0, player.getMoneyOffBet());
     }
 
 
