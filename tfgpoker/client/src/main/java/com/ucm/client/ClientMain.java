@@ -222,7 +222,6 @@ public class ClientMain extends Application {
 				}
 			}
 
-			System.out.printf("Comienza la partida!\n");
 			selector.close();
 			socket.configureBlocking(true);
 		}
@@ -235,7 +234,7 @@ public class ClientMain extends Application {
 
 	private static void game(Socket socket){
 
-		System.out.printf("La partida comienza!\n");
+		System.out.printf("Match starts!\n");
 		int roleCode;
 		boolean status;
 		Card[] playerCards = new Card[2];
@@ -247,15 +246,18 @@ public class ClientMain extends Application {
 
 			roleCode = SocketUtils.receiveInt(in);
 			String playerRole = translatePlayerRoleCode(roleCode);
-			System.out.printf("Player with name \'%s\' and rol code %s\n", _name, playerRole);
+			System.out.printf("Player with rol  %s\n", playerRole);
 
 			playerCards[0] = receiveCard(in);
 			playerCards[1] = receiveCard(in);
-			System.out.printf("Card1 %s received \n", translateCardCode(playerCards[0].numberCode, playerCards[0].suitCode));
-			System.out.printf("Card2 %s received\n", translateCardCode(playerCards[1].numberCode, playerCards[1].suitCode) );
+			System.out.printf("Cards: %s - %s\n\n", 
+				translateCardCode(playerCards[0].numberCode, playerCards[0].suitCode), 
+				translateCardCode(playerCards[1].numberCode, playerCards[1].suitCode)
+			);
 
 			// Preflop
 			status = playRound(playerCards[0], playerCards[1], socket);
+			System.out.printf("Preflop has ended!\n\n");
 			tableCardValues[0] = receiveCard(in);
 			tableCardValues[1] = receiveCard(in);
 			tableCardValues[2] = receiveCard(in);
@@ -372,6 +374,7 @@ public class ClientMain extends Application {
 
 		boolean roundSuccess = true;
 		int sb, bb, maxBet, myBet = 0;
+
 		int turn = SocketUtils.receiveInt(socket.getInputStream());
 		while(turn != GameType.ROUND_ENDS){
 
@@ -405,6 +408,7 @@ public class ClientMain extends Application {
 					String command = getUserCommand();
 					String baseCommand = command.split(" ")[0];
 
+					System.out.printf("Player command is %s\n", command);
 					valid = true;
 					if (baseCommand.equalsIgnoreCase("raise") || baseCommand.equalsIgnoreCase("r")) {
 						SocketUtils.sendString(socket.getOutputStream(), command);
@@ -520,7 +524,10 @@ public class ClientMain extends Application {
 		while (command == null) { 
 			
 			command = _scanner.nextLine();
-			command = (command.length() < MAX_SIZE) ? command : null;
+			if(command.isBlank())
+				command = null;
+			else
+				command = (command.length() < MAX_SIZE) ? command : null;
 		}
 
 		return command;

@@ -111,6 +111,14 @@ public class FakePlayer implements IPokerPlayer {
     public void retrieveCards() {}
 
     @Override
+    public int placeOnBetMoney() {
+
+        int money = onBetMoney;
+        onBetMoney = 0;
+        return money;
+    }
+
+    @Override
     public void foldPlayer() {}
 
     @Override

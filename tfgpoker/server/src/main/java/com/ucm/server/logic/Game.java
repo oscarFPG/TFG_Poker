@@ -51,7 +51,7 @@ public class Game {
         
         _initialSmallBlind = Game.INITIAL_SB;
         _initialBigBlind = Game.INITIAL_BB;
-        _handCounter = 1;
+        _handCounter = 0;
 
         _playerList = new PlayerList(Game.NUM_MAX_PLAYERS);
         _deck = new Deck();
@@ -129,26 +129,24 @@ public class Game {
 
     public void playHand() throws OnlyOnePlayerLeftException {
 
-        int pot = 0;
+        ++_handCounter;
         try {
             log.debug("Playing hand number {}...", _handCounter);
+
             _playerList.playHand(_currentSB, _currentBB, _isPreflop);
+            _playerList.managePlayerPots();
+            _isPreflop = false;
         } 
         // Collect remaining bets only if the round ended because all players folded
         catch (OnlyOnePlayerLeftException e) {
             _isPreflop = false;
             _showdownSkipped = true;
-            pot = _playerList.collectAllBets();
-            _totalPot += pot;
-            ++_handCounter;
+            _totalPot = _playerList.collectAllBets();
+            log.debug("Hand number {} finished!", _handCounter);
             throw e;
         }
+    
         log.debug("Hand number {} finished!", _handCounter);
-
-        _isPreflop = false;
-        pot = _playerList.collectAllBets();
-        _totalPot += pot;
-        ++_handCounter;
     }
 
     public void giveRewardToWinner() {
@@ -159,19 +157,15 @@ public class Game {
         if(_showdownSkipped) {
             winners = new ArrayList<IPokerPlayer>();
             winners.add( playerHands[0].player() );
+            log.debug("{} has won {}$!", winners.get(0).getPlayerName(), _totalPot);
         }
         else {
             winners = Evaluator.evaluateAllHands(playerHands, _tableCards);
-        }
-
-        if (winners.size() == 1) {    
-            log.debug("{} ha ganado {}$!", winners.get(0).getPlayerName(), _totalPot);
-        }
-        else {
             log.debug("Empate entre {} jugadores: ", winners.size());
             for(IPokerPlayer p : winners)
                 log.debug("{} ", p.getPlayerName());
         }
+
 
         int rewardPerPlayer = _totalPot / winners.size();
         for(IPokerPlayer p : winners) {

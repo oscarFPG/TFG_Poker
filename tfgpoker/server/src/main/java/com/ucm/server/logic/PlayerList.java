@@ -16,24 +16,35 @@ public class PlayerList {
 
     private static final Logger log = LogManager.getLogger(PlayerList.class);
 
-    public class Node {
-        Node _prev;
-        IPokerPlayer _player;
-        Node _next;
+    private class Node {
 
-        public Node(Node prev, Player p, Node next) {
-            _prev = prev;
+        public int _id;
+        public IPokerPlayer _player;
+        public int _playerPot;
+
+        public Node _prev;
+        public Node _next;
+
+        public Node(int id, Node prev, Player p, Node next) {
+            
+            _id = id;
             _player = p;
+            _playerPot = 0;
+
+            _prev = prev;
             _next = next;
         }
     }
 
+    private int _idCounter;
     private Node _first;
     private Node _last;
     private int _playerCounter;
     private int _maxNumberOfPlayers;
 
+
     public PlayerList(int n) {
+        _idCounter = 0;
         _first = null;
         _last = null;
         _playerCounter = 0;
@@ -43,7 +54,7 @@ public class PlayerList {
     
     public void addPlayer(Player p) {
 
-        Node newNode = new Node(null, p, null);
+        Node newNode = new Node(_idCounter++, null, p, null);
         if (isEmpty()) {
             _first = newNode;
             _last = newNode;
@@ -244,6 +255,45 @@ public class PlayerList {
 
     }
 
+    public void managePlayerPots(){
+
+    }
+
+    public int collectAllBets() {
+
+        int totalPot = 0;
+        Node pNode = _first;
+
+        totalPot += pNode._player.placeOnBetMoney();
+        pNode = pNode._next;
+        while (pNode != _first) {
+            totalPot += pNode._player.placeOnBetMoney();
+            pNode = pNode._next;
+        }
+
+        return totalPot;
+    }
+
+    public void passTurn() {
+        _first = _first._next;
+        _last = _last._next;
+        assignRolesToAllPlayers();
+    }
+
+    public void resetPlayers() {
+
+        _first._player.retrieveCards();
+        _first._player.unfoldPlayer();
+
+        Node current = _first._next;
+        while (current != _first) {
+            current._player.retrieveCards();
+            current._player.unfoldPlayer();
+            current = current._next;
+        }
+    }
+
+
     public void sendTableCardToAllPlayers(final Card card){
 
         _first._player.receiveTableCard(card);
@@ -252,21 +302,6 @@ public class PlayerList {
             i._player.receiveTableCard(card);
             i = i._next;
         }
-    }
-
-    public int collectAllBets() {
-
-        int totalPot = 0;
-        Node pNode = _first;
-
-        totalPot += pNode._player.getMoneyOnBet();
-        pNode = pNode._next;
-        while (pNode != _first) {
-            totalPot += pNode._player.getMoneyOnBet();
-            pNode = pNode._next;
-        }
-
-        return totalPot;
     }
 
     public void notifyRankingsToAllPlayers(){
@@ -293,11 +328,6 @@ public class PlayerList {
 
     }
 
-    public void passTurn() {
-        _first = _first._next;
-        _last = _last._next;
-        assignRolesToAllPlayers();
-    }
 
     public HandInfo[] getPlayerHandsInfo() {
 
@@ -327,31 +357,7 @@ public class PlayerList {
         }
 
         return cont;
-    }
-
-    public void resetPlayers() {
-
-        _first._player.retrieveCards();
-        _first._player.unfoldPlayer();
-
-        Node current = _first._next;
-        while (current != _first) {
-            current._player.retrieveCards();
-            current._player.unfoldPlayer();
-            current = current._next;
-        }
-    }
-
-    public void showPlayersStateDEBUG() {
-
-        Node pNode = _first._next;
-        log.debug("{}", _first._player.toString());
-
-        while (pNode != _first) {
-            log.debug("{}", pNode._player.toString());
-            pNode = pNode._next;
-        }
-    }
+    } 
 
     private Node getNextPlayerActive(Node current) {
 

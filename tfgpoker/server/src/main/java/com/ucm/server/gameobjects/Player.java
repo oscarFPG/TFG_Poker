@@ -123,19 +123,6 @@ public class Player implements IPokerPlayer {
     }
 
     /**
-     * Retrieve the money that it is contained in the {@link #_pocketMoney} and set
-     * it to zero.
-     * 
-     * @return the money retrieved
-     */
-    public int placeBet() {
-
-        int money = _pocketMoney;
-        _pocketMoney = 0;
-        return money;
-    }
-
-    /**
      * The player receives money
      * 
      * @param money received by the player
@@ -150,7 +137,7 @@ public class Player implements IPokerPlayer {
      * 
      * @param bet quantity to subtract
      */
-    private void decreaseMoney(int bet) {
+    private void decreaseOffBetMoney(int bet) {
         _money = Math.clamp(_money - bet, 0, _money);
     }
 
@@ -159,7 +146,7 @@ public class Player implements IPokerPlayer {
      * 
      * @param bet quantity to add
      */
-    private void increasePocketMoney(int bet) {
+    private void increaseOnBetMoney(int bet) {
         _pocketMoney += bet;
     }
 
@@ -232,10 +219,10 @@ public class Player implements IPokerPlayer {
         log.debug("Total money on bet: {}$", amount + _pocketMoney);
         
         // Aumento la apuesta de mi ronda
-        increasePocketMoney(resto);
+        increaseOnBetMoney(resto);
 
         // Quito de mi cartera la diferencia
-        decreaseMoney(resto);
+        decreaseOffBetMoney(resto);
 
         return true;
     }
@@ -279,9 +266,9 @@ public class Player implements IPokerPlayer {
 
     @Override
     public boolean allIn() {
-        increasePocketMoney(_money);
-        _money = 0;
 
+        increaseOnBetMoney(_money);
+        _money = 0;
         return true;
     }
 
@@ -391,6 +378,15 @@ public class Player implements IPokerPlayer {
         _cards[0] = null;
         _cards[1] = null;
         _numCards = 0;
+    }
+
+
+    @Override
+    public int placeOnBetMoney() {
+
+        int money = _pocketMoney;
+        _pocketMoney = 0;
+        return money;
     }
 
     @Override
@@ -531,6 +527,7 @@ public class Player implements IPokerPlayer {
         try{
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnForcedSBToCode());
             SocketUtils.sendInteger(_socket.getOutputStream(), sb);
+            _pocketMoney += sb;
         }
         catch(IOException e){
             log.error("Player {} making the small blind bet: {}", _name, e.getMessage());
@@ -543,6 +540,7 @@ public class Player implements IPokerPlayer {
         try{
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnForcedSBToCode());
             SocketUtils.sendInteger(_socket.getOutputStream(), bb);
+            _pocketMoney += bb;
         }
         catch(IOException e){
             log.error("Player {} making the small blind bet: {}", _name, e.getMessage());

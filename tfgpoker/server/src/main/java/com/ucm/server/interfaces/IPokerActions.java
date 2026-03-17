@@ -13,6 +13,12 @@ public interface IPokerActions {
     public boolean isFolded();
     public boolean isWinner();
     
+    /**
+     * Retrieve the money that the palyer has bet and sets it to zero.
+     * 
+     * @return the money retrieved
+     */
+    public int placeOnBetMoney();
     public void foldPlayer();
     public void unfoldPlayer();
     
