@@ -33,7 +33,7 @@ public class PlayerList {
         public Node _prev;
         public Node _next;
 
-        public Node(int id, Node prev, Player p, Node next) {
+        public Node(int id, Node prev, IPokerPlayer p, Node next) {
             
             _id = id;
             _player = p;
@@ -63,7 +63,7 @@ public class PlayerList {
     }
 
     
-    public void addPlayer(Player p) {
+    public void addPlayer(IPokerPlayer p) {
 
         if(isFull())
             return;
@@ -93,7 +93,7 @@ public class PlayerList {
         log.debug("Player {} added!", p.getPlayerName());
     }
 
-    public void removePlayer(Player p) {
+    public void removePlayer(IPokerPlayer p) {
 
         if (isEmpty())
             return;
@@ -127,22 +127,39 @@ public class PlayerList {
             log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.BIG_BLIND.name());
         }
         else {
-            _current._player.receiveRole(PlayerRole.DEALER);
+
+            List<PlayerRole> roles = new ArrayList<>(List.of(
+                PlayerRole.DEALER, 
+                PlayerRole.SMALL_BLIND, 
+                PlayerRole.BIG_BLIND,
+                PlayerRole.UNDER_THE_GUN,
+                PlayerRole.MIDDLE_POSITION,
+                PlayerRole.CUT_OFF,
+                PlayerRole.NO_ROLE,
+                PlayerRole.NO_ROLE,
+                PlayerRole.NO_ROLE
+            ));
+
+            PlayerRole currentRole = roles.removeFirst();
+            _current._player.receiveRole(currentRole);
             log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.DEALER.name());
 
             _current = getNextPlayerActive(_current);
-            _current._player.receiveRole(PlayerRole.SMALL_BLIND);
+            currentRole = roles.removeFirst();
+            _current._player.receiveRole(currentRole);
             log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.SMALL_BLIND.name());
 
             _current = getNextPlayerActive(_current);
-            _current._player.receiveRole(PlayerRole.BIG_BLIND);
+            currentRole = roles.removeFirst();
+            _current._player.receiveRole(currentRole);
             log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.BIG_BLIND.name());
 
             _current = getNextPlayerActive(_current);
             while (_current != _first) {
-                _current._player.receiveRole(PlayerRole.NO_ROLE);
+                currentRole = roles.removeFirst();
+                _current._player.receiveRole(currentRole);
                 _current = getNextPlayerActive(_current);
-                log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.NO_ROLE.name());
+                log.debug("Player {} receives role {}", _current._player.getPlayerName(), currentRole.name());
             }
         }
     }
