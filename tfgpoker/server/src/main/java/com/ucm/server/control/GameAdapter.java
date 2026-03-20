@@ -131,6 +131,9 @@ public class GameAdapter {
     public static int gameEnded(){
         return GameType.GAME_ENDS;
     }
+    public static int gameKeeps(){
+        return GameType.GAME_KEEPS;
+    }
     public static int playerWinsHand(){
         return GameType.PLAYER_WINS_HAND;
     }

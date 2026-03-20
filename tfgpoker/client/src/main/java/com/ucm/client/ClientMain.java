@@ -42,7 +42,7 @@ public class ClientMain extends Application {
 	public static boolean AUTOMATED_MODE = false;
     private static String hostname = "localhost";
     private static String _name;
-	private static int _money = 1000;
+	private static int _money;
 	private static boolean _gameStarts;
 	private static Scanner _scanner;
 
@@ -76,20 +76,28 @@ public class ClientMain extends Application {
 		if (!serverIP.trim().isEmpty()) {
 			hostname = serverIP.trim();
 		}
-		else{
+		else {
 			serverIP = hostname;
 		}
 
-		// Entrar a aplicacion de poker
+		// Poker application
 		Socket socket = preGame(serverIP);
 		game(socket);
+
+		// Cleanup
+		try {
+			socket.close();
+		}
+		catch(IOException e) {
+			System.out.printf("Error trying to end the game succesfully: %s\n", e.getMessage());
+		}
 
 		_scanner.close();
     }
 
 
 	// Pre-game methods
-	private static void handleConnect(SelectionKey key){
+	private static void handleConnect(SelectionKey key) {
 
 		SocketChannel client = (SocketChannel) key.channel();
 		try {
@@ -103,7 +111,7 @@ public class ClientMain extends Application {
 		}
 	}
 
-	private static void handleReceive(SelectionKey key){
+	private static void handleReceive(SelectionKey key) {
 
 		SocketChannel socket = (SocketChannel) key.channel();
 		ByteBuffer buffer = ByteBuffer.allocate(128);
@@ -143,7 +151,7 @@ public class ClientMain extends Application {
 		}
 	}
 
-	private static void handleSend(SelectionKey key){
+	private static void handleSend(SelectionKey key) {
 		
 		SocketChannel socket = (SocketChannel) key.channel();
 		try{
@@ -187,7 +195,7 @@ public class ClientMain extends Application {
 
 
 	// Pregame and in-game methods
-	private static Socket preGame(final String serverIP){
+	private static Socket preGame(final String serverIP) {
 
 		SocketChannel socket = null;
 		try{
@@ -232,77 +240,87 @@ public class ClientMain extends Application {
 		return (socket != null) ? socket.socket() : null;
 	}
 
-	private static void game(Socket socket){
+	private static void game(Socket socket) {
 
 		System.out.printf("Match starts!\n");
 		int roleCode;
 		boolean status;
+		boolean endOfGame = false;
 		Card[] playerCards = new Card[2];
 		Card[] tableCardValues = new Card[5];
 
 		try {
+
 			InputStream in = socket.getInputStream();
-			OutputStream out = socket.getOutputStream();
+			while(!endOfGame) {
 
-			roleCode = SocketUtils.receiveInt(in);
-			String playerRole = translatePlayerRoleCode(roleCode);
-			System.out.printf("Player with rol  %s\n", playerRole);
+				roleCode = SocketUtils.receiveInt(in);
+				String playerRole = translatePlayerRoleCode(roleCode);
+				System.out.printf("Player with rol %s\n", playerRole);
 
-			playerCards[0] = receiveCard(in);
-			playerCards[1] = receiveCard(in);
-			System.out.printf("Cards: %s - %s\n\n", 
-				translateCardCode(playerCards[0].numberCode, playerCards[0].suitCode), 
-				translateCardCode(playerCards[1].numberCode, playerCards[1].suitCode)
-			);
+				playerCards[0] = receiveCard(in);
+				playerCards[1] = receiveCard(in);
+				System.out.printf("Cards: %s - %s\n\n", 
+					translateCardCode(playerCards[0].numberCode, playerCards[0].suitCode), 
+					translateCardCode(playerCards[1].numberCode, playerCards[1].suitCode)
+				);
 
-			// Preflop
-			status = playRound(playerCards[0], playerCards[1], socket);
-			System.out.printf("Preflop has ended!\n\n");
-			tableCardValues[0] = receiveCard(in);
-			tableCardValues[1] = receiveCard(in);
-			tableCardValues[2] = receiveCard(in);
-			showTableCards(tableCardValues);
-			
-			// Flop
-			status = playRound(playerCards[0], playerCards[1], socket);
-			tableCardValues[3] = receiveCard(in);
-			showTableCards(tableCardValues);
+				// Preflop
+				status = playRound(playerCards[0], playerCards[1], socket);
+				System.out.printf("Preflop has ended!\n\n");
+				tableCardValues[0] = receiveCard(in);
+				tableCardValues[1] = receiveCard(in);
+				tableCardValues[2] = receiveCard(in);
+				showTableCards(tableCardValues);
+				
+				// Flop
+				status = playRound(playerCards[0], playerCards[1], socket);
+				tableCardValues[3] = receiveCard(in);
+				showTableCards(tableCardValues);
 
-			// Turn
-			status = playRound(playerCards[0], playerCards[1], socket);
-			tableCardValues[4] = receiveCard(in);
-			showTableCards(tableCardValues);
+				// Turn
+				status = playRound(playerCards[0], playerCards[1], socket);
+				tableCardValues[4] = receiveCard(in);
+				showTableCards(tableCardValues);
 
-			// River
-			status = playRound(playerCards[0], playerCards[1], socket);
-			showTableCards(tableCardValues);
+				// River
+				status = playRound(playerCards[0], playerCards[1], socket);
+				showTableCards(tableCardValues);
 
-			// Showdown
-			int rankingCode = SocketUtils.receiveInt(in);
-			_money = SocketUtils.receiveInt(in);
-			if(rankingCode == GameType.PLAYER_WINS_HAND){
-				System.out.printf("You have won! Current money is %d\n", _money);
+				// Showdown
+				int rankingCode = SocketUtils.receiveInt(in);
+				_money = SocketUtils.receiveInt(in);
+				if(rankingCode == GameType.PLAYER_WINS_HAND) {
+					System.out.printf("You have won!\nCurrent money is %d\n", _money);
+				}
+				else if(rankingCode == GameType.PLAYER_LOSES_HAND) {
+					System.out.printf("You have lost!\nCurrent money is %d\n", _money);
+				}
+
+				// Game ends or keeps
+				int gameStatusCode = SocketUtils.receiveInt(in);
+				System.out.printf("Game status code received is %d\n", gameStatusCode);
+				endOfGame = (gameStatusCode == GameType.GAME_ENDS);
 			}
-			else if(rankingCode == GameType.PLAYER_LOSES_HAND){
-				System.out.printf("You have lost! Current money is %d\n", _money);
-			}
 
+			System.out.printf("Game ends! Thanks for playing %s!\n", _name);
 		}
 		catch (IOException e) {
 			System.out.printf("Error: %s\n", e.getMessage());
-			try{
+			try {
 				socket.close();
 				System.out.printf("Socket closed successfully\n");
 			}
-			catch(IOException exc){
+			catch(IOException exc) {
 				System.out.printf("Error closing the socket: %s\n", exc.getMessage());
 			}
 		}
+
 	}
 
 
 	// Auxiliar methods to send/receive data
-	private static void sendString(String msg, SocketChannel socket) throws IOException{
+	private static void sendString(String msg, SocketChannel socket) throws IOException {
 
 		ByteBuffer buffer = ByteBuffer.allocate(1 + Integer.BYTES + msg.length());
 		buffer.put(GameType.DATA_TYPE_NAME);
@@ -314,7 +332,7 @@ public class ClientMain extends Application {
 			socket.write(buffer);
 	}
 
-	private static void sendPetition(int petitionCode, SocketChannel socket) throws IOException{
+	private static void sendPetition(int petitionCode, SocketChannel socket) throws IOException {
 
 		ByteBuffer buffer = ByteBuffer.allocate(1 + Integer.BYTES);
 		buffer.clear();
@@ -327,7 +345,7 @@ public class ClientMain extends Application {
 		}
 	}
 
-	private static void sendStartGameByHost(SocketChannel socket) throws IOException{
+	private static void sendStartGameByHost(SocketChannel socket) throws IOException {
 
 		// Wait for host to start the game
 		String command = null;
@@ -373,10 +391,11 @@ public class ClientMain extends Application {
 		System.out.printf("Round has started!\n");
 
 		boolean roundSuccess = true;
-		int sb, bb, maxBet, myBet = 0;
+		boolean blindsOnPlay = true;
+		int sb, bb, maxBet;
 
 		int turn = SocketUtils.receiveInt(socket.getInputStream());
-		while(turn != GameType.ROUND_ENDS){
+		while(turn != GameType.ROUND_ENDS) {
 
 			if(turn == GameType.TURN_FORCED_SB){
 				int cantidadSB = SocketUtils.receiveInt(socket.getInputStream());
@@ -391,16 +410,22 @@ public class ClientMain extends Application {
 			}
 			else if(turn == GameType.TURN_PLAY){
 
-				System.out.printf("It's your turn to play!\n");
+				System.out.printf("\nIt's your turn to play!\n");
 
 				// Receive round info
 				sb = SocketUtils.receiveInt( socket.getInputStream() );
 				bb = SocketUtils.receiveInt( socket.getInputStream() );
 				maxBet = SocketUtils.receiveInt( socket.getInputStream() );
-				System.out.printf("-- Small blind bet: %d\n", sb);
-				System.out.printf("-- Big blind bet: %d\n", bb);
+				_money = SocketUtils.receiveInt( socket.getInputStream() );
+
+				if(blindsOnPlay){
+					System.out.printf("-- Small blind bet: %d\n", sb);
+					System.out.printf("-- Big blind bet: %d\n", bb);
+					blindsOnPlay = false;
+				}
+				
 				System.out.printf("-- Max bet: %d\n", maxBet);
-				System.out.printf("-- Your bet: %d\n\n", myBet);
+				System.out.printf("-- Your money: %d\n\n", _money);
 
 				boolean valid = false;
 				while(!valid){
@@ -444,7 +469,7 @@ public class ClientMain extends Application {
 	}
 
 	// Auxiliar methods
-	private static int getUserPetition(){
+	private static int getUserPetition() {
 
 		// Wait for clients petition
 		int opcion = -1;
@@ -464,7 +489,7 @@ public class ClientMain extends Application {
 		return opcion;
 	}
 
-	private static String translateCardCode(final int value, final int suit){
+	private static String translateCardCode(final int value, final int suit) {
 		
 		String valueString = (value == GameType.NUMBER_ACE) ? "A" :
 								(value == GameType.NUMBER_TWO) ? "2" :
@@ -488,7 +513,7 @@ public class ClientMain extends Application {
 		return String.format("[%s%c]", valueString, suitChar);
 	}
 
-	private static String translatePlayerRoleCode(final int code){
+	private static String translatePlayerRoleCode(final int code) {
 		
 		switch (code) {
 			case GameType.PLAYER_ROLE_DEALER:
@@ -509,7 +534,7 @@ public class ClientMain extends Application {
 
 	}
 
-	private static String getUserCommand(){
+	private static String getUserCommand() {
 
 		final int MAX_SIZE = 32;
 		System.out.printf("Write your action: \n");
@@ -533,7 +558,7 @@ public class ClientMain extends Application {
 		return command;
 	}
 
-	private static void showTableCards(final Card tableCards[]){
+	private static void showTableCards(final Card tableCards[]) {
 
 		for(Card c : tableCards){
 			if(c != null)

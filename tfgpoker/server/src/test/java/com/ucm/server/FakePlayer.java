@@ -10,11 +10,13 @@ public class FakePlayer implements IPokerPlayer {
     public int offBetMoney;
     public int onBetMoney;
     public boolean isFolded;
+    public boolean isWinner;
 
     public FakePlayer(int offBet, int onBet){
         offBetMoney = offBet;
         onBetMoney = onBet;
         isFolded = false;
+        isWinner = false;
     }
 
     @Override
@@ -108,6 +110,11 @@ public class FakePlayer implements IPokerPlayer {
     public void receiveNewMoney(int money) {}
 
     @Override
+    public void receivePriceMoney(int amount) {
+        offBetMoney += amount;   
+    }
+
+    @Override
     public void retrieveCards() {}
 
     @Override
@@ -140,6 +147,9 @@ public class FakePlayer implements IPokerPlayer {
     public void notifyGameEnded() {}
 
     @Override
+    public void notifyGameKeeps() {}
+
+    @Override
     public void notifyHandWinner() {}
 
     @Override
@@ -158,6 +168,11 @@ public class FakePlayer implements IPokerPlayer {
     public void actionBigBlindBet(int bb) {}
 
     @Override
-    public String actionMakePlay(int sb, int bb, int maxBet) { return ""; }
+    public String actionMakePlay(int sb, int bb, int maxBet) { return null; }
+
+    @Override
+    public void setIsWinner(boolean state) {
+        isWinner = state;
+    }
 
 }

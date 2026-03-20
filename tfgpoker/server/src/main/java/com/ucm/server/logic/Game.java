@@ -2,7 +2,6 @@ package com.ucm.server.logic;
 
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -14,8 +13,8 @@ import com.ucm.server.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.server.gameobjects.Card;
 import com.ucm.server.gameobjects.Deck;
 import com.ucm.server.gameobjects.Player;
-import com.ucm.server.interfaces.IPokerPlayer;
 import com.ucm.server.middleclasses.HandInfo;
+import com.ucm.server.middleclasses.PlayerEvaluation;
 
 
 public class Game {
@@ -39,9 +38,7 @@ public class Game {
     private Card[] _tableCards;
     private int _tableCardsCounter;
 
-    private int _totalPot;
     private boolean _isPreflop;
-    private boolean _showdownSkipped;
 
     private int _currentSB;
     private int _currentBB;
@@ -58,9 +55,7 @@ public class Game {
         _tableCards = new Card[MAX_CARDS_IN_TABLE];
         _tableCardsCounter = 0;
 
-        _totalPot = 0;
         _isPreflop = true;
-        _showdownSkipped = false;
 
         _currentSB = _initialSmallBlind;
         _currentBB = _initialBigBlind;
@@ -134,14 +129,14 @@ public class Game {
             log.debug("Playing hand number {}...", _handCounter);
 
             _playerList.playHand(_currentSB, _currentBB, _isPreflop);
-            _playerList.managePlayerPots();
+            _playerList.updatePlayerPots();
             _isPreflop = false;
         } 
         // Collect remaining bets only if the round ended because all players folded
         catch (OnlyOnePlayerLeftException e) {
+            _playerList.updatePlayerPots();
             _isPreflop = false;
-            _showdownSkipped = true;
-            _totalPot = _playerList.collectAllBets();
+
             log.debug("Hand number {} finished!", _handCounter);
             throw e;
         }
@@ -151,46 +146,36 @@ public class Game {
 
     public void giveRewardToWinner() {
 
-        HandInfo[] playerHands = _playerList.getPlayerHandsInfo();
-        List<IPokerPlayer> winners = null;
-
-        if(_showdownSkipped) {
-            winners = new ArrayList<IPokerPlayer>();
-            winners.add( playerHands[0].player() );
-            log.debug("{} has won {}$!", winners.get(0).getPlayerName(), _totalPot);
+        List<HandInfo> playersHands = _playerList.getPlayerHandsInfo();
+        if(playersHands.size() == 1) {
+            _playerList.calculatePrizeForPlayerLeft();
         }
         else {
-            winners = Evaluator.evaluateAllHands(playerHands, _tableCards);
-            log.debug("Empate entre {} jugadores: ", winners.size());
-            for(IPokerPlayer p : winners)
-                log.debug("{} ", p.getPlayerName());
+            List<PlayerEvaluation> playersEval = Evaluator.evaluateAllHands(playersHands, _tableCards);
+            _playerList.calculatePrizeDistribution(playersEval);
         }
-
-
-        int rewardPerPlayer = _totalPot / winners.size();
-        for(IPokerPlayer p : winners) {
-            //p.receivePriceMoney(rewardPerPlayer);
-            //p.playerWinsHand();
-        }
-
+        
         _playerList.notifyRankingsToAllPlayers();
-        _totalPot = 0;
     }
 
-    public void passTurn() {
+    public boolean passTurn() {
 
         retrieveCardsFromTable();
-        _playerList.resetPlayers();
         _deck.resetDeck();
+        _playerList.resetPlayers();
         _playerList.passTurn();
         _isPreflop = true;
-        _showdownSkipped = false;
 
-        log.debug("Pasando turno...");
+        boolean endOfGame = _playerList.checkEndOfGame();
+        _playerList.notifyGameEnds(endOfGame);
+        
+        if(!endOfGame)
+            log.debug("Preparing for next hand...");
+        else
+            log.debug("End of game");
+
+        return endOfGame;
     }
 
-    public boolean isGameFinished() {
-        return false;
-    }
 
 }

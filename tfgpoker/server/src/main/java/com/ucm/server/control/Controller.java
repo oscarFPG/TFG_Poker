@@ -41,30 +41,30 @@ public class Controller {
 
     private void addPlayersToGame(List<ClientStructGame> players) {
 
-        int id = 0;
         for(ClientStructGame cs : players){
-            _game.addPlayer( new Player(id, cs.name(), cs.socket(), 1000) );
-            ++id;
+            _game.addPlayer( new Player(cs.name(), cs.socket(), 1000) );
         }
     }
 
     private void addPlayersToGameLocally(int numPlayers) {
 
         for(int i = 0; i < numPlayers; ++i){
-            _game.addPlayer( new Player(i, "Player" + i, null, 1000) );
+            _game.addPlayer( new Player("Player" + i, null, 1000) );
         }
     }
 
     public void run() {
 
         int handCounter = 0;
+        boolean endOfGame = false;
 
         ThreadContext.put("match", "0");
         ThreadContext.put("hand", String.valueOf(handCounter));
         log.debug("Starting a new game!");
 
+
         _game.assignRolesToAllPlayers();
-        while (!_game.isGameFinished()) {
+        while (!endOfGame) {
 
             log.debug("Starting {} hand!", handCounter);
             try {
@@ -94,13 +94,15 @@ public class Controller {
                 _game.giveRewardToWinner();
             }
 
-            _game.passTurn();
+            endOfGame = _game.passTurn();
 
             // Logger configuration for the next hand -> Write on file match{0}_hand{handCounter}.log
             log.debug("Finishing {} hand!", handCounter);
             ++handCounter;
             ThreadContext.put("hand", String.valueOf(handCounter));
         }
+
+        log.debug("End of game!");
     }
 
 }

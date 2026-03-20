@@ -21,11 +21,6 @@ public class Player implements IPokerPlayer {
     private static final Logger log = LogManager.getLogger(Player.class);
 
     /**
-     * Player's unique identifier
-     */
-    private int _id;
-
-    /**
      * Player's name
      */
     private String _name;
@@ -92,8 +87,7 @@ public class Player implements IPokerPlayer {
      * @param socket used for communicating with the real player
      * @param money  received at the beginning of the game
      */
-    public Player(int id, String name, Socket socket, int money) {
-        _id = id;
+    public Player(String name, Socket socket, int money) {
         _name = name;
         _socket = socket;
 
@@ -104,31 +98,6 @@ public class Player implements IPokerPlayer {
         _numCards = 0;
         _fold = false;
         _isWinner = false;
-    }
-
-    /**
-     * Retrieves a card from the player's hand.
-     * If the player has two card it shoul be called twice to retrieve both cards.
-     * 
-     * @return the card retrieved or null if the player has no cards
-     */
-    public Card retrieveCard() {
-
-        if (_numCards <= 0)
-            return null;
-
-        Card c = _cards[--_numCards];
-        _cards[_numCards] = null;
-        return c;
-    }
-
-    /**
-     * The player receives money
-     * 
-     * @param money received by the player
-     */
-    public void receivePriceMoney(int money) {
-        _money += money;
     }
 
     /**
@@ -151,22 +120,6 @@ public class Player implements IPokerPlayer {
     }
 
     /**
-     * Prints by console the player's status
-     * This includes the player id, name and cards
-     * 
-     * @see {@link Card} to know more about the Card's toString() method
-     *      implementation
-     * @return {@link String} representation of the player
-     */
-    public String toString() {
-
-        String carta1 = (_cards[0] != null) ? _cards[0].toString() : Card.MissingCardToString();
-        String carta2 = (_cards[1] != null) ? _cards[1].toString() : Card.MissingCardToString();
-
-        return String.format("Player[%d]: %s - %s%s", _id, _name, carta1, carta2);
-    }
-
-    /**
      * Eliminates the hand cards of the player and set the {@link #_numCards} value
      * to zero.
      */
@@ -179,15 +132,6 @@ public class Player implements IPokerPlayer {
             _cards[1] = null;
 
         _numCards = 0;
-    }
-
-    /**
-     * Gets the player ID
-     * 
-     * @return player ID
-     */
-    public int getID() {
-        return _id;
     }
 
     /**
@@ -209,6 +153,21 @@ public class Player implements IPokerPlayer {
         return _role;
     }
 
+    /**
+     * Prints by console the player's status
+     * This includes the player id, name and cards
+     * 
+     * @see {@link Card} to know more about the Card's toString() method
+     *      implementation
+     * @return {@link String} representation of the player
+     */
+    public String toString() {
+
+        String carta1 = (_cards[0] != null) ? _cards[0].toString() : Card.MissingCardToString();
+        String carta2 = (_cards[1] != null) ? _cards[1].toString() : Card.MissingCardToString();
+
+        return String.format("Player: %s - %s%s", _name, carta1, carta2);
+    }
 
     /// --------------------------------------- IPokerActions ---------------------------------------
     @Override
@@ -234,15 +193,6 @@ public class Player implements IPokerPlayer {
 
     @Override
     public boolean fold() {
-
-        // Devuelvo las cartas
-        Card c1 = retrieveCard();
-        if (c1 != null)
-            c1.setAvailable(true);
-
-        Card c2 = retrieveCard();
-        if (c2 != null)
-            c2.setAvailable(true);
 
         // El jugador pierde su apuesta
         // Ya no tiene derecho a seguir jugando
@@ -372,6 +322,16 @@ public class Player implements IPokerPlayer {
         }
     }
 
+    /**
+     * The player receives money
+     * 
+     * @param money received by the player
+     */
+    @Override
+    public void receivePriceMoney(int money) {
+        _money += money;
+    }
+
     @Override
     public void retrieveCards() {
         
@@ -380,6 +340,10 @@ public class Player implements IPokerPlayer {
         _numCards = 0;
     }
 
+    @Override
+    public void setIsWinner(boolean state){
+        _isWinner = state;
+    }
 
     @Override
     public int placeOnBetMoney() {
@@ -474,6 +438,18 @@ public class Player implements IPokerPlayer {
     }
 
     @Override
+    public void notifyGameKeeps() {
+        
+        try{
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.gameKeeps());
+            log.debug("Player {} notified about game keeps on", _name);
+        }
+        catch(IOException e){
+            log.error("Notifying GAME_KEEPS to player {}: {}", _name, e.getMessage());
+        }
+    }
+
+    @Override
     public void notifyHandWinner() {
 
         try{
@@ -527,6 +503,8 @@ public class Player implements IPokerPlayer {
         try{
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnForcedSBToCode());
             SocketUtils.sendInteger(_socket.getOutputStream(), sb);
+
+            _money -= sb;
             _pocketMoney += sb;
         }
         catch(IOException e){
@@ -540,6 +518,8 @@ public class Player implements IPokerPlayer {
         try{
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnForcedSBToCode());
             SocketUtils.sendInteger(_socket.getOutputStream(), bb);
+
+            _money -= bb;
             _pocketMoney += bb;
         }
         catch(IOException e){
@@ -557,6 +537,7 @@ public class Player implements IPokerPlayer {
             SocketUtils.sendInteger(_socket.getOutputStream(), sb);
             SocketUtils.sendInteger(_socket.getOutputStream(), bb);
             SocketUtils.sendInteger(_socket.getOutputStream(), maxBet);
+            SocketUtils.sendInteger(_socket.getOutputStream(), _money);
             log.debug("Round info sent to {}", _name);
 
             commandInput = SocketUtils.receiveString( _socket.getInputStream() );

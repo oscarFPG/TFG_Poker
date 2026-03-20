@@ -68,7 +68,7 @@ public class AllInCommand extends Command {
 
     @Override
     public String getCommandFormatShortcut() {
-        return "r";
+        return "a";
     }
 
 }

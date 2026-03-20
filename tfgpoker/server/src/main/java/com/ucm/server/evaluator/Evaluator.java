@@ -14,6 +14,7 @@ import com.ucm.server.gameobjects.Player;
 import com.ucm.server.gameobjects.Suit;
 import com.ucm.server.interfaces.IPokerPlayer;
 import com.ucm.server.middleclasses.HandInfo;
+import com.ucm.server.middleclasses.PlayerEvaluation;
 
 /**
  * Utility class responsible for evaluating poker hands.
@@ -108,34 +109,33 @@ public class Evaluator {
         }
     }
 
-    public static List<IPokerPlayer> evaluateAllHands(HandInfo[] playerHands, Card[] tableCards) {
+    public static List<PlayerEvaluation> evaluateAllHands(List<HandInfo> playerHands, Card[] tableCards) {
 
-        int encodedPlayerCards[][] = new int[playerHands.length][2];
-        int encodedTableCards[] = new int[tableCards.length];
-        short bestHandValue[] = new short[playerHands.length];
+        List<PlayerEvaluation> playersEval = new ArrayList<>( playerHands.size() );
+        int encodedPlayerCards[][] = new int[ playerHands.size() ][2];
+        int encodedTableCards[] = new int[ tableCards.length ];
         int encoded7Cards[] = new int[7];
 
 
-        for (int i = 0; i < playerHands.length; i++) {
-            encodedPlayerCards[i][0] = encodeCard(playerHands[i].cards()[0]);
-            encodedPlayerCards[i][1] = encodeCard(playerHands[i].cards()[1]);
+        for (int i = 0; i < playerHands.size(); i++) {
+            encodedPlayerCards[i][0] = encodeCard( playerHands.get(i).cards()[0] );
+            encodedPlayerCards[i][1] = encodeCard( playerHands.get(i).cards()[1] );
         }
         for (int i = 0; i < tableCards.length; i++) {
-            encodedTableCards[i] = encodeCard(tableCards[i]);
+            encodedTableCards[i] = encodeCard( tableCards[i] );
         }
 
         // For each player, calculate the best 5 cards hand between all 7 cards(player cards + all table cards)
-        short tableRank = evaluate5hand(
+        final short tableRank = evaluate5hand(
                 encodedTableCards[0],
                 encodedTableCards[1],
                 encodedTableCards[2],
                 encodedTableCards[3],
                 encodedTableCards[4]
         );
-        short bestValue = Short.MAX_VALUE;
-        short value = 0;
-        for (int i = 0; i < playerHands.length; i++) {
+        for (int i = 0; i < playerHands.size(); i++) {
 
+            final int playerID = playerHands.get(i).playerID(); // Player to evaluate
             encoded7Cards[0] = encodedPlayerCards[i][0];    // First player card
             encoded7Cards[1] = encodedPlayerCards[i][1];    // Second player card
             encoded7Cards[2] = encodedTableCards[0];        // First card on the table
@@ -145,21 +145,14 @@ public class Evaluator {
             encoded7Cards[6] = encodedTableCards[4];        // Fifth card on the table
 
             // Assign best hand value obtained between:
-            // One or both player cards + 3 on the table
-            // All 5 on the table
-            value = (short) Math.min(tableRank, evaluate7hand(encoded7Cards));
-            bestHandValue[i] = value;
-            bestValue = (short) Math.min(value, bestValue);
+            // One player card + 4 from the table
+            // Both player cards + 3 from the table
+            // All 5 cards from the table
+            short value = (short) Math.min(tableRank, evaluate7hand(encoded7Cards));
+            playersEval.add( new PlayerEvaluation(playerID, value) );
         }
 
-        // Select all players with the best value hand
-        List<IPokerPlayer> winners = new ArrayList<>();
-        for (int i = 0; i < playerHands.length; i++) {
-            if (bestHandValue[i] == bestValue)
-                winners.add(playerHands[i].player());
-        }
-
-        return winners;
+        return playersEval;
     }
 
     public static short evaluate5hand(final int card1, final int card2, final int card3, final int card4, final int card5) {

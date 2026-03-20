@@ -36,7 +36,7 @@ public class CallCommand extends Command {
 
 	@Override
     public boolean validate(final int maxBet) {
-		return maxBet > 0;
+		return maxBet > 0 && maxBet <= _playersOffBetMoney + _playersOnBetMoney;
     }
 
     @Override

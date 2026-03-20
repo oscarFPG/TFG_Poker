@@ -64,9 +64,10 @@ public class GameType {
     public static final int GAME_STARTS = 300;
     public static final int ROUND_STARTS = 301;
     public static final int HAND_STARTS = 302;
-    public static final int GAME_ENDS = 303;
-    public static final int ROUND_ENDS = 304;
-    public static final int HAND_ENDS = 305;
+    public static final int GAME_KEEPS = 303;
+    public static final int GAME_ENDS = 304;
+    public static final int ROUND_ENDS = 305;
+    public static final int HAND_ENDS = 306;
     public static final int PLAYER_WINS_HAND = 320;
     public static final int PLAYER_LOSES_HAND = 321;
     public static final int PLAYER_WINS_GAME = 330;
@@ -79,45 +80,4 @@ public class GameType {
     public static final int CALL_ACTION = 403;
     public static final int RAISE_ACTION = 404;
 
-    /*
-    // ES PREFLOP
-    public static final int PRE_FLOP = 6;
-    // NO ES PREFLOP
-    public static final int NO_PRE_FLOP = 6;
-
-    // TURN_OTHER_PLAYER
-    public static final int TURN_OTHER_PLAYER = 22;
-    // END_OF_ROUND (PRE-FLOP, FLOP, RIVER, ETC)
-    public static final int END_OF_ROUND = 23;
-    // END_OF_HAND (SHOW_DOWN)
-    public static final int END_OF_HAND = 24;
-
-    // END_OF_GAME (SE ACABA TODO EL JUEGO)
-    public static final int END_OF_GAME = 25;
-    
-
-    // MAX_TIME AVISA AL CLIENTE QUE SE HA QUEDADO SIN TIEMPO
-    public static final int MAX_TIME = 40;
-    
-    // HAND OVER WIN
-    public static final int HAND_OVER_WIN = 60;
-    // HAND OVER LOSE
-    public static final int HAND_OVER_LOSE = 61;
-    // GAME OVER WIN
-    public static final int GAME_OVER_WIN = 62;
-    // GAME OVER LOSE
-    public static final int GAME_OVER_LOSE = 63;
-
-    // ADMIN PLAYER
-    public static final int PLAYER_IS_ADMIN = 70;
-    // NOT ADMIN PLAYER
-    public static final int PLAYER_NOT_ADMIN = 76;
-    // GAME START ADMINISTRATOR
-    public static final int GAME_START_ADMINISTRATOR = 71;
-    // FULL TABLE
-    public static final int FULL_TABLE = 73;
-    // WAIT_GAME
-    public static final int WAIT_GAME = 74;
-
-    */
 }
