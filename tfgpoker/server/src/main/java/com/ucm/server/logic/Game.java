@@ -134,6 +134,7 @@ public class Game {
         } 
         // Collect remaining bets only if the round ended because all players folded
         catch (OnlyOnePlayerLeftException e) {
+            _playerList.notifyHandEndsByFold();
             _playerList.updatePlayerPots();
             _isPreflop = false;
 
@@ -160,19 +161,19 @@ public class Game {
 
     public boolean passTurn() {
 
+        boolean endOfGame = _playerList.checkEndOfGame();
+        _playerList.notifyGameEnds(endOfGame);
+
+        if(!endOfGame)
+            log.debug("Preparing for next hand...");
+        else
+            log.debug("End of game");
+
         retrieveCardsFromTable();
         _deck.resetDeck();
         _playerList.resetPlayers();
         _playerList.passTurn();
         _isPreflop = true;
-
-        boolean endOfGame = _playerList.checkEndOfGame();
-        _playerList.notifyGameEnds(endOfGame);
-        
-        if(!endOfGame)
-            log.debug("Preparing for next hand...");
-        else
-            log.debug("End of game");
 
         return endOfGame;
     }

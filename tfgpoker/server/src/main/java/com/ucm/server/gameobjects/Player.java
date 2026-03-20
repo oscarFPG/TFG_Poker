@@ -11,6 +11,7 @@ import com.ucm.server.control.GameAdapter;
 import com.ucm.server.interfaces.IPokerPlayer;
 import com.ucm.server.logic.Game;
 
+
 /**
  * This class represents any king of player in the game, whether its a human
  * player or and AI player.
@@ -71,6 +72,7 @@ public class Player implements IPokerPlayer {
      * This flag should only be read at the end of a hand o the game.
      */
     private boolean _isWinner;
+
 
     /**
      * Socket used for communication with the player.
@@ -341,7 +343,7 @@ public class Player implements IPokerPlayer {
     }
 
     @Override
-    public void setIsWinner(boolean state){
+    public void setIsWinner(boolean state) {
         _isWinner = state;
     }
 
@@ -494,6 +496,17 @@ public class Player implements IPokerPlayer {
         }
         catch(IOException e){
             log.error("Notifying GAME_LOSER to player {}: {}", _name, e.getMessage());
+        }
+    }
+
+    @Override
+    public void notifyHandEndsByFolds() {
+
+        try{
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.handEndsByFolds());
+        }
+        catch(IOException e){
+            log.error("Notifying HAND_ENDS_BY_FOLDS to player {}: {}", _name, e.getMessage());
         }
     }
 

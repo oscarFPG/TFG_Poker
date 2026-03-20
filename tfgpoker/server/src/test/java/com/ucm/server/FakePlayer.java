@@ -9,9 +9,10 @@ public class FakePlayer implements IPokerPlayer {
 
     public int offBetMoney;
     public int onBetMoney;
+    public PlayerRole role;
     public boolean isFolded;
     public boolean isWinner;
-    public PlayerRole role;
+
 
     public FakePlayer(int offBet, int onBet){
         offBetMoney = offBet;
@@ -19,6 +20,7 @@ public class FakePlayer implements IPokerPlayer {
         isFolded = false;
         isWinner = false;
     }
+
 
     @Override
     public boolean call(int amount) {
@@ -183,5 +185,8 @@ public class FakePlayer implements IPokerPlayer {
 
     @Override
     public String actionMakePlay(int sb, int bb, int maxBet) { return null; }
+
+    @Override
+    public void notifyHandEndsByFolds() {}
 
 }

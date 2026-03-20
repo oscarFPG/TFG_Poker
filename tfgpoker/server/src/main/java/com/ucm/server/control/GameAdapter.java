@@ -146,6 +146,9 @@ public class GameAdapter {
     public static int playerLosesGame(){
         return GameType.PLAYER_LOSES_GAME;
     }
+    public static int handEndsByFolds(){
+        return GameType.HAND_ENDS_BY_FOLD;
+    }
 
     // Commands
     public static int commandFoldToCode(){

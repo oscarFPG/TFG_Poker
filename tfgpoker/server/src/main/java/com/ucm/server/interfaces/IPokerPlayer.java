@@ -23,6 +23,7 @@ public interface IPokerPlayer extends IPokerActions {
     public void notifyHandLoser();
     public void notifyGameWinner();
     public void notifyGameLoser();
+    public void notifyHandEndsByFolds();
 
     public void actionSmallBlindBet(final int sb);
     public void actionBigBlindBet(final int bb);

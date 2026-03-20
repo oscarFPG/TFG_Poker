@@ -14,6 +14,7 @@ import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Scanner;
 
+import com.ucm.client.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.common.GameType;
 import com.ucm.common.SocketUtils;
 
@@ -33,6 +34,7 @@ public class ClientMain extends Application {
 			this.numberCode = -1;
 			this.suitCode = -1;
 		}
+
 		public Card(int number, int suit) {
 			this.numberCode = number;
 			this.suitCode = suit;
@@ -80,12 +82,12 @@ public class ClientMain extends Application {
 			serverIP = hostname;
 		}
 
-		// Poker application
-		Socket socket = preGame(serverIP);
-		game(socket);
 
 		// Cleanup
 		try {
+			// Poker application
+			Socket socket = preGame(serverIP);
+			game(socket);
 			socket.close();
 		}
 		catch(IOException e) {
@@ -240,19 +242,18 @@ public class ClientMain extends Application {
 		return (socket != null) ? socket.socket() : null;
 	}
 
-	private static void game(Socket socket) {
+	private static void game(Socket socket) throws IOException {
 
 		System.out.printf("Match starts!\n");
 		int roleCode;
-		boolean status;
 		boolean endOfGame = false;
 		Card[] playerCards = new Card[2];
 		Card[] tableCardValues = new Card[5];
 
-		try {
+		InputStream in = socket.getInputStream();
+		while(!endOfGame) {
 
-			InputStream in = socket.getInputStream();
-			while(!endOfGame) {
+			try {
 
 				roleCode = SocketUtils.receiveInt(in);
 				String playerRole = translatePlayerRoleCode(roleCode);
@@ -266,7 +267,7 @@ public class ClientMain extends Application {
 				);
 
 				// Preflop
-				status = playRound(playerCards[0], playerCards[1], socket);
+				playRound(playerCards[0], playerCards[1], socket);
 				System.out.printf("Preflop has ended!\n\n");
 				tableCardValues[0] = receiveCard(in);
 				tableCardValues[1] = receiveCard(in);
@@ -274,17 +275,17 @@ public class ClientMain extends Application {
 				showTableCards(tableCardValues);
 				
 				// Flop
-				status = playRound(playerCards[0], playerCards[1], socket);
+				playRound(playerCards[0], playerCards[1], socket);
 				tableCardValues[3] = receiveCard(in);
 				showTableCards(tableCardValues);
 
 				// Turn
-				status = playRound(playerCards[0], playerCards[1], socket);
+				playRound(playerCards[0], playerCards[1], socket);
 				tableCardValues[4] = receiveCard(in);
 				showTableCards(tableCardValues);
 
 				// River
-				status = playRound(playerCards[0], playerCards[1], socket);
+				playRound(playerCards[0], playerCards[1], socket);
 				showTableCards(tableCardValues);
 
 				// Showdown
@@ -299,20 +300,36 @@ public class ClientMain extends Application {
 
 				// Game ends or keeps
 				int gameStatusCode = SocketUtils.receiveInt(in);
-				System.out.printf("Game status code received is %d\n", gameStatusCode);
+				if(gameStatusCode == GameType.GAME_ENDS)
+					System.out.printf("Match ended!\n\n");
+				else if(gameStatusCode == GameType.GAME_KEEPS)
+					System.out.printf("Match keeps!\n\n");
 				endOfGame = (gameStatusCode == GameType.GAME_ENDS);
 			}
+			catch (OnlyOnePlayerLeftException e) {
 
-			System.out.printf("Game ends! Thanks for playing %s!\n", _name);
-		}
-		catch (IOException e) {
-			System.out.printf("Error: %s\n", e.getMessage());
-			try {
-				socket.close();
-				System.out.printf("Socket closed successfully\n");
-			}
-			catch(IOException exc) {
-				System.out.printf("Error closing the socket: %s\n", exc.getMessage());
+				System.out.printf("There is only one player left!\n");
+				try {
+
+					// Get winner/loser state
+					int rankingCode = SocketUtils.receiveInt(in);
+					_money = SocketUtils.receiveInt(in);
+					if(rankingCode == GameType.PLAYER_WINS_HAND) {
+						System.out.printf("You have won!\nCurrent money is %d\n", _money);
+					}
+					else if(rankingCode == GameType.PLAYER_LOSES_HAND) {
+						System.out.printf("You have lost!\nCurrent money is %d\n", _money);
+					}
+
+					// Game ends or keeps
+					int gameStatusCode = SocketUtils.receiveInt(in);
+					System.out.printf("Game status code received is %d\n", gameStatusCode);
+					endOfGame = (gameStatusCode == GameType.GAME_ENDS);
+
+				}
+				catch(IOException ex) {
+					System.out.printf("Error receiving the rank after a fold exception: %s", ex.getMessage());
+				}
 			}
 		}
 
@@ -386,31 +403,33 @@ public class ClientMain extends Application {
 		return c;
 	}
 
-	private static boolean playRound(final Card card1, final Card card2, Socket socket) throws IOException {
+	private static void playRound(final Card card1, final Card card2, Socket socket) 
+	throws IOException, 
+	OnlyOnePlayerLeftException {
 		
 		System.out.printf("Round has started!\n");
 
-		boolean roundSuccess = true;
+		boolean handEndsByFold = false;
 		boolean blindsOnPlay = true;
 		int sb, bb, maxBet;
 
-		int turn = SocketUtils.receiveInt(socket.getInputStream());
-		while(turn != GameType.ROUND_ENDS) {
+		int serverCode = SocketUtils.receiveInt(socket.getInputStream());
+		while(serverCode != GameType.ROUND_ENDS && !handEndsByFold) {
 
-			if(turn == GameType.TURN_FORCED_SB){
+			if(serverCode == GameType.TURN_FORCED_SB){
 				int cantidadSB = SocketUtils.receiveInt(socket.getInputStream());
 				System.out.printf("Forced play as the small blind with %d chips\n", cantidadSB);
 			}
-			else if(turn == GameType.TURN_FORCED_BB){
+			else if(serverCode == GameType.TURN_FORCED_BB){
 				int cantidadBB = SocketUtils.receiveInt(socket.getInputStream());
 				System.out.printf("Forced play as the big blind with %d chips\n", cantidadBB);
 			}
-			else if(turn == GameType.TURN_WAIT){
+			else if(serverCode == GameType.TURN_WAIT){
 				System.out.printf("Wait for the other players!\n");
 			}
-			else if(turn == GameType.TURN_PLAY){
+			else if(serverCode == GameType.TURN_PLAY){
 
-				System.out.printf("\nIt's your turn to play!\n");
+				System.out.printf("It's your turn to play!\n");
 
 				// Receive round info
 				sb = SocketUtils.receiveInt( socket.getInputStream() );
@@ -457,15 +476,21 @@ public class ClientMain extends Application {
 				}
 				
 			}
+			else if(serverCode == GameType.HAND_ENDS_BY_FOLD){
+				handEndsByFold = true;
+			}
 			else{
-				System.out.printf("Unknown turn code %d\n", turn);
+				System.out.printf("Unknown turn code %d\n", serverCode);
 			}
 
-			turn = SocketUtils.receiveInt(socket.getInputStream());
+			if(!handEndsByFold)
+				serverCode = SocketUtils.receiveInt(socket.getInputStream());
 		}
 		System.out.printf("Round has ended!\n\n");
-		
-		return roundSuccess;
+
+		if(handEndsByFold)
+			throw new OnlyOnePlayerLeftException();
+
 	}
 
 	// Auxiliar methods
