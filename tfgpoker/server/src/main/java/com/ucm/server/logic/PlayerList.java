@@ -25,7 +25,6 @@ public class PlayerList {
 
         public int _id;
         public IPokerPlayer _player;
-        public boolean _isEliminated;
 
         public Node _prev;
         public Node _next;
@@ -34,7 +33,6 @@ public class PlayerList {
             
             _id = id;
             _player = p;
-            _isEliminated = false;
 
             _prev = prev;
             _next = next;
@@ -48,6 +46,7 @@ public class PlayerList {
     private int _maxNumberOfPlayers;
 
     private PotManager _potManager;
+
 
     public PlayerList(int n) {
         _idCounter = 0;
@@ -125,17 +124,19 @@ public class PlayerList {
         }
         else {
 
-            List<PlayerRole> roles = new ArrayList<>(List.of(
-                PlayerRole.DEALER, 
-                PlayerRole.SMALL_BLIND, 
-                PlayerRole.BIG_BLIND,
-                PlayerRole.UNDER_THE_GUN,
-                PlayerRole.MIDDLE_POSITION,
-                PlayerRole.CUT_OFF,
-                PlayerRole.NO_ROLE,
-                PlayerRole.NO_ROLE,
-                PlayerRole.NO_ROLE
-            ));
+            List<PlayerRole> roles = new ArrayList<>(
+                List.of(
+                    PlayerRole.DEALER, 
+                    PlayerRole.SMALL_BLIND, 
+                    PlayerRole.BIG_BLIND,
+                    PlayerRole.UNDER_THE_GUN,
+                    PlayerRole.MIDDLE_POSITION,
+                    PlayerRole.CUT_OFF,
+                    PlayerRole.NO_ROLE,
+                    PlayerRole.NO_ROLE,
+                    PlayerRole.NO_ROLE
+                )
+            );
 
             PlayerRole currentRole = roles.removeFirst();
             _current._player.receiveRole(currentRole);
@@ -152,7 +153,7 @@ public class PlayerList {
             log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.BIG_BLIND.name());
 
             _current = getNextPlayerActive(_current);
-            while (_current != _first) {
+            while (_current != _first ) {
                 currentRole = roles.removeFirst();
                 _current._player.receiveRole(currentRole);
                 _current = getNextPlayerActive(_current);
@@ -166,7 +167,7 @@ public class PlayerList {
         if (isEmpty())
             return;
 
-        if (!_first._isEliminated && _first._player.getCardsCounter() == 0) {
+        if (!_first._player.isEliminated() && _first._player.getCardsCounter() == 0) {
             _first._player.receiveCard(c1);
             _first._player.receiveCard(c2);
             return;
@@ -175,7 +176,7 @@ public class PlayerList {
         Node index = _first._next;
         while (index != _first) {
 
-            if (!index._isEliminated && index._player.getCardsCounter() == 0) {
+            if (!index._player.isEliminated() && index._player.getCardsCounter() == 0) {
                 index._player.receiveCard(c1);
                 index._player.receiveCard(c2);
                 break;
@@ -185,39 +186,38 @@ public class PlayerList {
         }
     }
 
-    private Node smallBlindAndBigBlindPlays(final int sb, final int bb, final int playsToMake) {
+    private void smallBlindAndBigBlindPlays(final int sb, final int bb, final int playersRemaining) {
 
         // Select as small blind:
         // 1. First player if there is only two players -> playsToMake == 1
         // 2. Next player from first if there is more than two players -> playsToMake > 1
-        Node pNode = (playsToMake == 1) ? _first : _first._next;
+        Node pNode = (playersRemaining == 2) ? _first : _first._next;
         pNode._player.actionSmallBlindBet(sb);
 
         pNode = pNode._next;
         pNode._player.actionBigBlindBet(bb);
-
-        return pNode._next;
     }
 
     public void playHand(final int sb, final int bb, final boolean isPreflop) throws OnlyOnePlayerLeftException {
 
-        int playsToMake = (isPreflop) ? activePlayersCounter() - 1 : activePlayersCounter();
-        int playersRemaining = (isPreflop) ? playsToMake + 1 : playsToMake; // Number of players active
-
-        // Forced plays by sb and bb if it is first round(Preflop)
-        Node pNode = (isPreflop) ? smallBlindAndBigBlindPlays(sb, bb, playsToMake) : _first._next._next;
-
-        // Broadcast to all players except to playerOnTurn
-        Node iNode = (_first != pNode) ? _first : _first._next;
-        while (iNode != pNode) {
-            iNode._player.notifyTurnWait();
-            iNode = iNode._next;
+        if(checkAllPlayersAllIn()) { // Avoid asking if all active players have used all their money
+            notifyRoundEnded();
+            return;
         }
 
-        Node playerOnTurnNode = pNode;
-        IPokerPlayer playerOnTurn = pNode._player;
+
+        int playersRemaining = activePlayersCounter();        
+        Node playerOnTurn = calculatePlayerOnTurn(playersRemaining, isPreflop);
+        Node pivotPlayer = calculatePivotPlayer(playersRemaining, isPreflop);
         int maxBet = (isPreflop) ? bb : 0;
-        while ( playsToMake > 0 ) {
+        int currentBet = maxBet;
+
+
+        if(isPreflop)
+            smallBlindAndBigBlindPlays(sb, bb, playersRemaining);
+        notifyWaitExceptTo(playerOnTurn);
+
+        do {
 
             if(isPreflop)
                 log.debug("Current small blind: {}, current big blind: {}, current max bet: {}", sb, bb, maxBet);
@@ -225,58 +225,66 @@ public class PlayerList {
                 log.debug("Last maximum bet is {}", maxBet);
 
 
-            // Ask for an action by the player to execute
-            Command command = null;
-            log.debug("It's is {} turn to play", playerOnTurn.getPlayerName());
-            while (command == null) {
-
-                playerOnTurn.notifyTurnPlay();
-                
-                String commandString = playerOnTurn.actionMakePlay(sb, bb, maxBet);
-                String[] commandFormatted = commandString.split(" ");
-
-                command = Command.parseCommand(commandFormatted, playerOnTurn);
-                command = command.validate(maxBet) ? command : null;
-            }
-
+            Command command = askCommandToPlayer(playerOnTurn._player, sb, bb, maxBet);
             CommandResult result = command.execute(sb, bb, maxBet);
-            if (result.folds()) {
-                --playersRemaining;
+            
+            if(result.folds()) {
+                --playersRemaining; 
                 if (playersRemaining == 1)
                     throw new OnlyOnePlayerLeftException("Only one player left to play mid round");
             }
+            
 
-            playsToMake = result.raises() ? (activePlayersCounter() - 1) : (playsToMake - 1);
-            int currentBet = result.folds() ? 0 : result.bet();
+            currentBet = result.folds() ? 0 : result.bet();
             maxBet = Integer.max(maxBet, currentBet);
+            playersRemaining = playerOnTurn._player.isAllIn() ? playersRemaining - 1 : playersRemaining;
 
-            log.debug("{} plays left to play", playsToMake);
-            log.debug("Current bet is {} and maximum bet is {}", currentBet, maxBet);
+            pivotPlayer = result.raises() ? playerOnTurn : pivotPlayer;
+            playerOnTurn = getNextPlayerActive(playerOnTurn);
 
-            playerOnTurnNode = getNextPlayerActive(playerOnTurnNode);
-            playerOnTurn = playerOnTurnNode._player;
+            log.debug("Current bet is {}", currentBet);
+            log.debug("Maximum bet is {}", maxBet);
         }
+        while( pivotPlayer != playerOnTurn && playersRemaining != 0);
 
-        // Notify all players that the betting round has ended
-        _first._player.notifyRoundEnded();
-        iNode = _first._next;
-        while (iNode != _first) {
-            iNode._player.notifyRoundEnded();
-            iNode = iNode._next;
-        }
-
+        updateHandState();
+        notifyRoundEnded();
     }
 
-    public void updatePlayerPots() {
+    private Command askCommandToPlayer(IPokerPlayer player, final int sb, final int bb, final int maxBet) {
+
+        log.debug("It's is {} turn to play", player.getPlayerName());
+
+        Command command = null;
+        while (command == null) {
+
+            player.notifyTurnPlay();
+            
+            String commandString = player.actionMakePlay(sb, bb, maxBet);
+            String[] commandFormatted = commandString.split(" ");
+
+            command = Command.parseCommand(commandFormatted, player);
+            command = command.validate(maxBet) ? command : null;
+        }
+
+        return command;
+    }
+
+    private void updateHandState() {
 
         Node iNode = _first;
-        if(!iNode._isEliminated)
+        if(!iNode._player.isEliminated()){
+            iNode._player.unfoldPlayer();
             _potManager.updatePlayerPot(iNode._id, iNode._player.placeOnBetMoney(), iNode._player.isFolded());
+        }
 
         iNode = iNode._next;
         while(iNode != _first){
-            if(!iNode._isEliminated)
+            if(!iNode._player.isEliminated()){
+                iNode._player.unfoldPlayer();
                 _potManager.updatePlayerPot(iNode._id, iNode._player.placeOnBetMoney(), iNode._player.isFolded());
+            }
+
             iNode = iNode._next;
         }
 
@@ -284,31 +292,17 @@ public class PlayerList {
     }
 
     public void passTurn() {
-        _first = _first._next;
-        _last = _last._next;
+
+        resetPlayers();
+
+        Node newLast = !_first._player.isEliminated() ? _first : getNextNotEliminatedPlayer(_first);
+        Node newFirst = getNextNotEliminatedPlayer(newLast);
+
+        _first = newFirst;
+        _last = newLast;
         assignRolesToAllPlayers();
-    }
 
-    public void resetPlayers() {
-
-        _first._player.retrieveCards();
-        _first._player.unfoldPlayer();
-        _first._player.setIsWinner(false);
-        if(_first._player.getMoneyOffBet() == 0){
-            _first._isEliminated = true;
-        }
-
-        Node current = _first._next;
-        while (current != _first) {
-            current._player.retrieveCards();
-            current._player.unfoldPlayer();
-            current._player.setIsWinner(false);
-            if(current._player.getMoneyOffBet() == 0){
-                current._isEliminated = true;
-            }
-
-            current = current._next;
-        }
+        _potManager.restartPots();
     }
 
     public void calculatePrizeDistribution(final List<PlayerEvaluation> players) {
@@ -321,10 +315,10 @@ public class PlayerList {
 
     public void calculatePrizeForPlayerLeft() {
 
-        Node winner = ( _first._player.isFolded() && !_first._isEliminated ) ? null : _first;
+        Node winner = ( _first._player.isFolded() && !_first._player.isEliminated() ) ? null : _first;
         Node iNode = _first._next;
         while (winner == null && iNode != _first) {
-            winner = ( iNode._player.isFolded()  && !iNode._isEliminated) ? null : iNode;
+            winner = ( iNode._player.isFolded() && !iNode._player.isEliminated()) ? null : iNode;
             iNode = iNode._next;
         }
 
@@ -337,11 +331,11 @@ public class PlayerList {
 
         int playersNotEliminated = _playerCounter;
         Node iNode = _first;
-        playersNotEliminated = (iNode._isEliminated) ? playersNotEliminated - 1 : playersNotEliminated;
+        playersNotEliminated = (iNode._player.isEliminated()) ? playersNotEliminated - 1 : playersNotEliminated;
 
         iNode = iNode._next;
         while(iNode != _first){
-            playersNotEliminated = (iNode._isEliminated) ? playersNotEliminated - 1 : playersNotEliminated;
+            playersNotEliminated = (iNode._player.isEliminated()) ? playersNotEliminated - 1 : playersNotEliminated;
             iNode = iNode._next;
         }
 
@@ -350,36 +344,44 @@ public class PlayerList {
 
     public void sendTableCardToAllPlayers(final Card card) {
 
-        if(!_first._isEliminated)
+        if(!_first._player.isEliminated())
             _first._player.receiveTableCard(card);
 
         Node i = _first._next;
         while (i != _first){
-            if(!i._isEliminated)
+            if(!i._player.isEliminated())
                 i._player.receiveTableCard(card);
             i = i._next;
+        }
+    }
+
+    public void manageEliminatedPlayers() {
+
+        Node iNode = _first;
+        if(iNode._player.getMoneyOnBet() == 0 && iNode._player.getMoneyOffBet() == 0)
+            iNode._player.setIsEliminated(true);
+
+        iNode = iNode._next;
+        while(iNode != _first) {
+            if(iNode._player.getMoneyOnBet() == 0 && iNode._player.getMoneyOffBet() == 0)
+                iNode._player.setIsEliminated(true);
+        
+            iNode = iNode._next;
         }
     }
 
     public void notifyRankingsToAllPlayers() {
 
         Node i = _first;
-        if(!i._isEliminated) {
-            if(i._player.isWinner())
-                i._player.notifyHandWinner();
-            else
-                i._player.notifyHandLoser();
+        if(i._player.isWinner())
+            i._player.notifyHandWinner();
+        else
+            i._player.notifyHandLoser();
 
-            i._player.receiveNewMoney( i._player.getMoneyOffBet() );
-            i = i._next;
-        }
+        i._player.receiveNewMoney( i._player.getMoneyOffBet() );
+        i = i._next;
         
         while(i != _first) {
-
-            if(i._isEliminated){
-                i = i._next;
-                continue;
-            }
 
             if(i._player.isWinner())
                 i._player.notifyHandWinner();
@@ -400,6 +402,16 @@ public class PlayerList {
         iNode = iNode._next;
         while(iNode != _first) {
             iNode._player.notifyHandEndsByFolds();
+            iNode = iNode._next;
+        }
+    }
+
+    public void notifyRoundEnded() {
+
+        _first._player.notifyRoundEnded();
+        Node iNode = _first._next;
+        while (iNode != _first) {
+            iNode._player.notifyRoundEnded();
             iNode = iNode._next;
         }
     }
@@ -427,17 +439,94 @@ public class PlayerList {
         List<HandInfo> info = new ArrayList<>(_playerCounter);
         
         Node pNode = _first._next;
-        if(!pNode._isEliminated && !_first._player.isFolded())
+        if(!pNode._player.isEliminated() && !_first._player.isFolded())
             info.add( new HandInfo(_first._id, _first._player.getPlayerCards()) );
         
         while (pNode != _first) {
-            if(!pNode._isEliminated && !pNode._player.isFolded())
+            if(!pNode._player.isEliminated() && !pNode._player.isFolded())
                 info.add( new HandInfo(pNode._id, pNode._player.getPlayerCards()) );
             
             pNode = pNode._next;
         }
 
         return info;
+    }
+
+    private boolean checkAllPlayersAllIn() {
+
+        boolean allPlayersAllIn = true;
+
+        Node iNode = _first;
+        allPlayersAllIn &= iNode._player.isAllIn();
+
+        iNode = iNode._next;
+        while(allPlayersAllIn && iNode != _first) {
+            allPlayersAllIn &= iNode._player.isAllIn();
+            iNode = iNode._next;
+        }
+
+        return allPlayersAllIn;
+    }
+
+    private Node calculatePlayerOnTurn(final int numPlayers, final boolean isPreflop) {
+
+        if(numPlayers == 2)
+            return _first;
+
+
+        Node dealer =_first;
+        if(isPreflop) {
+            Node sb = getNextPlayerActive(dealer);
+            Node bb = getNextPlayerActive(sb);
+            return getNextPlayerActive(bb);
+        }
+        else {
+            return getNextPlayerActive(dealer);
+        }
+    }
+
+    private Node calculatePivotPlayer(final int numPlayers, final boolean isPreflop) {
+
+        if(numPlayers == 2)
+            return (isPreflop) ? getNextPlayerActive(_first) : _first;
+        
+        
+        Node dealer = _first;
+        if(isPreflop) {
+            Node sb = getNextPlayerActive(dealer);
+            return getNextPlayerActive(sb);
+        }
+        else {
+            return getNextPlayerActive(dealer);
+        }
+
+    }
+
+    private void notifyWaitExceptTo(final Node playerOnTurn) {
+
+        Node iNode = (_first != playerOnTurn) ? _first : _first._next;
+        while (iNode != playerOnTurn) {
+            iNode._player.notifyTurnWait();
+            iNode = iNode._next;
+        }
+    }
+
+    private void resetPlayers() {
+
+        _first._player.retrieveCards();
+        _first._player.unfoldPlayer();
+        _first._player.setIsWinner(false);
+        _first._player.setAllIn(false);
+
+        Node current = _first._next;
+        while (current != _first) {
+            current._player.retrieveCards();
+            current._player.unfoldPlayer();
+            current._player.setIsWinner(false);
+            current._player.setAllIn(false);
+
+            current = current._next;
+        }
     }
 
     private void delete(Node p) {
@@ -467,14 +556,14 @@ public class PlayerList {
 
         int cont = (
             _first._player.isFolded() 
-            || _first._isEliminated 
+            || _first._player.isEliminated() 
         ) ? 0 : 1;
         
         Node current = _first._next;
         while (current != _first) {
             cont += (
                 current._player.isFolded() 
-                || current._isEliminated 
+                || current._player.isEliminated() 
             ) ? 0 : 1;
             current = current._next;
         }
@@ -485,14 +574,31 @@ public class PlayerList {
     private Node getNextPlayerActive(Node current) {
 
         Node iNode = current._next;
-        if(!iNode._isEliminated && !iNode._player.isFolded())
+        if(!iNode._player.isEliminated() && !iNode._player.isFolded() && !iNode._player.isAllIn())
             return iNode;
 
 
         boolean found = false;
         while (!found && iNode != current) {
             iNode = iNode._next;
-            if(!iNode._isEliminated && !iNode._player.isFolded())
+            if(!iNode._player.isEliminated() && !iNode._player.isFolded() && !iNode._player.isAllIn())
+                found = true;
+        }
+
+        return iNode;
+    }
+
+    private Node getNextNotEliminatedPlayer(Node current) {
+
+        Node iNode = current._next;
+        if(!iNode._player.isEliminated())
+            return iNode;
+
+
+        boolean found = false;
+        while (!found && iNode != current) {
+            iNode = iNode._next;
+            if(!iNode._player.isEliminated())
                 found = true;
         }
 
@@ -501,12 +607,12 @@ public class PlayerList {
 
     private void givePriceToPlayerWithID(final int id, final int amount){
 
-        Node winner = (_first._id == id && !_first._isEliminated) ? _first : null;
+        Node winner = (_first._id == id && !_first._player.isEliminated()) ? _first : null;
         if(winner == null){
             
             Node i = _first._next;
             while(winner == null && i != _first){
-                winner = (i._id == id && !i._isEliminated) ? i : null;
+                winner = (i._id == id && !i._player.isEliminated()) ? i : null;
                 i = i._next;
             }
         }

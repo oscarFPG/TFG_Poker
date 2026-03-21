@@ -129,13 +129,11 @@ public class Game {
             log.debug("Playing hand number {}...", _handCounter);
 
             _playerList.playHand(_currentSB, _currentBB, _isPreflop);
-            _playerList.updatePlayerPots();
             _isPreflop = false;
         } 
         // Collect remaining bets only if the round ended because all players folded
         catch (OnlyOnePlayerLeftException e) {
             _playerList.notifyHandEndsByFold();
-            _playerList.updatePlayerPots();
             _isPreflop = false;
 
             log.debug("Hand number {} finished!", _handCounter);
@@ -156,6 +154,7 @@ public class Game {
             _playerList.calculatePrizeDistribution(playersEval);
         }
         
+        _playerList.manageEliminatedPlayers();
         _playerList.notifyRankingsToAllPlayers();
     }
 
@@ -164,16 +163,17 @@ public class Game {
         boolean endOfGame = _playerList.checkEndOfGame();
         _playerList.notifyGameEnds(endOfGame);
 
-        if(!endOfGame)
+        if(!endOfGame) {
             log.debug("Preparing for next hand...");
-        else
-            log.debug("End of game");
 
-        retrieveCardsFromTable();
-        _deck.resetDeck();
-        _playerList.resetPlayers();
-        _playerList.passTurn();
-        _isPreflop = true;
+            retrieveCardsFromTable();
+            _deck.resetDeck();
+            _playerList.passTurn();
+            _isPreflop = true;
+        }
+        else {
+            log.debug("End of game");
+        }
 
         return endOfGame;
     }

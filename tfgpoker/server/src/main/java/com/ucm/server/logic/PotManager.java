@@ -111,13 +111,14 @@ public class PotManager {
         }
 
         // Divide in pots
+        List<PlayerInfo> potsCopy = new ArrayList<>(_pots);
         List<Pot> pots = new ArrayList<>();
-        while(!_pots.isEmpty()){
+        while(!potsCopy.isEmpty()){
 
             Pot pot = createPot();
             pots.add( pot );
 
-            _pots.removeIf( p -> p.playerPot == 0 );
+            potsCopy.removeIf( p -> p.playerPot == 0 );
         }
 
         return createDistribution(pots);

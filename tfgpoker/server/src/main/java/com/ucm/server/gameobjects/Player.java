@@ -73,6 +73,10 @@ public class Player implements IPokerPlayer {
      */
     private boolean _isWinner;
 
+    private boolean _isAllIn;
+
+    private boolean _isEliminated;
+
 
     /**
      * Socket used for communication with the player.
@@ -100,6 +104,8 @@ public class Player implements IPokerPlayer {
         _numCards = 0;
         _fold = false;
         _isWinner = false;
+        _isAllIn = false;
+        _isEliminated = false;
     }
 
     /**
@@ -251,8 +257,18 @@ public class Player implements IPokerPlayer {
     }
 
     @Override
-    public boolean isWinner(){
+    public boolean isWinner() {
         return _isWinner;
+    }
+
+    @Override
+    public boolean isAllIn() {
+        return _isAllIn;
+    }
+
+    @Override
+    public boolean isEliminated() {
+        return _isEliminated;
     }
 
     @Override
@@ -271,6 +287,7 @@ public class Player implements IPokerPlayer {
 
         try {
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerRoleToCode(r));
+            _role = r;
         }
         catch (IOException e) {
             log.error("Receiving the role for {} player: {}", _name, e.getMessage());
@@ -288,7 +305,6 @@ public class Player implements IPokerPlayer {
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.cardValueToCode(c));
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.cardSuitToCode(c));
             _cards[_numCards++] = c;
-            log.debug("Player {} receives card {}", _name, c.toString());
         }
         catch (IOException e) {
             log.error("Giving the card {} to player {}: {}", c.toString(), _name, e.getMessage());
@@ -305,7 +321,6 @@ public class Player implements IPokerPlayer {
         try{
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.cardValueToCode(c));
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.cardSuitToCode(c));
-            log.debug("Table card {}", c.toString());
         }
         catch(IOException e){
             log.error("Trying to send a table card to {}: {}", _name,  e.getMessage());
@@ -348,6 +363,11 @@ public class Player implements IPokerPlayer {
     }
 
     @Override
+    public void setIsEliminated(boolean state) {
+        _isEliminated = state;
+    }
+
+    @Override
     public int placeOnBetMoney() {
 
         int money = _pocketMoney;
@@ -363,6 +383,11 @@ public class Player implements IPokerPlayer {
     @Override
     public void unfoldPlayer() {
         _fold = false;
+    }
+
+    @Override
+    public void setAllIn(boolean state) {
+        _isAllIn = state;
     }
 
 

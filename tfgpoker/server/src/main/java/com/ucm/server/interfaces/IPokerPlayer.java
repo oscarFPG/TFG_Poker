@@ -12,6 +12,7 @@ public interface IPokerPlayer extends IPokerActions {
     public void receivePriceMoney(int amount);
     public void retrieveCards();
     public void setIsWinner(boolean state);
+    public void setIsEliminated(boolean state);
 
     public void notifyTurnWait();
     public void notifyTurnPlay();

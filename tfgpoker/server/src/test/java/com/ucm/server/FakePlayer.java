@@ -12,6 +12,8 @@ public class FakePlayer implements IPokerPlayer {
     public PlayerRole role;
     public boolean isFolded;
     public boolean isWinner;
+    public boolean isAllIn;
+    public boolean isEliminated;
 
 
     public FakePlayer(int offBet, int onBet){
@@ -19,6 +21,8 @@ public class FakePlayer implements IPokerPlayer {
         onBetMoney = onBet;
         isFolded = false;
         isWinner = false;
+        isAllIn = false;
+        isEliminated = false;
     }
 
 
@@ -188,5 +192,29 @@ public class FakePlayer implements IPokerPlayer {
 
     @Override
     public void notifyHandEndsByFolds() {}
+
+
+    @Override
+    public boolean isAllIn() {
+        return isAllIn;
+    }
+
+
+    @Override
+    public void setAllIn(boolean state) {
+        isAllIn = state;
+    }
+
+
+    @Override
+    public boolean isEliminated() {
+        return isEliminated;
+    }
+
+
+    @Override
+    public void setIsEliminated(boolean state) {
+        isEliminated = state;
+    }
 
 }
