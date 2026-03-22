@@ -1,5 +1,5 @@
 .root {
-   -fx-background-image: url("../images/fondoPoker.png");
+   -fx-background-image: url("../images/fondoBlurrPoker.png");
    -fx-background-size: cover;
    -fx-background-position: center;
 }
