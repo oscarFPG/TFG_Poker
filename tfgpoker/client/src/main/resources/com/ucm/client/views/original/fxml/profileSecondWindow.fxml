@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="640.0" prefWidth="1074.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
    <children>
@@ -25,39 +26,82 @@
                </BorderPane.margin>
             </ImageView>
          </top>
-      </BorderPane>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0" StackPane.alignment="CENTER">
-         <children>
-            <VBox alignment="CENTER" layoutX="358.0" layoutY="166.0" prefHeight="384.0" prefWidth="374.0">
+         <center>
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
                <children>
-                  <Label alignment="TOP_CENTER" contentDisplay="CENTER" text="Edit your profile before start playing" />
-                  <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-                  <Button mnemonicParsing="false" />
-                  <TextField maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="25.0" prefWidth="342.0">
-                     <VBox.margin>
-                        <Insets top="20.0" />
-                     </VBox.margin>
-                  </TextField>
-                  <HBox alignment="CENTER" prefHeight="81.0" prefWidth="374.0">
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <Button alignment="CENTER" mnemonicParsing="false" prefHeight="25.0" prefWidth="58.0" text="SAVE">
-                           <HBox.margin>
-                              <Insets right="10.0" />
-                           </HBox.margin>
-                        </Button>
-                        <Button alignment="CENTER" mnemonicParsing="false" text="CANCEL">
-                           <HBox.margin>
-                              <Insets left="10.0" />
-                           </HBox.margin>
-                        </Button>
+                        <StackPane prefHeight="345.0" prefWidth="420.0">
+                           <children>
+                              <VBox alignment="CENTER" prefHeight="345.0" prefWidth="335.0" spacing="30.0" styleClass="rounded-description-label" StackPane.alignment="CENTER">
+                                 <children>
+                                    <Label alignment="CENTER" contentDisplay="CENTER" styleClass="bold-general-text-font" text="Edit your profile before start playing">
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../images/imagenPerfil.png" />
+                                       </image>
+                                    </ImageView>
+                                    <TextField alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="40.0" prefWidth="230.0" styleClass="username-label">
+                                       <VBox.margin>
+                                          <Insets />
+                                       </VBox.margin>
+                                    </TextField>
+                                    <HBox alignment="CENTER" prefHeight="50.0" prefWidth="420.0" spacing="40.0">
+                                       <children>
+                                          <Button alignment="CENTER" mnemonicParsing="false" prefHeight="40.0" prefWidth="137.0" text="SAVE">
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                             <font>
+                                                <Font size="27.0" />
+                                             </font>
+                                             <styleClass>
+                                                <String fx:value="general-button" />
+                                                <String fx:value="bold-general-text-font" />
+                                             </styleClass>
+                                          </Button>
+                                          <Button alignment="CENTER" mnemonicParsing="false" prefHeight="45.0" prefWidth="145.0" text="CANCEL">
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                             <font>
+                                                <Font size="27.0" />
+                                             </font>
+                                             <styleClass>
+                                                <String fx:value="general-button" />
+                                                <String fx:value="bold-general-text-font" />
+                                             </styleClass>
+                                          </Button>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets bottom="10.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                              <Button alignment="CENTER" mnemonicParsing="false" prefHeight="30.0" prefWidth="28.0" styleClass="profile-edit-button" StackPane.alignment="CENTER">
+                                 <graphic>
+                                    <ImageView fitHeight="31.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../images/cameraEditProfile.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                                 <StackPane.margin>
+                                    <Insets top="50.0" />
+                                 </StackPane.margin>
+                              </Button>
+                           </children>
+                        </StackPane>
                      </children>
-                     <VBox.margin>
-                        <Insets top="30.0" />
-                     </VBox.margin>
                   </HBox>
                </children>
             </VBox>
-         </children>
-      </AnchorPane>
+         </center>
+      </BorderPane>
    </children>
 </StackPane>
