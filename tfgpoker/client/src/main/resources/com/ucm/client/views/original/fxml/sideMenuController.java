@@ -8,7 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
-public class SideMenuController {
+public class sideMenuController {
 
     @FXML private VBox content1;
     @FXML private VBox content2;

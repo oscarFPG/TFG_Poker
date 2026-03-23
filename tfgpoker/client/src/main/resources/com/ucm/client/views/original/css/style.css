@@ -14,6 +14,9 @@
    -fx-background-insets: 0, 2;
 }
 
+.profileEdit{
+    -fx-background-image: url("../../images/fondoBlackPoker.png");
+}
 /**
  * Estilo para botones como "START", "CANCEL" o "SAVE"
  */
@@ -258,6 +261,17 @@
    
 }
 
+.container-semitransparent-colors {
+    -fx-background-color: rgba(13, 0, 28, 0.742);
+   -fx-border-color: linear-gradient(to top,
+    #DC8CFE 0%,
+    #FFF8FF 50%,
+    #FFF8FF 50%,
+    #DC8CFE 100%);
+   -fx-border-width: 2; 
+   
+}
+
 .cardsInfo:hover{
    
     -fx-scale-x: 1.08;
@@ -406,7 +420,7 @@
 /*contenedores para texto que introduce el usuario sin borde*/
 .text-container{
    -fx-border-width: 0; 
-    -fx-background-color: #6c27a0;
+    -fx-background-color:  rgba(188, 4, 255, 0.367);
 }
 
 /*ICONOS GENERALES ------------------------------------------------------------------------------------------------------------------------------ */
