@@ -1,6 +1,7 @@
 package com.ucm.server.commands;
 
-import com.ucm.server.gameobjects.Player;
+
+import com.ucm.server.interfaces.IPokerActions;
 import com.ucm.server.middleclasses.CommandResult;
 
 /**
@@ -9,8 +10,8 @@ import com.ucm.server.middleclasses.CommandResult;
  */
 public class AllInCommand extends Command {
 
-    
-    public AllInCommand(){}
+
+    public AllInCommand() {}
 
     /**
      * Constructor method that creates an AllInCommand.
@@ -18,8 +19,19 @@ public class AllInCommand extends Command {
      * @param money the total amount of money that the player has not bet yet.
      * @param pocketMoney the amount of money that the player has already bet in the current hand.
      */
-    public AllInCommand(Player p, int money, int pocketMoney) {
-        super(p, money, pocketMoney);
+    public AllInCommand(IPokerActions p) {
+        super(p);
+    }
+
+
+    @Override
+	protected Command createCommand(final String[] commandFormat, final IPokerActions player){
+		return new AllInCommand(player);
+	}
+
+    @Override
+    public boolean validate(final int maxBet) {
+        return true;
     }
 
     /**
@@ -29,7 +41,10 @@ public class AllInCommand extends Command {
     public CommandResult execute(int sb, int bb, int maxBet) {
 
         _player.allIn();
-        return CommandResult.continuePlaying(maxBet, false);
+        _player.setAllIn(true);
+
+        int playerBet = _player.getMoneyOnBet();
+        return CommandResult.continuePlaying(playerBet, playerBet > maxBet);
     }
 
     /**
@@ -44,26 +59,19 @@ public class AllInCommand extends Command {
      * {@inheritDoc}
      */
     @Override
-    public boolean matchCommand(String command) {
-        return  command.equalsIgnoreCase("all-in") || 
-                command.equalsIgnoreCase("a");
+    public String getCommandDescription() {
+        return "Bet all of your remaining money on the current hand.";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
-    public boolean checkAttributes(String[] fullCommand) {
-        return fullCommand.length == 1;
+    public String getCommandFormat() {
+        return "allin";
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public Command create(String[] fullCommand, Player p) {
-        return new AllInCommand(p, p.getMoney(), p.getPocketMoney());
+    public String getCommandFormatShortcut() {
+        return "a";
     }
-
 
 }

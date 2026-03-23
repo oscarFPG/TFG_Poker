@@ -1,30 +1,25 @@
 package com.ucm.server.gameobjects;
 
-import com.ucm.common.SocketUtils;
-import com.ucm.server.commands.AllInCommand;
-import com.ucm.server.commands.CallCommand;
-import com.ucm.server.commands.CheckCommand;
-import com.ucm.server.commands.Command;
-import com.ucm.server.commands.FoldCommand;
-import com.ucm.server.commands.RaiseCommand;
-import com.ucm.server.control.GameAdapter;
-import com.ucm.server.interfaces.IPlayer;
-
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Scanner;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.ucm.common.SocketUtils;
+import com.ucm.server.control.GameAdapter;
+import com.ucm.server.interfaces.IPokerPlayer;
+import com.ucm.server.logic.Game;
+
 
 /**
  * This class represents any king of player in the game, whether its a human
  * player or and AI player.
  * It works as a representation of the player entity in the server side.
  */
-public class Player implements IPlayer {
+public class Player implements IPokerPlayer {
 
-    /**
-     * Player's unique identifier
-     */
-    private int _id;
+    private static final Logger log = LogManager.getLogger(Player.class);
 
     /**
      * Player's name
@@ -73,15 +68,22 @@ public class Player implements IPlayer {
     private boolean _fold;
 
     /**
-     * Indicates whether the player has lost the game.
+     * Indicates if the player is the winner of a hand or the game.
+     * This flag should only be read at the end of a hand o the game.
      */
-    private boolean _hasLost;
+    private boolean _isWinner;
+
+    private boolean _isAllIn;
+
+    private boolean _isEliminated;
+
 
     /**
      * Socket used for communication with the player.
      * Check {@link Socket} and {@link SocketUtils}.
      */
     private Socket _socket;
+
 
     /**
      * Constructor for the Player class.
@@ -91,8 +93,7 @@ public class Player implements IPlayer {
      * @param socket used for communicating with the real player
      * @param money  received at the beginning of the game
      */
-    public Player(int id, String name, Socket socket, int money) {
-        _id = id;
+    public Player(String name, Socket socket, int money) {
         _name = name;
         _socket = socket;
 
@@ -102,185 +103,9 @@ public class Player implements IPlayer {
         _cards = new Card[2];
         _numCards = 0;
         _fold = false;
-        _hasLost = false;
-    }
-
-    /**
-     * Assigns a role to the player.
-     * 
-     * @param r
-     */
-    public void assignRole(PlayerRole r) {
-        _role = r;
-        onReceiveRole(r);
-    }
-
-    /**
-     * Makes a play based on the player's input by console
-     * 
-     * @return {@link Command} representing the play the player has made
-     */
-    public Command makePlay() {
-
-        Scanner sc = new Scanner(System.in);
-        Command command = null;
-        String[] userInput = null;
-
-
-        do {
-
-            menuMakePlay();
-            userInput = sc.nextLine().trim().split(" ");
-            command = Command.parseCommand(userInput, this);
-        }
-        while (command == null);
-
-        sc.close();
-        return command;
-    }
-
-    /**
-     * Prints the menu for the player to make a play by console.
-     */
-    private void menuMakePlay() {
-        System.out.printf("Haz una jugada, %s!\n", getName());
-        System.out.println("Opciones de jugada: ");
-        System.out.println( Command.showAvailableCommands() );
-        System.out.println("Introduce tu jugada: ");
-    }
-
-    /**
-     * Forces the player to make the small-blind or big-blind bet if its role is the
-     * corresponding one.
-     * Check {@link PlayerRole}
-     * 
-     * @param sb
-     * @param bb
-     */
-    public void makeForcedBet(int sb, int bb) {
-
-        int bet = 0;
-
-        // Forced small-blind and big-blind
-        if (_role == PlayerRole.SMALL_BLIND)
-            bet = sb;
-        else if (_role == PlayerRole.BIG_BLIND)
-            bet = bb;
-
-        increasePocketMoney(bet);
-        decreaseMoney(bet);
-    }
-
-    /**
-     * Adds a card to the player's hand if he has less than two cards.
-     * 
-     * @param c card to be added
-     * @return true if the card was added successfully, false in any other case
-     */
-    public boolean receiveCard(Card c) {
-
-        if (_numCards == 2)
-            return false;
-
-        _cards[_numCards++] = c;
-        return true;
-    }
-
-    /**
-     * Retrieves a card from the player's hand.
-     * If the player has two card it shoul be called twice to retrieve both cards.
-     * 
-     * @return the card retrieved or null if the player has no cards
-     */
-    public Card retrieveCard() {
-
-        if (_numCards <= 0)
-            return null;
-
-        Card c = _cards[--_numCards];
-        _cards[_numCards] = null;
-        return c;
-    }
-
-    /**
-     * Retrieve the money that it is contained in the {@link #_pocketMoney} and set
-     * it to zero.
-     * 
-     * @return the money retrieved
-     */
-    public int placeBet() {
-
-        int money = _pocketMoney;
-        _pocketMoney = 0;
-        return money;
-    }
-
-    /**
-     * Makes the player fold by setting the {@link #_fold} value to true.
-     * Retrieves the cards in his hands and marks him as 'folded'.
-     * The {@link #_pocketMoney} variable keeps its value
-     */
-    public void fold() {
-
-        // Devuelvo las cartas
-        Card c1 = retrieveCard();
-        if (c1 != null)
-            c1.setAvailable(true);
-
-        Card c2 = retrieveCard();
-        if (c2 != null)
-            c2.setAvailable(true);
-
-        // El jugador pierde su apuesta
-        // Ya no tiene derecho a seguir jugando
-        _fold = true;
-    }
-
-    /**
-     * The player 'calls' in this round, which means that equals the maximum bet made by other players.
-     * @param maxBet
-     */
-    public void call(int maxBet) {
-
-        int resto = maxBet - _pocketMoney; // dinero que necesita para igualar la apuesta en juego
-        // Aumento la apuesta de mi ronda
-        increasePocketMoney(resto);
-
-        // Quito de mi cartera la diferencia
-        decreaseMoney(resto);
-    }
-
-    /**
-     * The player bets all his money in the current hand
-     */
-    public void allIn() {
-        increasePocketMoney(_money);
-        _money = 0;
-    }
-
-    /**
-     * TODO: HAY QUE HACERLO BIEN !!
-     * @param maxBet
-     */
-    public void raise(int maxBet) {
-
-        // Si tengo menos dinero de lo que está apostado y quiero subir
-        // entonces primero igualo y luego subo lo que sea(max All-in)
-        if (_pocketMoney <= maxBet) {
-            call(maxBet);
-            return;
-        }
-
-        // En cualquier otro caso subo lo que eliga el player(max All-in)
-        _pocketMoney += 10;
-    }
-
-    /**
-     * The player receives money
-     * @param money received by the player
-     */
-    public void receivePriceMoney(int money) {
-        _money += money;
+        _isWinner = false;
+        _isAllIn = false;
+        _isEliminated = false;
     }
 
     /**
@@ -289,34 +114,22 @@ public class Player implements IPlayer {
      * 
      * @param bet quantity to subtract
      */
-    private void decreaseMoney(int bet) {
+    private void decreaseOffBetMoney(int bet) {
         _money = Math.clamp(_money - bet, 0, _money);
     }
 
     /**
      * Adds to the {@link #_pocketMoney} variable by a certain amount.
+     * 
      * @param bet quantity to add
      */
-    private void increasePocketMoney(int bet) {
+    private void increaseOnBetMoney(int bet) {
         _pocketMoney += bet;
     }
 
     /**
-     * Prints by console the player's status
-     * This includes the player id, name and cards
-     * @see {@link Card} to know more about the Card's toString() method implementation
-     * @return {@link String} representation of the player
-     */
-    public String toString() {
-
-        String carta1 = (_cards[0] != null) ? _cards[0].toString() : Card.MissingCardToString();
-        String carta2 = (_cards[1] != null) ? _cards[1].toString() : Card.MissingCardToString();
-
-        return String.format("Player[%d]: %s - %s%s", _id, _name, carta1, carta2);
-    }
-
-    /**
-     * Eliminates the hand cards of the player and set the {@link #_numCards} value to zero.
+     * Eliminates the hand cards of the player and set the {@link #_numCards} value
+     * to zero.
      */
     public void resetCards() {
 
@@ -330,24 +143,9 @@ public class Player implements IPlayer {
     }
 
     /**
-     * Sets a value to the {@link #_fold} member variable
-     * @param fold new value
-     */
-    public void setFold(boolean fold) {
-        _fold = fold;
-    }
-
-    /**
-     * Sets a value to the {@link #_hasLost} member variable
-     * @param lost new value
-     */
-    public void setHasLost(boolean lost) {
-        _hasLost = lost;
-    }
-
-    /**
      * Gets the player cards.
      * Player could have zero to two cards
+     * 
      * @return player cards
      */
     public Card[] getCards() {
@@ -355,89 +153,440 @@ public class Player implements IPlayer {
     }
 
     /**
-     * Gets the player ID
-     * @return player ID
-     */
-    public int getID() {
-        return _id;
-    }
-
-    /**
-     * Gets the player name
-     * @return player name
-     */
-    public String getName() {
-        return _name;
-    }
-
-    /**
-     * Gets the player money.
-     * This money could be the total money or a part of it, considering the {@link #_pocketMoney} variable.
-     * @return player money
-     */
-    public int getMoney() {
-        return _money;
-    }
-
-    /**
-     * Gets the money the player has bet in the current hand.
-     * @return money the player has bet in the current hand
-     */
-    public int getPocketMoney() {
-        return _pocketMoney;
-    }
-
-    /**
      * Gets the player role in the current hand.
+     * 
      * @return player role
      */
     public PlayerRole getPlayerRole() {
         return _role;
     }
 
-    public int getNumCards() {
-        return _numCards;
+    /**
+     * Prints by console the player's status
+     * This includes the player id, name and cards
+     * 
+     * @see {@link Card} to know more about the Card's toString() method
+     *      implementation
+     * @return {@link String} representation of the player
+     */
+    public String toString() {
+
+        String carta1 = (_cards[0] != null) ? _cards[0].toString() : Card.MissingCardToString();
+        String carta2 = (_cards[1] != null) ? _cards[1].toString() : Card.MissingCardToString();
+
+        return String.format("Player: %s - %s%s", _name, carta1, carta2);
     }
 
-    public boolean hasFolded() {
-        return _fold;
-    }
+    /// --------------------------------------- IPokerActions ---------------------------------------
+    @Override
+    public boolean call(final int amount) {
 
-    public boolean hasLost() {
-        return _hasLost;
+        int resto = amount - _pocketMoney; // dinero que necesita para igualar la apuesta en juego
+        log.debug("Player {} wants to call to {}$", _name, amount);
+        log.debug("Total money on bet: {}$", amount + _pocketMoney);
+        
+        // Aumento la apuesta de mi ronda
+        increaseOnBetMoney(resto);
+
+        // Quito de mi cartera la diferencia
+        decreaseOffBetMoney(resto);
+
+        return true;
     }
 
     @Override
-    public void onReceiveRole(PlayerRole r) {
+    public boolean check() {
+        return true;
+    }
+
+    @Override
+    public boolean fold() {
+
+        // El jugador pierde su apuesta
+        // Ya no tiene derecho a seguir jugando
+        _fold = true;
+
+        return true;
+    }
+
+    @Override
+    public boolean raise(final int amount) {
+
+        // Si tengo menos dinero de lo que está apostado y quiero subir
+        // entonces primero igualo y luego subo lo que sea(max All-in)
+        if (_pocketMoney <= amount) {
+            call(amount);
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean allIn() {
+
+        increaseOnBetMoney(_money);
+        _money = 0;
+        return true;
+    }
+
+    /* --------------------------------------- IPokerPlayer --------------------------------------- */
+    @Override
+    public String getPlayerName() {
+        return _name;
+    }
+
+    @Override
+    public int getMoneyOnBet() {
+        return _pocketMoney;
+    }
+
+    @Override
+    public int getMoneyOffBet() {
+        return _money;
+    }
+
+    @Override
+    public int getCardsCounter() {
+        return _numCards;
+    }
+
+    @Override
+    public boolean isFolded() {
+        return _fold;
+    }
+
+    @Override
+    public boolean isWinner() {
+        return _isWinner;
+    }
+
+    @Override
+    public boolean isAllIn() {
+        return _isAllIn;
+    }
+
+    @Override
+    public boolean isEliminated() {
+        return _isEliminated;
+    }
+
+    @Override
+    public Card[] getPlayerCards() {
+        return _cards;
+    }
+
+
+
+    @Override
+    public void receiveRole(PlayerRole r) {
+        
+        if (Game.DEBUG) {
+            return;
+        }
 
         try {
-
-            int role = GameAdapter.playerRoleToCode(r);
-            SocketUtils.sendInteger(_socket.getOutputStream(), role);
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerRoleToCode(r));
             _role = r;
-
-            System.out.printf("Player %s receives rol %s\n", _name, _role.name());
-        } catch (IOException e) {
-            System.out.printf("Error receiving the role for %s player: %s\n", _name, e.getMessage());
+        }
+        catch (IOException e) {
+            log.error("Receiving the role for {} player: {}", _name, e.getMessage());
         }
     }
 
     @Override
-    public void onReceiveCard(Card c) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onReceiveCard'");
+    public void receiveCard(Card c) {
+
+        if (_numCards == 2)
+            return ;
+
+
+        try {
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.cardValueToCode(c));
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.cardSuitToCode(c));
+            _cards[_numCards++] = c;
+        }
+        catch (IOException e) {
+            log.error("Giving the card {} to player {}: {}", c.toString(), _name, e.getMessage());
+        }
     }
 
     @Override
-    public void onReceiveTableCard(Card c) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onReceiveTableCard'");
+    public void receiveTableCard(Card c) {
+        
+        if (Game.DEBUG) {
+            return;
+        }
+
+        try{
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.cardValueToCode(c));
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.cardSuitToCode(c));
+        }
+        catch(IOException e){
+            log.error("Trying to send a table card to {}: {}", _name,  e.getMessage());
+        }
     }
 
     @Override
-    public void onReceiveTurn() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onReceiveTurn'");
+    public void receiveNewMoney(int money) {
+
+       try{
+            SocketUtils.sendInteger(_socket.getOutputStream(), money);
+            log.debug("Players {} new money is {}", _name, money);
+        }
+        catch (IOException e) {
+            log.error("Trying to force a move on the player {}: {}", _name, e.getMessage());
+        }
     }
 
+    /**
+     * The player receives money
+     * 
+     * @param money received by the player
+     */
+    @Override
+    public void receivePriceMoney(int money) {
+        _money += money;
+    }
+
+    @Override
+    public void retrieveCards() {
+        
+        _cards[0] = null;
+        _cards[1] = null;
+        _numCards = 0;
+    }
+
+    @Override
+    public void setIsWinner(boolean state) {
+        _isWinner = state;
+    }
+
+    @Override
+    public void setIsEliminated(boolean state) {
+        _isEliminated = state;
+    }
+
+    @Override
+    public int placeOnBetMoney() {
+
+        int money = _pocketMoney;
+        _pocketMoney = 0;
+        return money;
+    }
+
+    @Override
+    public void foldPlayer(){
+        _fold = true;
+    }
+
+    @Override
+    public void unfoldPlayer() {
+        _fold = false;
+    }
+
+    @Override
+    public void setAllIn(boolean state) {
+        _isAllIn = state;
+    }
+
+
+    @Override
+    public void notifyTurnWait() {
+
+        if (Game.DEBUG) {
+            return;
+        }
+
+        try{
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnWaitToCode());
+            log.debug("Player {} has to wait his turn!", _name);
+        }
+        catch (IOException e) {
+            log.error("Sending the WAIT order to player {}: {}", _name, e.getMessage());
+        }
+    }
+
+    @Override
+    public void notifyTurnPlay() {
+
+        if (Game.DEBUG) {
+            return ;
+        }
+
+        try {
+
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnPlayToCode());
+            log.debug("Player {} has to play his turn!", _name);
+        }
+        catch (IOException e) {
+            log.error("Receiving the command for {} player: {}", _name, e.getMessage());
+        }
+    }
+
+    @Override
+    public void notifyRoundEnded() {
+        
+        if (Game.DEBUG) {
+            return;
+        }
+
+        try{
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.gameRoundEnded());
+            log.debug("Player {} notified about the end of the round", _name);
+        }
+        catch (IOException e) {
+            log.error("Notifing ROUND_ENDS to player {}: {}", _name, e.getMessage());
+        }
+    }
+
+    @Override
+    public void notifyHandEnded() {
+        
+        try{
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.gameHandEnded());
+            log.debug("Player {} notified about the end of the hand", _name);
+        }
+        catch(IOException e){
+            log.error("Notifying HAND_ENDS to player {}: {}", _name, e.getMessage());
+        }
+    }
+
+    @Override
+    public void notifyGameEnded() {
+
+        try{
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.gameEnded());
+            log.debug("Player {} notified about the end of the game", _name);
+        }
+        catch(IOException e){
+            log.error("Notifying GAME_ENDS to player {}: {}", _name, e.getMessage());
+        }
+    }
+
+    @Override
+    public void notifyGameKeeps() {
+        
+        try{
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.gameKeeps());
+            log.debug("Player {} notified about game keeps on", _name);
+        }
+        catch(IOException e){
+            log.error("Notifying GAME_KEEPS to player {}: {}", _name, e.getMessage());
+        }
+    }
+
+    @Override
+    public void notifyHandWinner() {
+
+        try{
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerWinsHand());
+            log.debug("Player {} is then winner of the hand", _name);
+        }
+        catch(IOException e){
+            log.error("Notifying HAND_WINNER to player {}: {}", _name, e.getMessage());
+        }
+    }
+
+    @Override
+    public void notifyHandLoser() {
+
+        try{
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerLosesHand());
+            log.debug("Player {} is the loser of the hand", _name);
+        }
+        catch(IOException e){
+            log.error("Notifying HAND_LOSER to player {}: {}", _name, e.getMessage());
+        }
+    }
+    
+    @Override
+    public void notifyGameWinner() {
+
+        try{
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerWinsGame());
+            log.debug("Player {} is then winner of the game", _name);
+        }
+        catch(IOException e){
+            log.error("Notifying GAME_WINNER to player {}: {}", _name, e.getMessage());
+        }
+    }
+
+    @Override
+    public void notifyGameLoser() {
+
+        try{
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerLosesGame());
+            log.debug("Player {} is the loser of the game", _name);
+        }
+        catch(IOException e){
+            log.error("Notifying GAME_LOSER to player {}: {}", _name, e.getMessage());
+        }
+    }
+
+    @Override
+    public void notifyHandEndsByFolds() {
+
+        try{
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.handEndsByFolds());
+        }
+        catch(IOException e){
+            log.error("Notifying HAND_ENDS_BY_FOLDS to player {}: {}", _name, e.getMessage());
+        }
+    }
+
+    @Override
+    public void actionSmallBlindBet(final int sb) {
+        
+        try{
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnForcedSBToCode());
+            SocketUtils.sendInteger(_socket.getOutputStream(), sb);
+
+            _money -= sb;
+            _pocketMoney += sb;
+        }
+        catch(IOException e){
+            log.error("Player {} making the small blind bet: {}", _name, e.getMessage());
+        }
+    }
+
+    @Override
+    public void actionBigBlindBet(final int bb) {
+        
+        try{
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnForcedSBToCode());
+            SocketUtils.sendInteger(_socket.getOutputStream(), bb);
+
+            _money -= bb;
+            _pocketMoney += bb;
+        }
+        catch(IOException e){
+            log.error("Player {} making the small blind bet: {}", _name, e.getMessage());
+        }
+    }
+
+    @Override
+    public String actionMakePlay(final int sb, final int bb, final int maxBet) {
+        
+        String commandInput = null;
+        try{
+
+            // Send round info
+            SocketUtils.sendInteger(_socket.getOutputStream(), sb);
+            SocketUtils.sendInteger(_socket.getOutputStream(), bb);
+            SocketUtils.sendInteger(_socket.getOutputStream(), maxBet);
+            SocketUtils.sendInteger(_socket.getOutputStream(), _money);
+            log.debug("Round info sent to {}", _name);
+
+            commandInput = SocketUtils.receiveString( _socket.getInputStream() );
+            log.debug("Command code {} sent by the player {}", commandInput, _name);
+        }
+        catch (IOException e) {
+            log.error("Receiving the command for {} player: {}", _name, e.getMessage());
+        }
+
+        return commandInput;
+    }
+
+    
 }

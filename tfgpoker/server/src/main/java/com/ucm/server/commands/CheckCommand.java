@@ -1,6 +1,7 @@
 package com.ucm.server.commands;
 
-import com.ucm.server.gameobjects.Player;
+
+import com.ucm.server.interfaces.IPokerActions;
 import com.ucm.server.middleclasses.CommandResult;
 
 
@@ -10,21 +11,31 @@ import com.ucm.server.middleclasses.CommandResult;
 public class CheckCommand extends Command {
 
 
-    public CheckCommand(){
-        super();
-    }
+    public CheckCommand() {}
 
     /**
      * Constructor method that creates a CheckCommand.
      * @param p the player that is making the check play.
      */
-    public CheckCommand(Player p) {
-        super(p, 0, 0);
+    public CheckCommand(IPokerActions p) {
+        super(p);
+    }
+
+
+    @Override
+	protected Command createCommand(final String[] commandFormat, final IPokerActions player){
+		return new CheckCommand(player);
+	}
+
+    @Override
+    public boolean validate(final int maxBet) {
+        return _playersOnBetMoney == 0 && maxBet == 0;
     }
 
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
-        return CommandResult.continuePlaying(_money, false);
+        _player.check();
+        return CommandResult.continuePlaying(0, false);
     }
 
     @Override
@@ -33,21 +44,18 @@ public class CheckCommand extends Command {
     }
 
     @Override
-    public boolean matchCommand(String command) {
-        return  command.equalsIgnoreCase("check") || 
-                command.equalsIgnoreCase("k");
+    public String getCommandDescription() {
+        return "If there is no bet just pass your turn without betting.";
     }
 
     @Override
-    public boolean checkAttributes(String[] fullCommand) {
-        return fullCommand.length == 1;
+    public String getCommandFormat() {
+        return "check";
     }
 
     @Override
-    public Command create(String[] fullCommand, Player p) {
-        return new CheckCommand(p);
+    public String getCommandFormatShortcut() {
+        return "k";
     }
-
-
 
 }

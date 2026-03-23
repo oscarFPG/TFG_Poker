@@ -26,7 +26,7 @@ public record CommandResult(int bet, boolean raises, boolean folds) {
      * @param money the total bet committed before folding
      * @return a CommandResult representing a folding action
      */
-    public static CommandResult stopPlaying(int money) {
-        return new CommandResult(money, false, true);
+    public static CommandResult stopPlaying() {
+        return new CommandResult(0, false, true);
     }
 }

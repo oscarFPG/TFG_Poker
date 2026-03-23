@@ -119,6 +119,26 @@
             </build>
         </profile>
 
+        <!-- Ejecucion automatizada con archivo de texto -->
+        <profile>
+            <id>run-auto</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <configuration>
+                            <mainClass>com.ucm.client.ClientMain</mainClass>
+                            <arguments>
+                                <argument>${match}</argument>
+                                <argument>${player}</argument>
+                            </arguments>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
         <!-- Debug -->
         <profile>
             <id>debug</id>

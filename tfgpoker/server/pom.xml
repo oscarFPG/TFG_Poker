@@ -18,16 +18,32 @@
     <!-- Dependencias -->
     <dependencies>
 
+        <!-- Utils -->
         <dependency>
             <groupId>com.ucm</groupId>
             <artifactId>common</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
+        <!-- JUnit for tests -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <!-- Logger -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.25.2</version>
+        </dependency>
+
+        <!-- Log4j Core -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.25.2</version>
         </dependency>
 
     </dependencies>
@@ -53,19 +69,25 @@
                 <version>3.1.0</version>
                 <configuration>
                     <mainClass>com.ucm.server.ServerMain</mainClass>
-                    <arguments>
-                        <argument>-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000</argument>
-                    </arguments>
                 </configuration>
             </plugin>
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <forkCount>0</forkCount>
+                </configuration>
+            </plugin>
+    
         </plugins>
     </build>
 
     <!-- Perfiles de ejecucion y debug -->
     <profiles>
         
-        <!-- Ejecucion -->
+        <!-- Ejecucion modo servidor -->
         <profile>
             <id>run</id>
             <build>
@@ -90,7 +112,7 @@
             </build>
         </profile>
 
-        <!-- Debug -->
+        <!-- Debug modo servidor-->
         <profile>
             <id>debug</id>
             <build>
@@ -100,17 +122,52 @@
                         <artifactId>exec-maven-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>debug-app</id>
-                                <phase>compile</phase>
-                                <goals>
-                                    <goal>java</goal>
-                                </goals>
                                 <configuration>
                                     <mainClass>com.ucm.server.ServerMain</mainClass>
                                     <jvmArg>agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:8000</jvmArg>
                                 </configuration>
                             </execution>
                         </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Ejecucion local -->
+        <profile>
+            <id>run-local</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <configuration>
+                            <mainClass>com.ucm.server.ServerMain</mainClass>
+                            <arguments>
+                                <argument>local</argument>
+                                <argument>${n}</argument>
+                            </arguments>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Debug local -->
+        <profile>
+            <id>debug-local</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <configuration>
+                            <mainClass>com.ucm.server.ServerMain</mainClass>
+                            <arguments>
+                                <argument>local</argument>
+                                <argument>${n}</argument>
+                            </arguments>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

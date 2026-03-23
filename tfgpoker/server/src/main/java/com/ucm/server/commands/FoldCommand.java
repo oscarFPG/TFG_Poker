@@ -1,6 +1,7 @@
 package com.ucm.server.commands;
 
-import com.ucm.server.gameobjects.Player;
+
+import com.ucm.server.interfaces.IPokerActions;
 import com.ucm.server.middleclasses.CommandResult;
 
 
@@ -9,26 +10,33 @@ import com.ucm.server.middleclasses.CommandResult;
  */
 public class FoldCommand extends Command {
 
-    public FoldCommand(){
-        super();
-    }
+
+    public FoldCommand() {}
 
     /**
      * Constructor method that creates a FoldCommand.
      * @param p the player that is making the fold play.
      */
-    public FoldCommand(Player p) {
-        super(p, 0, 0);
+    public FoldCommand(IPokerActions p) {
+        super(p);
+    }
+
+
+    @Override
+	protected Command createCommand(final String[] commandFormat, final IPokerActions player){
+        return new FoldCommand(player);
+	}
+
+    @Override
+    public boolean validate(final int maxBet) {
+        return true;
     }
 
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
 
-        /*
-         * Player always can fold, no need to call the checkCommand() method
-         */
         _player.fold();
-        return CommandResult.stopPlaying(0);
+        return CommandResult.stopPlaying();
     }
 
     @Override
@@ -37,19 +45,18 @@ public class FoldCommand extends Command {
     }
 
     @Override
-    public boolean matchCommand(String command) {
-        return  command.equalsIgnoreCase("fold") || 
-                command.equalsIgnoreCase("f");
+    public String getCommandDescription() {
+        return "Retire from the current hand. If you have already bet, you will lose the money.";
     }
 
     @Override
-    public boolean checkAttributes(String[] fullCommand) {
-        return fullCommand.length == 1;
+    public String getCommandFormat() {
+        return "fold";
     }
 
     @Override
-    public Command create(String[] fullCommand, Player p) {
-        return new FoldCommand(p);
+    public String getCommandFormatShortcut() {
+        return "f";
     }
 
 }

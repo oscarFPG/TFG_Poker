@@ -2,6 +2,10 @@ package com.ucm.server.gameobjects;
 
 import java.util.Random;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import com.ucm.server.logic.Game;
+
 /**
  * This class is the responsible of managing all the {@link Card} objects of the
  * game.
@@ -9,6 +13,9 @@ import java.util.Random;
  * class, such as taking a card or retrieving it.
  */
 public class Deck {
+
+    private static final Logger log = LogManager.getLogger(Deck.class);
+    private static final int DEBUG_SEED = 123;
 
     /**
      * Number of different values in the deck (2, 3, 4, 5, 6, 7, 8, 9, 10, J, Q, K,
@@ -42,7 +49,10 @@ public class Deck {
      * Class constructor, initializes the deck and the random object.
      */
     public Deck() {
-        _random = new Random();
+        if(Game.DEBUG)
+            _random = new Random(DEBUG_SEED);
+        else
+            _random = new Random();
         initializeDeck();
     }
 
@@ -97,12 +107,12 @@ public class Deck {
 
             for (int j = 0; j < NUM_VALUES; j++) {
                 if (_deck[i][j] == null) {
-                    System.out.print("[xx]");
-                } else {
-                    System.out.print(_deck[i][j].toString());
+                    log.debug("[xx]");
+                }
+                else {
+                    log.debug( _deck[i][j].toString() );  
                 }
             }
-            System.out.println();
         }
     }
 

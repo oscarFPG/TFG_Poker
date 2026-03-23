@@ -1,6 +1,10 @@
 package com.ucm.server.commands;
 
-import com.ucm.server.gameobjects.Player;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.ucm.server.interfaces.IPokerActions;
 import com.ucm.server.middleclasses.CommandResult;
 
 /**
@@ -10,13 +14,13 @@ import com.ucm.server.middleclasses.CommandResult;
  */
 public class RaiseCommand extends Command {
 
+    private static final Logger log = LogManager.getLogger(RaiseCommand.class);
 
     protected int _targetBet;
     
-    public RaiseCommand() {
-        super();
-    }
-        
+
+    public RaiseCommand() {}
+
     /**
      * Constructor for the RaiseCommand class.
      * @param p the player who is raising
@@ -24,11 +28,34 @@ public class RaiseCommand extends Command {
      * @param money the total amount of money that the player has not bet yet.
      * @param pocketMoney the amount of money that the player has already bet in the current hand.
      */
-    public RaiseCommand(Player p, int newBet, int money, int pocketMoney) {
-        super(p, money, pocketMoney);
-        _targetBet = newBet;
+    public RaiseCommand(IPokerActions p, int targetBet) {
+        super(p);
+        _targetBet = targetBet;
     }
     
+
+    @Override
+    protected Command createCommand(String[] commandFormat, IPokerActions player) {
+        
+        if(commandFormat.length != 2){
+            log.debug("The RaiseCommand must have an argument <amount>");
+            return null;
+        } 
+
+        try {
+            int target = Integer.parseInt( commandFormat[1] );
+            return new RaiseCommand(player, target);
+        }
+        catch (NumberFormatException e) {
+            log.debug("Error al intentar convertir {} a un entero", commandFormat[1]);
+            return null;
+        }
+    }
+
+    @Override
+    public boolean validate(final int maxBet) {
+        return 0 <= _targetBet &&  maxBet < _targetBet && _targetBet <= _playersOnBetMoney + _playersOffBetMoney;
+    }
 
     /**
     * {@inheritDoc}
@@ -36,8 +63,8 @@ public class RaiseCommand extends Command {
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
 
-        if (_targetBet == _money + _pocketMoney) {
-            AllInCommand command = new AllInCommand(_player, _money,_pocketMoney);
+        if (_targetBet == _playersOffBetMoney + _playersOnBetMoney) {
+            AllInCommand command = new AllInCommand(_player);
             return command.execute(sb, bb, maxBet);
         }
 
@@ -53,31 +80,22 @@ public class RaiseCommand extends Command {
         return "RAISE";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public boolean matchCommand(String command) {
-        return  command.equalsIgnoreCase("raise") || 
-                command.equalsIgnoreCase("r");
+    public String getCommandDescription() {
+        return "Increase the current bet to a new amount.";
     }
 
     @Override
-    public boolean checkAttributes(String[] fullCommand) {
-
-        if(fullCommand.length != 2)
-            return false;
-        
-        try {
-            int bet = Integer.parseInt(fullCommand[1]);
-            return bet > 0;
-        }
-        catch (NumberFormatException e) {
-            return false;
-        }
+    public String getCommandFormat() {
+        return "raise";
     }
 
     @Override
-    public Command create(String[] fullCommand, Player p) {
-        int bet = Integer.parseInt(fullCommand[1]);
-        return new RaiseCommand(p, bet, p.getMoney(), p.getPocketMoney());
+    public String getCommandFormatShortcut() {
+        return "r";
     }
 
 }

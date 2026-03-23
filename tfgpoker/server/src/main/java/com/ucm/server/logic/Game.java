@@ -1,21 +1,27 @@
 package com.ucm.server.logic;
 
+
 import java.io.IOException;
-import java.net.Socket;
-import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.ucm.server.evaluator.Evaluator;
+import com.ucm.server.exceptions.EvaluatorException;
 import com.ucm.server.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.server.gameobjects.Card;
 import com.ucm.server.gameobjects.Deck;
 import com.ucm.server.gameobjects.Player;
 import com.ucm.server.middleclasses.HandInfo;
+import com.ucm.server.middleclasses.PlayerEvaluation;
 
 
 public class Game {
 
-    public static final boolean DEBUG = true;
+    private static final Logger log = LogManager.getLogger(Game.class);
+
+    public static final boolean DEBUG = false;
 
     public static final int INITIAL_SB = 1;
     public static final int INITIAL_BB = 2;
@@ -30,42 +36,44 @@ public class Game {
     private PlayerList _playerList;
     private Deck _deck;
     private Card[] _tableCards;
-    private int _actualTableCards;
+    private int _tableCardsCounter;
 
-    private int _totalPot;
     private boolean _isPreflop;
-    private boolean _showdownSkipped;
 
     private int _currentSB;
     private int _currentBB;
     
     
-    public Game() {
-
+    public Game() throws EvaluatorException {
+        
         _initialSmallBlind = Game.INITIAL_SB;
         _initialBigBlind = Game.INITIAL_BB;
-        _handCounter = 1;
+        _handCounter = 0;
 
         _playerList = new PlayerList(Game.NUM_MAX_PLAYERS);
         _deck = new Deck();
         _tableCards = new Card[MAX_CARDS_IN_TABLE];
-        _actualTableCards = 0;
+        _tableCardsCounter = 0;
 
-        _totalPot = 0;
         _isPreflop = true;
-        _showdownSkipped = false;
 
         _currentSB = _initialSmallBlind;
         _currentBB = _initialBigBlind;
+
+        try {
+            Evaluator.getInstance();
+        }
+        catch(IOException e) {
+            log.error("Trying to create the evaluator: {}", e.getMessage());
+            throw new EvaluatorException("Error creating the evaluator for the game");
+        }
+        
     }
 
 
     public void addPlayer(Player p) {
 
-        if (Game.DEBUG) {
-            System.out.printf("Intentando añadir jugador [%s]\n", p.getName());
-        }
-
+        log.debug("Intentando asignar jugador [{}]", p.getPlayerName());
         _playerList.addPlayer(p);
     }
 
@@ -73,15 +81,9 @@ public class Game {
         _playerList.assignRolesToAllPlayers();
     }
 
-    /**
-     * Repartir 2 cartas a todos los jugadores al principio de la partida
-     */
     public void shareOutCardsToAllPlayers() {
 
-        if (Game.DEBUG) {
-            System.out.printf("Repartiendo cartas a los jugadores...\n");
-        }
-
+        log.debug("Repartiendo cartas a los jugadores...");
         for (int i = 0; i < _playerList.size(); i++) {
             Card randomCard1 = _deck.takeRandomCard();
             Card randomCard2 = _deck.takeRandomCard();
@@ -91,120 +93,90 @@ public class Game {
 
     public void addCardToTable() {
 
-        if (_actualTableCards >= 5)
+        if (_tableCardsCounter >= 5)
             return;
 
-        _tableCards[_actualTableCards] = _deck.takeRandomCard();
-        _actualTableCards++;
+
+        Card c = _deck.takeRandomCard();
+        _playerList.sendTableCardToAllPlayers(c);
+        _tableCards[_tableCardsCounter] = c;
+        _tableCardsCounter++;
+
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < MAX_CARDS_IN_TABLE; i++){
+            if(_tableCards[i] == null)
+                sb.append(Card.FlippedDownCardToString()).append(" ");
+            else
+                sb.append(_tableCards[i].toString()).append(" ");
+        }
+        log.debug("Cartas en la mesa: {}", sb.toString());
     }
 
     public void retrieveCardsFromTable() {
 
-        for (int i = 0; i < _actualTableCards; i++){
+        for (int i = 0; i < _tableCardsCounter; i++){
             _deck.retrieveCard( _tableCards[i] );
             _tableCards[i] = null;
         }
 
-        _actualTableCards = 0;
-    }
-
-    public void passTurn() {
-
-        if (Game.DEBUG) {
-            System.out.printf("Pasando turno...\n");
-        }
-
-        _playerList.passTurn();
+        _tableCardsCounter = 0;
     }
 
     public void playHand() throws OnlyOnePlayerLeftException {
 
-        int pot = 0;
+        ++_handCounter;
         try {
+            log.debug("Playing hand number {}...", _handCounter);
+
             _playerList.playHand(_currentSB, _currentBB, _isPreflop);
-        } 
-        catch (OnlyOnePlayerLeftException e) {  // Collect remaining bets only if the round ended because all players
-                                                // folded in their turn and there is only one left
             _isPreflop = false;
-            _showdownSkipped = true;
-            pot = _playerList.collectAllBets();
-            _totalPot += pot;
+        } 
+        // Collect remaining bets only if the round ended because all players folded
+        catch (OnlyOnePlayerLeftException e) {
+            _playerList.notifyHandEndsByFold();
+            _isPreflop = false;
+
+            log.debug("Hand number {} finished!", _handCounter);
             throw e;
         }
-
-        if (Game.DEBUG) {
-            System.out.printf("Mano numero %d terminada!\n\n", _handCounter);
-        }
-
-        _isPreflop = false;
-        pot = _playerList.collectAllBets();
-        _totalPot += pot;
-        ++_handCounter;
+    
+        log.debug("Hand number {} finished!", _handCounter);
     }
 
     public void giveRewardToWinner() {
 
-        HandInfo[] playerHands = _playerList.getPlayerHandsInfo();
-        List<Player> winners = null;
-
-        if(_showdownSkipped){
-            winners = new ArrayList<Player>();
-            winners.add( playerHands[0].player() );
+        List<HandInfo> playersHands = _playerList.getPlayerHandsInfo();
+        if(playersHands.size() == 1) {
+            _playerList.calculatePrizeForPlayerLeft();
         }
-        else{
-            winners = Evaluator.evaluateAllHands(playerHands, _tableCards);
+        else {
+            List<PlayerEvaluation> playersEval = Evaluator.evaluateAllHands(playersHands, _tableCards);
+            _playerList.calculatePrizeDistribution(playersEval);
         }
-
-        if (Game.DEBUG && winners.size() == 1) {    
-            System.out.printf("%s ha ganado %d$!\n", winners.get(0).getName(), _totalPot);
-        }
-        else if(Game.DEBUG && winners.size() > 1){
-            System.out.printf("Empate entre %d jugadores: ", winners.size());
-            for(Player p : winners)
-                System.out.printf("%s ", p.getName());
-            System.out.print('\n');
-        }
-
-        int rewardPerPlayer = _totalPot / winners.size();
-        for(Player p : winners)
-            p.receivePriceMoney(rewardPerPlayer);
-
-        _totalPot = 0;
+        
+        _playerList.manageEliminatedPlayers();
+        _playerList.notifyRankingsToAllPlayers();
     }
 
-    public void restartRound() {
+    public boolean passTurn() {
 
-        retrieveCardsFromTable();
-        _playerList.resetPlayers();
-        _deck.resetDeck();
+        boolean endOfGame = _playerList.checkEndOfGame();
+        _playerList.notifyGameEnds(endOfGame);
 
-        if (Game.DEBUG) {
-            System.out.printf("------------------------ Reiniciando ronda... ------------------------\n\n\n");
+        if(!endOfGame) {
+            log.debug("Preparing for next hand...");
+
+            retrieveCardsFromTable();
+            _deck.resetDeck();
+            _playerList.passTurn();
+            _isPreflop = true;
+        }
+        else {
+            log.debug("End of game");
         }
 
-        _isPreflop = true;
-        _showdownSkipped = false;
+        return endOfGame;
     }
 
-    public boolean isGameFinished() {
-        return false;
-    }
-
-    public void showStateDEBUG() {
-
-        // Mostrar estado de los jugadores y sus cartas
-        _playerList.showPlayersStateDEBUG();
-
-        // Mostrar estado de las cartas de la mesa
-        for (int i = 0; i < _tableCards.length; i++) {
-
-            if (_tableCards[i] == null) {
-                System.out.print(Card.FlippedDownCardToString());
-            } else {
-                System.out.print(_tableCards[i].toString());
-            }
-        }
-        System.out.print("\n");
-    }
 
 }

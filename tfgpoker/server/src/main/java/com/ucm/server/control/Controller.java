@@ -6,10 +6,16 @@ import com.ucm.server.gameobjects.Player;
 import com.ucm.server.logic.Game;
 import com.ucm.server.middleclasses.ClientStructGame;
 
+import org.apache.logging.log4j.ThreadContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.List;
 
 
 public class Controller {
+
+    private static final Logger log = LogManager.getLogger(Controller.class);
 
     /**
      * Atributo que referencia la clase Game
@@ -21,66 +27,82 @@ public class Controller {
         addPlayersToGame(players);
     }
 
+    /**
+     * Controller constructor only for debugging purposes.
+     * It will be used in the local mode of the server, where no clients are needed.
+     * @param game The game instance to control.
+     * @param numPlayers The number of local players to add to the game.
+     */
+    public Controller(Game game, int numPlayers) {
+        _game = game;
+        addPlayersToGameLocally(numPlayers);
+    }
+
 
     private void addPlayersToGame(List<ClientStructGame> players) {
 
-        int id = 0;
         for(ClientStructGame cs : players){
-            _game.addPlayer( new Player(id, cs.name(), cs.socket(), 1000) );
-            ++id;
+            _game.addPlayer( new Player(cs.name(), cs.socket(), 1000) );
+        }
+    }
+
+    private void addPlayersToGameLocally(int numPlayers) {
+
+        for(int i = 0; i < numPlayers; ++i){
+            _game.addPlayer( new Player("Player" + i, null, 1000) );
         }
     }
 
     public void run() {
 
-        System.out.print("Controller.run() method");
+        int handCounter = 0;
+        boolean endOfGame = false;
 
-        // Start Game loop (1)
+        ThreadContext.put("match", "0");
+        ThreadContext.put("hand", String.valueOf(handCounter));
+        log.debug("Starting a new game!");
+
+
         _game.assignRolesToAllPlayers();
-        while (!_game.isGameFinished()) {
+        while (!endOfGame) {
 
+            log.debug("Starting {} hand!", handCounter);
             try {
                 
                 // Pre-flop (2)
                 _game.shareOutCardsToAllPlayers();
-                if (Game.DEBUG)
-                    _game.showStateDEBUG();
                 _game.playHand();
 
                 // Flop (3)
                 _game.addCardToTable();
                 _game.addCardToTable();
                 _game.addCardToTable();
-                if (Game.DEBUG)
-                    _game.showStateDEBUG();
                 _game.playHand();
 
                 // Turn (4)
                 _game.addCardToTable();
-                if (Game.DEBUG)
-                    _game.showStateDEBUG();
                 _game.playHand();
 
                 // River (5)
                 _game.addCardToTable();
-                if (Game.DEBUG)
-                    _game.showStateDEBUG();
                 _game.playHand();
 
                 // Showdown (6)
                 _game.giveRewardToWinner();
-                if (Game.DEBUG)
-                    _game.showStateDEBUG();
             }
             catch (OnlyOnePlayerLeftException e) {
                 _game.giveRewardToWinner();
             }
 
-            // Devolver todas las cartas al mazo, restablecer jugadores que han 'foldeado',
-            // etc...
-            _game.restartRound();
-            _game.passTurn();
+            endOfGame = _game.passTurn();
+
+            // Logger configuration for the next hand -> Write on file match{0}_hand{handCounter}.log
+            log.debug("Finishing {} hand!", handCounter);
+            ++handCounter;
+            ThreadContext.put("hand", String.valueOf(handCounter));
         }
+
+        log.debug("End of game!");
     }
 
 }

@@ -1,16 +1,25 @@
 package com.ucm.server.control;
 
 import com.ucm.common.GameType;
+import com.ucm.server.gameobjects.Card;
 import com.ucm.server.gameobjects.PlayerRole;
+import com.ucm.server.gameobjects.Suit;
 
 /**
  * Translates all in-game types(Classes, Records, etc...) in communication types(Any communication-oriented type defined in GameTypes.h)
+ * 
+ * IMPLEMENTACION !!!!!!! TEMPORAL !!!!!!!
+ * DEFINIR INTERFAZ 'NETWORK_ENCONDE' PARA QUE CADA OBJETO DEFINA COMO SE CODIFICA EN UN BYTE O INTEGER PARA ENVIARLO
+ *  Por ejemplo, clase Card:
+ *        bits:   7 6 5 4 | 3 2 1 0
+ *                  suit  |  value
  */
 public class GameAdapter {
     
     private GameAdapter(){}
 
 
+    // Player roles
     public static PlayerRole translatePlayerRole(int rolCode){
         switch (rolCode) {
         case GameType.PLAYER_ROLE_NO_ROLE:
@@ -31,7 +40,6 @@ public class GameAdapter {
             return null;
         }
     }
-
     public static int playerRoleToCode(PlayerRole r){
         switch (r) {
         case PlayerRole.NO_ROLE:
@@ -51,6 +59,112 @@ public class GameAdapter {
         default:
             return -1;
         }
+    }
+
+    // Cards
+    public static int cardValueToCode(Card c){
+        switch (c.getNumber()) {
+        case 1:     // As
+            return GameType.NUMBER_ACE;
+        case 2:
+            return GameType.NUMBER_TWO;
+        case 3:
+            return GameType.NUMBER_THREE;
+        case 4:
+            return GameType.NUMBER_FOUR;
+        case 5:
+            return GameType.NUMBER_FIVE;
+        case 6:
+            return GameType.NUMBER_SIX;
+        case 7:
+            return GameType.NUMBER_SEVEN;
+        case 8:
+            return GameType.NUMBER_EIGHT;
+        case 9:
+            return GameType.NUMBER_NINE;
+        case 10:
+            return GameType.NUMBER_TEN;
+        case 11:    // J
+            return GameType.NUMBER_J;
+        case 12:    // Q
+            return GameType.NUMBER_Q;
+        case 13:    // K
+            return GameType.NUMBER_K;
+        default:
+            return -1;
+        }
+    }
+    public static int cardSuitToCode(Card c){
+        switch (c.getSuit()) {
+        case Suit.SPADES:
+            return GameType.SPADES;
+        case Suit.HEARTS:
+            return GameType.HEARTS;
+        case Suit.DIAMONDS:
+            return GameType.DIAMONDS;
+        case Suit.CLUBS:
+            return GameType.CLUBS;
+        default:
+            return -1;
+        }
+    }
+
+    // Player turns and game states
+    public static int playerTurnPlayToCode(){
+        return GameType.TURN_PLAY;
+    }
+    public static int playerTurnWaitToCode(){
+        return GameType.TURN_WAIT;
+    }
+    public static int playerTurnForcedSBToCode(){
+        return GameType.TURN_FORCED_SB;
+    }
+    public static int playerTurnForcedBBToCode(){
+        return GameType.TURN_FORCED_BB;
+    }
+    public static int gameRoundEnded(){
+        return GameType.ROUND_ENDS;
+    }
+    public static int gameHandEnded(){
+        return GameType.HAND_ENDS;
+    }
+    public static int gameEnded(){
+        return GameType.GAME_ENDS;
+    }
+    public static int gameKeeps(){
+        return GameType.GAME_KEEPS;
+    }
+    public static int playerWinsHand(){
+        return GameType.PLAYER_WINS_HAND;
+    }
+    public static int playerLosesHand(){
+        return GameType.PLAYER_LOSES_HAND;
+    }
+    public static int playerWinsGame(){
+        return GameType.PLAYER_WINS_GAME;
+    }
+    public static int playerLosesGame(){
+        return GameType.PLAYER_LOSES_GAME;
+    }
+    public static int handEndsByFolds(){
+        return GameType.HAND_ENDS_BY_FOLD;
+    }
+
+    // Commands
+    public static int commandFoldToCode(){
+        return GameType.FOLD_ACTION;
+    }
+    public static int commandCheckToCode(){
+        return GameType.CHECK_ACTION;
+    }
+    public static int commandAllInToCode(){
+        return GameType.ALL_IN_ACTION;
+    }
+    public static int commandCallToCode(){
+        return GameType.CALL_ACTION;
+    }
+    public static int commandRaiseToCode(){
+        return GameType.RAISE_ACTION;
     }
 
 }

@@ -1,8 +1,12 @@
 package com.ucm.server.commands;
 
-import com.ucm.server.gameobjects.Player;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.ucm.server.interfaces.IPokerActions;
 import com.ucm.server.middleclasses.CommandResult;
-import com.ucm.common.GameType;
+
 
 
 /**
@@ -10,10 +14,10 @@ import com.ucm.common.GameType;
  */
 public class CallCommand extends Command {
 
+    private static final Logger log = LogManager.getLogger(CallCommand.class);
 
-    public CallCommand(){
-        super();
-    }
+
+    public CallCommand() {}
 
     /**
      * Constructor method that creates a CallCommand.
@@ -21,55 +25,52 @@ public class CallCommand extends Command {
      * @param money the total amount of money that the player has not bet yet.
      * @param pocketMoney the amount of money that the player has already bet in the current hand.
      */
-    public CallCommand(Player p, int money, int pocketMoney) {
-        super(p, money, pocketMoney);
+    public CallCommand(IPokerActions p) {
+        super(p);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+	@Override
+	protected Command createCommand(final String[] commandFormat, final IPokerActions player){
+		return new CallCommand(player);
+	}
+
+	@Override
+    public boolean validate(final int maxBet) {
+		return maxBet > 0 && maxBet <= _playersOffBetMoney + _playersOnBetMoney;
+    }
+
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
 
-        if(_currentBet == _money + _pocketMoney){
-            AllInCommand allIn = new AllInCommand(_player, _money, _pocketMoney);
+        if(_currentHandBet == _playersOffBetMoney + _playersOnBetMoney){
+            log.debug("Transform call command to all-in command");
+            AllInCommand allIn = new AllInCommand(_player);
             return allIn.execute(sb, bb, maxBet);
         }
         
+        log.debug("Executing the call command with value to bet {}", maxBet);
         _player.call(maxBet);
-        return CommandResult.continuePlaying(_money, false);
+        return CommandResult.continuePlaying(maxBet, false);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getCommandName() {
         return "CALL";
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public boolean matchCommand(String command) {
-        return  command.equalsIgnoreCase("call") || 
-                command.equalsIgnoreCase("c");
+    public String getCommandDescription() {
+        return "Call the current bet.";
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public boolean checkAttributes(String[] fullCommand) {
-        return fullCommand.length == 1;
+    public String getCommandFormat() {
+        return "call";
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public Command create(String[] fullCommand, Player p) {
-        return new CallCommand(p, p.getMoney(), p.getPocketMoney());
+    public String getCommandFormatShortcut() {
+        return "c";
     }
+
 }

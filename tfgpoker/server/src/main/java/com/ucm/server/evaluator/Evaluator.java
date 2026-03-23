@@ -1,7 +1,6 @@
 package com.ucm.server.evaluator;
 
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,7 +12,9 @@ import com.ucm.server.ServerMain;
 import com.ucm.server.gameobjects.Card;
 import com.ucm.server.gameobjects.Player;
 import com.ucm.server.gameobjects.Suit;
+import com.ucm.server.interfaces.IPokerPlayer;
 import com.ucm.server.middleclasses.HandInfo;
+import com.ucm.server.middleclasses.PlayerEvaluation;
 
 /**
  * Utility class responsible for evaluating poker hands.
@@ -39,7 +40,7 @@ public class Evaluator {
         STRAIGHT_FLUSH
     }
 
-    private static int PRIME_NUMBERS[] = { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41 };
+    private static final  int PRIME_NUMBERS[] = { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41 };
 
     private static short _flushes[];
     private static short _unique5[];
@@ -48,11 +49,7 @@ public class Evaluator {
 
     private static Evaluator instance;
 
-    /**
-     * Evitar instanciamiento desde fuera de esta clase
-     * 
-     * @throws IOException
-     */
+
     private Evaluator() throws IOException {
         loadEvaluator();
     }
@@ -66,7 +63,8 @@ public class Evaluator {
         return instance;
     }
 
-    public static List<String> getFileResource(String fileName) {
+
+    private static List<String> getFileResource(String fileName) {
 
         String resourcePath = "/arrays/" + fileName;
 
@@ -89,12 +87,6 @@ public class Evaluator {
         List<String> lineasUnique = getFileResource("unique.txt");
         List<String> lineasHashAdjust = getFileResource("hash_adjust.txt");
         List<String> lineasHashValues = getFileResource("hash_values.txt");
-        /*
-        List<String> lineasFlushes = Files.readAllLines(Path.of("../arrays/flushes.txt"));
-        List<String> lineasUnique = Files.readAllLines(Path.of("../arrays/unique.txt"));
-        List<String> lineasHashAdjust = Files.readAllLines(Path.of("../arrays/hash_adjust.txt"));
-        List<String> lineasHashValues = Files.readAllLines(Path.of("../arrays/hash_values.txt"));
-        */
 
         _flushes = new short[lineasFlushes.size()];
         for (int i = 0; i < lineasFlushes.size(); i++) {
@@ -117,67 +109,53 @@ public class Evaluator {
         }
     }
 
-    public static List<Player> evaluateAllHands(HandInfo[] playerHands, Card[] tableCards) {
+    public static List<PlayerEvaluation> evaluateAllHands(List<HandInfo> playerHands, Card[] tableCards) {
 
-        int encodedPlayerCards[][] = new int[playerHands.length][2];
-        int encodedTableCards[] = new int[tableCards.length];
+        List<PlayerEvaluation> playersEval = new ArrayList<>( playerHands.size() );
+        int encodedPlayerCards[][] = new int[ playerHands.size() ][2];
+        int encodedTableCards[] = new int[ tableCards.length ];
+        int encoded7Cards[] = new int[7];
 
-        for (int i = 0; i < playerHands.length; i++) {
-            encodedPlayerCards[i][0] = encodeCard(playerHands[i].cards()[0]);
-            encodedPlayerCards[i][1] = encodeCard(playerHands[i].cards()[1]);
+
+        for (int i = 0; i < playerHands.size(); i++) {
+            encodedPlayerCards[i][0] = encodeCard( playerHands.get(i).cards()[0] );
+            encodedPlayerCards[i][1] = encodeCard( playerHands.get(i).cards()[1] );
         }
         for (int i = 0; i < tableCards.length; i++) {
-            encodedTableCards[i] = encodeCard(tableCards[i]);
+            encodedTableCards[i] = encodeCard( tableCards[i] );
         }
 
-        /*
-         * For each player, calculate the best 5 cards hand including the two players
-         * cards + all table cards
-         */
-
-        short bestHandValue[] = new short[playerHands.length];
-        int encoded7Cards[] = new int[7];
-        short tableRank = evaluate5hand(
+        // For each player, calculate the best 5 cards hand between all 7 cards(player cards + all table cards)
+        final short tableRank = evaluate5hand(
                 encodedTableCards[0],
                 encodedTableCards[1],
                 encodedTableCards[2],
                 encodedTableCards[3],
                 encodedTableCards[4]
         );
+        for (int i = 0; i < playerHands.size(); i++) {
 
-        short bestValue = Short.MAX_VALUE;
-        short value = 0;
-        for (int i = 0; i < playerHands.length; i++) {
-
-            encoded7Cards[0] = encodedPlayerCards[i][0]; // First player card
-            encoded7Cards[1] = encodedPlayerCards[i][1]; // Second player card
-            encoded7Cards[2] = encodedTableCards[0]; // First card on the table
-            encoded7Cards[3] = encodedTableCards[1]; // Second card on the table
-            encoded7Cards[4] = encodedTableCards[2]; // Third card on the table
-            encoded7Cards[5] = encodedTableCards[3]; // Fourth card on the table
-            encoded7Cards[6] = encodedTableCards[4]; // Fifth card on the table
+            final int playerID = playerHands.get(i).playerID(); // Player to evaluate
+            encoded7Cards[0] = encodedPlayerCards[i][0];    // First player card
+            encoded7Cards[1] = encodedPlayerCards[i][1];    // Second player card
+            encoded7Cards[2] = encodedTableCards[0];        // First card on the table
+            encoded7Cards[3] = encodedTableCards[1];        // Second card on the table
+            encoded7Cards[4] = encodedTableCards[2];        // Third card on the table
+            encoded7Cards[5] = encodedTableCards[3];        // Fourth card on the table
+            encoded7Cards[6] = encodedTableCards[4];        // Fifth card on the table
 
             // Assign best hand value obtained between:
-            // One or both player cards + 3 on the table
-            // All 5 on the table
-            value = (short) Math.min(tableRank, evaluate7hand(encoded7Cards));
-            bestHandValue[i] = value;
-
-            bestValue = (short) Math.min(value, bestValue);
+            // One player card + 4 from the table
+            // Both player cards + 3 from the table
+            // All 5 cards from the table
+            short value = (short) Math.min(tableRank, evaluate7hand(encoded7Cards));
+            playersEval.add( new PlayerEvaluation(playerID, value) );
         }
 
-        // Select all players with the best value hand
-        List<Player> winner = new ArrayList<Player>();
-        for (int i = 0; i < playerHands.length; i++) {
-            if (bestHandValue[i] == bestValue)
-                winner.add(playerHands[i].player());
-        }
-
-        return winner;
+        return playersEval;
     }
 
-    public static short evaluate5hand(final int card1, final int card2, final int card3, final int card4,
-            final int card5) { // TODO Cambiar a private
+    public static short evaluate5hand(final int card1, final int card2, final int card3, final int card4, final int card5) {
 
         int q = (card1 | card2 | card3 | card4 | card5) >>> 16;
         boolean bIsFlush = (card1 & card2 & card3 & card4 & card5 & 0xF000) != 0;
@@ -280,7 +258,7 @@ public class Evaluator {
             return RANK.STRAIGHT_FLUSH; // 10 straight-flushes
     }
 
-    public static int encodeCard(Card c) { // TODO cambiar a private
+    public static int encodeCard(Card c) {
 
         int prime = Evaluator.PRIME_NUMBERS[c.getNumber() - 2];
         int rank = c.getNumber() - 2;
