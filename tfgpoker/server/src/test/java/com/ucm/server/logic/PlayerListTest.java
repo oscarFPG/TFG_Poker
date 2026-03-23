@@ -1,12 +1,12 @@
 package com.ucm.server.logic;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTimeout;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -14,7 +14,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import com.ucm.server.FakePlayer;
+import com.ucm.server.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.server.gameobjects.PlayerRole;
+
 
 public class PlayerListTest {
  
@@ -201,5 +203,41 @@ public class PlayerListTest {
 
     }
 
+
+    @Test
+    void testHand1() {
+
+        final int SB = 1;
+        final int BB = SB * 2;
+        
+
+        FakePlayer p1 = new FakePlayer(INITIAL_MONEY, 0);
+        FakePlayer p2 = new FakePlayer(INITIAL_MONEY, 0);
+        FakePlayer p3 = new FakePlayer(INITIAL_MONEY, 0);
+        PlayerList playerList = new PlayerList(3);
+
+        
+        assertTimeout(Duration.ofSeconds(2), () -> {
+        
+            boolean winByFolds = false;
+            try {
+                playerList.addPlayer( p1 );
+                playerList.addPlayer( p2 );
+                playerList.addPlayer( p3 );
+
+                playerList.assignRolesToAllPlayers();
+
+                p1.receiveCommandString( "call" );
+                p2.receiveCommandString( "call" );
+
+                playerList.playHand(SB, BB, true);
+
+            }
+            catch(OnlyOnePlayerLeftException e) {
+                winByFolds = true;
+            }
+        });
+
+    }
 
 }

@@ -14,9 +14,9 @@ public class FakePlayer implements IPokerPlayer {
     public boolean isWinner;
     public boolean isAllIn;
     public boolean isEliminated;
+    public String comString;
 
-
-    public FakePlayer(int offBet, int onBet){
+    public FakePlayer(int offBet, int onBet) {
         offBetMoney = offBet;
         onBetMoney = onBet;
         isFolded = false;
@@ -187,8 +187,14 @@ public class FakePlayer implements IPokerPlayer {
         offBetMoney -= bb;
     }
 
+    public void receiveCommandString(final String cmd) {
+        comString = String.copyValueOf( cmd.toCharArray() );
+    }
+
     @Override
-    public String actionMakePlay(int sb, int bb, int maxBet) { return null; }
+    public String actionMakePlay(int sb, int bb, int maxBet) { 
+        return comString; 
+    }
 
     @Override
     public void notifyHandEndsByFolds() {}
