@@ -46,7 +46,7 @@
                         </HBox>
                         <Label alignment="CENTER" prefHeight="43.0" prefWidth="444.0" styleClass="bold-general-text-font" text="EDIT PROFILE" textAlignment="CENTER">
                            <font>
-                              <Font size="58.0" />
+                              <Font name="Constantia" size="58.0" />
                            </font>
                         </Label>
                         <Label alignment="CENTER" opacity="0.67" prefWidth="430.0" styleClass="bold-general-text-font" text="UPDATE YOUR PERSONAL INFORMATION" textAlignment="CENTER">
