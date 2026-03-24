@@ -2,6 +2,7 @@
 
 # Indice
 Seccion [integrantes](#integrantes)\
+Seccion [memoria](#memoria)\
 Seccion [requisitos del proyecto](#requisitos-del-proyecto)\
 Seccion [guía de instalación](#guia-instalación)\
 Seccion [modos de uso](#modos-de-uso)\
@@ -11,6 +12,9 @@ Seccion [interfaz](#interfaz)\
 Seccion [ideas](#ideas)\
 Seccion [patrones de diseño empleados](#patrones-de-diseño-empleados)
 
+
+# Memoria
+https://docs.google.com/document/d/17gitDoBetkTzmvoT2JAn79Ssiv_-TdHw/edit?usp=sharing&ouid=115274461183780907670&rtpof=true&sd=true
 
 # Integrantes
 - Óscar Fabian Pineda German
