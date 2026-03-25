@@ -261,6 +261,9 @@
    
 }
 
+.text-ranking{
+     -fx-text-fill:  rgba(201, 172, 214, 0.902);
+}
 .container-semitransparent-colors {
     -fx-background-color: rgba(13, 0, 28, 0.742);
    -fx-border-color: linear-gradient(to top,
@@ -273,7 +276,7 @@
 }
 
 .container-semitransparent-colors-purple {
-    -fx-background-color: rgba(63, 0, 90, 0.53);
+    -fx-background-color: rgba(15, 2, 34, 0.73);
    -fx-border-color: linear-gradient(to top,
     #DC8CFE 0%,
     #FFF8FF 50%,

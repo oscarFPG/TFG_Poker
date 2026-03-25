@@ -49,7 +49,7 @@
                            <children>
                         <VBox alignment="CENTER" prefHeight="474.0" prefWidth="751.0" spacing="10.0">
                            <children>
-                              <Label alignment="CENTER" prefHeight="43.0" prefWidth="444.0" styleClass="bold-general-text-font" text="POKER HAND RANKINGS" textAlignment="CENTER">
+                              <Label alignment="CENTER" prefHeight="43.0" prefWidth="444.0" styleClass="bold-general-text-font" text="POKER HAND RANKINGS" textAlignment="CENTER" textFill="#e3c5e7">
                                  <font>
                                     <Font name="Constantia" size="30.0" />
                                  </font>
@@ -65,7 +65,11 @@
                                                       <String fx:value="bold-general-text-font" />
                                                       <String fx:value="super-bold-general-text-font" />
                                                       <String fx:value="general-text-font" />
+                                                      <String fx:value="text-ranking" />
                                                    </styleClass>
+                                                   <font>
+                                                      <Font size="15.0" />
+                                                   </font>
                                                 </Label>
                                                 <ImageView fitHeight="90.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" styleClass="cardsInfoRanking">
                                                    <image>
@@ -96,12 +100,16 @@
                                           </HBox>
                                           <HBox alignment="CENTER" prefHeight="57.0" prefWidth="334.0" spacing="2.0">
                                              <children>
-                                                <Label prefHeight="100.0" prefWidth="93.0" text="2. Straight Flush" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                                                <Label prefHeight="74.0" prefWidth="171.0" text="2. Straight Flush" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                                                    <styleClass>
                                                       <String fx:value="bold-general-text-font" />
                                                       <String fx:value="super-bold-general-text-font" />
                                                       <String fx:value="general-text-font" />
+                                                      <String fx:value="text-ranking" />
                                                    </styleClass>
+                                                   <font>
+                                                      <Font size="15.0" />
+                                                   </font>
                                                 </Label>
                                                 <ImageView fitHeight="90.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" styleClass="cardsInfoRanking">
                                                    <image>
@@ -137,7 +145,11 @@
                                                       <String fx:value="bold-general-text-font" />
                                                       <String fx:value="super-bold-general-text-font" />
                                                       <String fx:value="general-text-font" />
+                                                      <String fx:value="text-ranking" />
                                                    </styleClass>
+                                                   <font>
+                                                      <Font size="15.0" />
+                                                   </font>
                                                 </Label>
                                                 <ImageView fitHeight="90.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" styleClass="cardsInfoRanking">
                                                    <image>
@@ -173,7 +185,11 @@
                                                       <String fx:value="bold-general-text-font" />
                                                       <String fx:value="super-bold-general-text-font" />
                                                       <String fx:value="general-text-font" />
+                                                      <String fx:value="text-ranking" />
                                                    </styleClass>
+                                                   <font>
+                                                      <Font size="15.0" />
+                                                   </font>
                                                 </Label>
                                                 <ImageView fitHeight="90.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" styleClass="cardsInfoRanking">
                                                    <image>
@@ -209,7 +225,11 @@
                                                       <String fx:value="bold-general-text-font" />
                                                       <String fx:value="super-bold-general-text-font" />
                                                       <String fx:value="general-text-font" />
+                                                      <String fx:value="text-ranking" />
                                                    </styleClass>
+                                                   <font>
+                                                      <Font size="15.0" />
+                                                   </font>
                                                 </Label>
                                                 <ImageView fitHeight="90.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" styleClass="cardsInfoRanking">
                                                    <image>
@@ -249,7 +269,11 @@
                                                       <String fx:value="bold-general-text-font" />
                                                       <String fx:value="super-bold-general-text-font" />
                                                       <String fx:value="general-text-font" />
+                                                      <String fx:value="text-ranking" />
                                                    </styleClass>
+                                                   <font>
+                                                      <Font size="15.0" />
+                                                   </font>
                                                 </Label>
                                                 <ImageView fitHeight="90.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" styleClass="cardsInfoRanking">
                                                    <image>
@@ -285,7 +309,11 @@
                                                       <String fx:value="bold-general-text-font" />
                                                       <String fx:value="super-bold-general-text-font" />
                                                       <String fx:value="general-text-font" />
+                                                      <String fx:value="text-ranking" />
                                                    </styleClass>
+                                                   <font>
+                                                      <Font size="15.0" />
+                                                   </font>
                                                 </Label>
                                                 <ImageView fitHeight="90.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" styleClass="cardsInfoRanking">
                                                    <image>
@@ -321,7 +349,11 @@
                                                       <String fx:value="bold-general-text-font" />
                                                       <String fx:value="super-bold-general-text-font" />
                                                       <String fx:value="general-text-font" />
+                                                      <String fx:value="text-ranking" />
                                                    </styleClass>
+                                                   <font>
+                                                      <Font size="15.0" />
+                                                   </font>
                                                 </Label>
                                                 <ImageView fitHeight="90.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" styleClass="cardsInfoRanking">
                                                    <image>
@@ -357,7 +389,11 @@
                                                       <String fx:value="bold-general-text-font" />
                                                       <String fx:value="super-bold-general-text-font" />
                                                       <String fx:value="general-text-font" />
+                                                      <String fx:value="text-ranking" />
                                                    </styleClass>
+                                                   <font>
+                                                      <Font size="15.0" />
+                                                   </font>
                                                 </Label>
                                                 <ImageView fitHeight="90.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" styleClass="cardsInfoRanking">
                                                    <image>
@@ -393,7 +429,11 @@
                                                       <String fx:value="bold-general-text-font" />
                                                       <String fx:value="super-bold-general-text-font" />
                                                       <String fx:value="general-text-font" />
+                                                      <String fx:value="text-ranking" />
                                                    </styleClass>
+                                                   <font>
+                                                      <Font size="15.0" />
+                                                   </font>
                                                 </Label>
                                                 <ImageView fitHeight="90.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" styleClass="cardsInfoRanking">
                                                    <image>
@@ -436,6 +476,7 @@
                            <styleClass>
                               <String fx:value="oval-pane" />
                               <String fx:value="container-colors" />
+                              <String fx:value="container-semitransparent-colors-purple" />
                            </styleClass>
                            <HBox.margin>
                               <Insets />
@@ -446,7 +487,7 @@
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </HBox.margin>
                            <children>
-                                    <Button mnemonicParsing="false" prefHeight="52.0" prefWidth="214.0" text="JOIN GAME">
+                                    <Button mnemonicParsing="false" prefHeight="69.0" prefWidth="263.0" text="JOIN GAME">
                                        <styleClass>
                                           <String fx:value="general-button" />
                                           <String fx:value="super-bold-general-text-font" />
@@ -455,7 +496,7 @@
                                     <Font size="30.0" />
                                  </font>
                                     </Button>
-                              <Button mnemonicParsing="false" prefHeight="58.0" prefWidth="321.0" text="CREATE GAME">
+                              <Button mnemonicParsing="false" prefHeight="76.0" prefWidth="322.0" text="CREATE GAME">
                                  <styleClass>
                                     <String fx:value="general-button" />
                                     <String fx:value="super-bold-general-text-font" />
