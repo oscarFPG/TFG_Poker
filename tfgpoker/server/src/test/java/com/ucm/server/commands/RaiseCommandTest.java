@@ -20,7 +20,7 @@ public class RaiseCommandTest {
 
         final int initialBet = 0;
 
-        IPokerActions player = new FakePlayer(INITIAL_MONEY - initialBet, initialBet);
+        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "raize 100";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
@@ -34,7 +34,7 @@ public class RaiseCommandTest {
 
         final int initialBet = 0;
 
-        IPokerActions player = new FakePlayer(INITIAL_MONEY - initialBet, initialBet);
+        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "raise";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
@@ -48,7 +48,7 @@ public class RaiseCommandTest {
 
         final int initialBet = 0;
 
-        IPokerActions player = new FakePlayer(INITIAL_MONEY - initialBet, initialBet);
+        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "raise one hundred";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
@@ -63,7 +63,7 @@ public class RaiseCommandTest {
         final int initialBet = 0;
         final int maxBet = 0;
 
-        IPokerActions player = new FakePlayer(INITIAL_MONEY - initialBet, initialBet);
+        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "raise -100";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
@@ -80,7 +80,7 @@ public class RaiseCommandTest {
         final int initialBet = 0;
         final int maxBet = 100;
 
-        IPokerActions player = new FakePlayer(INITIAL_MONEY - initialBet, initialBet);
+        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "raise 50";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
@@ -97,7 +97,7 @@ public class RaiseCommandTest {
         final int initialBet = 0;
         final int maxBet = 100;
 
-        IPokerActions player = new FakePlayer(INITIAL_MONEY - initialBet, initialBet);
+        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "raise 150";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
@@ -118,7 +118,7 @@ public class RaiseCommandTest {
         final int initialBet = 50;
         final int maxBet = 100;
 
-        IPokerActions player = new FakePlayer(INITIAL_MONEY - initialBet, initialBet);
+        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "raise 150";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
@@ -139,7 +139,7 @@ public class RaiseCommandTest {
         final int initialBet = 0;
         final int maxBet = 100;
 
-        IPokerActions player = new FakePlayer(INITIAL_MONEY - initialBet, initialBet);
+        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "raise 1500";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);

@@ -16,6 +16,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import com.ucm.server.FakePlayer;
 import com.ucm.server.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.server.gameobjects.PlayerRole;
+import com.ucm.server.middleclasses.PlayerEvaluation;
 
 
 public class PlayerListTest {
@@ -125,7 +126,7 @@ public class PlayerListTest {
         
         List<FakePlayer> players = new ArrayList<>();
         for(int i = 0; i < size; i++)
-            players.add( new FakePlayer(INITIAL_MONEY, 0) );
+            players.add( new FakePlayer(1, INITIAL_MONEY, 0) );
 
         return players;
     }
@@ -137,7 +138,7 @@ public class PlayerListTest {
         PlayerList playerList = new PlayerList(numPlayers);
         FakePlayer[] players = new FakePlayer[numPlayers];
         for (int i = 0; i < numPlayers; i++) {
-            players[i] = new FakePlayer(INITIAL_MONEY, 0);
+            players[i] = new FakePlayer(0, INITIAL_MONEY, 0);
             playerList.addPlayer( players[i] );
         }
 
@@ -150,8 +151,8 @@ public class PlayerListTest {
     @Test
     void assignNewRolesOnPassTurnWithTwoPlayers() {
 
-        FakePlayer player1 = new FakePlayer(INITIAL_MONEY, 0);
-        FakePlayer player2 = new FakePlayer(INITIAL_MONEY, 0);
+        FakePlayer player1 = new FakePlayer(0, INITIAL_MONEY, 0);
+        FakePlayer player2 = new FakePlayer(1, INITIAL_MONEY, 0);
         PlayerList playerList = new PlayerList(2);
         
         playerList.addPlayer(player1);
@@ -205,39 +206,173 @@ public class PlayerListTest {
 
 
     @Test
-    void testHand1() {
+    void call() {
 
         final int SB = 1;
         final int BB = SB * 2;
         
+        FakePlayer p1 = new FakePlayer(0, INITIAL_MONEY, 0);
+        FakePlayer p2 = new FakePlayer(1, INITIAL_MONEY, 0);
+        FakePlayer p3 = new FakePlayer(2, INITIAL_MONEY, 0);
+        PlayerList playerList = new PlayerList(3);
 
-        FakePlayer p1 = new FakePlayer(INITIAL_MONEY, 0);
-        FakePlayer p2 = new FakePlayer(INITIAL_MONEY, 0);
-        FakePlayer p3 = new FakePlayer(INITIAL_MONEY, 0);
+        try {
+
+            playerList.addPlayer( p1 );
+            playerList.addPlayer( p2 ); // Small blind
+            playerList.addPlayer( p3 ); // Big blind
+
+            playerList.assignRolesToAllPlayers();
+
+            p1.commands = new ArrayList<>( List.of("fold") );
+            p2.commands = new ArrayList<>( List.of("fold") );
+            playerList.playHand(SB, BB, true);      // 2 + 2 + 2 = 6$ total - 2$ = 4$ beneficio
+
+            assertEquals(true, false, "This test should not reach this code");
+        }
+        catch(OnlyOnePlayerLeftException e) {
+
+            playerList.calculatePrizeForPlayerLeft();
+
+            assertEquals(INITIAL_MONEY, p1.getMoneyOffBet());
+            assertEquals(INITIAL_MONEY - 1, p2.getMoneyOffBet());
+            assertEquals(INITIAL_MONEY + 1, p3.getMoneyOffBet());
+        }
+    }
+
+    @Test
+    void raise() {
+        
+        final int SB = 1;
+        final int BB = SB * 2;
+        
+        FakePlayer p1 = new FakePlayer(0, INITIAL_MONEY, 0);
+        FakePlayer p2 = new FakePlayer(1, INITIAL_MONEY, 0);
+        FakePlayer p3 = new FakePlayer(2, INITIAL_MONEY, 0);
+        PlayerList playerList = new PlayerList(3);
+ 
+        try {
+
+            playerList.addPlayer( p1 );
+            playerList.addPlayer( p2 );
+            playerList.addPlayer( p3 );
+
+            playerList.assignRolesToAllPlayers();
+
+            p1.commands = new ArrayList<>( List.of("call") );
+            p2.commands = new ArrayList<>( List.of("call") );
+            playerList.playHand(SB, BB, true);      // 2 + 2 + 2 = 6$ total - 2$ = 4$ beneficio
+
+            p2.commands = new ArrayList<>( List.of("check", "raise 200", "call") );
+            p3.commands = new ArrayList<>( List.of("check", "raise 300") );
+            p1.commands = new ArrayList<>( List.of("raise 100", "call") );
+            playerList.playHand(SB, BB, false);     // 300 + 300 + 300 = 900$ total - 300$ = 600$ beneficio
+            
+            PlayerEvaluation p1Ev = new PlayerEvaluation(0, (short)20);
+            PlayerEvaluation p2Ev = new PlayerEvaluation(1, (short)50);
+            PlayerEvaluation p3Ev = new PlayerEvaluation(2, (short)100);
+
+            playerList.calculatePrizeDistribution( new ArrayList<>( List.of(p1Ev, p2Ev, p3Ev) ) );
+
+            assertEquals(INITIAL_MONEY + 604, p1.getMoneyOffBet(), "P1 does not have the corret money");
+            assertEquals(INITIAL_MONEY - 300 - 2, p2.getMoneyOffBet(), "P2 does not have the corret money");
+            assertEquals(INITIAL_MONEY - 300 - 2, p3.getMoneyOffBet(), "P3 does not have the corret money");
+
+        }
+        catch(OnlyOnePlayerLeftException e) {
+            assertEquals(true, false, "This test should not reach this code");
+        }
+    }
+
+    @Test
+    void allin_raise() {
+
+        final int SB = 1;
+        final int BB = SB * 2;
+        
+        FakePlayer p1 = new FakePlayer(0, 2 * INITIAL_MONEY, 0);
+        FakePlayer p2 = new FakePlayer(1, INITIAL_MONEY, 0);
+        FakePlayer p3 = new FakePlayer(2, INITIAL_MONEY, 0);
         PlayerList playerList = new PlayerList(3);
 
         
-        assertTimeout(Duration.ofSeconds(2), () -> {
+        try {
+
+            playerList.addPlayer( p1 );
+            playerList.addPlayer( p2 );
+            playerList.addPlayer( p3 );
+
+            playerList.assignRolesToAllPlayers();
+
+            p1.commands = new ArrayList<>( List.of("call") );
+            p2.commands = new ArrayList<>( List.of("call") );
+            playerList.playHand(SB, BB, true);      // 2 + 2 + 2 = 6$ total - 2$ = 4$ beneficio
+
+            p2.commands = new ArrayList<>( List.of("check", "call", "allin") );
+            p3.commands = new ArrayList<>( List.of("check", "allin") );
+            p1.commands = new ArrayList<>( List.of("raise 500", "raise 1200") );
+            playerList.playHand(SB, BB, false);
+            
+            PlayerEvaluation p1Ev = new PlayerEvaluation(0, (short)20);
+            PlayerEvaluation p2Ev = new PlayerEvaluation(1, (short)50);
+            PlayerEvaluation p3Ev = new PlayerEvaluation(2, (short)100);
+
+            playerList.calculatePrizeDistribution( new ArrayList<>( List.of(p1Ev, p2Ev, p3Ev) ) );
+
+            assertEquals(4 * INITIAL_MONEY, p1.getMoneyOffBet(), "P1 does not have the corret money");
+            assertEquals(0, p2.getMoneyOffBet(), "P2 does not have the corret money");
+            assertEquals(0, p3.getMoneyOffBet(), "P3 does not have the corret money");
+        }
+        catch(OnlyOnePlayerLeftException e) {
+            assertEquals(true, false, "This test should not reach this code");
+        }
+    }
+
+    @Test
+    void allin1_allin2() {
         
-            boolean winByFolds = false;
-            try {
-                playerList.addPlayer( p1 );
-                playerList.addPlayer( p2 );
-                playerList.addPlayer( p3 );
+        final int SB = 1;
+        final int BB = SB * 2;
+        
+        FakePlayer p1 = new FakePlayer(0, INITIAL_MONEY, 0);
+        FakePlayer p2 = new FakePlayer(1, INITIAL_MONEY, 0);
+        FakePlayer p3 = new FakePlayer(2, 2 * INITIAL_MONEY, 0);
+        FakePlayer p4 = new FakePlayer(3, 2 * INITIAL_MONEY, 0);
+        PlayerList playerList = new PlayerList(4);
 
-                playerList.assignRolesToAllPlayers();
+        try {
 
-                p1.receiveCommandString( "call" );
-                p2.receiveCommandString( "call" );
+            playerList.addPlayer( p1 );
+            playerList.addPlayer( p2 );
+            playerList.addPlayer( p3 );
+            playerList.addPlayer( p4 );
 
-                playerList.playHand(SB, BB, true);
+            playerList.assignRolesToAllPlayers();
 
-            }
-            catch(OnlyOnePlayerLeftException e) {
-                winByFolds = true;
-            }
-        });
+            p2.commands = new ArrayList<>( List.of("allin") );  // 1000
+            p3.commands = new ArrayList<>( List.of("allin") );  // 1000
+            p4.commands = new ArrayList<>( List.of("allin") );  // 2000
+            p1.commands = new ArrayList<>( List.of("allin") );  // 2000
+            playerList.playHand(SB, BB, false);
 
+            playerList.playHand(SB, BB, false); // No player should play here because all went all-in
+            
+            PlayerEvaluation p1Ev = new PlayerEvaluation(0, (short)20);     // Winner of the first pot between all players (1000, 1000, 1000, 1000)
+            PlayerEvaluation p2Ev = new PlayerEvaluation(1, (short)50);
+            PlayerEvaluation p3Ev = new PlayerEvaluation(2, (short)100);    // Winner of the second pot between him and p4 (1000, 1000)
+            PlayerEvaluation p4Ev = new PlayerEvaluation(3, (short)200);
+
+            playerList.calculatePrizeDistribution( new ArrayList<>( List.of(p1Ev, p2Ev, p3Ev, p4Ev) ) );
+
+            assertEquals(4000, p1.getMoneyOffBet(), "P1 does not have the corret money");
+            assertEquals(0, p2.getMoneyOffBet(), "P2 does not have the corret money");
+            assertEquals(2000, p3.getMoneyOffBet(), "P3 does not have the corret money");
+            assertEquals(0, p4.getMoneyOffBet(), "P3 does not have the corret money");
+
+        }
+        catch(OnlyOnePlayerLeftException e) {
+            assertEquals(true, false, "This test should not reach this code");
+        }
     }
 
 }

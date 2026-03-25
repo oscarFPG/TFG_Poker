@@ -21,7 +21,7 @@ public class CallCommandTest {
 
         final int initialBet = 0;
 
-        IPokerActions player = new FakePlayer(INITIAL_MONEY - initialBet, initialBet);
+        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "Cad";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
@@ -34,7 +34,7 @@ public class CallCommandTest {
 
         final int initialBet = 0;
 
-        IPokerActions player = new FakePlayer(INITIAL_MONEY - initialBet, initialBet);
+        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = " c";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
@@ -47,7 +47,7 @@ public class CallCommandTest {
 
         final int initialBet = 0;
 
-        IPokerActions player = new FakePlayer(INITIAL_MONEY - initialBet, initialBet);
+        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "CalL";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
@@ -61,7 +61,7 @@ public class CallCommandTest {
         final int initialBet = 0;
         int maxBet = 200;
 
-        IPokerActions player = new FakePlayer(INITIAL_MONEY - initialBet, initialBet);
+        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "call";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
@@ -81,7 +81,7 @@ public class CallCommandTest {
         final int initialBet = 100;
         int maxBet = 200;
 
-        IPokerActions player = new FakePlayer(INITIAL_MONEY - initialBet, initialBet);
+        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "call";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);

@@ -99,24 +99,6 @@ public class Deck {
     }
 
     /**
-     * Prints the current state of the deck in the console.
-     */
-    public void printAllDeck() {
-
-        for (int i = 0; i < SUITS.length; i++) {
-
-            for (int j = 0; j < NUM_VALUES; j++) {
-                if (_deck[i][j] == null) {
-                    log.debug("[xx]");
-                }
-                else {
-                    log.debug( _deck[i][j].toString() );  
-                }
-            }
-        }
-    }
-
-    /**
      * Retrieves a card to the deck, making it available again.
      * It must be taken previously from the deck using {@link #takeRandomCard()}
      * method, otherwise it may cause inconsistencies in the deck.

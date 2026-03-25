@@ -4,7 +4,6 @@ package com.ucm.client;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
@@ -83,18 +82,16 @@ public class ClientMain extends Application {
 		}
 
 
-		// Cleanup
 		try {
-			// Poker application
 			Socket socket = preGame(serverIP);
 			game(socket);
+
 			socket.close();
+			_scanner.close();
 		}
 		catch(IOException e) {
 			System.out.printf("Error trying to end the game succesfully: %s\n", e.getMessage());
 		}
-
-		_scanner.close();
     }
 
 
@@ -246,6 +243,7 @@ public class ClientMain extends Application {
 
 		System.out.printf("Match starts!\n");
 		int roleCode;
+		String playerRole;
 		boolean endOfGame = false;
 		Card[] playerCards = new Card[2];
 		Card[] tableCardValues = new Card[5];
@@ -256,7 +254,7 @@ public class ClientMain extends Application {
 			try {
 
 				roleCode = SocketUtils.receiveInt(in);
-				String playerRole = translatePlayerRoleCode(roleCode);
+				playerRole = translatePlayerRoleCode(roleCode);
 				System.out.printf("Player with rol %s\n", playerRole);
 
 				playerCards[0] = receiveCard(in);
@@ -267,28 +265,32 @@ public class ClientMain extends Application {
 				);
 
 				// Preflop
+				System.out.printf("-- Preflop --\n");
 				playRound(playerCards[0], playerCards[1], socket);
-				System.out.printf("Preflop has ended!\n\n");
 				tableCardValues[0] = receiveCard(in);
 				tableCardValues[1] = receiveCard(in);
 				tableCardValues[2] = receiveCard(in);
 				showTableCards(tableCardValues);
 				
 				// Flop
+				System.out.printf("-- Preflop --\n");
 				playRound(playerCards[0], playerCards[1], socket);
 				tableCardValues[3] = receiveCard(in);
 				showTableCards(tableCardValues);
 
 				// Turn
+				System.out.printf("-- Preflop --\n");
 				playRound(playerCards[0], playerCards[1], socket);
 				tableCardValues[4] = receiveCard(in);
 				showTableCards(tableCardValues);
 
 				// River
+				System.out.printf("-- Preflop --\n");
 				playRound(playerCards[0], playerCards[1], socket);
 				showTableCards(tableCardValues);
 
 				// Showdown
+				System.out.printf("-- Preflop --\n");
 				int rankingCode = SocketUtils.receiveInt(in);
 				_money = SocketUtils.receiveInt(in);
 				if(rankingCode == GameType.PLAYER_WINS_HAND) {
@@ -300,11 +302,12 @@ public class ClientMain extends Application {
 
 				// Game ends or keeps
 				int gameStatusCode = SocketUtils.receiveInt(in);
+				endOfGame = (gameStatusCode == GameType.GAME_ENDS);
 				if(gameStatusCode == GameType.GAME_ENDS)
 					System.out.printf("Match ended!\n\n");
 				else if(gameStatusCode == GameType.GAME_KEEPS)
 					System.out.printf("Match keeps!\n\n");
-				endOfGame = (gameStatusCode == GameType.GAME_ENDS);
+
 			}
 			catch (OnlyOnePlayerLeftException e) {
 
@@ -403,9 +406,7 @@ public class ClientMain extends Application {
 		return c;
 	}
 
-	private static void playRound(final Card card1, final Card card2, Socket socket) 
-	throws IOException, 
-	OnlyOnePlayerLeftException {
+	private static void playRound(final Card card1, final Card card2, Socket socket) throws IOException, OnlyOnePlayerLeftException {
 		
 		System.out.printf("Round has started!\n");
 
@@ -490,7 +491,6 @@ public class ClientMain extends Application {
 
 		if(handEndsByFold)
 			throw new OnlyOnePlayerLeftException();
-
 	}
 
 	// Auxiliar methods

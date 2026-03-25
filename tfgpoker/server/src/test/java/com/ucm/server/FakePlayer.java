@@ -1,5 +1,8 @@
 package com.ucm.server;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.ucm.server.gameobjects.Card;
 import com.ucm.server.gameobjects.PlayerRole;
 import com.ucm.server.interfaces.IPokerPlayer;
@@ -7,6 +10,7 @@ import com.ucm.server.interfaces.IPokerPlayer;
 
 public class FakePlayer implements IPokerPlayer {
 
+    public int id;
     public int offBetMoney;
     public int onBetMoney;
     public PlayerRole role;
@@ -14,15 +18,17 @@ public class FakePlayer implements IPokerPlayer {
     public boolean isWinner;
     public boolean isAllIn;
     public boolean isEliminated;
-    public String comString;
+    public List<String> commands;
 
-    public FakePlayer(int offBet, int onBet) {
+    public FakePlayer(final int ID, int offBet, int onBet) {
+        id = ID;
         offBetMoney = offBet;
         onBetMoney = onBet;
         isFolded = false;
         isWinner = false;
         isAllIn = false;
         isEliminated = false;
+        commands = new ArrayList<>();
     }
 
 
@@ -187,13 +193,10 @@ public class FakePlayer implements IPokerPlayer {
         offBetMoney -= bb;
     }
 
-    public void receiveCommandString(final String cmd) {
-        comString = String.copyValueOf( cmd.toCharArray() );
-    }
-
     @Override
     public String actionMakePlay(int sb, int bb, int maxBet) { 
-        return comString; 
+        String command = commands.removeFirst();
+        return command; 
     }
 
     @Override
@@ -217,10 +220,21 @@ public class FakePlayer implements IPokerPlayer {
         return isEliminated;
     }
 
+    @Override
+    public PlayerRole getRole() {
+        return role;
+    }
+
 
     @Override
     public void setIsEliminated(boolean state) {
         isEliminated = state;
+    }
+
+
+    @Override
+    public int getPlayerId() {
+        return id;
     }
 
 }

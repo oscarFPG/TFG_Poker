@@ -1,6 +1,7 @@
 package com.ucm.server.interfaces;
 
 import com.ucm.server.gameobjects.Card;
+import com.ucm.server.gameobjects.PlayerRole;
 
 public interface IPokerActions {
     
@@ -14,6 +15,7 @@ public interface IPokerActions {
     public boolean isWinner();
     public boolean isAllIn();
     public boolean isEliminated();
+    public PlayerRole getRole();
     
     /**
      * Retrieve the money that the palyer has bet and sets it to zero.

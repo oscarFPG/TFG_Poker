@@ -43,12 +43,10 @@ public class CallCommand extends Command {
     public CommandResult execute(int sb, int bb, int maxBet) {
 
         if(_currentHandBet == _playersOffBetMoney + _playersOnBetMoney){
-            log.debug("Transform call command to all-in command");
             AllInCommand allIn = new AllInCommand(_player);
             return allIn.execute(sb, bb, maxBet);
         }
         
-        log.debug("Executing the call command with value to bet {}", maxBet);
         _player.call(maxBet);
         return CommandResult.continuePlaying(maxBet, false);
     }
