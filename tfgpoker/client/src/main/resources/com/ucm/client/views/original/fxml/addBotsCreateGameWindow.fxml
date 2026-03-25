@@ -20,13 +20,16 @@
                <children>
                   <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                      <children>
-                        <Button mnemonicParsing="false">
+                        <Button mnemonicParsing="false" prefHeight="48.0" prefWidth="40.0">
                            <styleClass>
                               <String fx:value="arrow-back" />
                               <String fx:value="arrow-colors" />
                            </styleClass>
                         </Button>
-                        <Label styleClass="general-text-font" text="direction" />
+                        <Label styleClass="general-text-font" text="direction">
+                           <font>
+                              <Font size="15.0" />
+                           </font></Label>
                      </children>
                      <VBox.margin>
                         <Insets left="5.0" />

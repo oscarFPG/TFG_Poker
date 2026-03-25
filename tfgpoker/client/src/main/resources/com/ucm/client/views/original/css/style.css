@@ -14,6 +14,9 @@
    -fx-background-insets: 0, 2;
 }
 
+.profileEdit{
+    -fx-background-image: url("../../images/fondoBlackPoker.png");
+}
 /**
  * Estilo para botones como "START", "CANCEL" o "SAVE"
  */
@@ -107,16 +110,27 @@
 
 .general-text-font {
     -fx-text-fill: white;
-   -fx-alignment: center;
-   -fx-font-family: "Constantia";
+    -fx-font-family: "Constantia";
   
 }
 
 .bold-general-text-font {
     -fx-text-fill: white;
-   -fx-alignment: center;
-   -fx-font-family: "Constantia Bold";
-  
+    -fx-alignment: center;
+    -fx-font-family: "Constantia Bold";
+}
+
+.super-bold-general-text-font {
+    -fx-text-fill: white;
+    -fx-alignment: center;
+    -fx-font-family: "Constantia";
+    -fx-font-weight: 900;
+
+}
+
+.transparent-background{
+    -fx-background-color: transparent;
+    -fx-control-inner-background: transparent;
 }
 
 /**
@@ -244,6 +258,40 @@
     #FFF8FF 50%,
     #DC8CFE 100%);
    -fx-border-width: 2; 
+   
+}
+
+.text-ranking{
+     -fx-text-fill:  rgba(201, 172, 214, 0.902);
+}
+.container-semitransparent-colors {
+    -fx-background-color: rgba(13, 0, 28, 0.742);
+   -fx-border-color: linear-gradient(to top,
+    #DC8CFE 0%,
+    #FFF8FF 50%,
+    #FFF8FF 50%,
+    #DC8CFE 100%);
+   -fx-border-width: 2; 
+   
+}
+
+.container-semitransparent-colors-purple {
+    -fx-background-color: rgba(15, 2, 34, 0.73);
+   -fx-border-color: linear-gradient(to top,
+    #DC8CFE 0%,
+    #FFF8FF 50%,
+    #FFF8FF 50%,
+    #DC8CFE 100%);
+   -fx-border-width: 2; 
+   
+}
+
+
+.cardsInfoRanking:hover{
+   
+    -fx-scale-x: 1.08;
+    -fx-scale-y: 1.08;
+
 }
 
 
@@ -279,6 +327,46 @@
     -fx-border-width: 2; 
 }
 
+.accordion .titled-pane > .title {
+    -fx-background-color: linear-gradient(#5a007a, #2b0052);
+    -fx-border-color: #DC8CFE;
+    -fx-border-width: 1.5;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.accordion .titled-pane > .content {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-font-size: 16px;
+    
+}
+
+.accordion .titled-pane > .title > .arrow-button .arrow{
+       -fx-background-color:radial-gradient(
+        center 50% 50%, radius 60%, 
+        repeat, 
+        #66287a 0%, 
+        #692f79 25.8%, 
+        #3a0878 74.5%, 
+        #1e034f 94.8%, 
+        #201f4f 99.5%, 
+        #201f4f 100%
+    );
+    
+    -fx-border-color: linear-gradient(to top,
+    #DC8CFE 0%,
+    #FFF8FF 50%,
+    #FFF8FF 50%,
+    #DC8CFE 100%);
+
+    -fx-background-insets: 0;
+    -fx-border-width: 2; 
+    -fx-padding: 13; /* más grande */
+
+
+}
 .container-light-gradiant-colors {
     -fx-background-color:radial-gradient(
         center 50% 50%, radius 60%, 
@@ -295,13 +383,29 @@
     #FFF8FF 50%,
     #FFF8FF 50%,
     #DC8CFE 100%);
-
-
     -fx-background-insets: 0;
     -fx-border-width: 2; 
 }
 
 
+
+.border-neon-effect {
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.4), 20, 0.5, 0, 0);
+}
+
+.border-neon-effect-yellow{
+    -fx-effect: dropshadow(gaussian, rgba(229, 255, 0, 0.525), 20, 0.5, 0, 0);
+    -fx-border-color: linear-gradient(to top,
+    #d4ff008f 0%,
+    #FFF8FF 50%,
+    #FFF8FF 50%,
+    #ffea0096 100%);
+}
+
+
+.border-neon-effect-purple{
+    -fx-effect: dropshadow(gaussian, rgba(4, 108, 255, 0.671), 20, 0.5, 0, 0);
+}
 /*contenedores cuadrados*/
 .square-pane {
     -fx-padding: 10; 
@@ -331,7 +435,7 @@
 /*contenedores para texto que introduce el usuario sin borde*/
 .text-container{
    -fx-border-width: 0; 
-    -fx-background-color: #6c27a0;
+    -fx-background-color:  rgba(188, 4, 255, 0.367);
 }
 
 /*ICONOS GENERALES ------------------------------------------------------------------------------------------------------------------------------ */
