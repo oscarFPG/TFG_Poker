@@ -41,7 +41,17 @@
             </VBox>
          </top>
          <bottom>
-            <Button mnemonicParsing="false" text="Button" BorderPane.alignment="CENTER" />
+            <Button alignment="CENTER" mnemonicParsing="false" prefHeight="40.0" prefWidth="137.0" text="START" BorderPane.alignment="CENTER">
+               <font>
+                  <Font size="27.0" />
+               </font>
+               <styleClass>
+                  <String fx:value="general-button" />
+                  <String fx:value="bold-general-text-font" />
+               </styleClass>
+               <BorderPane.margin>
+                  <Insets bottom="40.0" />
+               </BorderPane.margin></Button>
          </bottom>
          <center>
             <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
@@ -63,34 +73,40 @@
                         </Button>
                      </children>
                   </HBox>
-                  <HBox prefHeight="100.0" prefWidth="200.0">
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <VBox prefHeight="200.0" prefWidth="100.0">
+                        <VBox alignment="CENTER" prefHeight="192.0" prefWidth="493.0" spacing="4.0" styleClass="rounded-description-label">
                            <children>
-                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
                                  <children>
-                                    <Label text="Room" />
-                                    <TextField />
+                                    <Label styleClass="bold-general-text-font" text="Room" />
+                                    <TextField styleClass="username-label" />
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets top="10.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+                                 <children>
+                                    <Label styleClass="bold-general-text-font" text="Id Room:" />
+                                    <Label styleClass="general-text-font" text="#####" />
                                  </children>
                               </HBox>
-                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                              <HBox alignment="CENTER" prefHeight="24.0" prefWidth="445.0" spacing="20.0">
                                  <children>
-                                    <Label text="Id Room:" />
-                                    <Label text="#####" />
+                                    <Label styleClass="bold-general-text-font" text="Created by:" />
+                                    <Label styleClass="general-text-font" text="username" />
                                  </children>
                               </HBox>
-                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                              <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
                                  <children>
-                                    <Label text="Created by:" />
-                                    <Label text="username" />
+                                    <CheckBox mnemonicParsing="false" styleClass="general-text-font" text="Alows bots" />
+                                    <CheckBox mnemonicParsing="false" styleClass="general-text-font" text="Private room" />
+                                    <CheckBox mnemonicParsing="false" styleClass="general-text-font" text="Min bet" />
                                  </children>
-                              </HBox>
-                              <VBox alignment="BOTTOM_CENTER" prefHeight="200.0" prefWidth="100.0">
-                                 <children>
-                                    <CheckBox mnemonicParsing="false" text="Alows bots" />
-                                    <CheckBox mnemonicParsing="false" text="Private room" />
-                                    <CheckBox mnemonicParsing="false" text="Min bet" />
-                                 </children>
+                                 <VBox.margin>
+                                    <Insets bottom="10.0" />
+                                 </VBox.margin>
                               </VBox>
                            </children>
                         </VBox>
