@@ -273,24 +273,24 @@ public class ClientMain extends Application {
 				showTableCards(tableCardValues);
 				
 				// Flop
-				System.out.printf("-- Preflop --\n");
+				System.out.printf("-- Flop --\n");
 				playRound(playerCards[0], playerCards[1], socket);
 				tableCardValues[3] = receiveCard(in);
 				showTableCards(tableCardValues);
 
 				// Turn
-				System.out.printf("-- Preflop --\n");
+				System.out.printf("-- Turn --\n");
 				playRound(playerCards[0], playerCards[1], socket);
 				tableCardValues[4] = receiveCard(in);
 				showTableCards(tableCardValues);
 
 				// River
-				System.out.printf("-- Preflop --\n");
+				System.out.printf("-- River --\n");
 				playRound(playerCards[0], playerCards[1], socket);
 				showTableCards(tableCardValues);
 
 				// Showdown
-				System.out.printf("-- Preflop --\n");
+				System.out.printf("-- Showdown --\n");
 				int rankingCode = SocketUtils.receiveInt(in);
 				_money = SocketUtils.receiveInt(in);
 				if(rankingCode == GameType.PLAYER_WINS_HAND) {
