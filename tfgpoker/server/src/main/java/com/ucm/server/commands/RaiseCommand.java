@@ -38,7 +38,7 @@ public class RaiseCommand extends Command {
     protected Command createCommand(String[] commandFormat, IPokerActions player) {
         
         if(commandFormat.length != 2){
-            log.debug("The RaiseCommand must have an argument <amount>");
+            log.error("The RaiseCommand must have an argument <amount>");
             return null;
         } 
 
@@ -47,7 +47,7 @@ public class RaiseCommand extends Command {
             return new RaiseCommand(player, target);
         }
         catch (NumberFormatException e) {
-            log.debug("Error al intentar convertir {} a un entero", commandFormat[1]);
+            log.error("Trying to parse as an integer the string {}", commandFormat[1]);
             return null;
         }
     }

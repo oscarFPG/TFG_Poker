@@ -4,12 +4,12 @@
         {
             "label": "Server run",
             "type": "shell",
-            "command": "cd .\\tfgpoker; .\\mvnw.cmd -pl server -Pdebug exec:java"
+            "command": "cd .\\tfgpoker; .\\mvnw.cmd -pl server -Prun exec:java"
         },
         {
-            "label": "Client debug",
+            "label": "Client run",
             "type": "shell",
-            "command": "cd .\\tfgpoker; .\\mvnwDebug.cmd -pl client -Pdebug exec:java"
+            "command": "cd .\\tfgpoker; .\\mvnw.cmd -pl client -Prun exec:java"
         }
         /*
         {

@@ -19,7 +19,7 @@ public class CheckCommandTest {
 
         final int initialBet = 0;
 
-        IPokerActions player = new FakePlayer(INITIAL_MONEY - initialBet, initialBet);
+        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "Chek";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
@@ -34,7 +34,7 @@ public class CheckCommandTest {
         final int initialBet = 0;
         final int maxBet = 0;
 
-        IPokerActions player = new FakePlayer(INITIAL_MONEY - initialBet, initialBet);
+        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "check";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
@@ -54,7 +54,7 @@ public class CheckCommandTest {
         final int initialBet = 200;
         final int maxBet = initialBet;
 
-        IPokerActions player = new FakePlayer(INITIAL_MONEY - initialBet, initialBet);
+        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "check";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);

@@ -21,6 +21,8 @@ public class Player implements IPokerPlayer {
 
     private static final Logger log = LogManager.getLogger(Player.class);
 
+    private int _id;
+
     /**
      * Player's name
      */
@@ -93,7 +95,9 @@ public class Player implements IPokerPlayer {
      * @param socket used for communicating with the real player
      * @param money  received at the beginning of the game
      */
-    public Player(String name, Socket socket, int money) {
+    public Player(final int id, String name, Socket socket, int money) {
+       
+        _id = id;
         _name = name;
         _socket = socket;
 
@@ -182,8 +186,6 @@ public class Player implements IPokerPlayer {
     public boolean call(final int amount) {
 
         int resto = amount - _pocketMoney; // dinero que necesita para igualar la apuesta en juego
-        log.debug("Player {} wants to call to {}$", _name, amount);
-        log.debug("Total money on bet: {}$", amount + _pocketMoney);
         
         // Aumento la apuesta de mi ronda
         increaseOnBetMoney(resto);
@@ -272,11 +274,19 @@ public class Player implements IPokerPlayer {
     }
 
     @Override
+    public PlayerRole getRole() {
+        return _role;
+    }
+
+    @Override
     public Card[] getPlayerCards() {
         return _cards;
     }
 
-
+    @Override
+    public int getPlayerId() {
+        return _id;
+    }
 
     @Override
     public void receiveRole(PlayerRole r) {
@@ -332,7 +342,6 @@ public class Player implements IPokerPlayer {
 
        try{
             SocketUtils.sendInteger(_socket.getOutputStream(), money);
-            log.debug("Players {} new money is {}", _name, money);
         }
         catch (IOException e) {
             log.error("Trying to force a move on the player {}: {}", _name, e.getMessage());
@@ -400,7 +409,6 @@ public class Player implements IPokerPlayer {
 
         try{
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnWaitToCode());
-            log.debug("Player {} has to wait his turn!", _name);
         }
         catch (IOException e) {
             log.error("Sending the WAIT order to player {}: {}", _name, e.getMessage());
@@ -417,7 +425,6 @@ public class Player implements IPokerPlayer {
         try {
 
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnPlayToCode());
-            log.debug("Player {} has to play his turn!", _name);
         }
         catch (IOException e) {
             log.error("Receiving the command for {} player: {}", _name, e.getMessage());
@@ -433,7 +440,6 @@ public class Player implements IPokerPlayer {
 
         try{
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.gameRoundEnded());
-            log.debug("Player {} notified about the end of the round", _name);
         }
         catch (IOException e) {
             log.error("Notifing ROUND_ENDS to player {}: {}", _name, e.getMessage());
@@ -445,7 +451,6 @@ public class Player implements IPokerPlayer {
         
         try{
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.gameHandEnded());
-            log.debug("Player {} notified about the end of the hand", _name);
         }
         catch(IOException e){
             log.error("Notifying HAND_ENDS to player {}: {}", _name, e.getMessage());
@@ -457,7 +462,6 @@ public class Player implements IPokerPlayer {
 
         try{
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.gameEnded());
-            log.debug("Player {} notified about the end of the game", _name);
         }
         catch(IOException e){
             log.error("Notifying GAME_ENDS to player {}: {}", _name, e.getMessage());
@@ -469,7 +473,6 @@ public class Player implements IPokerPlayer {
         
         try{
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.gameKeeps());
-            log.debug("Player {} notified about game keeps on", _name);
         }
         catch(IOException e){
             log.error("Notifying GAME_KEEPS to player {}: {}", _name, e.getMessage());
@@ -481,7 +484,6 @@ public class Player implements IPokerPlayer {
 
         try{
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerWinsHand());
-            log.debug("Player {} is then winner of the hand", _name);
         }
         catch(IOException e){
             log.error("Notifying HAND_WINNER to player {}: {}", _name, e.getMessage());
@@ -493,7 +495,6 @@ public class Player implements IPokerPlayer {
 
         try{
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerLosesHand());
-            log.debug("Player {} is the loser of the hand", _name);
         }
         catch(IOException e){
             log.error("Notifying HAND_LOSER to player {}: {}", _name, e.getMessage());
@@ -505,7 +506,6 @@ public class Player implements IPokerPlayer {
 
         try{
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerWinsGame());
-            log.debug("Player {} is then winner of the game", _name);
         }
         catch(IOException e){
             log.error("Notifying GAME_WINNER to player {}: {}", _name, e.getMessage());
@@ -517,7 +517,6 @@ public class Player implements IPokerPlayer {
 
         try{
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerLosesGame());
-            log.debug("Player {} is the loser of the game", _name);
         }
         catch(IOException e){
             log.error("Notifying GAME_LOSER to player {}: {}", _name, e.getMessage());
@@ -576,10 +575,8 @@ public class Player implements IPokerPlayer {
             SocketUtils.sendInteger(_socket.getOutputStream(), bb);
             SocketUtils.sendInteger(_socket.getOutputStream(), maxBet);
             SocketUtils.sendInteger(_socket.getOutputStream(), _money);
-            log.debug("Round info sent to {}", _name);
 
             commandInput = SocketUtils.receiveString( _socket.getInputStream() );
-            log.debug("Command code {} sent by the player {}", commandInput, _name);
         }
         catch (IOException e) {
             log.error("Receiving the command for {} player: {}", _name, e.getMessage());

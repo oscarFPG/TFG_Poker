@@ -5,6 +5,8 @@ import com.ucm.server.gameobjects.PlayerRole;
 
 public interface IPokerPlayer extends IPokerActions {
 
+    public int getPlayerId();
+
     public void receiveRole(PlayerRole r);
     public void receiveCard(Card c);
     public void receiveTableCard(Card c);
@@ -14,6 +16,7 @@ public interface IPokerPlayer extends IPokerActions {
     public void setIsWinner(boolean state);
     public void setIsEliminated(boolean state);
 
+    
     public void notifyTurnWait();
     public void notifyTurnPlay();
     public void notifyRoundEnded();

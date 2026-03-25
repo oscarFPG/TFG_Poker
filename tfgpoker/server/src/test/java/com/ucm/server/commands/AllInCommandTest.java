@@ -21,7 +21,7 @@ public class AllInCommandTest {
 
         final int initialBet = 0;
 
-        IPokerActions player = new FakePlayer(INITIAL_MONEY - initialBet, initialBet);
+        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "alIin";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
@@ -36,7 +36,7 @@ public class AllInCommandTest {
         int maxBet = 0;
 
 
-        IPokerActions player = new FakePlayer(INITIAL_MONEY - initialBet, initialBet);
+        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "allin";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
@@ -44,7 +44,7 @@ public class AllInCommandTest {
         boolean valid = command.validate(maxBet);
         CommandResult result = command.execute(SMALL_BLIND, BIG_BLIND, maxBet);
 
-        assertEquals(CommandResult.continuePlaying(INITIAL_MONEY, false), result);
+        assertEquals(CommandResult.continuePlaying(INITIAL_MONEY, true), result);
         assertEquals(valid, true);
         assertEquals(INITIAL_MONEY, player.getMoneyOnBet());
         assertEquals(0, player.getMoneyOffBet());
@@ -56,7 +56,7 @@ public class AllInCommandTest {
         final int initialBet = 200;
         int maxBet = 0;
 
-        IPokerActions player = new FakePlayer(INITIAL_MONEY - initialBet, initialBet);
+        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "allin";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
@@ -64,7 +64,7 @@ public class AllInCommandTest {
         boolean valid = command.validate(maxBet);
         CommandResult result = command.execute(SMALL_BLIND, BIG_BLIND, maxBet);
 
-        assertEquals(CommandResult.continuePlaying(INITIAL_MONEY, false), result);
+        assertEquals(CommandResult.continuePlaying(INITIAL_MONEY, true), result);
         assertEquals(valid, true);
         assertEquals(INITIAL_MONEY, player.getMoneyOnBet());
         assertEquals(0, player.getMoneyOffBet());
@@ -76,7 +76,47 @@ public class AllInCommandTest {
         final int initialBet = 0;
         int maxBet = 20;
 
-        IPokerActions player = new FakePlayer(INITIAL_MONEY - initialBet, initialBet);
+        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
+        String input = "allin";
+        String[] inputFormatted = input.split(" ");
+        Command command = Command.parseCommand(inputFormatted, player);
+
+        boolean valid = command.validate(maxBet);
+        CommandResult result = command.execute(SMALL_BLIND, BIG_BLIND, maxBet);
+
+        assertEquals(CommandResult.continuePlaying(INITIAL_MONEY, true), result);
+        assertEquals(valid, true);
+        assertEquals(INITIAL_MONEY, player.getMoneyOnBet());
+        assertEquals(0, player.getMoneyOffBet());
+    }
+
+    @Test
+    public void fromSome_previousBet(){
+
+        final int initialBet = 200;
+        int maxBet = 20;
+
+        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
+        String input = "allin";
+        String[] inputFormatted = input.split(" ");
+        Command command = Command.parseCommand(inputFormatted, player);
+
+        boolean valid = command.validate(maxBet);
+        CommandResult result = command.execute(SMALL_BLIND, BIG_BLIND, maxBet);
+
+        assertEquals(CommandResult.continuePlaying(INITIAL_MONEY, true), result);
+        assertEquals(valid, true);
+        assertEquals(INITIAL_MONEY, player.getMoneyOnBet());
+        assertEquals(0, player.getMoneyOffBet());
+    }
+
+    @Test
+    public void fromZero_previousAllIn(){
+
+        final int initialBet = 0;
+        int maxBet = INITIAL_MONEY;
+
+        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "allin";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
@@ -91,12 +131,12 @@ public class AllInCommandTest {
     }
 
     @Test
-    public void fromSome_previousBet(){
+    public void fromZome_previousAllIn(){
 
-        final int initialBet = 200;
-        int maxBet = 20;
+        final int initialBet = 100;
+        int maxBet = INITIAL_MONEY;
 
-        IPokerActions player = new FakePlayer(INITIAL_MONEY - initialBet, initialBet);
+        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "allin";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
@@ -109,6 +149,5 @@ public class AllInCommandTest {
         assertEquals(INITIAL_MONEY, player.getMoneyOnBet());
         assertEquals(0, player.getMoneyOffBet());
     }
-
 
 }

@@ -73,7 +73,6 @@ public class Game {
 
     public void addPlayer(Player p) {
 
-        log.debug("Intentando asignar jugador [{}]", p.getPlayerName());
         _playerList.addPlayer(p);
     }
 
@@ -82,8 +81,7 @@ public class Game {
     }
 
     public void shareOutCardsToAllPlayers() {
-
-        log.debug("Repartiendo cartas a los jugadores...");
+        
         for (int i = 0; i < _playerList.size(); i++) {
             Card randomCard1 = _deck.takeRandomCard();
             Card randomCard2 = _deck.takeRandomCard();
@@ -109,7 +107,7 @@ public class Game {
             else
                 sb.append(_tableCards[i].toString()).append(" ");
         }
-        log.debug("Cartas en la mesa: {}", sb.toString());
+        log.debug("Table cards: {}", sb.toString());
     }
 
     public void retrieveCardsFromTable() {
@@ -126,8 +124,6 @@ public class Game {
 
         ++_handCounter;
         try {
-            log.debug("Playing hand number {}...", _handCounter);
-
             _playerList.playHand(_currentSB, _currentBB, _isPreflop);
             _isPreflop = false;
         } 
@@ -136,11 +132,8 @@ public class Game {
             _playerList.notifyHandEndsByFold();
             _isPreflop = false;
 
-            log.debug("Hand number {} finished!", _handCounter);
             throw e;
         }
-    
-        log.debug("Hand number {} finished!", _handCounter);
     }
 
     public void giveRewardToWinner() {
@@ -164,15 +157,10 @@ public class Game {
         _playerList.notifyGameEnds(endOfGame);
 
         if(!endOfGame) {
-            log.debug("Preparing for next hand...");
-
             retrieveCardsFromTable();
             _deck.resetDeck();
             _playerList.passTurn();
             _isPreflop = true;
-        }
-        else {
-            log.debug("End of game");
         }
 
         return endOfGame;

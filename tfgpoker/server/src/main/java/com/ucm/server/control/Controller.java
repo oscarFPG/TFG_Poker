@@ -41,16 +41,21 @@ public class Controller {
 
     private void addPlayersToGame(List<ClientStructGame> players) {
 
+        int id = 0;
         for(ClientStructGame cs : players){
-            _game.addPlayer( new Player(cs.name(), cs.socket(), 1000) );
+            _game.addPlayer( new Player(id, cs.name(), cs.socket(), 1000) );
+            ++id;
         }
     }
 
     private void addPlayersToGameLocally(int numPlayers) {
 
+        int id = 0;
         for(int i = 0; i < numPlayers; ++i){
-            _game.addPlayer( new Player("Player" + i, null, 1000) );
+            _game.addPlayer( new Player(id, "Player" + i, null, 1000) );
+            ++id;
         }
+
     }
 
     public void run() {
@@ -60,49 +65,57 @@ public class Controller {
 
         ThreadContext.put("match", "0");
         ThreadContext.put("hand", String.valueOf(handCounter));
-        log.debug("Starting a new game!");
 
 
+        log.debug("Assigning roles to all players");
         _game.assignRolesToAllPlayers();
+        
         while (!endOfGame) {
 
-            log.debug("Starting {} hand!", handCounter);
+            log.debug("Starting hand {}", handCounter);
             try {
                 
                 // Pre-flop (2)
+                log.debug("Pre-flop round");
                 _game.shareOutCardsToAllPlayers();
                 _game.playHand();
 
                 // Flop (3)
+                log.debug("Flop round");
                 _game.addCardToTable();
                 _game.addCardToTable();
                 _game.addCardToTable();
                 _game.playHand();
 
                 // Turn (4)
+                log.debug("Turn round");
                 _game.addCardToTable();
                 _game.playHand();
 
                 // River (5)
+                log.debug("River round");
                 _game.addCardToTable();
                 _game.playHand();
 
                 // Showdown (6)
+                log.debug("Showdown round");
                 _game.giveRewardToWinner();
             }
             catch (OnlyOnePlayerLeftException e) {
+                log.debug("Showdown with only one player left");
                 _game.giveRewardToWinner();
             }
 
+            log.debug("Passing to the next round");
             endOfGame = _game.passTurn();
 
             // Logger configuration for the next hand -> Write on file match{0}_hand{handCounter}.log
-            log.debug("Finishing {} hand!", handCounter);
+            log.debug("Finishing hand {}", handCounter);
             ++handCounter;
             ThreadContext.put("hand", String.valueOf(handCounter));
         }
 
-        log.debug("End of game!");
+        log.debug("Game ends!");
     }
 
 }

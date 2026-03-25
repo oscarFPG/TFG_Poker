@@ -115,7 +115,7 @@ public class PotManager {
         List<Pot> pots = new ArrayList<>();
         while(!potsCopy.isEmpty()){
 
-            Pot pot = createPot();
+            Pot pot = createPot(potsCopy);
             pots.add( pot );
 
             potsCopy.removeIf( p -> p.playerPot == 0 );
@@ -164,12 +164,12 @@ public class PotManager {
         return dist;
     }
 
-    private Pot createPot() {
+    private Pot createPot(List<PlayerInfo> playerPots) {
 
         List<PlayerInfo> potentialWinners = new ArrayList<>();
-        final int potPerPlayer = _pots.getFirst().playerPot;
+        final int potPerPlayer = playerPots.getFirst().playerPot;
         int total = 0;
-        for(PlayerInfo pl : _pots){
+        for(PlayerInfo pl : playerPots){
             pl.decreasePot(potPerPlayer);
             total += potPerPlayer;
             potentialWinners.add(pl);

@@ -2,8 +2,7 @@
 P1
 1
 start
-c
+call
+call
 k
-c
-k
-k
+raise 100

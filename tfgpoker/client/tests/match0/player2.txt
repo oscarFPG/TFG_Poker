@@ -1,8 +1,7 @@
 
 P2
 2
-r
-20
+raise 20
 k
 k
-k
+fold

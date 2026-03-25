@@ -3,11 +3,23 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Run Server",
+            "preLaunchTask": "Server run",
+            "request": "launch"
+        },
+        {
+            "type": "java",
             "name": "Debug Server",
             "request": "attach",
             "hostName": "localhost",
             "port": 8000,
             "projectName": "server"
+        },
+        {
+            "type": "java",
+            "name": "Run Client",
+            "preLaunchTask": "Client run",
+            "request": "launch"
         },
         {
             "type": "java",
