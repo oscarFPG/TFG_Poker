@@ -369,29 +369,20 @@ public class ClientMain extends Application {
 
 		// Wait for host to start the game
 		String command = null;
-		while(command == null){
+		while(command == null) {
 			System.out.printf("Escriba \'start\' para comenzar la partida...\n > ");
 
-			if(AUTOMATED_MODE){
-				try {
-
-					final int seconds = 6;
-					for(int i = 0; i < seconds; i++){
-						System.out.printf("Waiting %d seconds for the other players...\n", seconds - i);
-						Thread.sleep(1000); // Esperar a que se unan los demas jugadores
-					}
-				}
-				catch (InterruptedException e) {
-					e.printStackTrace();
-				}	
+			// Give time to the rest of the automated players to join
+			if(AUTOMATED_MODE) {
+				waitSeconds(6);
 			}
 
 			command = _scanner.next();
-			if(!command.equalsIgnoreCase("start")){
+			if(!command.equalsIgnoreCase("start")) {
 				System.out.printf("Comando \'%s\' no valido!\n", command);
 				command = null;
 			}
-			else{
+			else {
 				sendPetition(GameType.HOST_START_GAME_PETITION, socket);
 			}
 		}
@@ -594,6 +585,22 @@ public class ClientMain extends Application {
 		System.out.printf("\n");
 
 	}
+
+	private static void waitSeconds(final int seconds) {
+
+		try {
+
+			for(int i = 0; i < seconds; i++) {
+				System.out.printf("Waiting %d seconds for the other players...\n", seconds - i);
+				Thread.sleep(1000); // Esperar a que se unan los demas jugadores
+			}
+		}
+		catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+	}
+
 
     @Override
     public void start(Stage stage) throws Exception {
