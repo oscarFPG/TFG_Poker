@@ -17,9 +17,9 @@ import com.ucm.server.logic.Game;
  * player or and AI player.
  * It works as a representation of the player entity in the server side.
  */
-public class Player implements IPokerPlayer {
+public class HumanPlayer implements IPokerPlayer {
 
-    private static final Logger log = LogManager.getLogger(Player.class);
+    private static final Logger log = LogManager.getLogger(HumanPlayer.class);
 
     private int _id;
 
@@ -95,7 +95,7 @@ public class Player implements IPokerPlayer {
      * @param socket used for communicating with the real player
      * @param money  received at the beginning of the game
      */
-    public Player(final int id, String name, Socket socket, int money) {
+    public HumanPlayer(final int id, String name, Socket socket, int money) {
        
         _id = id;
         _name = name;

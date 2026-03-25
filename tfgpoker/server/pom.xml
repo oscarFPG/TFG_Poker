@@ -46,6 +46,21 @@
             <version>2.25.2</version>
         </dependency>
 
+        <!-- LangChain4j Core -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j</artifactId>
+            <version>1.12.2</version>
+        </dependency>
+
+        <!-- LLM providers for LangCHain4j -->
+        <!-- Gemini -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-google-ai-gemini</artifactId>
+            <version>1.12.2</version>
+        </dependency>
+
     </dependencies>
 
     <!-- Plugins -->

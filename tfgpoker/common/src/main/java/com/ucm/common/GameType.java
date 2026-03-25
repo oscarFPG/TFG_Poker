@@ -13,15 +13,19 @@ public class GameType {
     public static final byte DATA_TYPE_NAME = 2;   // Flag to send a name as a string
 
     // Clients and server codes during pregame
-    public static final int CREATE_PETITION = 10;   // Client requests creating a game
+    public static final int CREATE_PETITION = 10;       // Client requests creating a game
     public static final int CREATE_PETITION_ERROR_ALREADY_A_GAME = 11;   // Server error response to CREATE_PETITION
 
-    public static final int JOIN_PETITION = 20;   // Client requests joining a game
+    public static final int JOIN_PETITION = 20;         // Client requests joining a game
     public static final int JOIN_PETITION_ERROR = 21;   // Server error response to JOIN_PETITION
 
-    public static final int HOST_START_GAME_PETITION = 30;   // Client requests starting the game
-    public static final int HOST_START_GAME_PETITION_ERROR_NOT_ENOUGH_PLAYERS = 31;   // Server error response to HOST_START_GAME_PETITION
-    public static final int HOST_START_GAME_PETITION_ERROR_NOT_HOST = 32;   // Server error response to HOST_START_GAME_PETITION
+    public static final int ADD_BOT_PETITION = 30;      // Match administrator wants to add a bot to the game
+    public static final int ADD_BOT_PETITION_ERROR = 31;
+    public static final int BOT_TYPE_LLM = 32;
+
+    public static final int HOST_START_GAME_PETITION = 40;   // Client requests starting the game
+    public static final int HOST_START_GAME_PETITION_ERROR_NOT_ENOUGH_PLAYERS = 41;   // Server error response to HOST_START_GAME_PETITION
+    public static final int HOST_START_GAME_PETITION_ERROR_NOT_HOST = 42;   // Server error response to HOST_START_GAME_PETITION
 
     // Player roles
     public static final int PLAYER_ROLE_NO_ROLE = 50;

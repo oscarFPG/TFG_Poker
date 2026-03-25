@@ -2,7 +2,7 @@ package com.ucm.server.control;
 
 
 import com.ucm.server.exceptions.OnlyOnePlayerLeftException;
-import com.ucm.server.gameobjects.Player;
+import com.ucm.server.gameobjects.HumanPlayer;
 import com.ucm.server.logic.Game;
 import com.ucm.server.middleclasses.ClientStructGame;
 
@@ -43,7 +43,7 @@ public class Controller {
 
         int id = 0;
         for(ClientStructGame cs : players){
-            _game.addPlayer( new Player(id, cs.name(), cs.socket(), 1000) );
+            _game.addPlayer( new HumanPlayer(id, cs.name(), cs.socket(), 1000) );
             ++id;
         }
     }
@@ -52,7 +52,7 @@ public class Controller {
 
         int id = 0;
         for(int i = 0; i < numPlayers; ++i){
-            _game.addPlayer( new Player(id, "Player" + i, null, 1000) );
+            _game.addPlayer( new HumanPlayer(id, "Player" + i, null, 1000) );
             ++id;
         }
 

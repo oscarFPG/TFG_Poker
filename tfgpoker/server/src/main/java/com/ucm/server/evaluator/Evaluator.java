@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 import com.ucm.server.ServerMain;
 import com.ucm.server.gameobjects.Card;
-import com.ucm.server.gameobjects.Player;
+import com.ucm.server.gameobjects.HumanPlayer;
 import com.ucm.server.gameobjects.Suit;
 import com.ucm.server.interfaces.IPokerPlayer;
 import com.ucm.server.middleclasses.HandInfo;

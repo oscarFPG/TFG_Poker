@@ -62,13 +62,13 @@ public class ClientMain extends Application {
      */
     public static void main(String[] args) throws IOException {
 
-		if(args.length == 2){	// Ejecucion automatizada con archivos de texto para simular el input de multiples jugadores
+		if(args.length == 2) {	// Ejecucion automatizada con archivos de texto para simular el input de multiples jugadores
 			String playerFilePath = "client/tests/" + args[0] + "/" + args[1] + ".txt";
 			System.out.printf("Running in auto mode with player file: %s\n", playerFilePath);
 			_scanner = new Scanner( new File(playerFilePath) );
 			AUTOMATED_MODE = true;
 		}
-		else{
+		else {
 			_scanner = new Scanner(System.in);
 		}
 
@@ -153,7 +153,7 @@ public class ClientMain extends Application {
 	private static void handleSend(SelectionKey key) {
 		
 		SocketChannel socket = (SocketChannel) key.channel();
-		try{
+		try {
 
 			// Get users name
 			System.out.printf("Escribe tu nombre: ");
@@ -167,12 +167,12 @@ public class ClientMain extends Application {
 
 			// Get user petition and send it to the server
 			int opcion = getUserPetition();
-			if(opcion == 1){
+			if(opcion == 1) {
 				sendPetition(GameType.CREATE_PETITION, socket);
 				System.out.printf("Petition CREATE sent!\n");
-				sendStartGameByHost(socket);
+				createGame(socket);
 			}
-			else if(opcion == 2){
+			else if(opcion == 2) {
 				sendPetition(GameType.JOIN_PETITION, socket);
 				System.out.printf("Petition JOIN sent!\n");
 			}
@@ -365,25 +365,33 @@ public class ClientMain extends Application {
 		}
 	}
 
-	private static void sendStartGameByHost(SocketChannel socket) throws IOException {
+	private static void createGame(SocketChannel socket) throws IOException {
 
-		// Wait for host to start the game
-		String command = null;
-		while(command == null) {
-			System.out.printf("Escriba \'start\' para comenzar la partida...\n > ");
-
+		// Wait for host to start the game and configure the game
+		boolean hostWantsToStart = false;
+		while(!hostWantsToStart) {
+			
 			// Give time to the rest of the automated players to join
 			if(AUTOMATED_MODE) {
 				waitSeconds(6);
 			}
 
-			command = _scanner.next();
-			if(!command.equalsIgnoreCase("start")) {
-				System.out.printf("Comando \'%s\' no valido!\n", command);
-				command = null;
+			System.out.printf("Start game - \'start\'\n");
+			System.out.printf("Add bot - \'bot\'\n");
+			System.out.printf(" > ");
+
+			String command = _scanner.next();
+			if(command.equalsIgnoreCase("start")) {
+				sendPetition(GameType.HOST_START_GAME_PETITION, socket);
+				hostWantsToStart = true;
+			}
+			else if(command.equalsIgnoreCase("bot")) {
+				sendPetition(GameType.ADD_BOT_PETITION, socket);
+				System.out.printf("Host wants to add a bot");
 			}
 			else {
-				sendPetition(GameType.HOST_START_GAME_PETITION, socket);
+				System.out.printf("Command \'%s\' invalid!\n", command);
+				hostWantsToStart = false;
 			}
 		}
 	}
@@ -488,21 +496,21 @@ public class ClientMain extends Application {
 	private static int getUserPetition() {
 
 		// Wait for clients petition
-		int opcion = -1;
-		while(opcion == -1){
+		int option = -1;
+		while(option == -1){
 			System.out.printf("Que desea hacer?\n");
 			System.out.printf("1- Crear partida\n");
 			System.out.printf("2- Unirse a partida\n");
 			System.out.printf("> ");
-			opcion = _scanner.nextInt();
 
-			if(opcion != 1 && opcion != 2){
-				opcion = -1;
-				System.out.printf("Code petition unknown %d\n", opcion);
+			option = _scanner.nextInt();
+			if(option < 1 || 2 < option){
+				option = -1;
+				System.out.printf("%d is not a valid option\n", option);
 			}
 		}
 
-		return opcion;
+		return option;
 	}
 
 	private static String translateCardCode(final int value, final int suit) {

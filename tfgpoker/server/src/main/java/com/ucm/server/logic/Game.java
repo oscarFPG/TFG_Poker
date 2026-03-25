@@ -12,7 +12,7 @@ import com.ucm.server.exceptions.EvaluatorException;
 import com.ucm.server.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.server.gameobjects.Card;
 import com.ucm.server.gameobjects.Deck;
-import com.ucm.server.gameobjects.Player;
+import com.ucm.server.gameobjects.HumanPlayer;
 import com.ucm.server.middleclasses.HandInfo;
 import com.ucm.server.middleclasses.PlayerEvaluation;
 
@@ -71,7 +71,7 @@ public class Game {
     }
 
 
-    public void addPlayer(Player p) {
+    public void addPlayer(HumanPlayer p) {
 
         _playerList.addPlayer(p);
     }
