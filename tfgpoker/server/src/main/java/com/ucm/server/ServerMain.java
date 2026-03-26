@@ -18,7 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Scanner;
+
 
 // Poker Game
 import com.ucm.server.middleclasses.ClientStructGame;
@@ -194,7 +194,7 @@ public class ServerMain {
             }
             log.debug("Host empieza la partida!");
 
-            // Cancel all clients keys -> Important!
+            // Cancel all clients left keys -> Important!
             for (SelectionKey key : selector.keys()) {
                 key.cancel();
             }
@@ -204,16 +204,16 @@ public class ServerMain {
             ByteBuffer broadcastBuffer = ByteBuffer.allocate(Integer.BYTES);
             broadcastBuffer.putInt(GameType.GAME_STARTS);
             for(ClientStructPreGame cs : roomList){
-                try{
+                try {
                     broadcastBuffer.rewind();
                     cs.clientSocket.write(broadcastBuffer);
                 }
-                catch(IOException e){
+                catch(IOException e) {
                     log.error("Sending GAME_STARTS flag: {}", e.getMessage());
-                    try{
+                    try {
                         cs.clientSocket.close();
                     }
-                    catch(IOException exception){
+                    catch(IOException exception) {
                         log.error("Closing socket: {}", e.getMessage());
                     }
                 }
@@ -221,7 +221,7 @@ public class ServerMain {
 
             //  Eliminate all not in-game players to avoid infinite waiting
             for(ClientStructPreGame cs : clientList){
-                try{
+                try {
                     cs.key.cancel();
                     cs.clientSocket.close();
                 }
@@ -278,7 +278,7 @@ public class ServerMain {
         int bytesRead;
         byte tipo;
 
-        try{
+        try {
 
             bytesRead = socket.read(buffer);
             if (bytesRead == -1) {
@@ -344,7 +344,6 @@ public class ServerMain {
     private static void handleClientPetition(SelectionKey key, final int petition, List<ClientStructPreGame> clientList, List<ClientStructPreGame> roomList) {
 
         SocketChannel client = (SocketChannel) key.channel();
-		
         switch (petition) {
         case GameType.CREATE_PETITION:
 
@@ -458,6 +457,7 @@ public class ServerMain {
             }
 
             log.debug("Host wants to add a bot");
+
 
             break;
             

@@ -2,9 +2,9 @@ package com.ucm.server.control;
 
 
 import com.ucm.server.exceptions.OnlyOnePlayerLeftException;
-import com.ucm.server.gameobjects.HumanPlayer;
 import com.ucm.server.logic.Game;
 import com.ucm.server.middleclasses.ClientStructGame;
+import com.ucm.server.players.HumanPlayer;
 
 import org.apache.logging.log4j.ThreadContext;
 import org.apache.logging.log4j.LogManager;
@@ -42,7 +42,7 @@ public class Controller {
     private void addPlayersToGame(List<ClientStructGame> players) {
 
         int id = 0;
-        for(ClientStructGame cs : players){
+        for(ClientStructGame cs : players) {
             _game.addPlayer( new HumanPlayer(id, cs.name(), cs.socket(), 1000) );
             ++id;
         }

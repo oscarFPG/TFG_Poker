@@ -9,8 +9,8 @@ public class GameType {
     public static final int PORT = 5005;
 
     // Types
-    public static final byte DATA_TYPE_PETITION = 1;   // Flag to send a pregame petition
-    public static final byte DATA_TYPE_NAME = 2;   // Flag to send a name as a string
+    public static final byte DATA_TYPE_PETITION = 1;    // Flag to send a pregame petition
+    public static final byte DATA_TYPE_NAME = 2;        // Flag to send a name as a string
 
     // Clients and server codes during pregame
     public static final int CREATE_PETITION = 10;       // Client requests creating a game
@@ -19,22 +19,23 @@ public class GameType {
     public static final int JOIN_PETITION = 20;         // Client requests joining a game
     public static final int JOIN_PETITION_ERROR = 21;   // Server error response to JOIN_PETITION
 
-    public static final int ADD_BOT_PETITION = 30;      // Match administrator wants to add a bot to the game
-    public static final int ADD_BOT_PETITION_ERROR = 31;
-    public static final int BOT_TYPE_LLM = 32;
+    public static final int REQUEST_BOT_LIST_PETITION = 30;      // Match administrator wants to add a bot to the game
+    public static final int ADD_BOT_PETITION = 31;
+    public static final int ADD_BOT_PETITION_ERROR = 33;
 
     public static final int HOST_START_GAME_PETITION = 40;   // Client requests starting the game
     public static final int HOST_START_GAME_PETITION_ERROR_NOT_ENOUGH_PLAYERS = 41;   // Server error response to HOST_START_GAME_PETITION
     public static final int HOST_START_GAME_PETITION_ERROR_NOT_HOST = 42;   // Server error response to HOST_START_GAME_PETITION
 
+
     // Player roles
-    public static final int PLAYER_ROLE_NO_ROLE = 50;
-    public static final int PLAYER_ROLE_DEALER = 51;
-    public static final int PLAYER_ROLE_SMALL_BLIND = 52;
-    public static final int PLAYER_ROLE_BIG_BLIND = 53;
-    public static final int PLAYER_ROLE_UNDER_THE_GUN = 54;
-    public static final int PLAYER_ROLE_MIDDLE_POSITION = 55;
-    public static final int PLAYER_ROLE_CUT_OFF = 56;
+    public static final int PLAYER_ROLE_NO_ROLE = 80;
+    public static final int PLAYER_ROLE_DEALER = 81;
+    public static final int PLAYER_ROLE_SMALL_BLIND = 82;
+    public static final int PLAYER_ROLE_BIG_BLIND = 83;
+    public static final int PLAYER_ROLE_UNDER_THE_GUN = 84;
+    public static final int PLAYER_ROLE_MIDDLE_POSITION = 85;
+    public static final int PLAYER_ROLE_CUT_OFF = 86;
 
     // Card suits
     public static final int HEARTS = 100;
