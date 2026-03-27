@@ -166,6 +166,8 @@ public class ClientMain extends Application {
 		
 		List<String> botList = new ArrayList<>();
 		
+		
+
 		return botList;
 	}
 

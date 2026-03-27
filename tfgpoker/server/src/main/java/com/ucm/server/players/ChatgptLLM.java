@@ -1,7 +1,8 @@
 package com.ucm.server.players;
 
+import com.ucm.server.gameobjects.Bot;
+import com.ucm.server.gameobjects.BotLLM;
 import com.ucm.server.gameobjects.Card;
-import com.ucm.server.gameobjects.Player;
 import com.ucm.server.gameobjects.PlayerRole;
 
 import dev.langchain4j.data.message.AiMessage;
@@ -15,13 +16,16 @@ import static dev.langchain4j.data.message.UserMessage.userMessage;
 import static dev.langchain4j.model.openai.OpenAiChatModelName.GPT_4_O_MINI;
 
 
-public class ChatgptLLM extends Player {
+public class ChatgptLLM extends BotLLM {
 
-    private String _apiKey;
+
+
+    public ChatgptLLM() {
+        super();
+    }
 
     public ChatgptLLM(int id, int money) {
-        super(id, "ChatGPT_LLM", money);
-        _apiKey = "demo";
+        super(id, "ChatGPT", money, "Una");
     }
 
 
