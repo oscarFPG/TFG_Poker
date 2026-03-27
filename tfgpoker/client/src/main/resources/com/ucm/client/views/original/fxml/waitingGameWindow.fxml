@@ -831,14 +831,14 @@
                <children>
                   <StackPane prefHeight="89.0" prefWidth="1312.0">
                      <children>
-                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="731.0" spacing="10.0" StackPane.alignment="CENTER">
+                        <HBox prefHeight="100.0" prefWidth="731.0" spacing="10.0" StackPane.alignment="CENTER">
                            <children>
                               <ImageView fitHeight="100.0" fitWidth="95.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../../images/imagenPerfil.png" />
                                  </image>
                               </ImageView>
-                              <VBox alignment="CENTER_LEFT" prefHeight="154.0" prefWidth="144.0" spacing="10.0">
+                              <VBox prefHeight="154.0" prefWidth="144.0" spacing="10.0">
                                  <children>
                                     <Label alignment="CENTER" minWidth="-Infinity" prefHeight="40.0" styleClass="username-label" text="label">
                                        <padding>
@@ -862,7 +862,7 @@
                               <Insets />
                            </StackPane.margin>
                         </HBox>
-                        <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="1243.0" spacing="5.0" StackPane.alignment="TOP_RIGHT">
+                        <HBox alignment="TOP_RIGHT" prefHeight="100.0" prefWidth="1243.0" spacing="5.0" StackPane.alignment="TOP_RIGHT">
                            <children>
                               <Label alignment="CENTER" styleClass="bold-general-text-font" text="Id room:">
                                  <font>
@@ -877,36 +877,6 @@
                                     <Insets top="4.0" />
                                  </HBox.margin>
                               </Label>
-                              <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
-                                 <children>
-                                    <Button mnemonicParsing="false" prefHeight="59.0" prefWidth="64.0">
-                                       <styleClass>
-                                          <String fx:value="square-icon" />
-                                          <String fx:value="icon-colors" />
-                                       </styleClass>
-                                       <graphic>
-                                          <ImageView fitHeight="65.0" fitWidth="71.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../../images/iconoExit.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
-                                    <Button mnemonicParsing="false" prefHeight="59.0" prefWidth="64.0">
-                                       <styleClass>
-                                          <String fx:value="square-icon" />
-                                          <String fx:value="icon-colors" />
-                                       </styleClass>
-                                       <graphic>
-                                          <ImageView fitHeight="65.0" fitWidth="71.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../../images/iconoDadosEquity.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
-                                 </children>
-                              </HBox>
                            </children>
                         </HBox>
                      </children>
