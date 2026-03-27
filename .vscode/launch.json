@@ -3,6 +3,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "MainApp",
+            "request": "launch",
+            "mainClass": "com.ucm.client.MainApp",
+            "projectName": "client"
+        },
+        {
+            "type": "java",
             "name": "Run Server",
             "preLaunchTask": "Server run",
             "request": "launch"
