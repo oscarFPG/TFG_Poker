@@ -862,51 +862,38 @@
                               <Insets />
                            </StackPane.margin>
                         </HBox>
-                        <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="1243.0" spacing="5.0" StackPane.alignment="TOP_RIGHT">
+                        <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="1243.0" spacing="5.0" StackPane.alignment="CENTER">
                            <children>
-                              <Label alignment="CENTER" styleClass="bold-general-text-font" text="Id room:">
-                                 <font>
-                                    <Font size="27.0" />
-                                 </font>
-                              </Label>
-                              <Label alignment="CENTER" styleClass="general-text-font" text="Label">
-                                 <font>
-                                    <Font size="27.0" />
-                                 </font>
-                                 <HBox.margin>
-                                    <Insets top="4.0" />
-                                 </HBox.margin>
-                              </Label>
-                              <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                    <Button mnemonicParsing="false" prefHeight="59.0" prefWidth="64.0">
-                                       <styleClass>
-                                          <String fx:value="square-icon" />
-                                          <String fx:value="icon-colors" />
-                                       </styleClass>
-                                       <graphic>
-                                          <ImageView fitHeight="65.0" fitWidth="71.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../../images/iconoExit.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
-                                    <Button mnemonicParsing="false" prefHeight="59.0" prefWidth="64.0">
-                                       <styleClass>
-                                          <String fx:value="square-icon" />
-                                          <String fx:value="icon-colors" />
-                                       </styleClass>
-                                       <graphic>
-                                          <ImageView fitHeight="65.0" fitWidth="71.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../../images/iconoDadosEquity.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
+                                    <Label alignment="CENTER" styleClass="bold-general-text-font" text="Id room:">
+                                       <font>
+                                          <Font size="27.0" />
+                                       </font>
+                                    </Label>
+                                    <Label alignment="CENTER" styleClass="general-text-font" text="Label">
+                                       <font>
+                                          <Font size="27.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets top="4.0" />
+                                       </HBox.margin>
+                                    </Label>
                                  </children>
                               </HBox>
+                              <Button mnemonicParsing="false" prefHeight="59.0" prefWidth="64.0">
+                                 <styleClass>
+                                    <String fx:value="square-icon" />
+                                    <String fx:value="icon-colors" />
+                                 </styleClass>
+                                 <graphic>
+                                    <ImageView fitHeight="65.0" fitWidth="71.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../images/iconoExit.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
                            </children>
                         </HBox>
                      </children>
