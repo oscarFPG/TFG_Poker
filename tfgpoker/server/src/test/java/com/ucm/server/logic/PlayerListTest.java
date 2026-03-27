@@ -144,7 +144,7 @@ public class PlayerListTest {
 
         playerList.assignRolesToAllPlayers();
         for (int i = 0; i < expectedRoles.size(); i++) {
-            assertEquals(expectedRoles.get(i), players[i].role);
+            assertEquals(expectedRoles.get(i), players[i].getRole());
         }
     }
 
@@ -160,16 +160,16 @@ public class PlayerListTest {
 
 
         playerList.assignRolesToAllPlayers();
-        assertEquals(PlayerRole.SMALL_BLIND, player1.role);
-        assertEquals(PlayerRole.BIG_BLIND, player2.role);
+        assertEquals(PlayerRole.SMALL_BLIND, player1.getRole());
+        assertEquals(PlayerRole.BIG_BLIND, player2.getRole());
 
         playerList.passTurn();
-        assertEquals(PlayerRole.BIG_BLIND, player1.role);
-        assertEquals(PlayerRole.SMALL_BLIND, player2.role);
+        assertEquals(PlayerRole.BIG_BLIND, player1.getRole());
+        assertEquals(PlayerRole.SMALL_BLIND, player2.getRole());
 
         playerList.passTurn();
-        assertEquals(PlayerRole.SMALL_BLIND, player1.role);
-        assertEquals(PlayerRole.BIG_BLIND, player2.role);
+        assertEquals(PlayerRole.SMALL_BLIND, player1.getRole());
+        assertEquals(PlayerRole.BIG_BLIND, player2.getRole());
     }
 
 
@@ -193,7 +193,7 @@ public class PlayerListTest {
             for(int i = 0; i < numPlayers; i++){
                 FakePlayer player = players.get(playerIndex);
                 PlayerRole role = roles.get(roleIndex);
-                assertEquals(role, player.role);
+                assertEquals(role, player.getRole());
 
                 playerIndex = (playerIndex + 1) % numPlayers;   // Treat as an circular array
                 roleIndex = (roleIndex + 1) % numPlayers;       // Treat as an circular array

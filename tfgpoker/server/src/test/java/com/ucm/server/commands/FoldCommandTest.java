@@ -34,7 +34,7 @@ public class FoldCommandTest {
         final int initialBet = 0;
         int maxBet = 0;
         
-        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
+        FakePlayer player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "fold";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
@@ -55,7 +55,7 @@ public class FoldCommandTest {
         final int initialBet = 100;
         int maxBet = 200;
         
-        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
+        FakePlayer player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "fold";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
