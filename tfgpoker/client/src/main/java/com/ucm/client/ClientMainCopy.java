@@ -51,6 +51,7 @@ public class ClientMainCopy extends Application {
      * 		.\mvnw.cmd clean install
      * Run:
      * 		.\mvnw.cmd -pl client -Prun exec:java
+	 *  	.\mvnw.cmd -pl client -Prun javafx:run
 	 * Run auto(Siendo 'match' el nombre del archivo de partida a jugar y 'player' el del jugador a imitar):
 	 * 		.\mvnw.cmd -pl client -Prun-auto exec:java -Dmatch="" -Dplayer=""
      * Debug:
@@ -91,7 +92,9 @@ public class ClientMainCopy extends Application {
 
 	public static void iniciar(final String serverIP, final String userName){
 
-		System.out.printf("Specify the server IP (default: localhost): ");
+		_scanner = new Scanner(System.in);
+
+		System.out.printf("Specify the server IP (default: localhost):\n");
 		if (!serverIP.trim().isEmpty()) {
 			_hostname = serverIP.trim();
 		}
@@ -122,6 +125,7 @@ public class ClientMainCopy extends Application {
 		System.out.printf("Write your username: ");
 		_name = userName;
 		sendString(_name, socket);
+		System.out.printf("Name: %s\n", _name);
 
 		int opcion = getUserPetition();
 		if(opcion == 1) {
