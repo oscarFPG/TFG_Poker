@@ -8,6 +8,7 @@ target/
 *.log
 *.tmp
 *.bak
+.vscode/credentials.json
 
 # Ignorar otros archivos comunes
 .DS_Store

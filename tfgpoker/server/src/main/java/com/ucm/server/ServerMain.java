@@ -22,6 +22,7 @@ import java.util.List;
 
 // Poker Game
 import com.ucm.server.middleclasses.ClientStructGame;
+import com.ucm.server.players.ChatgptLLM;
 import com.ucm.common.*;
 import com.ucm.server.control.Controller;
 import com.ucm.server.exceptions.EvaluatorException;
@@ -70,6 +71,18 @@ public class ServerMain {
      *      .\mvnw.cmd test
      */
     public static void main(String[] args) throws IOException {
+
+
+        ChatgptLLM chatgpt = new ChatgptLLM(0, 1000);
+        String result = chatgpt.actionMakePlay(0, 0, 0);
+        System.out.printf(result);
+        
+        boolean no = false;
+        while(!no) {
+
+        }
+
+
 
         // Local mode for testing without real clients connected by sockets
         if(args.length > 0 && args[0].equalsIgnoreCase("local")){
