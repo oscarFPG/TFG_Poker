@@ -111,7 +111,7 @@ public class PlayerList {
             _current._player.receiveRole(PlayerRole.SMALL_BLIND);
             log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.SMALL_BLIND.name());
 
-            _current = getNextPlayerToPlay(_current);
+            _current = getNextPlayerActive(_current);
             _current._player.receiveRole(PlayerRole.BIG_BLIND);
             log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.BIG_BLIND.name());
         }
@@ -135,21 +135,21 @@ public class PlayerList {
             _current._player.receiveRole(currentRole);
             log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.DEALER.name());
 
-            _current = getNextPlayerToPlay(_current);
+            _current = getNextPlayerActive(_current);
             currentRole = roles.removeFirst();
             _current._player.receiveRole(currentRole);
             log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.SMALL_BLIND.name());
 
-            _current = getNextPlayerToPlay(_current);
+            _current = getNextPlayerActive(_current);
             currentRole = roles.removeFirst();
             _current._player.receiveRole(currentRole);
             log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.BIG_BLIND.name());
 
-            _current = getNextPlayerToPlay(_current);
+            _current = getNextPlayerActive(_current);
             while (_current != _first ) {
                 currentRole = roles.removeFirst();
                 _current._player.receiveRole(currentRole);
-                _current = getNextPlayerToPlay(_current);
+                _current = getNextPlayerActive(_current);
                 log.debug("Player {} receives role {}", _current._player.getPlayerName(), currentRole.name());
             }
         }
@@ -190,6 +190,7 @@ public class PlayerList {
         // 2. Next player from first if there is more than two players -> playsToMake > 1
         Node pNode = (playersRemaining == 2) ? _first : _first._next;
         pNode._player.actionSmallBlindBet(sb);
+        pNode._player.notifySmallBlindBet(sb);
         log.debug(
             "Player {} puts {}$ as SMALL_BLIND. Now it has {}$", 
             pNode._player.getPlayerName(), pNode._player.getMoneyOnBet(), pNode._player.getMoneyOffBet()
@@ -197,6 +198,7 @@ public class PlayerList {
 
         pNode = pNode._next;
         pNode._player.actionBigBlindBet(bb);
+        pNode._player.notifyBigBlindBet(bb);
         log.debug(
             "Player {} puts {}$ as BIG_BLIND. Now it has {}$", 
             pNode._player.getPlayerName(), pNode._player.getMoneyOnBet(), pNode._player.getMoneyOffBet()
@@ -486,10 +488,16 @@ public class PlayerList {
     private Node calculatePlayerOnTurn(final int numPlayers, final boolean isPreflop) {
 
         if(isPreflop) {
-            Node dealer = _first;
-            Node sb = getNextPlayerToPlay(dealer);
-            Node bb = getNextPlayerToPlay(sb);
-            return getNextPlayerToPlay(bb);
+
+            if(numPlayers == 2) {
+                return getPlayerByRole(PlayerRole.SMALL_BLIND);
+            }
+            else {
+                Node dealer = _first;
+                Node sb = getNextPlayerToPlay(dealer);
+                Node bb = getNextPlayerToPlay(sb);
+                return getNextPlayerToPlay(bb);
+            }
         }
         else {
 

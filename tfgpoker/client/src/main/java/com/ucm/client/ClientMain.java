@@ -45,7 +45,6 @@ public class ClientMain extends Application {
     private static String _hostname = "localhost";
 
     private static String _name;
-	private static int _money;
 	private static Scanner _scanner;
 
 	
@@ -124,7 +123,7 @@ public class ClientMain extends Application {
 		while(!gameStarts){ 
 			gameStarts = receiveGameStartCode(socket);
 		}
-		System.out.printf("Game starts!");
+		System.out.printf("Game starts!\n");
 
 		socket.configureBlocking(true);	// Important!!
 		return (socket != null) ? socket.socket() : null;
@@ -213,11 +212,11 @@ public class ClientMain extends Application {
 		code = buffer.getInt();
 		switch (code) {
 		case GameType.GAME_STARTS:
-			System.out.printf("Aviso GAME_STARTS recibido!\n");
+			System.out.printf("GAME_STARTS code received!\n");
 			return true;
 	
 		default:
-			System.out.printf("Aviso %d desconocido %d\n", code);
+			System.out.printf("Code %d unknown %d\n", code);
 			return false;
 		}
 	}
@@ -382,6 +381,7 @@ public class ClientMain extends Application {
 		boolean handEndsByFold = false;
 		boolean blindsOnPlay = true;
 		int sb, bb, maxBet;
+		int offBetMoney, onBetMoney;
 
 		int serverCode = SocketUtils.receiveInt(socket.getInputStream());
 		while(serverCode != GameType.ROUND_ENDS && !handEndsByFold) {
@@ -390,14 +390,14 @@ public class ClientMain extends Application {
 				int cantidadSB = SocketUtils.receiveInt(socket.getInputStream());
 				System.out.printf("Forced play as the small blind with %d chips\n", cantidadSB);
 			}
-			else if(serverCode == GameType.TURN_FORCED_BB){
+			else if(serverCode == GameType.TURN_FORCED_BB) {
 				int cantidadBB = SocketUtils.receiveInt(socket.getInputStream());
 				System.out.printf("Forced play as the big blind with %d chips\n", cantidadBB);
 			}
-			else if(serverCode == GameType.TURN_WAIT){
+			else if(serverCode == GameType.TURN_WAIT) {
 				System.out.printf("Wait for the other players!\n");
 			}
-			else if(serverCode == GameType.TURN_PLAY){
+			else if(serverCode == GameType.TURN_PLAY) {
 
 				System.out.printf("It's your turn to play!\n");
 
@@ -405,24 +405,26 @@ public class ClientMain extends Application {
 				sb = SocketUtils.receiveInt( socket.getInputStream() );
 				bb = SocketUtils.receiveInt( socket.getInputStream() );
 				maxBet = SocketUtils.receiveInt( socket.getInputStream() );
-				_money = SocketUtils.receiveInt( socket.getInputStream() );
+				offBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
+				onBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
 
-				if(blindsOnPlay){
+				if(blindsOnPlay) {
 					System.out.printf("-- Small blind bet: %d\n", sb);
 					System.out.printf("-- Big blind bet: %d\n", bb);
 					blindsOnPlay = false;
 				}
 				
 				System.out.printf("-- Max bet: %d\n", maxBet);
-				System.out.printf("-- Your money: %d\n\n", _money);
+				System.out.printf("-- Your money: %d\n", offBetMoney);
+				System.out.printf("-- Your last bet: %d\n\n", onBetMoney);
+				
 
 				boolean valid = false;
-				while(!valid){
+				while(!valid) {
 
 					String command = getUserCommand();
 					String baseCommand = command.split(" ")[0];
 
-					System.out.printf("Player command is %s\n", command);
 					valid = true;
 					if (baseCommand.equalsIgnoreCase("raise") || baseCommand.equalsIgnoreCase("r")) {
 						SocketUtils.sendString(socket.getOutputStream(), command);
@@ -440,16 +442,16 @@ public class ClientMain extends Application {
 						SocketUtils.sendString(socket.getOutputStream(), command);
 					}
 					else {
-						System.out.printf("Command %s not valid!\n", command);
+						System.out.printf("Command %s not valid! Try again\n", command);
 						valid = false;
 					}
 				}
 				
 			}
-			else if(serverCode == GameType.HAND_ENDS_BY_FOLD){
+			else if(serverCode == GameType.HAND_ENDS_BY_FOLD) {
 				handEndsByFold = true;
 			}
-			else{
+			else {
 				System.out.printf("Unknown turn code %d\n", serverCode);
 			}
 
@@ -466,6 +468,7 @@ public class ClientMain extends Application {
 
 		System.out.printf("Match starts!\n");
 		int roleCode;
+		int currentMoney;
 		String playerRole;
 		boolean endOfGame = false;
 		Card[] playerCards = new Card[2];
@@ -515,12 +518,12 @@ public class ClientMain extends Application {
 				// Showdown
 				System.out.printf("-- Showdown --\n");
 				int rankingCode = SocketUtils.receiveInt(in);
-				_money = SocketUtils.receiveInt(in);
+				currentMoney = SocketUtils.receiveInt(in);
 				if(rankingCode == GameType.PLAYER_WINS_HAND) {
-					System.out.printf("You have won!\nCurrent money is %d\n", _money);
+					System.out.printf("You have won!\nCurrent money is %d\n", currentMoney);
 				}
 				else if(rankingCode == GameType.PLAYER_LOSES_HAND) {
-					System.out.printf("You have lost!\nCurrent money is %d\n", _money);
+					System.out.printf("You have lost!\nCurrent money is %d\n", currentMoney);
 				}
 
 				// Game ends or keeps
@@ -539,12 +542,12 @@ public class ClientMain extends Application {
 
 					// Get winner/loser state
 					int rankingCode = SocketUtils.receiveInt(in);
-					_money = SocketUtils.receiveInt(in);
+					currentMoney = SocketUtils.receiveInt(in);
 					if(rankingCode == GameType.PLAYER_WINS_HAND) {
-						System.out.printf("You have won!\nCurrent money is %d\n", _money);
+						System.out.printf("You have won!\nCurrent money is %d\n", currentMoney);
 					}
 					else if(rankingCode == GameType.PLAYER_LOSES_HAND) {
-						System.out.printf("You have lost!\nCurrent money is %d\n", _money);
+						System.out.printf("You have lost!\nCurrent money is %d\n", currentMoney);
 					}
 
 					// Game ends or keeps

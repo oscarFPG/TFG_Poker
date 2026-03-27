@@ -16,6 +16,8 @@ public interface IPokerPlayer extends IPokerActions {
     public void receiveNewMoney(int money);
     public void receivePriceMoney(int amount);
 
+    public void notifySmallBlindBet(final int amount);
+    public void notifyBigBlindBet(final int amount);
     public void notifyTurnWait();
     public void notifyTurnPlay();
     public void notifyRoundEnded();

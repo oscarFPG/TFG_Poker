@@ -46,6 +46,28 @@ public class HumanPlayer extends Player {
 
 
     @Override
+    public String actionMakePlay(final int sb, final int bb, final int maxBet) {
+        
+        String commandInput = null;
+        try {
+
+            // Send round info
+            SocketUtils.sendInteger(_socket.getOutputStream(), sb);
+            SocketUtils.sendInteger(_socket.getOutputStream(), bb);
+            SocketUtils.sendInteger(_socket.getOutputStream(), maxBet);
+            SocketUtils.sendInteger(_socket.getOutputStream(), _offBetMoney);
+            SocketUtils.sendInteger(_socket.getOutputStream(), _onBetMoney);
+
+            commandInput = SocketUtils.receiveString( _socket.getInputStream() );
+        }
+        catch (IOException e) {
+            log.error("Receiving the command for {} player: {}", _name, e.getMessage());
+        }
+
+        return commandInput;
+    }
+
+    @Override
     public void receiveRole(PlayerRole r) {
         
         if (Game.DEBUG) {
@@ -115,7 +137,30 @@ public class HumanPlayer extends Player {
         _offBetMoney += money;
     }
 
-    
+
+    @Override
+    public void notifySmallBlindBet(final int amount) {
+
+        try {
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnForcedSBToCode());
+            SocketUtils.sendInteger(_socket.getOutputStream(), amount);
+        }
+        catch(IOException e) {
+            log.error("Player {} making the small blind bet: {}", _name, e.getMessage());
+        }
+    }
+
+    @Override
+    public void notifyBigBlindBet(final int amount) {
+        
+        try {
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnForcedSBToCode());
+            SocketUtils.sendInteger(_socket.getOutputStream(), amount);
+        }
+        catch(IOException e) {
+            log.error("Player {} making the small blind bet: {}", _name, e.getMessage());
+        }
+    }
 
     @Override
     public void notifyTurnWait() {
@@ -249,57 +294,6 @@ public class HumanPlayer extends Player {
         catch(IOException e) {
             log.error("Notifying HAND_ENDS_BY_FOLDS to player {}: {}", _name, e.getMessage());
         }
-    }
-
-    @Override
-    public void actionSmallBlindBet(final int sb) {
-        
-        try {
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnForcedSBToCode());
-            SocketUtils.sendInteger(_socket.getOutputStream(), sb);
-
-            decreaseOffBetMoney(sb);
-            increaseOnBetMoney(sb);
-        }
-        catch(IOException e) {
-            log.error("Player {} making the small blind bet: {}", _name, e.getMessage());
-        }
-    }
-
-    @Override
-    public void actionBigBlindBet(final int bb) {
-        
-        try {
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnForcedSBToCode());
-            SocketUtils.sendInteger(_socket.getOutputStream(), bb);
-
-            decreaseOffBetMoney(bb);
-            increaseOnBetMoney(bb);
-        }
-        catch(IOException e) {
-            log.error("Player {} making the small blind bet: {}", _name, e.getMessage());
-        }
-    }
-
-    @Override
-    public String actionMakePlay(final int sb, final int bb, final int maxBet) {
-        
-        String commandInput = null;
-        try {
-
-            // Send round info
-            SocketUtils.sendInteger(_socket.getOutputStream(), sb);
-            SocketUtils.sendInteger(_socket.getOutputStream(), bb);
-            SocketUtils.sendInteger(_socket.getOutputStream(), maxBet);
-            SocketUtils.sendInteger(_socket.getOutputStream(), _offBetMoney);
-
-            commandInput = SocketUtils.receiveString( _socket.getInputStream() );
-        }
-        catch (IOException e) {
-            log.error("Receiving the command for {} player: {}", _name, e.getMessage());
-        }
-
-        return commandInput;
     }
 
     

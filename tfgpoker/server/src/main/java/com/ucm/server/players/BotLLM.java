@@ -61,6 +61,16 @@ public class BotLLM extends Player {
     }
 
     @Override
+    public void notifySmallBlindBet(final int amount) {
+
+    }
+
+    @Override
+    public void notifyBigBlindBet(final int amount) {
+        
+    }
+
+    @Override
     public void notifyTurnWait() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'notifyTurnWait'");

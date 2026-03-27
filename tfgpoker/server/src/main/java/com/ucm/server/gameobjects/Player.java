@@ -90,8 +90,18 @@ public abstract class Player implements IPokerPlayer {
     }
 
 
-    public abstract void actionSmallBlindBet(int sb);
-    public abstract void actionBigBlindBet(int bb);
+    @Override
+    public void actionSmallBlindBet(final int sb) {   
+        decreaseOffBetMoney(sb);
+        increaseOnBetMoney(sb);
+    }
+
+    @Override
+    public void actionBigBlindBet(final int bb) {
+        decreaseOffBetMoney(bb);
+        increaseOnBetMoney(bb);
+    }
+    
     public abstract String actionMakePlay(int sb, int bb, int maxBet);
 
     public abstract void receiveRole(PlayerRole r);
@@ -100,6 +110,8 @@ public abstract class Player implements IPokerPlayer {
     public abstract void receiveNewMoney(int money);
     public abstract void receivePriceMoney(int money);
 
+    public abstract void notifySmallBlindBet(final int amount);
+    public abstract void notifyBigBlindBet(final int amount);
     public abstract void notifyTurnWait();
     public abstract void notifyTurnPlay();
     public abstract void notifyRoundEnded();

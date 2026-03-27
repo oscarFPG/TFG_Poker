@@ -20,6 +20,7 @@ public class FakePlayer implements IPokerPlayer {
     public boolean isEliminated;
     public List<String> commands;
 
+
     public FakePlayer(final int ID, int offBet, int onBet) {
         id = ID;
         offBetMoney = offBet;
@@ -36,7 +37,6 @@ public class FakePlayer implements IPokerPlayer {
     public void call(int amount) {
         
         int resto = amount - onBetMoney;
-        
         offBetMoney -= resto;
         onBetMoney += resto;
     }
@@ -52,16 +52,7 @@ public class FakePlayer implements IPokerPlayer {
 
     @Override
     public void raise(int amount) {
-        
-        if(amount > offBetMoney + onBetMoney){
-            call(amount);
-
-        }
-
-        int resto = amount - onBetMoney;
-        
-        onBetMoney += resto;
-        offBetMoney -= resto;
+        call(amount);
     }
 
     @Override
@@ -72,7 +63,7 @@ public class FakePlayer implements IPokerPlayer {
 
     @Override
     public String getPlayerName() {
-        return "FakePlayer";
+        return String.format("FakePlayer %d", id);
     }
 
     @Override
@@ -117,7 +108,9 @@ public class FakePlayer implements IPokerPlayer {
     public void receiveTableCard(Card c) {}
 
     @Override
-    public void receiveNewMoney(int money) {}
+    public void receiveNewMoney(int money) {
+        offBetMoney = money;
+    }
 
     @Override
     public void receivePriceMoney(int amount) {
@@ -136,12 +129,21 @@ public class FakePlayer implements IPokerPlayer {
     }
 
     @Override
-    public void unfoldPlayer() {}
+    public void unfoldPlayer() {
+        isFolded = false;
+    }
 
     @Override
     public void setIsWinner(boolean state) {
         isWinner = state;
     }
+
+
+    @Override
+    public void notifySmallBlindBet(final int amount) {}
+
+    @Override
+    public void notifyBigBlindBet(final int amount) {}
 
     @Override
     public void notifyTurnWait() {}

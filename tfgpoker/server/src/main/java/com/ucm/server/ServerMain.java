@@ -71,20 +71,6 @@ public class ServerMain {
      */
     public static void main(String[] args) throws IOException {
 
-        boolean LLM = false;
-        if(LLM) {
-
-            GoogleAiGeminiChatModel model = GoogleAiGeminiChatModel
-                                                .builder()
-                                                .apiKey("AIzaSyCb05FfrXkYakJIhJi4neTabhonMxZ8o8w")
-                                                .modelName("gemini-2.5-flash-lite")
-                                                .build();
-
-            String answer = model.chat("Respondeme en menos de 100 palabras porque el TFG se nos está complicando tanto");
-            System.out.printf("Respuesta de la IA: %s\n", answer);
-            return;
-        }
-
         // Local mode for testing without real clients connected by sockets
         if(args.length > 0 && args[0].equalsIgnoreCase("local")){
             runGameInModeLocal(args);
