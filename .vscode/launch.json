@@ -35,6 +35,12 @@
             "hostName": "localhost",
             "port": 8000,
             "projectName": "client"
+        },
+        {
+            "type": "java",
+            "name": "Run JavaFX",
+            "preLaunchTask": "Run JavaFX",
+            "request": "launch"
         }
     ]
 }

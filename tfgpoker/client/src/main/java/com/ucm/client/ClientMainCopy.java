@@ -45,70 +45,29 @@ public class ClientMainCopy extends Application {
     private static String _name;
 	private static Scanner _scanner;
 
-	
-    /*
-     * Desde la ruta TFGPOKER/tfgpoker
-     * 		.\mvnw.cmd clean install
-     * Run:
-     * 		.\mvnw.cmd -pl client -Prun exec:java
-	 *  	.\mvnw.cmd -pl client -Prun javafx:run
-	 * Run auto(Siendo 'match' el nombre del archivo de partida a jugar y 'player' el del jugador a imitar):
-	 * 		.\mvnw.cmd -pl client -Prun-auto exec:java -Dmatch="" -Dplayer=""
-     * Debug:
-     * 		.\mvnwDebug.cmd -pl client -Pdebug exec:java
-     * Run the Tests
-     * 		.\mvnw.cmd test
-     */
-    public static void main(String[] args) throws IOException {
-
-		if(args.length == 2) {	// Ejecucion automatizada con archivos de texto para simular el input de multiples jugadores
-			String playerFilePath = "client/tests/" + args[0] + "/" + args[1] + ".txt";
-			System.out.printf("Running in auto mode with player file: %s\n", playerFilePath);
-			_scanner = new Scanner( new File(playerFilePath) );
-			AUTOMATED_MODE = true;
-		}
-		else {
-			_scanner = new Scanner(System.in);
-		}
-
-		/*System.out.printf("Specify the server IP (default: localhost): ");
-	    String serverIP = _scanner.nextLine();
-		if (!serverIP.trim().isEmpty()) {
-			_hostname = serverIP.trim();
-		}
-
-		try {
-			Socket socket = preGame(_hostname);
-			game(socket);
-
-			socket.close();
-			_scanner.close();
-		}
-		catch(IOException e) {
-			System.out.printf("%s\n", e.getMessage());
-		}*/
-    }
-
 
 	public static void iniciar(final String serverIP, final String userName){
 
-		_scanner = new Scanner(System.in);
+		Thread clientThread = new Thread(() -> {
+			_scanner = new Scanner(System.in);
 
-		System.out.printf("Specify the server IP (default: localhost):\n");
-		if (!serverIP.trim().isEmpty()) {
-			_hostname = serverIP.trim();
-		}
+			System.out.printf("Specify the server IP (default: localhost):\n");
+			if (!serverIP.trim().isEmpty()) {
+				_hostname = serverIP.trim();
+			}
 
-		try {
-			Socket socket = preGame(_hostname, userName);
-			game(socket);
+			try {
+				Socket socket = preGame(_hostname, userName);
+				game(socket);
 
-			socket.close();
-			_scanner.close();
-		}
-		catch(IOException e) {
-			System.out.printf("%s\n", e.getMessage());
-		}
+				socket.close();
+				_scanner.close();
+			}
+			catch(IOException e) {
+				System.out.printf("%s\n", e.getMessage());
+			}
+		});
+		clientThread.start();
 
 	}
 

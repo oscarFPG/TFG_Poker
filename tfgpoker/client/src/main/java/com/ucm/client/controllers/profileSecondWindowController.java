@@ -2,8 +2,8 @@ package com.ucm.client.controllers;
 
 import com.ucm.client.ClientMain;
 import com.ucm.client.ClientMainCopy;
-import com.ucm.client.ClientService;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -11,31 +11,43 @@ import javafx.scene.control.TextField;
 public class profileSecondWindowController {
 
     
-      ClientMainCopy clientMain;
-    
-         @FXML
-        private TextField ipLabel;
+    ClientMainCopy clientMain;
 
-         @FXML
-        private TextField nameLabel;
+    @FXML
+    private TextField ipLabel;
 
-        @FXML
-        private Button btnSave;
+    @FXML
+    private TextField nameLabel;
 
-        @FXML
-        public void initialize() {
+    @FXML
+    private Button btnSave;
 
-            btnSave.disableProperty().bind(
-                ipLabel.textProperty().isEmpty()
-                    .or(nameLabel.textProperty().isEmpty())
-            );
-}
+    @FXML
+    public void initialize() {
 
-        @FXML
-        private void conectar() {
+        btnSave.setDisable(true);
+        nameLabel.textProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue == null || newValue.trim().isEmpty()) {
+                btnSave.setDisable(true);
+            } 
+            else {
+                btnSave.setDisable(false);
+            }
+        });
+    // btnSave.disableProperty()
+    //     .bind(
+    //         nameLabel.textProperty().isEmpty()
+    //     );
+    }
 
-            clientMain.iniciar(ipLabel.getText(),nameLabel.getText() );
+    @FXML
+    private void conectar() {
 
-            
-        }
+        Platform.runLater(() -> {
+            clientMain.iniciar(ipLabel.getText(), nameLabel.getText() );
+        });
+        
+
+        
+    }
 }

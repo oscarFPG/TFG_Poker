@@ -10,13 +10,13 @@
             "label": "Client run",
             "type": "shell",
             "command": "cd .\\tfgpoker; .\\mvnw.cmd -pl client -Prun exec:java"
-        }
-        /*
+        },
+        
         {
             "label": "Run JavaFX",
             "type": "shell",
-            "command": "cd tfgpoker; .\\mvnw.cmd clean javafx:run"
+            "command": "cd tfgpoker; .\\mvnw.cmd -pl client -Prun javafx:run"
         }
-        */
+        
     ]
 }
