@@ -469,18 +469,19 @@ public class ClientMain extends Application {
 		System.out.printf("Match starts!\n");
 		int roleCode;
 		int currentMoney;
-		String playerRole;
-		boolean endOfGame = false;
+		int rankingCode;
+		int gameStatusCode;
 		Card[] playerCards = new Card[2];
 		Card[] tableCardValues = new Card[5];
-
 		InputStream in = socket.getInputStream();
+
+		boolean endOfGame = false;
 		while(!endOfGame) {
 
 			try {
 
 				roleCode = SocketUtils.receiveInt(in);
-				playerRole = translatePlayerRoleCode(roleCode);
+				String playerRole = translatePlayerRoleCode(roleCode);
 				System.out.printf("Player with rol %s\n", playerRole);
 
 				playerCards[0] = receiveCard(in);
@@ -517,7 +518,7 @@ public class ClientMain extends Application {
 
 				// Showdown
 				System.out.printf("-- Showdown --\n");
-				int rankingCode = SocketUtils.receiveInt(in);
+				rankingCode = SocketUtils.receiveInt(in);
 				currentMoney = SocketUtils.receiveInt(in);
 				if(rankingCode == GameType.PLAYER_WINS_HAND) {
 					System.out.printf("You have won!\nCurrent money is %d\n", currentMoney);
@@ -527,7 +528,7 @@ public class ClientMain extends Application {
 				}
 
 				// Game ends or keeps
-				int gameStatusCode = SocketUtils.receiveInt(in);
+				gameStatusCode = SocketUtils.receiveInt(in);
 				endOfGame = (gameStatusCode == GameType.GAME_ENDS);
 				if(gameStatusCode == GameType.GAME_ENDS)
 					System.out.printf("Match ended!\n\n");
@@ -541,7 +542,7 @@ public class ClientMain extends Application {
 				try {
 
 					// Get winner/loser state
-					int rankingCode = SocketUtils.receiveInt(in);
+					rankingCode = SocketUtils.receiveInt(in);
 					currentMoney = SocketUtils.receiveInt(in);
 					if(rankingCode == GameType.PLAYER_WINS_HAND) {
 						System.out.printf("You have won!\nCurrent money is %d\n", currentMoney);
@@ -551,9 +552,12 @@ public class ClientMain extends Application {
 					}
 
 					// Game ends or keeps
-					int gameStatusCode = SocketUtils.receiveInt(in);
-					System.out.printf("Game status code received is %d\n", gameStatusCode);
+					gameStatusCode = SocketUtils.receiveInt(in);
 					endOfGame = (gameStatusCode == GameType.GAME_ENDS);
+					if(gameStatusCode == GameType.GAME_ENDS)
+						System.out.printf("Match ended!\n\n");
+					else if(gameStatusCode == GameType.GAME_KEEPS)
+						System.out.printf("Match keeps!\n\n");
 
 				}
 				catch(IOException ex) {

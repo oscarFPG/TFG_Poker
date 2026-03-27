@@ -78,34 +78,26 @@ public class ServerMain {
         }
 
 
-        log.debug("Running in server mode...");
-        HttpClient client = null;
-        HttpRequest request = null;
-        HttpResponse<String> response = null;
-        String serverIP = null;
         try {
-            client = HttpClient.newHttpClient();
-            request = HttpRequest.newBuilder()
-                    .uri(URI.create("https://api.ipify.org"))
-                    .GET()
-                    .build();
 
-            response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        }
-        catch (Exception e) {
-            log.fatal("Trying to get the serve's public IP: %s", e.getMessage());
-        }
+            log.debug("Running in server mode...");
+            String serverIP = getServerPublicIP();
+            List<ClientStructPreGame> joinedClients = preGame();
+            List<ClientStructGame> players = new ArrayList<>();
+            for(ClientStructPreGame cs : joinedClients){
+                cs.clientSocket.configureBlocking(true);
+                players.add( new ClientStructGame(cs.clientName, cs.clientSocket.socket()) );
+            }
+            game(players);
 
-        serverIP = response.body();
-        log.debug("Server public IP obtained: {}", serverIP);
-        List<ClientStructPreGame> joinedClients = preGame();
-        List<ClientStructGame> players = new ArrayList<>();
-        for(ClientStructPreGame cs : joinedClients){
-            cs.clientSocket.configureBlocking(true);
-            players.add( new ClientStructGame(cs.clientName, cs.clientSocket.socket()) );
-        }
-        game(players);
 
+        }
+        catch(IOException e) {
+            log.fatal("{}", e.getMessage());
+        }
+        catch(InterruptedException e) {
+            log.fatal("{}", e.getMessage());
+        }
     }
 
     private static void runGameInModeLocal(String[] args) {
@@ -135,6 +127,22 @@ public class ServerMain {
         }
     }
 
+
+    private static String getServerPublicIP() throws IOException, InterruptedException {
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest
+                                .newBuilder()
+                                .uri(URI.create("https://api.ipify.org"))
+                                .GET()
+                                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        String serverIP = response.body();
+        log.debug("Server public IP obtained: {}", serverIP);
+
+        return serverIP;
+    } 
 
     private static List<ClientStructPreGame> preGame() {
 

@@ -109,10 +109,12 @@ public class PlayerList {
 
         if (n == 2) {
             _current._player.receiveRole(PlayerRole.SMALL_BLIND);
+            _current._player.notifyPlayerRole(PlayerRole.SMALL_BLIND);
             log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.SMALL_BLIND.name());
 
             _current = getNextPlayerActive(_current);
             _current._player.receiveRole(PlayerRole.BIG_BLIND);
+            _current._player.notifyPlayerRole(PlayerRole.BIG_BLIND);
             log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.BIG_BLIND.name());
         }
         else {
@@ -133,22 +135,26 @@ public class PlayerList {
 
             PlayerRole currentRole = roles.removeFirst();
             _current._player.receiveRole(currentRole);
+            _current._player.notifyPlayerRole(currentRole);
             log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.DEALER.name());
 
             _current = getNextPlayerActive(_current);
             currentRole = roles.removeFirst();
             _current._player.receiveRole(currentRole);
+            _current._player.notifyPlayerRole(currentRole);
             log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.SMALL_BLIND.name());
 
             _current = getNextPlayerActive(_current);
             currentRole = roles.removeFirst();
             _current._player.receiveRole(currentRole);
+            _current._player.notifyPlayerRole(currentRole);
             log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.BIG_BLIND.name());
 
             _current = getNextPlayerActive(_current);
             while (_current != _first ) {
                 currentRole = roles.removeFirst();
                 _current._player.receiveRole(currentRole);
+                _current._player.notifyPlayerRole(currentRole);
                 _current = getNextPlayerActive(_current);
                 log.debug("Player {} receives role {}", _current._player.getPlayerName(), currentRole.name());
             }
@@ -162,7 +168,9 @@ public class PlayerList {
 
         if (!_first._player.isEliminated() && _first._player.getCardsCounter() == 0) {
             _first._player.receiveCard(c1);
+            _first._player.notifyPlayerCard(c1);
             _first._player.receiveCard(c2);
+            _first._player.notifyPlayerCard(c2);
 
             log.debug("Player {} receives the cards: {} {}", _first._player.getPlayerName(), c1.toString(), c2.toString());
             return;
@@ -173,7 +181,9 @@ public class PlayerList {
 
             if (!index._player.isEliminated() && index._player.getCardsCounter() == 0) {
                 index._player.receiveCard(c1);
+                index._player.notifyPlayerCard(c1);
                 index._player.receiveCard(c2);
+                index._player.notifyPlayerCard(c2);
 
                 log.debug("Player {} receives the cards: {} {}", index._player.getPlayerName(), c1.toString(), c2.toString());
                 break;
@@ -226,7 +236,6 @@ public class PlayerList {
             return;
         }
 
-
         if(isPreflop)
             smallBlindAndBigBlindPlays(sb, bb, playersRemaining);
         notifyWaitExceptTo(playerOnTurn);
@@ -246,7 +255,7 @@ public class PlayerList {
 
 
             Command command = askCommandToPlayer(playerOnTurn._player, sb, bb, maxBet);
-            CommandResult result = command.execute(sb, bb, maxBet);            
+            CommandResult result = command.execute(sb, bb, maxBet);
             if(result.folds()) {
                 --playersRemaining; 
                 if (playersRemaining == 1) {
@@ -362,12 +371,12 @@ public class PlayerList {
     public void sendTableCardToAllPlayers(final Card card) {
 
         if(!_first._player.isEliminated())
-            _first._player.receiveTableCard(card);
+            _first._player.notifyTableCard(card);
 
         Node i = _first._next;
         while (i != _first){
             if(!i._player.isEliminated())
-                i._player.receiveTableCard(card);
+                i._player.notifyTableCard(card);
             i = i._next;
         }
     }
@@ -395,7 +404,7 @@ public class PlayerList {
         else
             i._player.notifyHandLoser();
 
-        i._player.receiveNewMoney( i._player.getMoneyOffBet() );
+        i._player.notifyMoneyAmount( i._player.getMoneyOffBet() );
         i = i._next;
         
         while(i != _first) {
@@ -405,7 +414,7 @@ public class PlayerList {
             else
                 i._player.notifyHandLoser();
 
-            i._player.receiveNewMoney( i._player.getMoneyOffBet() );
+            i._player.notifyMoneyAmount( i._player.getMoneyOffBet() );
             i = i._next;
         }
 

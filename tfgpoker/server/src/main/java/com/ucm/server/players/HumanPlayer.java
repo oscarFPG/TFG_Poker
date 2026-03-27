@@ -46,7 +46,7 @@ public class HumanPlayer extends Player {
 
 
     @Override
-    public String actionMakePlay(final int sb, final int bb, final int maxBet) {
+    public final String actionMakePlay(final int sb, final int bb, final int maxBet) {
         
         String commandInput = null;
         try {
@@ -67,16 +67,23 @@ public class HumanPlayer extends Player {
         return commandInput;
     }
 
-    @Override
-    public void receiveRole(PlayerRole r) {
-        
-        if (Game.DEBUG) {
-            return;
-        }
 
+    @Override
+    public void notifyMoneyAmount(final int amount) {
+
+       try {
+            SocketUtils.sendInteger(_socket.getOutputStream(), amount);
+        }
+        catch (IOException e) {
+            log.error("Trying to send the money value to player {}: {}", _name, e.getMessage());
+        }
+    }
+
+    @Override
+    public void notifyPlayerRole(final PlayerRole role) {
+        
         try {
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerRoleToCode(r));
-            _role = r;
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerRoleToCode(role));
         }
         catch (IOException e) {
             log.error("Receiving the role for {} player: {}", _name, e.getMessage());
@@ -84,16 +91,11 @@ public class HumanPlayer extends Player {
     }
 
     @Override
-    public void receiveCard(Card c) {
-
-        if (_numCards == 2)
-            return ;
-
-
+    public void notifyPlayerCard(final Card c) {
+        
         try {
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.cardValueToCode(c));
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.cardSuitToCode(c));
-            _cards[_numCards++] = c;
         }
         catch (IOException e) {
             log.error("Giving the card {} to player {}: {}", c.toString(), _name, e.getMessage());
@@ -101,12 +103,8 @@ public class HumanPlayer extends Player {
     }
 
     @Override
-    public void receiveTableCard(Card c) {
+    public void notifyTableCard(final Card c) {
         
-        if (Game.DEBUG) {
-            return;
-        }
-
         try {
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.cardValueToCode(c));
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.cardSuitToCode(c));
@@ -115,28 +113,6 @@ public class HumanPlayer extends Player {
             log.error("Trying to send a table card to {}: {}", _name,  e.getMessage());
         }
     }
-
-    @Override
-    public void receiveNewMoney(int money) {
-
-       try {
-            SocketUtils.sendInteger(_socket.getOutputStream(), money);
-        }
-        catch (IOException e) {
-            log.error("Trying to force a move on the player {}: {}", _name, e.getMessage());
-        }
-    }
-
-    /**
-     * The player receives money
-     * 
-     * @param money received by the player
-     */
-    @Override
-    public void receivePriceMoney(int money) {
-        _offBetMoney += money;
-    }
-
 
     @Override
     public void notifySmallBlindBet(final int amount) {
@@ -165,10 +141,6 @@ public class HumanPlayer extends Player {
     @Override
     public void notifyTurnWait() {
 
-        if (Game.DEBUG) {
-            return;
-        }
-
         try {
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnWaitToCode());
         }
@@ -179,10 +151,6 @@ public class HumanPlayer extends Player {
 
     @Override
     public void notifyTurnPlay() {
-
-        if (Game.DEBUG) {
-            return ;
-        }
 
         try {
 
@@ -195,11 +163,7 @@ public class HumanPlayer extends Player {
 
     @Override
     public void notifyRoundEnded() {
-        
-        if (Game.DEBUG) {
-            return;
-        }
-
+ 
         try {
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.gameRoundEnded());
         }
@@ -244,10 +208,10 @@ public class HumanPlayer extends Player {
     @Override
     public void notifyHandWinner() {
 
-        try{
+        try {
             SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerWinsHand());
         }
-        catch(IOException e){
+        catch(IOException e) {
             log.error("Notifying HAND_WINNER to player {}: {}", _name, e.getMessage());
         }
     }

@@ -41,7 +41,6 @@ public class AllInCommand extends Command {
     public CommandResult execute(int sb, int bb, int maxBet) {
 
         _player.allIn();
-        _player.setAllIn(true);
 
         int playerBet = _player.getMoneyOnBet();
         return CommandResult.continuePlaying(playerBet, playerBet > maxBet);

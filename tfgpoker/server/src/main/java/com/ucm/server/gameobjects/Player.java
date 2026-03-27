@@ -90,25 +90,7 @@ public abstract class Player implements IPokerPlayer {
     }
 
 
-    @Override
-    public void actionSmallBlindBet(final int sb) {   
-        decreaseOffBetMoney(sb);
-        increaseOnBetMoney(sb);
-    }
-
-    @Override
-    public void actionBigBlindBet(final int bb) {
-        decreaseOffBetMoney(bb);
-        increaseOnBetMoney(bb);
-    }
-    
     public abstract String actionMakePlay(int sb, int bb, int maxBet);
-
-    public abstract void receiveRole(PlayerRole r);
-    public abstract void receiveCard(Card c);
-    public abstract void receiveTableCard(Card c);
-    public abstract void receiveNewMoney(int money);
-    public abstract void receivePriceMoney(int money);
 
     public abstract void notifySmallBlindBet(final int amount);
     public abstract void notifyBigBlindBet(final int amount);
@@ -125,9 +107,84 @@ public abstract class Player implements IPokerPlayer {
     public abstract void notifyHandEndsByFolds();
 
 
+    /**
+     * Decrements the {@link #_money} variable by a certain amount.
+     * This avoids negative values
+     * 
+     * @param bet quantity to subtract
+     */
+    protected final void decreaseOffBetMoney(int bet) {
+        _offBetMoney = Math.clamp(_offBetMoney - bet, 0, _offBetMoney);
+    }
+
+    /**
+     * Adds to the {@link #_pocketMoney} variable by a certain amount.
+     * 
+     * @param bet quantity to add
+     */
+    protected final void increaseOnBetMoney(int bet) {
+        _onBetMoney += bet;
+    }
+
+    @Override
+    public final void actionSmallBlindBet(final int sb) {   
+        decreaseOffBetMoney(sb);
+        increaseOnBetMoney(sb);
+    }
+
+    @Override
+    public final void actionBigBlindBet(final int bb) {
+        decreaseOffBetMoney(bb);
+        increaseOnBetMoney(bb);
+    }
+    
+    @Override
+    public final void receiveRole(PlayerRole r) {
+        _role = r;
+    }
+
+    @Override
+    public final void receiveCard(Card c) {
+
+        if(_numCards == 2)
+            return;
+
+        _cards[_numCards++] = c;
+    }
+    
+    @Override
+    public final int placeOnBetMoney() {
+
+        int money = _onBetMoney;
+        _onBetMoney = 0;
+        return money;
+    }
+
+    /**
+     * Eliminates the hand cards of the player and set the {@link #_numCards} value
+     * to zero.
+     */
+    @Override
+    public final void retrieveCards() {
+        
+        _cards[0] = null;
+        _cards[1] = null;
+        _numCards = 0;
+    }
+    
+    /**
+     * The player receives money
+     * 
+     * @param money received by the player
+     */
+    @Override
+    public final void receivePriceMoney(int money) {
+        _offBetMoney += money;
+    }
+
+
     @Override
     public final void call(int amount) {
-
         int resto = amount - _onBetMoney;
         increaseOnBetMoney(resto);
         decreaseOffBetMoney(resto);
@@ -150,49 +207,9 @@ public abstract class Player implements IPokerPlayer {
     
     @Override
     public final void allIn() {
-
         increaseOnBetMoney(_offBetMoney);
         _offBetMoney = 0;
-    }
-
-
-    @Override
-    public final int placeOnBetMoney() {
-
-        int money = _onBetMoney;
-        _onBetMoney = 0;
-        return money;
-    }
-
-    /**
-     * Eliminates the hand cards of the player and set the {@link #_numCards} value
-     * to zero.
-     */
-    @Override
-    public final void retrieveCards() {
-        
-        _cards[0] = null;
-        _cards[1] = null;
-        _numCards = 0;
-    }
-    
-    /**
-     * Decrements the {@link #_money} variable by a certain amount.
-     * This avoids negative values
-     * 
-     * @param bet quantity to subtract
-     */
-    protected final void decreaseOffBetMoney(int bet) {
-        _offBetMoney = Math.clamp(_offBetMoney - bet, 0, _offBetMoney);
-    }
-
-    /**
-     * Adds to the {@link #_pocketMoney} variable by a certain amount.
-     * 
-     * @param bet quantity to add
-     */
-    protected final void increaseOnBetMoney(int bet) {
-        _onBetMoney += bet;
+        _isAllIn = true;
     }
 
 
