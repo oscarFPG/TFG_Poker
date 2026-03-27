@@ -33,46 +33,41 @@ public class FakePlayer implements IPokerPlayer {
 
 
     @Override
-    public boolean call(int amount) {
+    public void call(int amount) {
         
         int resto = amount - onBetMoney;
         
         offBetMoney -= resto;
         onBetMoney += resto;
-        return true;
     }
 
     @Override
-    public boolean check() {
-        return true;
+    public void check() {
     }
 
     @Override
-    public boolean fold() {
+    public void fold() {
         isFolded = true;
-        return true;
     }
 
     @Override
-    public boolean raise(int amount) {
+    public void raise(int amount) {
         
         if(amount > offBetMoney + onBetMoney){
             call(amount);
-            return true;
+
         }
 
         int resto = amount - onBetMoney;
         
         onBetMoney += resto;
         offBetMoney -= resto;
-        return true;
     }
 
     @Override
-    public boolean allIn() {
+    public void allIn() {
         onBetMoney += offBetMoney;
         offBetMoney = 0;
-        return true;
     }
 
     @Override
@@ -139,9 +134,6 @@ public class FakePlayer implements IPokerPlayer {
         onBetMoney = 0;
         return money;
     }
-
-    @Override
-    public void foldPlayer() {}
 
     @Override
     public void unfoldPlayer() {}

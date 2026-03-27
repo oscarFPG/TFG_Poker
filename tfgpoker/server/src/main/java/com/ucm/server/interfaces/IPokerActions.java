@@ -1,36 +1,29 @@
 package com.ucm.server.interfaces;
 
-import com.ucm.server.gameobjects.Card;
 import com.ucm.server.gameobjects.PlayerRole;
+
 
 public interface IPokerActions {
     
-    public String getPlayerName();
+    public void call(final int amount);
+    public void check();
+    public void fold();
+    public void raise(final int amount);
+    public void allIn();
+
+    public int placeOnBetMoney();
+    public void unfoldPlayer();
+    public void setIsWinner(boolean state);
+    public void setIsEliminated(boolean state);
+    public void setAllIn(boolean state);
+
     public int getMoneyOnBet();
     public int getMoneyOffBet();
-    public int getCardsCounter();
-    public Card[] getPlayerCards();
 
     public boolean isFolded();
     public boolean isWinner();
     public boolean isAllIn();
     public boolean isEliminated();
     public PlayerRole getRole();
-    
-    /**
-     * Retrieve the money that the palyer has bet and sets it to zero.
-     * 
-     * @return the money retrieved
-     */
-    public int placeOnBetMoney();
-    public void foldPlayer();
-    public void unfoldPlayer();
-    public void setAllIn(boolean state);
-    
-    public boolean call(final int amount);
-    public boolean check();
-    public boolean fold();
-    public boolean raise(final int amount);
-    public boolean allIn();
 
 }
