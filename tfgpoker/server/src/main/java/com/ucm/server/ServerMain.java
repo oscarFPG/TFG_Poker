@@ -5,7 +5,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.SocketException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -20,11 +19,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+
+// Poker Game
 import com.ucm.server.middleclasses.ClientStructGame;
 import com.ucm.common.*;
 import com.ucm.server.control.Controller;
 import com.ucm.server.exceptions.EvaluatorException;
 import com.ucm.server.logic.Game;
+
+// LLMs
+import dev.langchain4j.model.googleai.*;
 
 
 public class ServerMain {
@@ -49,6 +53,8 @@ public class ServerMain {
     private static SocketChannel _host;
     private static boolean _hostWantsToStart;
     
+    private static List<String> _botList;
+
     /*
      * Desde la ruta TFGPOKER/tfgpoker
      *      .\mvnw.cmd clean install
@@ -65,38 +71,28 @@ public class ServerMain {
      */
     public static void main(String[] args) throws IOException {
 
-        // Local mode for testing without real clients connected by sockets
-        if(args.length > 0 && args[0].equalsIgnoreCase("local")){
-            
-            int n_players = 2;
-            if(args.length > 1){
-                try{
-                    n_players = Integer.parseInt(args[1]);
-                }
-                catch(NumberFormatException e){
-                    log.error("Invalid number of players!Using default value: {}", n_players);
-                }
-            }
+        boolean LLM = false;
+        if(LLM) {
 
-            log.debug("Running in local mode...");
-            log.debug("Number of players: {}", n_players);
+            GoogleAiGeminiChatModel model = GoogleAiGeminiChatModel
+                                                .builder()
+                                                .apiKey("AIzaSyCb05FfrXkYakJIhJi4neTabhonMxZ8o8w")
+                                                .modelName("gemini-2.5-flash-lite")
+                                                .build();
 
-            try{
-                Game game = new Game();
-                Controller controller = new Controller(game, n_players);
-                controller.run();
-
-                log.debug("Server finished!");
-            }
-            catch(EvaluatorException e){
-                log.error("Initializing the game: {}", e.getMessage());
-            }
-            
+            String answer = model.chat("Respondeme en menos de 100 palabras porque el TFG se nos está complicando tanto");
+            System.out.printf("Respuesta de la IA: %s\n", answer);
             return;
         }
 
-        log.debug("Running in server mode...");
+        // Local mode for testing without real clients connected by sockets
+        if(args.length > 0 && args[0].equalsIgnoreCase("local")){
+            runGameInModeLocal(args);
+            return;
+        }
 
+
+        log.debug("Running in server mode...");
         HttpClient client = null;
         HttpRequest request = null;
         HttpResponse<String> response = null;
@@ -111,7 +107,7 @@ public class ServerMain {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         }
         catch (Exception e) {
-            log.fatal("Trying to get the serve's public IP");
+            log.fatal("Trying to get the serve's public IP: %s", e.getMessage());
         }
 
         serverIP = response.body();
@@ -126,10 +122,40 @@ public class ServerMain {
 
     }
 
-    private static List<ClientStructPreGame> preGame(){
+    private static void runGameInModeLocal(String[] args) {
+
+        int n_players = 2;
+        if(args.length > 1){
+            try{
+                n_players = Integer.parseInt(args[1]);
+            }
+            catch(NumberFormatException e){
+                log.error("Invalid number of players!Using default value: {}", n_players);
+            }
+        }
+
+        log.debug("Running in local mode...");
+        log.debug("Number of players: {}", n_players);
+
+        try{
+            Game game = new Game();
+            Controller controller = new Controller(game, n_players);
+            controller.run();
+
+            log.debug("Server finished!");
+        }
+        catch(EvaluatorException e){
+            log.error("Initializing the game: {}", e.getMessage());
+        }
+    }
+
+
+    private static List<ClientStructPreGame> preGame() {
 
         List<ClientStructPreGame> roomList = new ArrayList<>();     // Player list that enter the game
         List<ClientStructPreGame> clientList = new ArrayList<>();   // Client list that tries to play
+        _botList = new ArrayList<>();
+
         ServerSocketChannel serverSocket = null;
         Selector selector = null;
         try {
@@ -168,7 +194,7 @@ public class ServerMain {
             }
             log.debug("Host empieza la partida!");
 
-            // Cancel all clients keys -> Important!
+            // Cancel all clients left keys -> Important!
             for (SelectionKey key : selector.keys()) {
                 key.cancel();
             }
@@ -178,16 +204,16 @@ public class ServerMain {
             ByteBuffer broadcastBuffer = ByteBuffer.allocate(Integer.BYTES);
             broadcastBuffer.putInt(GameType.GAME_STARTS);
             for(ClientStructPreGame cs : roomList){
-                try{
+                try {
                     broadcastBuffer.rewind();
                     cs.clientSocket.write(broadcastBuffer);
                 }
-                catch(IOException e){
+                catch(IOException e) {
                     log.error("Sending GAME_STARTS flag: {}", e.getMessage());
-                    try{
+                    try {
                         cs.clientSocket.close();
                     }
-                    catch(IOException exception){
+                    catch(IOException exception) {
                         log.error("Closing socket: {}", e.getMessage());
                     }
                 }
@@ -195,7 +221,7 @@ public class ServerMain {
 
             //  Eliminate all not in-game players to avoid infinite waiting
             for(ClientStructPreGame cs : clientList){
-                try{
+                try {
                     cs.key.cancel();
                     cs.clientSocket.close();
                 }
@@ -221,7 +247,7 @@ public class ServerMain {
         return roomList;
     }
 
-    private static void game(List<ClientStructGame> clients){
+    private static void game(List<ClientStructGame> clients) {
 
         try{
             Game game = new Game();
@@ -233,6 +259,7 @@ public class ServerMain {
             return;
         }
     }
+
 
     private static void handleAccept(SelectionKey key, Selector selector) throws IOException {
 
@@ -251,7 +278,7 @@ public class ServerMain {
         int bytesRead;
         byte tipo;
 
-        try{
+        try {
 
             bytesRead = socket.read(buffer);
             if (bytesRead == -1) {
@@ -263,7 +290,7 @@ public class ServerMain {
 
             buffer.flip();
             tipo = buffer.get();
-            log.debug("Tipo de petición {}", tipo);
+            log.debug("Tipo de peticion {}", tipo);
 
             switch (tipo) {
             case GameType.DATA_TYPE_NAME:
@@ -313,10 +340,10 @@ public class ServerMain {
 
     }
 
+    // Game options
     private static void handleClientPetition(SelectionKey key, final int petition, List<ClientStructPreGame> clientList, List<ClientStructPreGame> roomList) {
 
         SocketChannel client = (SocketChannel) key.channel();
-		
         switch (petition) {
         case GameType.CREATE_PETITION:
 
@@ -383,7 +410,9 @@ public class ServerMain {
                 log.debug("Only the host can start the game!");
                 try{
                     ClientStructPreGame cs = roomList.stream()
-                        .filter(c -> c.clientSocket == client).findFirst().orElse(null);
+                        .filter(c -> c.clientSocket == client)
+                        .findFirst()
+                        .orElse(null);
 
                     clientList.remove(cs);
                     roomList.remove(cs);
@@ -391,20 +420,47 @@ public class ServerMain {
                     client.close();
                 }
                 catch (IOException ignored){}
+
+                return;
             }
 
             if(roomList.size() >= 2){
                 log.debug("Host starts the game succesfully with {} players!", roomList.size());
                 _hostWantsToStart = true;
             }
-            else{
+            else {
                 log.debug("Cannot start the game with less than 2 players!");
-                // TODO: Aqui deberia enviar codigo para que el cliente se mantenga esperando y enviandonos el codigo hasta que haya al menos 2 jugadores
-                // key.interestOps( key.interestOps() | SelectionKey.OP_WRITE );
+                // TODO : Avisar al cliente de esto
             }
             
             break;
 
+        case GameType.ADD_BOT_PETITION:
+
+            if(client != _host){
+
+                log.debug("Only the host can add bots!");
+                try {
+                    ClientStructPreGame cs = roomList.stream()
+                        .filter(c -> c.clientSocket == client)
+                        .findFirst()
+                        .orElse(null);
+
+                    clientList.remove(cs);
+                    roomList.remove(cs);
+                    key.cancel();
+                    client.close();
+                }
+                catch (IOException ignored){}
+
+                return;
+            }
+
+            log.debug("Host wants to add a bot");
+
+
+            break;
+            
         default:
             log.error("Unknown petition {}", petition);
             break;
