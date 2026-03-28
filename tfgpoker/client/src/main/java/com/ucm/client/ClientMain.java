@@ -150,9 +150,8 @@ public class ClientMain extends Application {
 				sendPetition(GameType.HOST_START_GAME_PETITION, socket);
 				hostWantsToStart = true;
 			}
-			else if(command.equalsIgnoreCase("bot")) {	// TODO
-				List<String> botList = receiveBotList(socket);
-				configureBots(socket, botList);
+			else if(command.equalsIgnoreCase("bot")) {
+				configureBots(socket);
 			}
 			else {
 				System.out.printf("Command \'%s\' invalid!\n", command);
@@ -161,18 +160,7 @@ public class ClientMain extends Application {
 		}
 	}
 
-	// TODO
-	private static List<String> receiveBotList(SocketChannel socket) {
-		
-		List<String> botList = new ArrayList<>();
-		
-		
-
-		return botList;
-	}
-
-	// TODO
-	private static void configureBots(SocketChannel socket, final List<String> botList) {
+	private static void configureBots(SocketChannel socket) throws IOException{
 
 		System.out.printf("Host wants to add a bot");
 		boolean exit = false;
@@ -184,14 +172,27 @@ public class ClientMain extends Application {
 				waitSeconds(6);
 			}
 
-			System.out.printf("Select a bot: \n");
-			for(String botInfo : botList) {
-				System.out.printf("%s\n", botInfo);
-			}
+			// TODO !!!!! Terrible -> Cambiar para solicitar lista y seleccionar en base a esa lista
+			System.out.printf("Select a bot(Write the number to select it): \n");
+			System.out.printf("0 - ChatGPT\n");
+			System.out.printf("E/e - Exit\n");
 			System.out.printf(" > ");
-
 			command = _scanner.next();
+
+			try {
 			
+				if(command.equalsIgnoreCase("exit") || command.equalsIgnoreCase("e")) {
+					exit = true;
+				}
+				else {
+					int botCode = Integer.valueOf(command);
+					sendBotPetition(botCode, socket);
+				}
+			}
+			catch(NumberFormatException e) {
+				System.out.printf("Write a valid number!\n");
+			}
+
 		}
 	}
 
@@ -242,6 +243,19 @@ public class ClientMain extends Application {
 		buffer.clear();
 		buffer.put(GameType.DATA_TYPE_PETITION);	// Tipo de peticion
 		buffer.putInt(petitionCode);				// Codigo peticion
+		buffer.flip();
+
+		while(buffer.hasRemaining()){
+			socket.write(buffer);
+		}
+	}
+
+	private static void sendBotPetition(int botCode, SocketChannel socket) throws IOException {
+
+		ByteBuffer buffer = ByteBuffer.allocate(2 * Integer.BYTES);
+		buffer.clear();
+		buffer.put(GameType.DATA_BOT);		// Tipo de peticion
+		buffer.putInt(botCode);				// Codigo peticion
 		buffer.flip();
 
 		while(buffer.hasRemaining()){

@@ -13,6 +13,11 @@ public abstract class Bot extends Player {
     }
 
 
+    public String getFullDescription() {
+        return this.getPlayerName() + " : " + this.getDescription();
+    }
+
+    public abstract String getDescription();
     
     public abstract String actionMakePlay(int sb, int bb, int maxBet);
 

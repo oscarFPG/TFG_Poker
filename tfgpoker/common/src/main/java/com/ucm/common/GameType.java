@@ -9,8 +9,9 @@ public class GameType {
     public static final int PORT = 5005;
 
     // Types
-    public static final byte DATA_TYPE_PETITION = 1;    // Flag to send a pregame petition
+    public static final byte DATA_TYPE_PETITION = 1;    // Flag to send a pregame petition   
     public static final byte DATA_TYPE_NAME = 2;        // Flag to send a name as a string
+    public static final byte DATA_BOT = 3;              // Flag to send a bot to add
 
     // Clients and server codes during pregame
     public static final int CREATE_PETITION = 10;       // Client requests creating a game

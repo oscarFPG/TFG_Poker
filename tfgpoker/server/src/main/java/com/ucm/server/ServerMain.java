@@ -24,8 +24,10 @@ import java.util.List;
 import com.ucm.server.middleclasses.ClientStructGame;
 import com.ucm.server.players.ChatgptLLM;
 import com.ucm.common.*;
+import com.ucm.server.control.BotServiceProvider;
 import com.ucm.server.control.Controller;
 import com.ucm.server.exceptions.EvaluatorException;
+import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.logic.Game;
 
 // LLMs
@@ -54,7 +56,7 @@ public class ServerMain {
     private static SocketChannel _host;
     private static boolean _hostWantsToStart;
     
-    private static List<String> _botList;
+    private static final List<String> _botListInformation = BotServiceProvider.getBotListInformation();
 
     /*
      * Desde la ruta TFGPOKER/tfgpoker
@@ -82,16 +84,16 @@ public class ServerMain {
         try {
 
             log.debug("Running in server mode...");
-            String serverIP = getServerPublicIP();
+            showServerIP();
+
             List<ClientStructPreGame> joinedClients = preGame();
             List<ClientStructGame> players = new ArrayList<>();
             for(ClientStructPreGame cs : joinedClients){
                 cs.clientSocket.configureBlocking(true);
                 players.add( new ClientStructGame(cs.clientName, cs.clientSocket.socket()) );
             }
+            
             game(players);
-
-
         }
         catch(IOException e) {
             log.fatal("{}", e.getMessage());
@@ -128,8 +130,8 @@ public class ServerMain {
         }
     }
 
-
-    private static String getServerPublicIP() throws IOException, InterruptedException {
+ 
+    private static void showServerIP() throws IOException, InterruptedException {
 
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest
@@ -141,15 +143,13 @@ public class ServerMain {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         String serverIP = response.body();
         log.debug("Server public IP obtained: {}", serverIP);
-
-        return serverIP;
     } 
 
     private static List<ClientStructPreGame> preGame() {
 
         List<ClientStructPreGame> roomList = new ArrayList<>();     // Player list that enter the game
         List<ClientStructPreGame> clientList = new ArrayList<>();   // Client list that tries to play
-        _botList = new ArrayList<>();
+        List<Bot> botList = new ArrayList<>();                      // Bot list to introduce in the game
 
         ServerSocketChannel serverSocket = null;
         Selector selector = null;
@@ -180,7 +180,7 @@ public class ServerMain {
                         handleAccept(key, selector);
                     } 
                     else if (key.isReadable()) {
-                        handleReceive(key, clientList, roomList);
+                        handleReceive(key, clientList, roomList, botList);
                     } 
                     else if (key.isWritable()) {
                         handleSend(key);
@@ -266,7 +266,11 @@ public class ServerMain {
         log.debug("Nuevo cliente conectado!");
     }
 
-    private static void handleReceive(SelectionKey key, List<ClientStructPreGame> clientList, List<ClientStructPreGame> roomList) {
+    private static void handleReceive(
+        SelectionKey key, 
+        List<ClientStructPreGame> clientList, 
+        List<ClientStructPreGame> roomList,
+        List<Bot> botList) {
 
         SocketChannel socket = (SocketChannel) key.channel();
         ByteBuffer buffer = (ByteBuffer) key.attachment();
@@ -295,12 +299,11 @@ public class ServerMain {
                 msgSize = buffer.getInt();
                 msgBytes = new byte[msgSize];
                 buffer.get(msgBytes);
+
                 String clientName = new String(msgBytes, StandardCharsets.UTF_8);
                 log.debug("Client {} authenticated!", clientName);
 
-                // Almacenar nombre para relacionar socket-nombre si esta en la lista de clientes
-                // Esta lista es distinta a la lista de jugadores que SI que van a entrar a partida
-                log.debug("Cliente {} almacenado en la lista de clientes!", clientName);
+                log.debug("Client {} added to the client list!", clientName);
                 clientList.add( new ClientStructPreGame(clientName, socket, key) );
 
                 break;
@@ -312,11 +315,18 @@ public class ServerMain {
 
                 break;
 
+            case GameType.DATA_BOT:
+                int botCode = buffer.getInt();
+                handleBotPetition(key, botCode, clientList, roomList, botList);
+
+                break;
+
             default:
                 log.debug("Tipo desconocido: {}", tipo);
             }
         }
-        catch(IOException e){
+        catch(IOException e) {
+
             log.error("Something strange ocurred with the clients socket: {}", e.getMessage());
 			try {
 				key.cancel();
@@ -332,13 +342,29 @@ public class ServerMain {
 
         SocketChannel client = (SocketChannel) key.channel();
         ByteBuffer buffer = (ByteBuffer) key.attachment();
+        buffer.flip();
+
+        int type = buffer.getInt();
+        switch (type) {
+        case 0:
+            
+            break;
+            
+        default:
+            break;
+        }
 
     }
 
-    // Game options
-    private static void handleClientPetition(SelectionKey key, final int petition, List<ClientStructPreGame> clientList, List<ClientStructPreGame> roomList) {
+    private static void handleClientPetition(
+        SelectionKey key, 
+        final int petition, 
+        List<ClientStructPreGame> clientList, 
+        List<ClientStructPreGame> roomList) {
 
         SocketChannel client = (SocketChannel) key.channel();
+        ByteBuffer buffer = (ByteBuffer) key.attachment();
+
         switch (petition) {
         case GameType.CREATE_PETITION:
 
@@ -429,38 +455,62 @@ public class ServerMain {
             }
             
             break;
-
-        case GameType.ADD_BOT_PETITION:
-
-            if(client != _host){
-
-                log.debug("Only the host can add bots!");
-                try {
-                    ClientStructPreGame cs = roomList.stream()
-                        .filter(c -> c.clientSocket == client)
-                        .findFirst()
-                        .orElse(null);
-
-                    clientList.remove(cs);
-                    roomList.remove(cs);
-                    key.cancel();
-                    client.close();
-                }
-                catch (IOException ignored){}
-
-                return;
-            }
-
-            log.debug("Host wants to add a bot");
-
-
-            break;
-            
+        
         default:
             log.error("Unknown petition {}", petition);
             break;
         }
         
     }
+
+    private static void handleBotPetition(
+        SelectionKey key, 
+        final int botCode, 
+        List<ClientStructPreGame> clientList,
+        List<ClientStructPreGame> roomList, 
+        List<Bot> botList) {
+
+        SocketChannel client = (SocketChannel) key.channel();
+        ByteBuffer buffer = (ByteBuffer) key.attachment();
+
+        if(client != _host){
+
+            log.debug("Only the host can add bots!");
+            try {
+                ClientStructPreGame cs = roomList.stream()
+                    .filter(c -> c.clientSocket == client)
+                    .findFirst()
+                    .orElse(null);
+
+                clientList.remove(cs);
+                roomList.remove(cs);
+                key.cancel();
+                client.close();
+            }
+            catch (IOException ignored){}
+
+            return;
+        }
+
+        switch (botCode) {
+            case 0:
+                log.debug("Creating bot ChatGPT_LLM");
+                Bot bot = BotServiceProvider.createChatgptBot();
+                botList.add(bot);
+                
+                break;
+        
+            default:
+                break;
+        }
+        
+    }
+
+
+    // TODO
+    private static void sendStatusCode(SocketChannel socket, final int code) {
+
+    }
+
 
 }
