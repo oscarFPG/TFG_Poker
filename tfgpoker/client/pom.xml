@@ -110,7 +110,7 @@
                                     <goal>java</goal>
                                 </goals>
                                 <configuration>
-                                    <mainClass>com.ucm.client.MainApp</mainClass>
+                                    <mainClass>com.ucm.client.views.original.MainApp</mainClass>
                                 </configuration>
                             </execution>
                         </executions>

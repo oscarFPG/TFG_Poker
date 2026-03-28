@@ -381,8 +381,7 @@
         #a0378e 0%, 
         #983c93 25.8%, 
         #843c98 74.5%, 
-        #50046e 94.8%, 
-        
+        #50046e 94.8%
     );
     
     -fx-border-color: linear-gradient(to top,
@@ -472,14 +471,15 @@
     #310a93,
     #8500d7 ,
     #ff1fc2,
-    #220470,
+    #220470
     );
 
    -fx-border-color: linear-gradient(to top,
     #DC8CFE 0%,
     #FFF8FF 50%,
     #FFF8FF 50%,
-    #DC8CFE 100%);
+    #DC8CFE 100%
+    );
 
     -fx-background-insets: 0;
      

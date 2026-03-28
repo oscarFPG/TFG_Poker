@@ -1,4 +1,4 @@
-package com.ucm.client.controllers;
+package com.ucm.client.views.original.controllers;
 
 public class StatusController {
 

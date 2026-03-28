@@ -1,4 +1,4 @@
-package com.ucm.client.controllers;
+package com.ucm.client.views.original.controllers;
 
 import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
@@ -23,10 +23,10 @@ public class MainController {
     public void updateView(){
         switch(statusController.getCurrentState()){
             case START_APP:
-                loadView("/com/ucm/client/views/original/fxml/profileSecondWindow.fxml");
+                loadView("/original/fxml/profileSecondWindow.fxml");
             break;
             case SET_PROFILE:
-                loadView("/com/ucm/client/views/original/fxml/setProfileWindow.fxml");
+                loadView("/original/fxml/setProfileWindow.fxml");
             break;
         }
     }
@@ -35,11 +35,9 @@ public class MainController {
     private void loadView(String path){
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
-
+            Scene scene = new Scene(loader.load());
             GenericController controller = loader.getController();
             controller.setMainController(this);
-
-            Scene scene = new Scene(loader.load());
             stage.setScene(scene);
             stage.show();
         } 

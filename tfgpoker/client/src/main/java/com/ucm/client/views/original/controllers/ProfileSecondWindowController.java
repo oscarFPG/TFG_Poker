@@ -1,4 +1,4 @@
-package com.ucm.client.controllers;
+package com.ucm.client.views.original.controllers;
 
 import com.ucm.client.ClientMain;
 import com.ucm.client.PokerGame;
@@ -8,7 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
-public class ProfileSecondWindowController {
+public class ProfileSecondWindowController extends GenericController {
 
     
     PokerGame clientMain;
@@ -44,7 +44,7 @@ public class ProfileSecondWindowController {
     private void conectar() {
 
         Platform.runLater(() -> {
-            clientMain.iniciar(ipLabel.getText(), nameLabel.getText() );
+            //ientMain.iniciar(ipLabel.getText(), nameLabel.getText() );
         });
         
 

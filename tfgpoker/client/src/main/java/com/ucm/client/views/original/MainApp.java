@@ -1,7 +1,7 @@
 
-package com.ucm.client;
+package com.ucm.client.views.original;
 
-import com.ucm.client.controllers.MainController;
+import com.ucm.client.views.original.controllers.MainController;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
