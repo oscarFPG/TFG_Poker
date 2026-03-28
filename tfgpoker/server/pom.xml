@@ -90,7 +90,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <mainClass>com.ucm.server.ServerMain</mainClass>
+                    <mainClass>com.ucm.server.ServerMainNew</mainClass>
                 </configuration>
             </plugin>
 
@@ -125,7 +125,7 @@
                                     <goal>java</goal>
                                 </goals>
                                 <configuration>
-                                    <mainClass>com.ucm.server.ServerMain</mainClass>
+                                    <mainClass>com.ucm.server.ServerMainNew</mainClass>
                                 </configuration>
                             </execution>
                         </executions>
@@ -145,7 +145,7 @@
                         <executions>
                             <execution>
                                 <configuration>
-                                    <mainClass>com.ucm.server.ServerMain</mainClass>
+                                    <mainClass>com.ucm.server.ServerMainNew</mainClass>
                                     <jvmArg>agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:8000</jvmArg>
                                 </configuration>
                             </execution>

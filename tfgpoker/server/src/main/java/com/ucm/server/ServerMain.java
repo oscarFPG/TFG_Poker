@@ -24,7 +24,6 @@ import java.util.List;
 import com.ucm.server.middleclasses.ClientStructGame;
 import com.ucm.server.players.ChatgptLLM;
 import com.ucm.common.*;
-import com.ucm.server.control.BotServiceProvider;
 import com.ucm.server.control.Controller;
 import com.ucm.server.exceptions.EvaluatorException;
 import com.ucm.server.gameobjects.Bot;
@@ -56,7 +55,6 @@ public class ServerMain {
     private static SocketChannel _host;
     private static boolean _hostWantsToStart;
     
-    private static final List<String> _botListInformation = BotServiceProvider.getBotListInformation();
 
     /*
      * Desde la ruta TFGPOKER/tfgpoker
@@ -72,6 +70,7 @@ public class ServerMain {
      * Run the tests
      *      .\mvnw.cmd test
      */
+    /*
     public static void main(String[] args) throws IOException {
 
         // Local mode for testing without real clients connected by sockets
@@ -102,6 +101,7 @@ public class ServerMain {
             log.fatal("{}", e.getMessage());
         }
     }
+    
 
     private static void runGameInModeLocal(String[] args) {
 
@@ -495,8 +495,6 @@ public class ServerMain {
         switch (botCode) {
             case 0:
                 log.debug("Creating bot ChatGPT_LLM");
-                Bot bot = BotServiceProvider.createChatgptBot();
-                botList.add(bot);
                 
                 break;
         
@@ -512,5 +510,5 @@ public class ServerMain {
 
     }
 
-
+    */
 }

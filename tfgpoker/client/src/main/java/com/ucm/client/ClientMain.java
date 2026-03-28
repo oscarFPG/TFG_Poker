@@ -8,23 +8,16 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 // Poker Game
 import com.ucm.client.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.common.GameType;
+import com.ucm.common.SocketChannelUtils;
 import com.ucm.common.SocketUtils;
 
-// JavaFX
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.stage.Stage;
 
-
-public class ClientMain extends Application {
+public class ClientMain {
 
 	private static class Card {
 		public int numberCode;
@@ -94,174 +87,173 @@ public class ClientMain extends Application {
 	// Pregame section
 	private static Socket preGame(final String serverIP) throws IOException {
 
-		SocketChannel socket = SocketChannel.open();
+		SocketChannel socket;
+		boolean isCreator = false;
+		boolean onGame = false;
+		boolean gameStarts = false;
+		int opcion;
+		int matchStatus;
+
+
+		socket = SocketChannel.open();
 		socket.configureBlocking(false);
 		socket.connect( new InetSocketAddress(serverIP, GameType.PORT) );
-		
 		while(!socket.finishConnect()) {}
 		System.out.printf("Connected to the server succesfully!\n");
 
-		System.out.printf("Write your username: ");
-		_name = _scanner.next();
-		sendString(_name, socket);
+		sendName(socket);
+		while(!onGame) {
 
-		int opcion = getUserPetition();
-		if(opcion == 1) {
-			sendPetition(GameType.CREATE_PETITION, socket);
-			System.out.printf("Petition CREATE sent!\n");
-			configureGame(socket);
+			opcion = getUserPetition();
+			if(opcion == 1) {
+				onGame = createGame(socket);
+				if(onGame) {
+					isCreator = true;
+					addBots(socket);
+				}
+			}
+			else if(opcion == 2) {
+				isCreator = false;
+				onGame = joinGame(socket);
+			}
+			else {
+				throw new IOException("User petition invalid! Must be 1 or 2");
+			}
 		}
-		else if(opcion == 2) {
-			sendPetition(GameType.JOIN_PETITION, socket);
-			System.out.printf("Petition JOIN sent!\n");
+		
+		if(isCreator) {
+
+			String input = null;
+			int code;
+			while(!gameStarts) {
+
+				System.out.printf("Type \'start\' to start the game!\n");
+				input = _scanner.next(); 
+				if(!input.equalsIgnoreCase("start"))
+					continue;
+
+				SocketChannelUtils.sendInteger(socket, GameType.PETITION_HOST_TRIES_START);
+				code = SocketChannelUtils.receiveInteger(socket);
+				if(code == GameType.CONFIRMATION_GAME_STARTS) {
+					System.out.printf("Starting thee game...\n");
+					gameStarts = true;
+				}
+				else if(code == GameType.CONFIRMATION_GAME_NOT_STARTS) {
+					System.out.printf("Cannot start the game yet! Too few players\n");
+					gameStarts = false;
+				}
+					
+			}
 		}
 		else {
-			throw new IOException("User petition invalid! Must be 1 or 2");
-		}
 
-		boolean gameStarts = false;
-		while(!gameStarts){ 
-			gameStarts = receiveGameStartCode(socket);
+			System.out.printf("Waiting host to start the game\n");
+			do {
+				matchStatus = SocketChannelUtils.receiveInteger(socket);
+			} while(matchStatus != GameType.GAME_STARTS);
 		}
 		System.out.printf("Game starts!\n");
+		
 
-		socket.configureBlocking(true);	// Important!!
+		socket.configureBlocking(true);
 		return (socket != null) ? socket.socket() : null;
 	}
 
-	private static void configureGame(SocketChannel socket) throws IOException {
+	private static void sendName(SocketChannel socket) throws IOException {
 
-		boolean hostWantsToStart = false;
-		String command = null;
-		while(!hostWantsToStart) {
-			
-			// Give time to the rest of the automated players to join
-			if(AUTOMATED_MODE) {
-				waitSeconds(6);
-			}
+		boolean nameValid = false;
+		while(!nameValid) {
 
-			System.out.printf("Select an action: \n");
-			System.out.printf("Start game: \'start\'\n");
-			System.out.printf("Add bots: \'bot\'\n");
-			System.out.printf(" > ");
+			System.out.printf("Write your username: ");
+			_name = _scanner.next();
+			SocketChannelUtils.sendInteger(socket, GameType.PETITION_PLAYER_NAME);
+			SocketChannelUtils.sendString(socket, _name);
 
-			command = _scanner.next();
-			if(command.equalsIgnoreCase("start")) {
-				sendPetition(GameType.HOST_START_GAME_PETITION, socket);
-				hostWantsToStart = true;
+			int response = SocketChannelUtils.receiveInteger(socket);
+			if(response == GameType.CONFIRMATION_NAME_VALID) {
+				System.out.printf("Name valid!\n");
+				nameValid = true;
 			}
-			else if(command.equalsIgnoreCase("bot")) {
-				configureBots(socket);
+			else if(response == GameType.ERROR_NAME_TOO_SHORT) {
+				System.out.printf("Name too short!\n");
 			}
-			else {
-				System.out.printf("Command \'%s\' invalid!\n", command);
-				hostWantsToStart = false;
-			}
+			else if(response == GameType.ERROR_NAME_TOO_LONG) {
+				System.out.printf("Name too long!\n");
+			} 
 		}
+
 	}
 
-	private static void configureBots(SocketChannel socket) throws IOException{
+	private static void addBots(SocketChannel sockets) throws IOException {
 
-		System.out.printf("Host wants to add a bot");
-		boolean exit = false;
-		String command = null;
-		while(!exit) {
-			
-			// Give time to the rest of the automated players to join
-			if(AUTOMATED_MODE) {
-				waitSeconds(6);
-			}
+		String input = null;
+		int option = 1;
+		while(input == null) {
+			System.out.printf("Do you want to add bots?\n");
+			System.out.printf("[Y]es/[N]o : ");
 
-			// TODO !!!!! Terrible -> Cambiar para solicitar lista y seleccionar en base a esa lista
-			System.out.printf("Select a bot(Write the number to select it): \n");
-			System.out.printf("0 - ChatGPT\n");
-			System.out.printf("E/e - Exit\n");
-			System.out.printf(" > ");
-			command = _scanner.next();
-
-			try {
-			
-				if(command.equalsIgnoreCase("exit") || command.equalsIgnoreCase("e")) {
-					exit = true;
+			input = _scanner.next();
+			if(!input.isBlank()) {
+				if(input.equalsIgnoreCase("yes") || input.equalsIgnoreCase("y")) {
+					option = 0;
+				}
+				else if(input.equalsIgnoreCase("no") || input.equalsIgnoreCase("n")) {
+					option = 1;
 				}
 				else {
-					int botCode = Integer.valueOf(command);
-					sendBotPetition(botCode, socket);
+					input = null;
 				}
 			}
-			catch(NumberFormatException e) {
-				System.out.printf("Write a valid number!\n");
-			}
+		}
 
+		if(option == 0) {
+
+			System.out.printf("Requesting bot list...\n");
+			SocketChannelUtils.sendInteger(sockets, GameType.PETITION_BOT_LIST);
+			int response = SocketChannelUtils.receiveInteger(sockets);
+			if(response == GameType.CONFIRMATION_BOT_LIST) {	// TODO : temporal sin bots
+				String list = SocketChannelUtils.receiveString(sockets);
+				System.out.printf("Bots: " + list + "\n\n");
+			}
+		}
+	
+	}
+
+	private static boolean createGame(SocketChannel socket) throws IOException {
+
+		SocketChannelUtils.sendInteger(socket, GameType.PETITION_CREATE_GAME);
+		int response = SocketChannelUtils.receiveInteger(socket);
+
+		switch (response) {
+		case GameType.CONFIRMATION_CREATED_GAME:
+			System.out.printf("Game has been created\n");
+			return true;
+		
+		case GameType.ERROR_GAME_ALREADY_CREATED:
+			System.out.printf("Game has already been created! Try to join instead if you want to play\n\n");
+			return false;
+
+		default:
+			System.out.printf("Unexpected server response: %d\n", response);
+			return false;
 		}
 	}
 
-	private static boolean receiveGameStartCode(SocketChannel socket) throws IOException {
+	private static boolean joinGame(SocketChannel socket) throws IOException {
 
-		ByteBuffer buffer = ByteBuffer.allocate(128);
-		int bytesRead;
-		int code;
+		SocketChannelUtils.sendInteger(socket, GameType.PETITION_JOIN_GAME);
+		int response = SocketChannelUtils.receiveInteger(socket);
 
-		bytesRead = socket.read(buffer);
-		if (bytesRead == -1) {
-			socket.close();
-			return false;
-		}
-		else if(bytesRead == 0) {
-			return false;
-		}
-
-		buffer.flip();
-		code = buffer.getInt();
-		switch (code) {
-		case GameType.GAME_STARTS:
-			System.out.printf("GAME_STARTS code received!\n");
+		switch (response) {
+		case GameType.CONFIRMATION_JOINED_GAME:
+			System.out.printf("Joined game confirmation received!\n");
 			return true;
 	
 		default:
-			System.out.printf("Code %d unknown %d\n", code);
 			return false;
 		}
 	}
 
-	// Auxiliar methods - Pregame
-	private static void sendString(String msg, SocketChannel socket) throws IOException {
-
-		ByteBuffer buffer = ByteBuffer.allocate(1 + Integer.BYTES + msg.length());
-		buffer.put(GameType.DATA_TYPE_NAME);
-		buffer.putInt(msg.length());
-		buffer.put(msg.getBytes());
-		buffer.flip();
-
-		while(buffer.hasRemaining())
-			socket.write(buffer);
-	}
-
-	private static void sendPetition(int petitionCode, SocketChannel socket) throws IOException {
-
-		ByteBuffer buffer = ByteBuffer.allocate(1 + Integer.BYTES);
-		buffer.clear();
-		buffer.put(GameType.DATA_TYPE_PETITION);	// Tipo de peticion
-		buffer.putInt(petitionCode);				// Codigo peticion
-		buffer.flip();
-
-		while(buffer.hasRemaining()){
-			socket.write(buffer);
-		}
-	}
-
-	private static void sendBotPetition(int botCode, SocketChannel socket) throws IOException {
-
-		ByteBuffer buffer = ByteBuffer.allocate(2 * Integer.BYTES);
-		buffer.clear();
-		buffer.put(GameType.DATA_BOT);		// Tipo de peticion
-		buffer.putInt(botCode);				// Codigo peticion
-		buffer.flip();
-
-		while(buffer.hasRemaining()){
-			socket.write(buffer);
-		}
-	}
 
 	private static int getUserPetition() {
 
@@ -269,7 +261,7 @@ public class ClientMain extends Application {
 		int option = -1;
 		while(option == -1){
 			System.out.printf("What do you want do?\n");
-			System.out.printf("1- Creat game\n");
+			System.out.printf("1- Create game\n");
 			System.out.printf("2- Join game\n");
 			System.out.printf("> ");
 
@@ -584,16 +576,5 @@ public class ClientMain extends Application {
 
 	}
 
-	
-
-
-    @Override
-    public void start(Stage stage) throws Exception {
-
-        // Llamar a este metodo con: launch(args);
-        stage.setScene(new Scene(new Label("Aplicacion Poker"), 300, 200));
-        stage.setTitle("Poker TFG");
-        stage.show();
-    }
 
 }
