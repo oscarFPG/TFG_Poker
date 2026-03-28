@@ -1,17 +1,17 @@
 package com.ucm.client.controllers;
 
 import com.ucm.client.ClientMain;
-import com.ucm.client.ClientMainCopy;
+import com.ucm.client.PokerGame;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
-public class profileSecondWindowController {
+public class ProfileSecondWindowController {
 
     
-    ClientMainCopy clientMain;
+    PokerGame clientMain;
 
     @FXML
     private TextField ipLabel;

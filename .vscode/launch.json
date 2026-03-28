@@ -41,6 +41,14 @@
             "name": "Run JavaFX",
             "preLaunchTask": "Run JavaFX",
             "request": "launch"
+        },
+        {
+            "type": "java",
+            "name": "Debug JavaFX",
+            "request": "attach",
+            "hostName": "localhost",
+            "port": 8000,
+            "projectName": "client"
         }
     ]
 }

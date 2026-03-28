@@ -22,7 +22,7 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 
-public class ClientMainCopy extends Application {
+public class PokerGame{
 
 	private static class Card {
 		public int numberCode;
@@ -548,17 +548,5 @@ public class ClientMainCopy extends Application {
 		}
 
 	}
-
-	
-
-
-    @Override
-    public void start(Stage stage) throws Exception {
-
-        // Llamar a este metodo con: launch(args);
-        stage.setScene(new Scene(new Label("Aplicacion Poker"), 300, 200));
-        stage.setTitle("Poker TFG");
-        stage.show();
-    }
 
 }
