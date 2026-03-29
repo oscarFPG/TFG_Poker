@@ -1,19 +1,18 @@
 package com.ucm.server;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Scanner;
-
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.lang.Thread;
 
 import org.apache.logging.log4j.LogManager;
@@ -26,6 +25,8 @@ import com.ucm.server.exceptions.EvaluatorException;
 import com.ucm.server.logic.Game;
 import com.ucm.server.middleclasses.ClientStruct;
 
+import opennlp.tools.stemmer.snowball.indonesianStemmer;
+
 
 public class ServerMain {
     
@@ -34,7 +35,8 @@ public class ServerMain {
     
     public static int MAX_PLAYERS = 9;
 
-    private static List<ClientStruct> _clients = new ArrayList<>();
+    private static List< ClientStruct<Integer> > _clients = Collections.synchronizedList(new ArrayList<>());
+
     private static boolean _gameStarts = false;
 
 
@@ -42,9 +44,11 @@ public class ServerMain {
 
         private String clientName;
         private Socket socket;
+        private BlockingQueue<Integer> queue;
 
-        public ClientThread(Socket s) {
+        public ClientThread(Socket s, BlockingQueue<Integer> q) {
             socket = s;
+            queue = q;
         }
 
         public void run() {
@@ -98,30 +102,34 @@ public class ServerMain {
                 log.debug("Client {} does not want to add bots", clientName);
             }
 
-            Thread sendInfo = new Thread(() -> {
+           _clients.add( new ClientStruct<>(clientName, socket, queue) );
+            Thread sendNewPlayerInfoThread = new Thread(() -> {
 
-                try {
+                boolean exit = false;
+                while(!exit) {
 
-                    OutputStream out = socket.getOutputStream();
-                    int counter = 0;
-                    while(true) {
+                    try {
+                        
+                        System.out.printf("Waiting...\n");
+                        int code = queue.take();
+                        if(code == GameType.EVENT_PLAYER_JOINED) {
+                            sendListInfo(socket);
+                        }
 
-                        SocketUtils.sendInteger(out, counter);
-
-                        ++counter;
-                        waitSeconds(2);
                     }
-                }
-                catch (IOException e) {
-                    log.error("There was an error with a client: {}", e.getMessage());
-                }
-            });
-            sendInfo.start();
+                    catch (IOException | InterruptedException e) {
+                        log.debug("There was an error : {}", e.getMessage());
+                    }
 
-            sendInfo.join();
+
+                }
+
+            });
+            sendNewPlayerInfoThread.start();
+            sendNewPlayerInfoThread.join();
         }
 
-        private void joinGame() throws IOException {
+        private void joinGame() throws IOException, InterruptedException {
 
             log.debug("Client {} wants to join to a game", clientName);
             if(_clients.isEmpty()) {
@@ -130,9 +138,30 @@ public class ServerMain {
                 return;
             }
 
+            _clients.add( new ClientStruct<>(clientName, socket, queue) );
             
+            for(ClientStruct<Integer> cl : _clients)
+                cl.queue().put(GameType.EVENT_PLAYER_JOINED);
 
+            while(true) {
 
+                int code = queue.take();
+                if(code == GameType.EVENT_PLAYER_JOINED) {
+                    sendListInfo(socket);
+                }
+            }
+
+        }
+
+        private void sendListInfo(Socket socket) throws IOException {
+
+            List< ClientStruct<Integer> > copy = new ArrayList<>(_clients);
+
+            SocketUtils.sendInteger(socket.getOutputStream(), GameType.EVENT_PLAYER_JOINED);
+            SocketUtils.sendInteger(socket.getOutputStream(), copy.size());
+            for(ClientStruct<Integer> cl : copy) {
+                SocketUtils.sendString(socket.getOutputStream(), cl.name());
+            }
         }
 
         private void waitSeconds(final int sec) {
@@ -232,7 +261,7 @@ public class ServerMain {
             log.debug("New client connected!");
 
             if(_clients.size() < MAX_PLAYERS) {
-                ClientThread client = new ClientThread(socket);
+                ClientThread client = new ClientThread(socket, new LinkedBlockingQueue<>());
                 client.start();
             }
             else {

@@ -15,8 +15,11 @@ public class GameType {
     public static final int PETITION_ADD_BOTS = 4;
     public static final int PETITION_NOT_ADD_BOTS = 5;
 
-    public static final int CONFIRMATION_TYPE = 100;
-    public static final int CONFIRMATION_NAME_VALID = 101;
+    public static final int EVENT_PLAYER_JOINED = 100;
+
+
+    public static final int CONFIRMATION_TYPE = 200;
+    public static final int CONFIRMATION_NAME_VALID = 201;
 
     public static final int ERROR_TYPE = 500;
     public static final int ERROR_NAME_TOO_SHORT = 501;
