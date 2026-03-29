@@ -1,22 +1,20 @@
 package com.ucm.client.views.original.controllers;
 
 import javafx.stage.Stage;
-
-import com.ucm.client.UserProfile;
-
+import com.ucm.client.ClientInfo;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+
 
 public class MainController {
     
     private Stage stage;
     private StatusController statusController;
-    private UserProfile userProfile;
+    private static final String path = "/original/fxml/";
 
     public MainController(Stage stage){
         this.stage = stage;
         this.statusController = new StatusController();
-        this.userProfile = new UserProfile();
     }
 
 
@@ -28,19 +26,19 @@ public class MainController {
     public void updateView(){
         switch(statusController.getCurrentState()){
             case START_APP:
-                loadView("/original/fxml/startWindow.fxml");
+                loadView(path + "startWindow.fxml");
             break;
             case SET_PROFILE:
-                loadView("/original/fxml/profileSecondWindow.fxml");
+                loadView(path + "profileSecondWindow.fxml");
             break;
             case MAIN_WINDOW:
-                loadView("/original/fxml/mainWindow.fxml");
+                loadView(path + "mainWindow.fxml");
             break;
             case CHOOSE_GAME:
-                loadView("/original/fxml/chooseGameWindow.fxml");
+                loadView(path + "chooseGameWindow.fxml");
             break;
             case CREATE_GAME:
-                loadView("/original/fxml/homeCreateGameWindow.fxml");
+                loadView(path + "homeCreateGameWindow.fxml");
             break;
 
         }
@@ -64,22 +62,15 @@ public class MainController {
 
     public void next(){
         statusController.next();
-        updateView();
     }
 
     public void back(){
         statusController.back();
-        updateView();
     }
 
     
     public void chooseCreateGame(){
         statusController.stateCreateGame();
         updateView();
-    }
-
-
-    public UserProfile getUserProfile() {
-        return userProfile;
     }
 }

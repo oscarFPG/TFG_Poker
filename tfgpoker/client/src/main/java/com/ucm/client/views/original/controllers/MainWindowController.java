@@ -8,9 +8,20 @@ public class MainWindowController extends GenericController {
     @FXML
     private Button btnSaveMain;
 
+    
     @FXML
     private void chooseGame() {
-        mainController.next();
+        next();
+    }
+
+
+    @Override
+    public void onNextEvent() {
+    }
+
+
+    @Override
+    public void onBackEvent() {
     }
 
 }

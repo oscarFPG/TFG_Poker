@@ -1,5 +1,5 @@
 
-package com.ucm.client.views.original;
+package com.ucm.client;
 
 import com.ucm.client.views.original.controllers.MainController;
 
@@ -9,10 +9,12 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class MainApp extends Application {
+
+    
+
     /*
     Run javafx: .\mvnw.cmd -pl client -Prun javafx:run
     */
-
     @Override
     public void start(Stage primaryStage) throws Exception {
        MainController mainController = new MainController(primaryStage);

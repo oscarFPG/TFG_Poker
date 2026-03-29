@@ -10,7 +10,15 @@ public class HomeCreateGameWindowController extends GenericController {
 
     @FXML
     public void returnChooseGame(){
-        mainController.back();
+        back();
+    }
+
+    @Override
+    public void onNextEvent() {
+    }
+
+    @Override
+    public void onBackEvent() {
     }
 
 }

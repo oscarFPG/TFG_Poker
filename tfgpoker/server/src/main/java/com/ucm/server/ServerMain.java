@@ -91,6 +91,7 @@ public class ServerMain {
         private void createGame() throws IOException, InterruptedException {
 
             log.debug("Client {} wants to create a game", clientName);
+            SocketUtils.sendInteger(socket.getOutputStream(), GameType.CONFIRMATION_CREATE_GAME);
 
             int bots = SocketUtils.receiveInt(socket.getInputStream());
             if(bots == GameType.PETITION_ADD_BOTS) {

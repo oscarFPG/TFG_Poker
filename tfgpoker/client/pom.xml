@@ -67,7 +67,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <mainClass>com.ucm.client.ClientMain</mainClass>
+                    <mainClass>com.ucm.client.MainApp</mainClass>
                 </configuration>
             </plugin>
 
@@ -76,7 +76,7 @@
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.ucm.client.ClientMain</mainClass>
+                    <mainClass>com.ucm.client.MainApp</mainClass>
                 </configuration>
                 <version>0.0.8</version>
             </plugin>
@@ -110,7 +110,7 @@
                                     <goal>java</goal>
                                 </goals>
                                 <configuration>
-                                    <mainClass>com.ucm.client.views.original.MainApp</mainClass>
+                                    <mainClass>com.ucm.client.MainApp</mainClass>
                                 </configuration>
                             </execution>
                         </executions>
@@ -128,7 +128,7 @@
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
                         <configuration>
-                            <mainClass>com.ucm.client.ClientMain</mainClass>
+                            <mainClass>com.ucm.client.MainApp</mainClass>
                             <arguments>
                                 <argument>${match}</argument>
                                 <argument>${player}</argument>
@@ -155,7 +155,7 @@
                                     <goal>java</goal>
                                 </goals>
                                 <configuration>
-                                    <mainClass>com.ucm.client.ClientMain</mainClass>
+                                    <mainClass>com.ucm.client.MainApp</mainClass>
                                     <jvmArg>agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:8000</jvmArg>
                                 </configuration>
                             </execution>

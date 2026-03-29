@@ -10,7 +10,7 @@ import com.ucm.common.GameType;
 import com.ucm.common.SocketUtils;
 
 
-public class ClientMain {
+public class EJEMPLO {
     
     private static class Card {
 		public int numberCode;
@@ -43,27 +43,7 @@ public class ClientMain {
      * Debug:
      *      .\mvnwDebug.cmd -pl client -Pdebug exec:java
      */
-    public static void main(String[] args) {
-
-        System.out.printf("Specify the server IP (default: localhost): ");
-		String serverIP = _scanner.nextLine();
-		if (!serverIP.trim().isEmpty()) {
-			_hostname = serverIP.trim();
-		}
-
-		try {
-
-			Socket socket = preGame(_hostname);
-
-			socket.close();
-			_scanner.close();
-		}
-		catch(IOException e) {
-			System.out.printf("%s\n", e.getMessage());
-		}
-
-    }
-
+    
 
     private static Socket preGame(final String serverIP) throws IOException {
 

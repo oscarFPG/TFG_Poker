@@ -1,7 +1,5 @@
 package com.ucm.client.views.original.controllers;
 
-import com.ucm.client.ClientMain;
-
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -14,7 +12,15 @@ public class StartWindowController extends GenericController {
 
     public void initialize() {
         startButton.setOnAction(e -> {
-            mainController.next();
+           next();
         });
+    }
+
+    @Override
+    public void onNextEvent() {
+    }
+
+    @Override
+    public void onBackEvent() {
     }
 }

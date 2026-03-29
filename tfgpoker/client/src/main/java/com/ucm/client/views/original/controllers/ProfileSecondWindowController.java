@@ -1,16 +1,21 @@
 package com.ucm.client.views.original.controllers;
 
-import com.ucm.client.ClientMainGUI;
+import java.io.IOException;
+import java.net.Socket;
+
+import com.ucm.client.ClientInfo;
+import com.ucm.client.PokerGame;
+import com.ucm.common.SocketUtils;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
+
+
 public class ProfileSecondWindowController extends GenericController {
 
-    
-    ClientMainGUI clientMain;
 
     @FXML
     private TextField ipLabel;
@@ -23,6 +28,7 @@ public class ProfileSecondWindowController extends GenericController {
 
     @FXML
     private Button btnCancel;
+
 
     @FXML
     public void initialize() {
@@ -42,22 +48,42 @@ public class ProfileSecondWindowController extends GenericController {
     @FXML
     private void save() {
         
-        String ip = ipLabel.getText();
+        String serverIP = ipLabel.getText();
         String name = nameLabel.getText();
 
-        mainController.getUserProfile().setIp(ip);
-        mainController.getUserProfile().setName(name);
+        boolean validIP = PokerGame.checkIpValid(serverIP);
+        if(!validIP) {
+            serverIP = PokerGame.LOCAL_HOST;
+        }
 
-        clientMain.iniciar(ipLabel.getText(), nameLabel.getText() );
+        _clientInfo = ClientInfo.getInstance();
+        _clientInfo.ip = serverIP;
+        _clientInfo.name = name;
 
-        mainController.next();
- 
-
+        try {
+            _clientInfo.socket = PokerGame.connect(serverIP);
+            SocketUtils.sendString(_clientInfo.socket.getOutputStream(), name);
+        }
+        catch(IOException e) {
+            System.out.printf("Error connecting to the socket: %s", e.getMessage());
+        }
+        
+        next();
     }
 
 
     @FXML
     private void cancel() {
         Platform.exit();
+    }
+
+
+    @Override
+    public void onNextEvent() {
+    }
+
+
+    @Override
+    public void onBackEvent() {
     }
 }
