@@ -209,7 +209,7 @@ public class ClientMainGUI{
 			socket.write(buffer);
 	}
 
-	private static void sendPetition(int petitionCode, SocketChannel socket) throws IOException {
+	public static void sendPetition(int petitionCode, SocketChannel socket) throws IOException {
 
 		ByteBuffer buffer = ByteBuffer.allocate(1 + Integer.BYTES);
 		buffer.clear();
