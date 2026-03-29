@@ -1,7 +1,6 @@
 package com.ucm.client.views.original.controllers;
 
-import com.ucm.client.ClientMain;
-import com.ucm.client.PokerGame;
+import com.ucm.client.ClientMainGUI;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -11,7 +10,7 @@ import javafx.scene.control.TextField;
 public class ProfileSecondWindowController extends GenericController {
 
     
-    PokerGame clientMain;
+    ClientMainGUI clientMain;
 
     @FXML
     private TextField ipLabel;
@@ -49,7 +48,7 @@ public class ProfileSecondWindowController extends GenericController {
         mainController.getUserProfile().setIp(ip);
         mainController.getUserProfile().setName(name);
 
-        //clientMain.iniciar(ipLabel.getText(), nameLabel.getText() );
+        clientMain.iniciar(ipLabel.getText(), nameLabel.getText() );
 
         mainController.next();
  

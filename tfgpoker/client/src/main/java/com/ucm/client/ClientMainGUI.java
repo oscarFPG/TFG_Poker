@@ -1,7 +1,6 @@
 package com.ucm.client;
 
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
@@ -16,13 +15,8 @@ import com.ucm.client.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.common.GameType;
 import com.ucm.common.SocketUtils;
 
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.stage.Stage;
 
-
-public class PokerGame{
+public class ClientMainGUI{
 
 	private static class Card {
 		public int numberCode;
@@ -84,7 +78,7 @@ public class PokerGame{
 		System.out.printf("Write your username: ");
 		_name = userName;
 		sendString(_name, socket);
-		System.out.printf("Name: %s\n", _name);
+		System.out.printf("%s\n", _name);
 
 		int opcion = getUserPetition();
 		if(opcion == 1) {
