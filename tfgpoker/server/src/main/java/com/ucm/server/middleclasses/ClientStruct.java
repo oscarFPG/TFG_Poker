@@ -2,4 +2,4 @@ package com.ucm.server.middleclasses;
 
 import java.net.Socket;
 
-public record ClientStructGame(String name, Socket socket) {}
+public record ClientStruct(String name, Socket socket) {}
