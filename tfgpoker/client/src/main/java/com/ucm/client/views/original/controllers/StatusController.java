@@ -6,6 +6,8 @@ public class StatusController {
         START_APP,
         SET_PROFILE,
         MAIN_WINDOW,
+        CHOOSE_GAME,
+        CREATE_GAME,
     }
     private State currentState;
 
@@ -19,6 +21,7 @@ public class StatusController {
         return currentState;
     }
 
+
     public void next(){
         switch(currentState){
             case START_APP:
@@ -27,7 +30,32 @@ public class StatusController {
             case SET_PROFILE:
                 currentState = State.MAIN_WINDOW;
             break;
+            case MAIN_WINDOW:
+                currentState = State.CHOOSE_GAME;
+            break;
         }
+    }
+
+    public void back(){
+        switch(currentState){
+            case SET_PROFILE:
+                currentState = State.START_APP;
+            break;
+            case MAIN_WINDOW:
+                currentState = State.SET_PROFILE;
+            break;
+            case CHOOSE_GAME:
+                currentState = State.MAIN_WINDOW;
+            break;
+            case CREATE_GAME:
+                currentState = State.CHOOSE_GAME;
+            break;
+        }
+    }
+
+
+    public void stateCreateGame(){
+        currentState = State.CREATE_GAME;
     }
 
 

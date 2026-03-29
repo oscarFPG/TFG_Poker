@@ -36,6 +36,13 @@ public class MainController {
             case MAIN_WINDOW:
                 loadView("/original/fxml/mainWindow.fxml");
             break;
+            case CHOOSE_GAME:
+                loadView("/original/fxml/chooseGameWindow.fxml");
+            break;
+            case CREATE_GAME:
+                loadView("/original/fxml/homeCreateGameWindow.fxml");
+            break;
+
         }
     }
 
@@ -59,6 +66,18 @@ public class MainController {
         statusController.next();
         updateView();
     }
+
+    public void back(){
+        statusController.back();
+        updateView();
+    }
+
+    
+    public void chooseCreateGame(){
+        statusController.stateCreateGame();
+        updateView();
+    }
+
 
     public UserProfile getUserProfile() {
         return userProfile;
