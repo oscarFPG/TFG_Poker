@@ -73,6 +73,8 @@ public abstract class Player implements IPokerPlayer {
     protected boolean _isEliminated;
 
 
+    public Player() {}
+
     public Player(final int id, final String name, final int money) {
 
         _id = id;

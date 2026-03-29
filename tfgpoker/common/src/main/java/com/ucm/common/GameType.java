@@ -8,9 +8,34 @@ public class GameType {
     // Server port
     public static final int PORT = 5005;
 
+    /* ---------------- PREGAME CODES ----------------  */
+    public static final int PETITION_PLAYER_NAME = 1;
+    public static final int PETITION_CREATE_GAME = 2;
+    public static final int PETITION_JOIN_GAME = 3;
+    public static final int PETITION_BOT_LIST = 4;
+    public static final int PETITION_WAITING_PLAYERS = 5;
+    public static final int PETITION_HOST_TRIES_START = 6;
+
+
+    public static final int CONFIRMATION_TYPE = 100;
+    public static final int CONFIRMATION_NAME_VALID = 101;
+    public static final int CONFIRMATION_BOT_LIST = 102;
+    public static final int CONFIRMATION_CREATED_GAME = 103;
+    public static final int CONFIRMATION_JOINED_GAME = 104;
+    public static final int CONFIRMATION_GAME_STARTS = 110;
+    public static final int CONFIRMATION_GAME_NOT_STARTS = 111;
+
+    public static final int ERROR_TYPE = 500;
+    public static final int ERROR_NAME_TOO_SHORT = 501;
+    public static final int ERROR_NAME_TOO_LONG = 502;
+    public static final int ERROR_GAME_ALREADY_CREATED = 503;
+    public static final int ERROR_GAME_NOT_CREATED = 504;
+
+    /*
     // Types
-    public static final byte DATA_TYPE_PETITION = 1;    // Flag to send a pregame petition
+    public static final byte DATA_TYPE_PETITION = 1;    // Flag to send a pregame petition   
     public static final byte DATA_TYPE_NAME = 2;        // Flag to send a name as a string
+    public static final byte DATA_BOT = 3;              // Flag to send a bot to add
 
     // Clients and server codes during pregame
     public static final int CREATE_PETITION = 10;       // Client requests creating a game
@@ -26,8 +51,9 @@ public class GameType {
     public static final int HOST_START_GAME_PETITION = 40;   // Client requests starting the game
     public static final int HOST_START_GAME_PETITION_ERROR_NOT_ENOUGH_PLAYERS = 41;   // Server error response to HOST_START_GAME_PETITION
     public static final int HOST_START_GAME_PETITION_ERROR_NOT_HOST = 42;   // Server error response to HOST_START_GAME_PETITION
+    */
 
-
+    /* ---------------- GAME CODES ----------------  */
     // Player roles
     public static final int PLAYER_ROLE_NO_ROLE = 80;
     public static final int PLAYER_ROLE_DEALER = 81;
