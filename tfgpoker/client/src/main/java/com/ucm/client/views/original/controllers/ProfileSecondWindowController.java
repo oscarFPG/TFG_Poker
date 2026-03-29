@@ -23,6 +23,9 @@ public class ProfileSecondWindowController extends GenericController {
     private Button btnSave;
 
     @FXML
+    private Button btnCancel;
+
+    @FXML
     public void initialize() {
 
         btnSave.setDisable(true);
@@ -34,20 +37,28 @@ public class ProfileSecondWindowController extends GenericController {
                 btnSave.setDisable(false);
             }
         });
-    // btnSave.disableProperty()
-    //     .bind(
-    //         nameLabel.textProperty().isEmpty()
-    //     );
     }
 
+
     @FXML
-    private void conectar() {
-
-        Platform.runLater(() -> {
-            //ientMain.iniciar(ipLabel.getText(), nameLabel.getText() );
-        });
+    private void save() {
         
+        String ip = ipLabel.getText();
+        String name = nameLabel.getText();
 
-        
+        mainController.getUserProfile().setIp(ip);
+        mainController.getUserProfile().setName(name);
+
+        //clientMain.iniciar(ipLabel.getText(), nameLabel.getText() );
+
+        mainController.next();
+ 
+
+    }
+
+
+    @FXML
+    private void cancel() {
+        Platform.exit();
     }
 }

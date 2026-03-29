@@ -5,6 +5,7 @@ public class StatusController {
     public enum State{
         START_APP,
         SET_PROFILE,
+        MAIN_WINDOW,
     }
     private State currentState;
 
@@ -22,6 +23,9 @@ public class StatusController {
         switch(currentState){
             case START_APP:
                 currentState = State.SET_PROFILE;
+            break;
+            case SET_PROFILE:
+                currentState = State.MAIN_WINDOW;
             break;
         }
     }

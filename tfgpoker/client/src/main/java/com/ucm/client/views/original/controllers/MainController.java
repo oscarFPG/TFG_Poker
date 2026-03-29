@@ -1,6 +1,9 @@
 package com.ucm.client.views.original.controllers;
 
 import javafx.stage.Stage;
+
+import com.ucm.client.UserProfile;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 
@@ -8,10 +11,12 @@ public class MainController {
     
     private Stage stage;
     private StatusController statusController;
+    private UserProfile userProfile;
 
     public MainController(Stage stage){
         this.stage = stage;
         this.statusController = new StatusController();
+        this.userProfile = new UserProfile();
     }
 
 
@@ -23,10 +28,13 @@ public class MainController {
     public void updateView(){
         switch(statusController.getCurrentState()){
             case START_APP:
-                loadView("/original/fxml/profileSecondWindow.fxml");
+                loadView("/original/fxml/startWindow.fxml");
             break;
             case SET_PROFILE:
-                loadView("/original/fxml/setProfileWindow.fxml");
+                loadView("/original/fxml/profileSecondWindow.fxml");
+            break;
+            case MAIN_WINDOW:
+                loadView("/original/fxml/mainWindow.fxml");
             break;
         }
     }
@@ -50,5 +58,9 @@ public class MainController {
     public void next(){
         statusController.next();
         updateView();
+    }
+
+    public UserProfile getUserProfile() {
+        return userProfile;
     }
 }

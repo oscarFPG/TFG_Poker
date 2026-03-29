@@ -30,7 +30,7 @@
                         <Image url="@../../images/startTitle.png" />
                      </image>
                   </ImageView>
-                  <Button fx:id="startButton" alignment="CENTER" mnemonicParsing="false" onAction="#abrirNuevaVentana" prefHeight="40.0" prefWidth="170.0" text="START" StackPane.alignment="BOTTOM_CENTER">
+                  <Button fx:id="startButton" alignment="CENTER" mnemonicParsing="false" prefHeight="40.0" prefWidth="170.0" text="START" StackPane.alignment="BOTTOM_CENTER">
                      <styleClass>
                         <String fx:value="general-button" />
                         <String fx:value="bold-general-text-font" />
