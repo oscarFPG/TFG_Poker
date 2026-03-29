@@ -1,21 +1,26 @@
 package com.ucm.server;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+
 import java.lang.Thread;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ucm.common.GameType;
+import com.ucm.common.SocketUtils;
 import com.ucm.server.control.Controller;
 import com.ucm.server.exceptions.EvaluatorException;
 import com.ucm.server.logic.Game;
@@ -29,28 +34,119 @@ public class ServerMain {
     
     public static int MAX_PLAYERS = 9;
 
-    private static class ClientHandler extends Thread {
+    private static List<ClientStruct> _clients = new ArrayList<>();
+    private static boolean _gameStarts = false;
 
-        private int id;
+
+    private static class ClientThread extends Thread {
+
+        private String clientName;
         private Socket socket;
 
-        public ClientHandler(Socket s, int ID) {
-            id = ID;
-            this.socket = s;
+        public ClientThread(Socket s) {
+            socket = s;
         }
 
         public void run() {
 
-            for(int i = 0; i < 4; i++) {
-                try {
-                    System.out.printf("Mostrando dato desde Thread %d\n", id);
-                    Thread.sleep(1000);
-                }
-                catch(InterruptedException e) {
-                    e.printStackTrace();
+            try {
+
+                String name;
+                int code;
+                while(!_gameStarts) {
+
+                    name = SocketUtils.receiveString(socket.getInputStream());
+                    clientName = name;
+                    log.debug("Client name is {}", clientName);
+
+                    code = SocketUtils.receiveInt(socket.getInputStream());
+                    if(code == GameType.PETITION_CREATE_GAME) {
+                        createGame();
+                    }
+                    else if(code == GameType.PETITION_JOIN_GAME) {
+                        joinGame();
+                    }
+                    else {
+                        throw new IOException( String.format("Unknown code %d", code) );
+                    }
+
+                    log.debug("End of connection for client {}", clientName);
+                    return;
+
                 }
             }
-                
+            catch(IOException e) {
+                log.error("There was an error with a client: {}", e.getMessage());
+            }
+            catch (InterruptedException e) {
+                log.error("Thread interrupted: {}", e.getMessage());
+            }
+            
+        }
+
+        private void createGame() throws IOException, InterruptedException {
+
+            log.debug("Client {} wants to create a game", clientName);
+
+            int bots = SocketUtils.receiveInt(socket.getInputStream());
+            if(bots == GameType.PETITION_ADD_BOTS) {
+                log.debug("Client {} wants to add bots", clientName);
+                log.debug("Loop in where the client must configure the bots");
+                waitSeconds(3);
+            }
+            else if(bots == GameType.PETITION_NOT_ADD_BOTS) {
+                log.debug("Client {} does not want to add bots", clientName);
+            }
+
+            Thread sendInfo = new Thread(() -> {
+
+                try {
+
+                    OutputStream out = socket.getOutputStream();
+                    int counter = 0;
+                    while(true) {
+
+                        SocketUtils.sendInteger(out, counter);
+
+                        ++counter;
+                        waitSeconds(2);
+                    }
+                }
+                catch (IOException e) {
+                    log.error("There was an error with a client: {}", e.getMessage());
+                }
+            });
+            sendInfo.start();
+
+            sendInfo.join();
+        }
+
+        private void joinGame() throws IOException {
+
+            log.debug("Client {} wants to join to a game", clientName);
+            if(_clients.isEmpty()) {
+                log.debug("Notify client that it cannot join if there is no games");
+                socket.close();
+                return;
+            }
+
+            
+
+
+        }
+
+        private void waitSeconds(final int sec) {
+
+            try {
+
+                for(int times = sec; 0 < times; times--) {
+                    log.debug("Ready in {}", times);
+                    Thread.sleep(1000);
+                }
+            }
+            catch(InterruptedException e) {
+                log.error("{}", e.getMessage());
+            }
         }
 
     }
@@ -75,7 +171,7 @@ public class ServerMain {
 
             showServerIP();
 
-            List<ClientHandler> players = preGame();
+            preGame();
             //game(players);
         }
         catch(IOException | InterruptedException e) {
@@ -127,26 +223,24 @@ public class ServerMain {
     } 
 
 
-    private static List<ClientHandler> preGame() throws IOException {
+    private static void preGame() throws IOException {
 
         ServerSocket serverSocket = new ServerSocket(GameType.PORT);
-        List<ClientHandler> clients = new ArrayList<>();
-
-        int ids = 0;
-        while(clients.size() < MAX_PLAYERS) {
+        while(!_gameStarts) {
 
             Socket socket = serverSocket.accept();
-            ClientHandler handler = new ClientHandler(socket, ids);
+            log.debug("New client connected!");
 
-            synchronized (clients) {
-                clients.add(handler);
+            if(_clients.size() < MAX_PLAYERS) {
+                ClientThread client = new ClientThread(socket);
+                client.start();
             }
-            handler.start();
+            else {
 
-            ++ids;
+                socket.close();
+                log.debug("Denying more connections, server full");
+            }
         }
-
-        return clients;
     }
 
     private static void game(List<ClientStruct> clients) {

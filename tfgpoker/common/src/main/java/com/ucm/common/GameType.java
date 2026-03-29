@@ -12,24 +12,16 @@ public class GameType {
     public static final int PETITION_PLAYER_NAME = 1;
     public static final int PETITION_CREATE_GAME = 2;
     public static final int PETITION_JOIN_GAME = 3;
-    public static final int PETITION_BOT_LIST = 4;
-    public static final int PETITION_WAITING_PLAYERS = 5;
-    public static final int PETITION_HOST_TRIES_START = 6;
-
+    public static final int PETITION_ADD_BOTS = 4;
+    public static final int PETITION_NOT_ADD_BOTS = 5;
 
     public static final int CONFIRMATION_TYPE = 100;
     public static final int CONFIRMATION_NAME_VALID = 101;
-    public static final int CONFIRMATION_BOT_LIST = 102;
-    public static final int CONFIRMATION_CREATED_GAME = 103;
-    public static final int CONFIRMATION_JOINED_GAME = 104;
-    public static final int CONFIRMATION_GAME_STARTS = 110;
-    public static final int CONFIRMATION_GAME_NOT_STARTS = 111;
 
     public static final int ERROR_TYPE = 500;
     public static final int ERROR_NAME_TOO_SHORT = 501;
     public static final int ERROR_NAME_TOO_LONG = 502;
-    public static final int ERROR_GAME_ALREADY_CREATED = 503;
-    public static final int ERROR_GAME_NOT_CREATED = 504;
+
 
     /*
     // Types
