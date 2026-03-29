@@ -1,59 +1,184 @@
 package com.ucm.server;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.io.IOException;
-import java.net.InetSocketAddress;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.lang.Thread;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-// Poker Game
-import com.ucm.server.middleclasses.ClientStructGame;
-import com.ucm.common.*;
+import com.ucm.common.GameType;
+import com.ucm.common.SocketUtils;
 import com.ucm.server.control.Controller;
 import com.ucm.server.exceptions.EvaluatorException;
 import com.ucm.server.logic.Game;
+import com.ucm.server.middleclasses.ClientStruct;
 
-// LLMs
-import dev.langchain4j.model.googleai.*;
+import opennlp.tools.stemmer.snowball.indonesianStemmer;
 
 
 public class ServerMain {
+    
 
     private static final Logger log = LogManager.getLogger(ServerMain.class);
-
-    private static class ClientStructPreGame {
-
-        public String clientName;
-        public SocketChannel clientSocket;
-        public SelectionKey key;
-
-        ClientStructPreGame(final String name, final SocketChannel s, final SelectionKey k){
-            clientName = name;
-            clientSocket = s;
-            key = k;
-        }
-    }
-
-
-    public static int MAX_PLAYERS = 9;
-    private static SocketChannel _host;
-    private static boolean _hostWantsToStart;
     
-    private static List<String> _botList;
+    public static int MAX_PLAYERS = 9;
+
+    private static List< ClientStruct<Integer> > _clients = Collections.synchronizedList(new ArrayList<>());
+
+    private static boolean _gameStarts = false;
+
+
+    private static class ClientThread extends Thread {
+
+        private String clientName;
+        private Socket socket;
+        private BlockingQueue<Integer> queue;
+
+        public ClientThread(Socket s, BlockingQueue<Integer> q) {
+            socket = s;
+            queue = q;
+        }
+
+        public void run() {
+
+            try {
+
+                String name;
+                int code;
+                while(!_gameStarts) {
+
+                    name = SocketUtils.receiveString(socket.getInputStream());
+                    clientName = name;
+                    log.debug("Client name is {}", clientName);
+
+                    code = SocketUtils.receiveInt(socket.getInputStream());
+                    if(code == GameType.PETITION_CREATE_GAME) {
+                        createGame();
+                    }
+                    else if(code == GameType.PETITION_JOIN_GAME) {
+                        joinGame();
+                    }
+                    else {
+                        throw new IOException( String.format("Unknown code %d", code) );
+                    }
+
+                    log.debug("End of connection for client {}", clientName);
+                    return;
+
+                }
+            }
+            catch(IOException e) {
+                log.error("There was an error with a client: {}", e.getMessage());
+            }
+            catch (InterruptedException e) {
+                log.error("Thread interrupted: {}", e.getMessage());
+            }
+            
+        }
+
+        private void createGame() throws IOException, InterruptedException {
+
+            log.debug("Client {} wants to create a game", clientName);
+
+            int bots = SocketUtils.receiveInt(socket.getInputStream());
+            if(bots == GameType.PETITION_ADD_BOTS) {
+                log.debug("Client {} wants to add bots", clientName);
+                log.debug("Loop in where the client must configure the bots");
+                waitSeconds(3);
+            }
+            else if(bots == GameType.PETITION_NOT_ADD_BOTS) {
+                log.debug("Client {} does not want to add bots", clientName);
+            }
+
+           _clients.add( new ClientStruct<>(clientName, socket, queue) );
+            Thread sendNewPlayerInfoThread = new Thread(() -> {
+
+                boolean exit = false;
+                while(!exit) {
+
+                    try {
+                        
+                        System.out.printf("Waiting...\n");
+                        int code = queue.take();
+                        if(code == GameType.EVENT_PLAYER_JOINED) {
+                            sendListInfo(socket);
+                        }
+
+                    }
+                    catch (IOException | InterruptedException e) {
+                        log.debug("There was an error : {}", e.getMessage());
+                    }
+
+
+                }
+
+            });
+            sendNewPlayerInfoThread.start();
+            sendNewPlayerInfoThread.join();
+        }
+
+        private void joinGame() throws IOException, InterruptedException {
+
+            log.debug("Client {} wants to join to a game", clientName);
+            if(_clients.isEmpty()) {
+                log.debug("Notify client that it cannot join if there is no games");
+                socket.close();
+                return;
+            }
+
+            _clients.add( new ClientStruct<>(clientName, socket, queue) );
+            
+            for(ClientStruct<Integer> cl : _clients)
+                cl.queue().put(GameType.EVENT_PLAYER_JOINED);
+
+            while(true) {
+
+                int code = queue.take();
+                if(code == GameType.EVENT_PLAYER_JOINED) {
+                    sendListInfo(socket);
+                }
+            }
+
+        }
+
+        private void sendListInfo(Socket socket) throws IOException {
+
+            List< ClientStruct<Integer> > copy = new ArrayList<>(_clients);
+
+            SocketUtils.sendInteger(socket.getOutputStream(), GameType.EVENT_PLAYER_JOINED);
+            SocketUtils.sendInteger(socket.getOutputStream(), copy.size());
+            for(ClientStruct<Integer> cl : copy) {
+                SocketUtils.sendString(socket.getOutputStream(), cl.name());
+            }
+        }
+
+        private void waitSeconds(final int sec) {
+
+            try {
+
+                for(int times = sec; 0 < times; times--) {
+                    log.debug("Ready in {}", times);
+                    Thread.sleep(1000);
+                }
+            }
+            catch(InterruptedException e) {
+                log.error("{}", e.getMessage());
+            }
+        }
+
+    }
 
     /*
      * Desde la ruta TFGPOKER/tfgpoker
@@ -69,36 +194,21 @@ public class ServerMain {
      * Run the tests
      *      .\mvnw.cmd test
      */
-    public static void main(String[] args) throws IOException {
-
-        // Local mode for testing without real clients connected by sockets
-        if(args.length > 0 && args[0].equalsIgnoreCase("local")){
-            runGameInModeLocal(args);
-            return;
-        }
-
+    public static void main(String[] args) {
 
         try {
 
-            log.debug("Running in server mode...");
-            String serverIP = getServerPublicIP();
-            List<ClientStructPreGame> joinedClients = preGame();
-            List<ClientStructGame> players = new ArrayList<>();
-            for(ClientStructPreGame cs : joinedClients){
-                cs.clientSocket.configureBlocking(true);
-                players.add( new ClientStructGame(cs.clientName, cs.clientSocket.socket()) );
-            }
-            game(players);
+            showServerIP();
 
-
+            preGame();
+            //game(players);
         }
-        catch(IOException e) {
-            log.fatal("{}", e.getMessage());
-        }
-        catch(InterruptedException e) {
-            log.fatal("{}", e.getMessage());
+        catch(IOException | InterruptedException e) {
+            log.fatal("Couldnt get the public server ip {}", e.getMessage());
+            return;
         }
     }
+
 
     private static void runGameInModeLocal(String[] args) {
 
@@ -127,8 +237,7 @@ public class ServerMain {
         }
     }
 
-
-    private static String getServerPublicIP() throws IOException, InterruptedException {
+    private static void showServerIP() throws IOException, InterruptedException {
 
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest
@@ -140,108 +249,30 @@ public class ServerMain {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         String serverIP = response.body();
         log.debug("Server public IP obtained: {}", serverIP);
-
-        return serverIP;
     } 
 
-    private static List<ClientStructPreGame> preGame() {
 
-        List<ClientStructPreGame> roomList = new ArrayList<>();     // Player list that enter the game
-        List<ClientStructPreGame> clientList = new ArrayList<>();   // Client list that tries to play
-        _botList = new ArrayList<>();
+    private static void preGame() throws IOException {
 
-        ServerSocketChannel serverSocket = null;
-        Selector selector = null;
-        try {
-            serverSocket = ServerSocketChannel.open();
-            serverSocket.configureBlocking(false);
-            serverSocket.bind( new InetSocketAddress(GameType.PORT) );
-            log.debug("Server up, waiting for clients...");
+        ServerSocket serverSocket = new ServerSocket(GameType.PORT);
+        while(!_gameStarts) {
 
-            selector = Selector.open();
-            serverSocket.register(selector, SelectionKey.OP_ACCEPT);
+            Socket socket = serverSocket.accept();
+            log.debug("New client connected!");
 
-            _hostWantsToStart = false;
-            while (!_hostWantsToStart) {
-
-                selector.select();
-                Iterator<SelectionKey> keys = selector.selectedKeys().iterator();
-                while (keys.hasNext()) {
-
-                    SelectionKey key = keys.next();
-                    keys.remove();
-
-                    if (!key.isValid())
-                        continue;
-
-
-                    if (key.isAcceptable()) {
-                        handleAccept(key, selector);
-                    } 
-                    else if (key.isReadable()) {
-                        handleReceive(key, clientList, roomList);
-                    } 
-                    else if (key.isWritable()) {
-                        handleSend(key);
-                    }
-                }
+            if(_clients.size() < MAX_PLAYERS) {
+                ClientThread client = new ClientThread(socket, new LinkedBlockingQueue<>());
+                client.start();
             }
-            log.debug("Host empieza la partida!");
+            else {
 
-            // Cancel all clients left keys -> Important!
-            for (SelectionKey key : selector.keys()) {
-                key.cancel();
-            }
-            selector.selectNow();
-
-            // Send to all clients the GAME_STARTS flag
-            ByteBuffer broadcastBuffer = ByteBuffer.allocate(Integer.BYTES);
-            broadcastBuffer.putInt(GameType.GAME_STARTS);
-            for(ClientStructPreGame cs : roomList){
-                try {
-                    broadcastBuffer.rewind();
-                    cs.clientSocket.write(broadcastBuffer);
-                }
-                catch(IOException e) {
-                    log.error("Sending GAME_STARTS flag: {}", e.getMessage());
-                    try {
-                        cs.clientSocket.close();
-                    }
-                    catch(IOException exception) {
-                        log.error("Closing socket: {}", e.getMessage());
-                    }
-                }
-            }
-
-            //  Eliminate all not in-game players to avoid infinite waiting
-            for(ClientStructPreGame cs : clientList){
-                try {
-                    cs.key.cancel();
-                    cs.clientSocket.close();
-                }
-                catch(IOException ignored){}
-            } 
-        } 
-        catch (IOException e) {
-            log.error("Something happend with clients socket {}", e.getMessage());
-        } 
-        finally {
-
-            if (serverSocket.isOpen()) {
-                try {
-                    serverSocket.close();
-                    selector.close();
-                }
-                catch (IOException e) {
-                    log.error("Closing the server socket: {}", e.getMessage());
-                }
+                socket.close();
+                log.debug("Denying more connections, server full");
             }
         }
-
-        return roomList;
     }
 
-    private static void game(List<ClientStructGame> clients) {
+    private static void game(List<ClientStruct> clients) {
 
         try{
             Game game = new Game();
@@ -252,214 +283,6 @@ public class ServerMain {
             log.error("Initializing the game: {}", e.getMessage());
             return;
         }
-    }
-
-
-    private static void handleAccept(SelectionKey key, Selector selector) throws IOException {
-
-        ServerSocketChannel serverChannel = (ServerSocketChannel) key.channel();
-        SocketChannel client = serverChannel.accept();
-        client.configureBlocking(false);
-
-        client.register(selector, SelectionKey.OP_READ, ByteBuffer.allocate(128));
-        log.debug("Nuevo cliente conectado!");
-    }
-
-    private static void handleReceive(SelectionKey key, List<ClientStructPreGame> clientList, List<ClientStructPreGame> roomList) {
-
-        SocketChannel socket = (SocketChannel) key.channel();
-        ByteBuffer buffer = (ByteBuffer) key.attachment();
-        int bytesRead;
-        byte tipo;
-
-        try {
-
-            bytesRead = socket.read(buffer);
-            if (bytesRead == -1) {
-                key.cancel();
-                socket.close();
-                log.debug("Connection closed!");
-                return;
-            }
-
-            buffer.flip();
-            tipo = buffer.get();
-            log.debug("Tipo de peticion {}", tipo);
-
-            switch (tipo) {
-            case GameType.DATA_TYPE_NAME:
-                int msgSize;
-                byte[] msgBytes;
-
-                msgSize = buffer.getInt();
-                msgBytes = new byte[msgSize];
-                buffer.get(msgBytes);
-                String clientName = new String(msgBytes, StandardCharsets.UTF_8);
-                log.debug("Client {} authenticated!", clientName);
-
-                // Almacenar nombre para relacionar socket-nombre si esta en la lista de clientes
-                // Esta lista es distinta a la lista de jugadores que SI que van a entrar a partida
-                log.debug("Cliente {} almacenado en la lista de clientes!", clientName);
-                clientList.add( new ClientStructPreGame(clientName, socket, key) );
-
-                break;
-
-            case GameType.DATA_TYPE_PETITION:
-                int code = buffer.getInt();
-                log.debug("Petition type received {}", code);
-                handleClientPetition(key, code, clientList, roomList);
-
-                break;
-
-            default:
-                log.debug("Tipo desconocido: {}", tipo);
-            }
-        }
-        catch(IOException e){
-            log.error("Something strange ocurred with the clients socket: {}", e.getMessage());
-			try {
-				key.cancel();
-				socket.close();
-			}
-			catch (IOException ignored) {}
-        }
-
-        buffer.clear();
-    }
-
-    private static void handleSend(SelectionKey key) {
-
-        SocketChannel client = (SocketChannel) key.channel();
-        ByteBuffer buffer = (ByteBuffer) key.attachment();
-
-    }
-
-    // Game options
-    private static void handleClientPetition(SelectionKey key, final int petition, List<ClientStructPreGame> clientList, List<ClientStructPreGame> roomList) {
-
-        SocketChannel client = (SocketChannel) key.channel();
-        switch (petition) {
-        case GameType.CREATE_PETITION:
-
-            log.debug("Peticion CREATE del cliente");
-            if(roomList.isEmpty()){
-
-                log.debug("Creando partida!");
-                ClientStructPreGame hostClient = clientList.stream()
-                    .filter(c -> c.clientSocket == client).findFirst().
-                    orElse(null);
-
-                if(hostClient != null){
-                    clientList.remove(hostClient);
-                    roomList.add(hostClient);
-                    _host = client;  // Select the host to wait for his petition to start the game
-                    log.debug("Client {} selected as host", hostClient.clientName);
-                }
-            }
-            else{
-
-                log.debug("Partida ya existente!");
-                try {
-                    client.close();
-                }
-                catch (IOException e) {
-                    log.error("Closing connection with client {}", e.getMessage());
-                }
-            }
-            break;
-
-        case GameType.JOIN_PETITION:
-
-            log.debug("Peticion JOIN del cliente");
-            if(!roomList.isEmpty() && roomList.size() < MAX_PLAYERS){     // La partida ha sido creada y ha, al menos, dos jugadores
-
-                ClientStructPreGame joiningClient = clientList.stream()
-                    .filter(c -> c.clientSocket == client).findFirst().
-                    orElse(null);
-
-                if(joiningClient != null){
-                    roomList.add( joiningClient );
-                    clientList.removeIf(c -> c.clientSocket == joiningClient.clientSocket);
-                    log.debug("Uniendo jugador a la partida! Jugadores actuales: {}", roomList.size());
-                }
-            }
-            else{
-
-                log.debug("Partida no creada o llena!");
-                try {
-                    client.close();
-                    key.cancel();
-                }
-                catch(IOException e) {
-                    log.error("Trying to close connection safely: {}", e.getMessage());
-                }
-            }
-            break;
-    
-        case GameType.HOST_START_GAME_PETITION:
-
-            // Other client except the true host tries to start the game
-            if(client != _host){
-
-                log.debug("Only the host can start the game!");
-                try{
-                    ClientStructPreGame cs = roomList.stream()
-                        .filter(c -> c.clientSocket == client)
-                        .findFirst()
-                        .orElse(null);
-
-                    clientList.remove(cs);
-                    roomList.remove(cs);
-                    key.cancel();
-                    client.close();
-                }
-                catch (IOException ignored){}
-
-                return;
-            }
-
-            if(roomList.size() >= 2){
-                log.debug("Host starts the game succesfully with {} players!", roomList.size());
-                _hostWantsToStart = true;
-            }
-            else {
-                log.debug("Cannot start the game with less than 2 players!");
-                // TODO : Avisar al cliente de esto
-            }
-            
-            break;
-
-        case GameType.ADD_BOT_PETITION:
-
-            if(client != _host){
-
-                log.debug("Only the host can add bots!");
-                try {
-                    ClientStructPreGame cs = roomList.stream()
-                        .filter(c -> c.clientSocket == client)
-                        .findFirst()
-                        .orElse(null);
-
-                    clientList.remove(cs);
-                    roomList.remove(cs);
-                    key.cancel();
-                    client.close();
-                }
-                catch (IOException ignored){}
-
-                return;
-            }
-
-            log.debug("Host wants to add a bot");
-
-
-            break;
-            
-        default:
-            log.error("Unknown petition {}", petition);
-            break;
-        }
-        
     }
 
 }

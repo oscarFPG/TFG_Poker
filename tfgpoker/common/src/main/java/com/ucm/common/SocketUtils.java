@@ -9,11 +9,11 @@ import java.io.IOException;
 
 public class SocketUtils {
 
-    private SocketUtils(){}
+    private SocketUtils() {}
 
-    public static void sendString(OutputStream out, String data) throws IOException {
+    public static void sendString(OutputStream out, String msg) throws IOException {
 
-        byte buffer[] = data.getBytes(StandardCharsets.UTF_8);
+        byte buffer[] = msg.getBytes(StandardCharsets.UTF_8);
         sendInteger(out, buffer.length);
         out.write( buffer );
         out.flush();
