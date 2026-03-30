@@ -54,87 +54,25 @@ public class EJEMPLO {
 
         System.out.printf("Write your username: ");
         _name = _scanner.next();
+        SocketUtils.sendInteger(out, GameType.PETITION_PLAYER_NAME);
         SocketUtils.sendString(out, _name);
 
-        int option = getUserPetition();
-        if(option == 1) {
-
-            SocketUtils.sendInteger(out, GameType.PETITION_CREATE_GAME);
-            System.out.printf("CREATE_GAME sent\n");
-
-            System.out.printf("Do you want to add bots?\n");
-            System.out.printf("[Y]es/[N]o : ");
-            String input = _scanner.next();
-            if(input.equalsIgnoreCase("yes") || input.equalsIgnoreCase("yes")) {
-                SocketUtils.sendInteger(out, GameType.PETITION_ADD_BOTS);
-            }
-            else {
-                SocketUtils.sendInteger(out, GameType.PETITION_NOT_ADD_BOTS);
-            }
-
-            boolean gameStarts = false;
-            while(!gameStarts) {
-
-                System.out.printf("Waiting...\n");
-                int code = SocketUtils.receiveInt(in);
-                System.out.printf("");
-
-                if(code == GameType.GAME_STARTS) {
-                    gameStarts = true;
-                }
-                else if(code == GameType.EVENT_PLAYER_JOINED) {
-
-                    System.out.printf("Player's info\n\n");
-
-                    int numPlayers = SocketUtils.receiveInt(in);
-                    System.out.printf("%d players in the game\n", numPlayers);
-                    for(int i = 0; i < numPlayers; i++) {
-                        String name = SocketUtils.receiveString(in);
-                        System.out.printf("Player %s in the game\n", name);
-                    }
-                    System.out.printf("List completed!\n");
-
-                }
-
-            }
-
+        int response = SocketUtils.receiveInt(in);
+        if(response == GameType.CONFIRMATION_NAME_VALID) {
+            System.out.printf("Name valid!\n");
         }
-        else if(option == 2) {
-
-            SocketUtils.sendInteger(out, GameType.PETITION_JOIN_GAME);
-            System.out.printf("JOIN_GAME sent\n");
-
-            boolean gameStarts = false;
-            while(!gameStarts) {
-
-                System.out.printf("Waiting...\n");
-                int code = SocketUtils.receiveInt(in);
-                if(code == GameType.GAME_STARTS) {
-                    gameStarts = true;
-                }
-                else if(code == GameType.EVENT_PLAYER_JOINED) {
-                    
-                    System.out.printf("Player's info\n\n");
-
-                    int numPlayers = SocketUtils.receiveInt(in);
-                    System.out.printf("%d players in the game\n", numPlayers);
-                    for(int i = 0; i < numPlayers; i++) {
-                        String name = SocketUtils.receiveString(in);
-                        System.out.printf("Player %s in the game\n", name);
-                    }
-                    System.out.printf("List completed!\n");
-
-                }
-            }
-            System.out.printf("Game starts!\n");
-
+        else if(response == GameType.ERROR_NAME_TOO_SHORT) {
+            System.out.printf("Name too short!\n");
         }
-        else {
-            throw new IOException( String.format("Option not found: %d", option) );
+        else if(response == GameType.ERROR_NAME_TOO_LONG) {
+            System.out.printf("Name too long!\n");
         }
 
+        boolean test = true;
+        while(test) {
 
-        System.out.printf("Pregame ends!\n");
+        }
+
         return socket;
     }
 

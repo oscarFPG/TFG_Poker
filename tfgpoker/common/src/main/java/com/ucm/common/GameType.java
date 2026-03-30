@@ -7,6 +7,7 @@ public class GameType {
 
     // Server port
     public static final int PORT = 5005;
+    public static final int MAX_PLAYERS = 9;
 
     /* ---------------- PREGAME CODES ----------------  */
     public static final int PETITION_PLAYER_NAME = 1;
