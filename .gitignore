@@ -13,3 +13,9 @@ target/
 # Ignorar otros archivos comunes
 .DS_Store
 Thumbs.db
+
+# Modelos de IA (muy pesados)
+model/
+model-llama/
+model-qwen/
+*.gguf

@@ -6,15 +6,13 @@ import com.ucm.server.gameobjects.Card;
 import com.ucm.server.gameobjects.PlayerRole;
 
 import dev.langchain4j.data.message.AiMessage;
+import static dev.langchain4j.data.message.UserMessage.userMessage;
 import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.memory.chat.TokenWindowChatMemory;
-import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModelName;
-import dev.langchain4j.model.openai.OpenAiTokenCountEstimator;
-
-import static dev.langchain4j.data.message.UserMessage.userMessage;
 import static dev.langchain4j.model.openai.OpenAiChatModelName.GPT_4_O_MINI;
+import dev.langchain4j.model.openai.OpenAiTokenCountEstimator;
 
 
 public class ChatgptLLM extends BotLLM {
@@ -136,6 +134,11 @@ public class ChatgptLLM extends BotLLM {
 
     @Override
     public void notifyHandEndsByFolds() {
+        
+    }
+
+    @Override
+    public void notifyPlayerAction(PlayerRole role, String action, double amount) {
         
     }
     
