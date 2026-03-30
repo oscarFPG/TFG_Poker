@@ -8,6 +8,10 @@ public class StatusController {
         MAIN_WINDOW,
         CHOOSE_GAME,
         CREATE_GAME,
+        ADD_BOTS,
+        ADD_PLAYERS,
+        ADD_TABLE,
+        ADD_CARDS
     }
     private State currentState;
 
@@ -33,6 +37,18 @@ public class StatusController {
             case MAIN_WINDOW:
                 currentState = State.CHOOSE_GAME;
             break;
+            case CREATE_GAME:
+                currentState = State.ADD_BOTS;
+            break;
+            case ADD_BOTS:
+                currentState = State.ADD_PLAYERS;
+            break;
+            case ADD_PLAYERS:
+                currentState = State.ADD_TABLE;
+            break;
+            case ADD_TABLE:
+                currentState = State.ADD_CARDS;
+            break;
         }
     }
 
@@ -49,6 +65,18 @@ public class StatusController {
             break;
             case CREATE_GAME:
                 currentState = State.CHOOSE_GAME;
+            break;
+            case ADD_BOTS:
+                currentState = State.CREATE_GAME;
+            break;
+            case ADD_PLAYERS:
+                currentState = State.ADD_BOTS;
+            break;
+            case ADD_TABLE:
+                currentState = State.ADD_PLAYERS;
+            break;
+            case ADD_CARDS:
+                currentState = State.ADD_TABLE;
             break;
         }
     }

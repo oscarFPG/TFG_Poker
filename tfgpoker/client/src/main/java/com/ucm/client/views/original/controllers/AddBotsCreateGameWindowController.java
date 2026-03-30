@@ -8,26 +8,29 @@ import com.ucm.common.SocketUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
-public class ChooseGameWindowController extends GenericController {
+public class AddBotsCreateGameWindowController extends GenericController {
     
     @FXML
-    private Button btnCreateGame;
-
+    private Button btnBackHome;
+    @FXML
+    private Button btnNextPlayers;
 
     @FXML
-    private void onCreateGame() {
-        
-       _mainController.chooseCreateGame();
+    public void jumpToHome(){
+        back();
     }
 
+    @FXML
+    public void jumpToPlayers(){
+        next();
+    }
 
     @Override
     public void onNextEvent() {
     }
 
-
     @Override
     public void onBackEvent() {
+        
     }
-
 }

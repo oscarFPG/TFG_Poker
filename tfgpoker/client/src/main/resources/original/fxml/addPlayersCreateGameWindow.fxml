@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="706.0" prefWidth="1043.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.AddPlayersCreateGameWindowController">
    <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0">
          <top>
@@ -52,14 +52,14 @@
                <children>
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                      <children>
-                        <Button mnemonicParsing="false" prefHeight="44.0" prefWidth="36.0">
+                        <Button fx:id="btnBackBots" mnemonicParsing="false" onAction="#jumpToBots" prefHeight="44.0" prefWidth="36.0">
                            <styleClass>
                               <String fx:value="arrow-back" />
                               <String fx:value="arrow-colors" />
                            </styleClass>
                         </Button>
                         <Label prefHeight="82.0" prefWidth="493.0" styleClass="title-label" text="Add Players" />
-                        <Button mnemonicParsing="false" prefHeight="44.0" prefWidth="36.0" rotate="180.0">
+                        <Button fx:id="btnNextTable" mnemonicParsing="false" onAction="#jumpToTable" prefHeight="44.0" prefWidth="36.0" rotate="180.0">
                            <styleClass>
                               <String fx:value="arrow-back" />
                               <String fx:value="arrow-colors" />

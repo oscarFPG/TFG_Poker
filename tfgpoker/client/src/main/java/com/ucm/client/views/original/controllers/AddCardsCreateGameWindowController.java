@@ -3,29 +3,24 @@ package com.ucm.client.views.original.controllers;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
-public class HomeCreateGameWindowController extends GenericController {
+public class AddCardsCreateGameWindowController extends GenericController {
+    
+    @FXML
+    private Button btnBackTable;
 
     @FXML
-    private Button btnBackChooseGame;
-    @FXML
-    private Button btnNextHome;
-
-    @FXML
-    public void returnChooseGame(){
+    public void jumpToTable(){
         back();
-    }
-
-    @FXML
-    public void jumpToBots(){
-        next();
     }
 
     @Override
     public void onNextEvent() {
+       
     }
 
     @Override
     public void onBackEvent() {
+        
     }
-
+    
 }

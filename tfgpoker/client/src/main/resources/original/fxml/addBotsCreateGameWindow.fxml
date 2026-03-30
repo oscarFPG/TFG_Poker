@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="738.0" prefWidth="1069.0" styleClass="root" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" styleClass="root" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.AddBotsCreateGameWindowController">
          <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0">
          <top>
@@ -48,14 +48,14 @@
                      <children>
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                      <children>
-                        <Button mnemonicParsing="false" prefHeight="44.0" prefWidth="36.0">
+                        <Button fx:id="btnBackHome" mnemonicParsing="false" onAction="#jumpToHome" prefHeight="44.0" prefWidth="36.0">
                            <styleClass>
                               <String fx:value="arrow-back" />
                               <String fx:value="arrow-colors-black" />
                            </styleClass>
                         </Button>
                               <Label alignment="TOP_CENTER" prefHeight="82.0" prefWidth="493.0" styleClass="title-label" text="Add Bots" />
-                        <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="36.0" rotate="180.0">
+                        <Button fx:id="btnNextPlayers" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#jumpToPlayers" prefHeight="44.0" prefWidth="36.0" rotate="180.0">
                            <styleClass>
                               <String fx:value="arrow-back" />
                               <String fx:value="arrow-colors-black" />

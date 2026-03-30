@@ -40,6 +40,18 @@ public class MainController {
             case CREATE_GAME:
                 loadView(path + "homeCreateGameWindow.fxml");
             break;
+            case ADD_BOTS:
+                loadView(path + "addBotsCreateGameWindow.fxml");
+            break;
+            case ADD_PLAYERS:
+                loadView(path + "addPlayersCreateGameWindow.fxml");
+            break;
+            case ADD_TABLE:
+                loadView(path + "addTableCreateGameWindow.fxml");
+            break;
+            case ADD_CARDS:
+                loadView(path + "addCardsCreateGameWindow.fxml");
+            break;
 
         }
     }

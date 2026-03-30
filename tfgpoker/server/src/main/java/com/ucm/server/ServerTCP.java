@@ -71,11 +71,6 @@ public class ServerTCP {
                         String name = SocketUtils.receiveString(input);
                         log.debug("Received player name: {}", name);
 
-                        for(int i = 6; 0 < i; i--) {
-                            log.debug("Responding to client in {}", i);
-                            Thread.sleep(1000);
-                        }
-
                         if(name.length() < 3) {
                             SocketUtils.sendInteger(output, GameType.ERROR_NAME_TOO_SHORT);
                         }
@@ -104,7 +99,7 @@ public class ServerTCP {
 
                 }
             }
-            catch(IOException | InterruptedException e) {
+            catch(IOException e) {
                 log.error("Handling client connection: {}", e.getMessage());  
             }
             finally {
