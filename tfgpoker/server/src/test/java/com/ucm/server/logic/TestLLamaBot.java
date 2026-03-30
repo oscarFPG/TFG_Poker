@@ -12,10 +12,10 @@ public class TestLLamaBot {
 
         
         bot.notifyPlayerRole(PlayerRole.BIG_BLIND);
-        bot.notifyPlayerCard(new Card(14, Suit.HEARTS));
+        bot.notifyPlayerCard(new Card(1, Suit.HEARTS));
         bot.notifyPlayerCard(new Card(13, Suit.HEARTS));
 
-        bot.notifyTableCard(new Card(12, Suit.DIAMONDS));
+        bot.notifyTableCard(new Card(10, Suit.DIAMONDS));
         bot.notifyTableCard(new Card(11, Suit.HEARTS));
         bot.notifyTableCard(new Card(2, Suit.CLUBS));
 
@@ -23,8 +23,8 @@ public class TestLLamaBot {
         bot.notifyBigBlindBet(2);
 
        
-        bot.notifyPlayerAction(PlayerRole.UNDER_THE_GUN, "raise", 3);
-        bot.notifyPlayerAction(PlayerRole.SMALL_BLIND, "call", 3);
+        bot.notifyPlayerAction(PlayerRole.UNDER_THE_GUN, "raise", 4);
+        bot.notifyPlayerAction(PlayerRole.SMALL_BLIND, "fold", 3);
 
        
         String action = bot.actionMakePlay(1, 2, 3);

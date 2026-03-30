@@ -83,51 +83,66 @@ public class LlamaPokerLLM extends BotLLM {
 }
 
     private String callOllama(String prompt) {
-        try {
-            URL url = new URL(OLLAMA_URL);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+    try {
+        URL url = new URL(OLLAMA_URL);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type", "application/json");
-            conn.setDoOutput(true);
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Content-Type", "application/json");
+        conn.setDoOutput(true);
 
-            String json = """
-            {
-              "model": "%s",
-              "prompt": "%s",
-              "stream": false,
-              "options": {
-                "temperature": 0,
-                "top_p": 0.1,
-                "num_predict": 30
-              }
-            }
-            """.formatted(MODEL_NAME, prompt.replace("\"", "\\\""));
+        // 🔥 Escapar correctamente JSON
+        String safePrompt = prompt
+                .replace("\\", "\\\\")   // backslash
+                .replace("\"", "\\\"")   // comillas
+                .replace("\n", "\\n")    // saltos de línea
+                .replace("\r", "")       // returns
+                .replace("\t", "\\t");   // tabs
 
-            OutputStream os = conn.getOutputStream();
-            os.write(json.getBytes());
-            os.flush();
-
-            BufferedReader br = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream())
-            );
-
-            StringBuilder response = new StringBuilder();
-            String line;
-
-            while ((line = br.readLine()) != null) {
-                response.append(line);
-            }
-
-            conn.disconnect();
-            return response.toString();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "<action>fold</action>";
+        String json = """
+        {
+          "model": "%s",
+          "prompt": "%s",
+          "stream": false,
+          "options": {
+            "temperature": 0,
+            "top_p": 0.1,
+            "num_predict": 30
+          }
         }
-    }
+        """.formatted(MODEL_NAME, safePrompt);
 
+        OutputStream os = conn.getOutputStream();
+        os.write(json.getBytes());
+        os.flush();
+        os.close();
+
+        int status = conn.getResponseCode();
+
+        BufferedReader br;
+        if (status >= 200 && status < 300) {
+            br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        } else {
+            // 🔥 Leer error real (CLAVE para debug)
+            br = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+        }
+
+        StringBuilder response = new StringBuilder();
+        String line;
+
+        while ((line = br.readLine()) != null) {
+            response.append(line);
+        }
+
+        conn.disconnect();
+
+        return response.toString();
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        return "<action>fold</action>";
+    }
+}
 
     private String extractAction(String text) {
 
@@ -171,7 +186,7 @@ public class LlamaPokerLLM extends BotLLM {
         String response = callOllama(prompt);
 
         System.out.println("PROMPT:\n" + prompt);
-        System.out.println("RAW RESPONSE:\n" + response);
+        //System.out.println("RAW RESPONSE:\n" + response);
 
         String action = extractAction(response);
 
