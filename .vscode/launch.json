@@ -3,6 +3,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "MainApp",
+            "request": "launch",
+            "mainClass": "com.ucm.client.MainApp",
+            "projectName": "client"
+        },
+        {
+            "type": "java",
             "name": "Run Server",
             "preLaunchTask": "Server run",
             "request": "launch"
@@ -24,6 +31,20 @@
         {
             "type": "java",
             "name": "Debug Client",
+            "request": "attach",
+            "hostName": "localhost",
+            "port": 8000,
+            "projectName": "client"
+        },
+        {
+            "type": "java",
+            "name": "Run JavaFX",
+            "preLaunchTask": "Run JavaFX",
+            "request": "launch"
+        },
+        {
+            "type": "java",
+            "name": "Debug JavaFX",
             "request": "attach",
             "hostName": "localhost",
             "port": 8000,

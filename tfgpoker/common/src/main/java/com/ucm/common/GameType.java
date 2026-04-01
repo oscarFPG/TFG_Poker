@@ -21,10 +21,12 @@ public class GameType {
 
     public static final int CONFIRMATION_TYPE = 200;
     public static final int CONFIRMATION_NAME_VALID = 201;
+    public static final int CONFIRMATION_CREATE_GAME = 202;
 
     public static final int ERROR_TYPE = 500;
-    public static final int ERROR_NAME_TOO_SHORT = 501;
-    public static final int ERROR_NAME_TOO_LONG = 502;
+    public static final int ERROR_GAME_ALREADY_CREATED = 501;
+    public static final int ERROR_NAME_TOO_SHORT = 502;
+    public static final int ERROR_NAME_TOO_LONG = 503;
 
 
     /*
