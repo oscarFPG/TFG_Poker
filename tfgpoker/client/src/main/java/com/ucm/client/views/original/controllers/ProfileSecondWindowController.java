@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.Socket;
 
 import com.ucm.client.ClientInfo;
-import com.ucm.client.PokerGame;
+import com.ucm.common.PokerGame;
 import com.ucm.common.SocketUtils;
 
 import javafx.application.Platform;
@@ -16,6 +16,11 @@ import javafx.scene.control.TextField;
 
 public class ProfileSecondWindowController extends GenericController {
 
+
+    public class Config {
+
+        public boolean alloBots;
+    }
 
     @FXML
     private TextField ipLabel;
@@ -62,7 +67,7 @@ public class ProfileSecondWindowController extends GenericController {
 
         try {
             _clientInfo.socket = PokerGame.connect(serverIP);
-            SocketUtils.sendString(_clientInfo.socket.getOutputStream(), name);
+            PokerGame.sendName(_clientInfo.name, _clientInfo.socket);
         }
         catch(IOException e) {
             System.out.printf("Error connecting to the socket: %s", e.getMessage());
@@ -80,10 +85,14 @@ public class ProfileSecondWindowController extends GenericController {
 
     @Override
     public void onNextEvent() {
+
+
     }
 
 
     @Override
     public void onBackEvent() {
+   
+        
     }
 }

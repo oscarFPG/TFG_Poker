@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ucm.common.GameType;
+import com.ucm.common.PokerGame;
 import com.ucm.common.SocketUtils;
 
 
@@ -65,25 +66,12 @@ public class ClientThread implements Runnable{
                 switch (request) {
                 case GameType.PETITION_PLAYER_NAME:
                     
-                    String name = SocketUtils.receiveString(input);
-                    log.debug("Received player name: {}", name);
-
-                    for(int i = 6; 0 < i; i--) {
-                        log.debug("Responding to client in {}", i);
-                        Thread.sleep(1000);
-                    }
-
-                    if(name.length() < 3) {
-                        SocketUtils.sendInteger(output, GameType.ERROR_NAME_TOO_SHORT);
-                    }
-                    else if(10 < name.length()) {
-                        SocketUtils.sendInteger(output, GameType.ERROR_NAME_TOO_LONG);
-                    }
-                    else {
+                    String name = PokerGame.receiveName(input, output);
+                    if(name != null) {
                         _playerName = name;
-                        SocketUtils.sendInteger(output, GameType.CONFIRMATION_NAME_VALID);
+                        log.debug("Client with name {} authenticated!", _playerName);
                     }
-
+                     
                     break;
             
                 case GameType.PETITION_CREATE_GAME:
@@ -101,7 +89,7 @@ public class ClientThread implements Runnable{
 
             }
         }
-        catch(IOException | InterruptedException e) {
+        catch(IOException e) {
             log.error("Handling client connection: {}", e.getMessage());  
         }
         finally {
