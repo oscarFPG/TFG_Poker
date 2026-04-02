@@ -8,6 +8,7 @@ import java.net.Socket;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.ucm.common.GameConfig;
 import com.ucm.common.GameType;
 import com.ucm.common.PokerGame;
 import com.ucm.common.SocketUtils;
@@ -75,7 +76,17 @@ public class ClientThread implements Runnable{
                     break;
             
                 case GameType.PETITION_CREATE_GAME:
-                    // Misma logica...
+                    
+                    GameConfig config = PokerGame.receiveGameConfig(input, output);
+                    if(config != null) {
+                        SocketUtils.sendInteger(output, GameType.ERROR_GAME_NOT_CREATED);
+                        log.error("Configuration was not valid");
+                    }
+                    else {
+                        SocketUtils.sendInteger(output, GameType.CONFIRMATION_CREATE_GAME);
+                        log.debug("Configuration valid! Creating {}'s game room...", _playerName);
+                    }
+
                     break;
 
                 case GameType.PETITION_JOIN_GAME:

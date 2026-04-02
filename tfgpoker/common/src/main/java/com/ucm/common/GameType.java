@@ -5,7 +5,7 @@ public class GameType {
     
     private GameType(){}
 
-    // Server port
+    /* ---------------- SERVER PROPERTIES ----------------  */
     public static final int PORT = 5005;
     public static final int MAX_PLAYERS = 9;
 
@@ -16,40 +16,18 @@ public class GameType {
     public static final int PETITION_ADD_BOTS = 4;
     public static final int PETITION_NOT_ADD_BOTS = 5;
 
-    public static final int EVENT_PLAYER_JOINED = 100;
-
+    public static final int EVENT_TYPE = 100;
+    public static final int EVENT_PLAYER_JOINED = 101;
 
     public static final int CONFIRMATION_TYPE = 200;
     public static final int CONFIRMATION_NAME_VALID = 201;
     public static final int CONFIRMATION_CREATE_GAME = 202;
 
     public static final int ERROR_TYPE = 500;
-    public static final int ERROR_GAME_ALREADY_CREATED = 501;
-    public static final int ERROR_NAME_TOO_SHORT = 502;
+    public static final int ERROR_NAME_TOO_SHORT = 502;     // Name error codes
     public static final int ERROR_NAME_TOO_LONG = 503;
+    public static final int ERROR_GAME_NOT_CREATED = 504;
 
-
-    /*
-    // Types
-    public static final byte DATA_TYPE_PETITION = 1;    // Flag to send a pregame petition   
-    public static final byte DATA_TYPE_NAME = 2;        // Flag to send a name as a string
-    public static final byte DATA_BOT = 3;              // Flag to send a bot to add
-
-    // Clients and server codes during pregame
-    public static final int CREATE_PETITION = 10;       // Client requests creating a game
-    public static final int CREATE_PETITION_ERROR_ALREADY_A_GAME = 11;   // Server error response to CREATE_PETITION
-
-    public static final int JOIN_PETITION = 20;         // Client requests joining a game
-    public static final int JOIN_PETITION_ERROR = 21;   // Server error response to JOIN_PETITION
-
-    public static final int REQUEST_BOT_LIST_PETITION = 30;      // Match administrator wants to add a bot to the game
-    public static final int ADD_BOT_PETITION = 31;
-    public static final int ADD_BOT_PETITION_ERROR = 33;
-
-    public static final int HOST_START_GAME_PETITION = 40;   // Client requests starting the game
-    public static final int HOST_START_GAME_PETITION_ERROR_NOT_ENOUGH_PLAYERS = 41;   // Server error response to HOST_START_GAME_PETITION
-    public static final int HOST_START_GAME_PETITION_ERROR_NOT_HOST = 42;   // Server error response to HOST_START_GAME_PETITION
-    */
 
     /* ---------------- GAME CODES ----------------  */
     // Player roles
