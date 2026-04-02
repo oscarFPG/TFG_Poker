@@ -50,4 +50,24 @@ public class PokerGame {
     }
 
 
+    public static void sendGameConfig(GameConfig config, OutputStream out) throws IOException {
+    
+        SocketUtils.sendInteger(out, GameType.PETITION_CREATE_GAME);
+        SocketUtils.sendString(out, config._roomName);
+        // TODO
+        // Aqui habria que enviar los demas datos...
+        // Id, numero de jugadores, etc...
+    }
+
+    public static GameConfig receiveGameConfig(InputStream input, OutputStream output) throws IOException {
+
+        String name = SocketUtils.receiveString(input);
+        //int roomNameCode = GameConfig.checkRoomName();
+
+        GameConfig config = new GameConfig();
+        config._roomName = name;
+
+        return config;
+    }
+
 }
