@@ -2,12 +2,15 @@ package com.ucm.client;
 
 import java.net.Socket;
 
-public class ClientInfo {
+import com.ucm.common.GameConfig;
+
+public class ClientInfo{
     
+    public GameConfig gameConfig;
+
     public String ip;
     public String name;
     public Socket socket;
-
 
     public static ClientInfo instance;
 
@@ -21,6 +24,4 @@ public class ClientInfo {
         
         return instance;
     }
-
-
 }
