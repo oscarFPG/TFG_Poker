@@ -17,6 +17,8 @@ public class HomeCreateGameWindowController extends GenericController {
     @FXML
     private Button btnNextHome;
     @FXML
+    private Button btnSaveHome;
+    @FXML
     private TextField textFieldRoomName;
 
     @FXML
@@ -30,14 +32,14 @@ public class HomeCreateGameWindowController extends GenericController {
     }
 
     @FXML
-    public void roomName(){
+    public void saveHomeConfig(){
         String roomName = textFieldRoomName.getText();
         if(GameConfig.isValidRoomName(roomName)){
             _clientInfo.gameConfig._roomName = roomName;
             try {
                 PokerGame.sendGameConfig(_clientInfo.gameConfig, _clientInfo.socket.getOutputStream());
             } catch (IOException e) {
-                System.out.println("Error server room name");
+                System.out.println( String.format("Error server room name %s\n", e.getMessage()) );
             }
         }
         else{

@@ -78,7 +78,7 @@ public class ClientThread implements Runnable{
                 case GameType.PETITION_CREATE_GAME:
                     
                     GameConfig config = PokerGame.receiveGameConfig(input, output);
-                    if(config != null) {
+                    if(config == null) {
                         SocketUtils.sendInteger(output, GameType.ERROR_GAME_NOT_CREATED);
                         log.error("Configuration was not valid");
                     }

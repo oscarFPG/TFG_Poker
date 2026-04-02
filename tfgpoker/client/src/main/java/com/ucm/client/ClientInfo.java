@@ -6,7 +6,7 @@ import com.ucm.common.GameConfig;
 
 public class ClientInfo{
     
-    public GameConfig gameConfig;
+    public GameConfig gameConfig = new GameConfig();
 
     public String ip;
     public String name;
