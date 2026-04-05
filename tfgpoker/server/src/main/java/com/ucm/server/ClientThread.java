@@ -14,7 +14,7 @@ import com.ucm.common.PokerGame;
 import com.ucm.common.SocketUtils;
 
 
-public class ClientThread implements Runnable{
+public class ClientThread implements Runnable {
 
 
     private static final Logger log = LogManager.getLogger(ClientThread.class);

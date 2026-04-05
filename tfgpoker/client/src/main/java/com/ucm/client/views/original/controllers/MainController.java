@@ -81,8 +81,8 @@ public class MainController {
             stage.setScene(scene);
             stage.show();
         } 
-        catch (Exception ex) {
-            ex.printStackTrace();
+        catch (Exception e) {
+            System.out.printf("Error: %s\n", e.getMessage());
         }
     }
 

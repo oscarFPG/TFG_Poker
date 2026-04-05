@@ -19,7 +19,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.WaitingGameWindowController">
    <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0">
          <center>
@@ -31,7 +31,7 @@
                      </image>
                   </ImageView>
                   <Label layoutX="461.0" layoutY="255.0" prefHeight="96.0" prefWidth="409.0" styleClass="username-label" text="Waiting for the rest of the players to start..." />
-                  <StackPane layoutX="177.0" layoutY="467.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer1" layoutX="177.0" layoutY="467.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>
@@ -119,7 +119,7 @@
                         </Circle>
                      </children>
                   </StackPane>
-                  <StackPane layoutX="382.0" layoutY="48.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer4" layoutX="382.0" layoutY="48.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>
@@ -207,7 +207,7 @@
                         </Circle>
                      </children>
                   </StackPane>
-                  <StackPane layoutX="63.0" layoutY="158.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer3" layoutX="63.0" layoutY="158.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>
@@ -295,7 +295,7 @@
                         </Circle>
                      </children>
                   </StackPane>
-                  <StackPane layoutX="63.0" layoutY="297.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer2" layoutX="63.0" layoutY="297.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>
@@ -383,7 +383,7 @@
                         </Circle>
                      </children>
                   </StackPane>
-                  <StackPane layoutX="719.0" layoutY="58.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer5" layoutX="719.0" layoutY="58.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>
@@ -471,7 +471,7 @@
                         </Circle>
                      </children>
                   </StackPane>
-                  <StackPane layoutX="505.0" layoutY="467.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer0" layoutX="505.0" layoutY="467.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>
@@ -559,7 +559,7 @@
                         </Circle>
                      </children>
                   </StackPane>
-                  <StackPane layoutX="823.0" layoutY="467.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer8" layoutX="823.0" layoutY="467.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>
@@ -647,7 +647,7 @@
                         </Circle>
                      </children>
                   </StackPane>
-                  <StackPane layoutX="991.0" layoutY="158.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer6" layoutX="991.0" layoutY="158.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>
@@ -735,7 +735,7 @@
                         </Circle>
                      </children>
                   </StackPane>
-                  <StackPane layoutX="1003.0" layoutY="308.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer7" layoutX="1003.0" layoutY="308.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>
@@ -840,7 +840,7 @@
                               </ImageView>
                               <VBox prefHeight="154.0" prefWidth="144.0" spacing="10.0">
                                  <children>
-                                    <Label alignment="CENTER" minWidth="-Infinity" prefHeight="40.0" styleClass="username-label" text="label">
+                                    <Label fx:id="playerNamePlaceholder" alignment="CENTER" minWidth="-Infinity" prefHeight="40.0" styleClass="username-label" text="username">
                                        <padding>
                                           <Insets left="5.0" right="5.0" />
                                        </padding>
@@ -914,70 +914,6 @@
                               <Image url="@../../images/logoPoker.png" />
                            </image>
                         </ImageView>
-                        <VBox alignment="CENTER_RIGHT" prefHeight="84.0" prefWidth="234.0">
-                           <children>
-                              <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="84.0" prefWidth="234.0" styleClass="general-button">
-                                 <children>
-                                    <Button mnemonicParsing="false" prefHeight="60.0" prefWidth="66.0" styleClass="general-button">
-                                       <graphic>
-                                          <VBox alignment="CENTER" prefHeight="58.0" prefWidth="59.0">
-                                             <children>
-                                                <ImageView fitHeight="42.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../../images/bot.png" />
-                                                   </image>
-                                                </ImageView>
-                                                <Label alignment="CENTER" styleClass="bold-general-text-font" text="Bot 1" />
-                                             </children>
-                                          </VBox>
-                                       </graphic>
-                                    </Button>
-                                    <Button mnemonicParsing="false" prefHeight="60.0" prefWidth="66.0" styleClass="general-button">
-                                       <graphic>
-                                          <VBox alignment="CENTER" prefHeight="34.0" prefWidth="71.0">
-                                             <children>
-                                                <ImageView fitHeight="42.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../../images/bot.png" />
-                                                   </image>
-                                                </ImageView>
-                                                <Label alignment="CENTER" styleClass="bold-general-text-font" text="Bot 2" />
-                                             </children>
-                                          </VBox>
-                                       </graphic>
-                                    </Button>
-                                    <Button mnemonicParsing="false" prefHeight="60.0" prefWidth="66.0" styleClass="general-button">
-                                       <graphic>
-                                          <VBox alignment="CENTER" prefHeight="149.0" prefWidth="142.0">
-                                             <children>
-                                                <ImageView fitHeight="42.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../../images/bot.png" />
-                                                   </image>
-                                                </ImageView>
-                                                <Label alignment="CENTER" styleClass="bold-general-text-font" text="Bot 3" />
-                                             </children>
-                                          </VBox>
-                                       </graphic>
-                                    </Button>
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets right="90.0" />
-                                 </VBox.margin>
-                              </HBox>
-                           </children>
-                           <StackPane.margin>
-                              <Insets />
-                           </StackPane.margin>
-                        </VBox>
-                        <Button alignment="CENTER" mnemonicParsing="false" prefHeight="84.0" prefWidth="86.0" text="Add Bots" StackPane.alignment="CENTER_RIGHT">
-                           <styleClass>
-                              <String fx:value="general-button" />
-                              <String fx:value="bold-general-text-font" />
-                           </styleClass>
-                           <StackPane.margin>
-                              <Insets right="10.0" />
-                           </StackPane.margin></Button>
                      </children>
                   </StackPane>
                </children>

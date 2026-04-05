@@ -46,7 +46,8 @@ public class HomeCreateGameWindowController extends GenericController {
     private Spinner<Integer> spinnerInitialMoney;
 
     @FXML
-    private void initialize(){
+    private void initialize() {
+    
         _clientInfo = ClientInfo.getInstance();
         initializeRoomName();
         initializeBlindsValue();
