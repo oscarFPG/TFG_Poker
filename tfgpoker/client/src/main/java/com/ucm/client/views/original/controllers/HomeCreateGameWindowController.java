@@ -57,6 +57,7 @@ public class HomeCreateGameWindowController extends GenericController {
 
     private void initializeRoomName(){
         textFieldRoomName.setText(_clientInfo.name + "'s room");
+        textFieldRoomName.selectAll();
         textFieldRoomName.setTextFormatter(new TextFormatter<String>(change -> {
             String newText = change.getControlNewText();
             if (newText.length() > MAX_ROOM_NAME_LENGTH) {

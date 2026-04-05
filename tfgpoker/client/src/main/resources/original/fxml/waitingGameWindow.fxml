@@ -19,7 +19,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0">
          <center>
@@ -526,31 +526,36 @@
                               </RadialGradient>
                            </fill>
                            <stroke>
-                              <LinearGradient endX="1.0" endY="1.0">
+                              <LinearGradient endX="0.7725118483412322" endY="0.8530805687203792" startX="0.32701421800947866" startY="0.15165876777251183">
                                  <stops>
                                     <Stop>
                                        <color>
-                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                          <Color red="0.706944465637207" green="0.023148147389292717" blue="1.0" />
                                        </color>
                                     </Stop>
-                                    <Stop offset="0.714765100671141">
+                                    <Stop offset="0.12751677852348994">
                                        <color>
-                                          <Color red="1.0" green="0.9725490212440491" blue="1.0" />
+                                          <Color red="0.706944465637207" green="0.023148147389292717" blue="1.0" />
                                        </color>
                                     </Stop>
-                                    <Stop offset="0.768456375838926">
+                                    <Stop offset="0.2631568178097888">
                                        <color>
-                                          <Color red="1.0" green="0.9725490212440491" blue="1.0" />
+                                          <Color red="1.0" green="0.9800000190734863" blue="1.0" />
                                        </color>
                                     </Stop>
-                                    <Stop offset="0.9359756097560974">
+                                    <Stop offset="0.5332910459977082">
                                        <color>
-                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                          <Color red="0.6639254093170166" green="0.06396199017763138" blue="0.9210526347160339" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.8791946308724832">
+                                       <color>
+                                          <Color red="0.6342470645904541" green="0.057139378041028976" blue="0.8815789222717285" />
                                        </color>
                                     </Stop>
                                     <Stop offset="1.0">
                                        <color>
-                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                          <Color red="0.6342470645904541" green="0.057139378041028976" blue="0.8815789222717285" />
                                        </color>
                                     </Stop>
                                  </stops>
@@ -831,40 +836,23 @@
                <children>
                   <StackPane prefHeight="89.0" prefWidth="1312.0">
                      <children>
-                        <HBox prefHeight="100.0" prefWidth="731.0" spacing="10.0" StackPane.alignment="CENTER">
+                        <VBox alignment="TOP_RIGHT">
                            <children>
-                              <ImageView fitHeight="100.0" fitWidth="95.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../../images/imagenPerfil.png" />
-                                 </image>
-                              </ImageView>
-                              <VBox prefHeight="154.0" prefWidth="144.0" spacing="10.0">
+                              <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="2.0">
                                  <children>
-                                    <Label alignment="CENTER" minWidth="-Infinity" prefHeight="40.0" styleClass="username-label" text="label">
-                                       <padding>
-                                          <Insets left="5.0" right="5.0" />
-                                       </padding>
+                                    <Label styleClass="bold-general-text-font" text="Room Name:">
+                                       <font>
+                                          <Font size="27.0" />
+                                       </font>
                                     </Label>
-                                    <HBox alignment="CENTER_LEFT" prefHeight="33.0" prefWidth="98.0">
-                                       <children>
-                                          <ImageView fitHeight="33.0" fitWidth="56.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../../images/monedasPerfil.png" />
-                                             </image>
-                                          </ImageView>
-                                          <Label alignment="CENTER" styleClass="general-text-font" text="Label" />
-                                       </children>
-                                    </HBox>
+                                    <Label styleClass="general-text-font" text="Label">
+                                       <font>
+                                          <Font size="27.0" />
+                                       </font>
+                                    </Label>
                                  </children>
-                              </VBox>
-                           </children>
-                           <StackPane.margin>
-                              <Insets />
-                           </StackPane.margin>
-                        </HBox>
-                        <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="1243.0" spacing="5.0" StackPane.alignment="CENTER">
-                           <children>
-                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="2.0">
                                  <children>
                                     <Label alignment="CENTER" styleClass="bold-general-text-font" text="Id room:">
                                        <font>
@@ -881,6 +869,10 @@
                                     </Label>
                                  </children>
                               </HBox>
+                           </children>
+                        </VBox>
+                        <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="1243.0" spacing="5.0" StackPane.alignment="CENTER">
+                           <children>
                               <Button mnemonicParsing="false" prefHeight="59.0" prefWidth="64.0">
                                  <styleClass>
                                     <String fx:value="square-icon" />
@@ -905,83 +897,18 @@
             </HBox>
          </top>
          <bottom>
-            <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-               <children>
-                  <StackPane prefHeight="100.0" prefWidth="1383.0">
-                     <children>
-                        <ImageView fitHeight="87.0" fitWidth="961.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT">
-                           <image>
-                              <Image url="@../../images/logoPoker.png" />
-                           </image>
-                        </ImageView>
-                        <VBox alignment="CENTER_RIGHT" prefHeight="84.0" prefWidth="234.0">
-                           <children>
-                              <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="84.0" prefWidth="234.0" styleClass="general-button">
-                                 <children>
-                                    <Button mnemonicParsing="false" prefHeight="60.0" prefWidth="66.0" styleClass="general-button">
-                                       <graphic>
-                                          <VBox alignment="CENTER" prefHeight="58.0" prefWidth="59.0">
-                                             <children>
-                                                <ImageView fitHeight="42.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../../images/bot.png" />
-                                                   </image>
-                                                </ImageView>
-                                                <Label alignment="CENTER" styleClass="bold-general-text-font" text="Bot 1" />
-                                             </children>
-                                          </VBox>
-                                       </graphic>
-                                    </Button>
-                                    <Button mnemonicParsing="false" prefHeight="60.0" prefWidth="66.0" styleClass="general-button">
-                                       <graphic>
-                                          <VBox alignment="CENTER" prefHeight="34.0" prefWidth="71.0">
-                                             <children>
-                                                <ImageView fitHeight="42.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../../images/bot.png" />
-                                                   </image>
-                                                </ImageView>
-                                                <Label alignment="CENTER" styleClass="bold-general-text-font" text="Bot 2" />
-                                             </children>
-                                          </VBox>
-                                       </graphic>
-                                    </Button>
-                                    <Button mnemonicParsing="false" prefHeight="60.0" prefWidth="66.0" styleClass="general-button">
-                                       <graphic>
-                                          <VBox alignment="CENTER" prefHeight="149.0" prefWidth="142.0">
-                                             <children>
-                                                <ImageView fitHeight="42.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../../images/bot.png" />
-                                                   </image>
-                                                </ImageView>
-                                                <Label alignment="CENTER" styleClass="bold-general-text-font" text="Bot 3" />
-                                             </children>
-                                          </VBox>
-                                       </graphic>
-                                    </Button>
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets right="90.0" />
-                                 </VBox.margin>
-                              </HBox>
-                           </children>
-                           <StackPane.margin>
-                              <Insets />
-                           </StackPane.margin>
-                        </VBox>
-                        <Button alignment="CENTER" mnemonicParsing="false" prefHeight="84.0" prefWidth="86.0" text="Add Bots" StackPane.alignment="CENTER_RIGHT">
-                           <styleClass>
-                              <String fx:value="general-button" />
-                              <String fx:value="bold-general-text-font" />
-                           </styleClass>
-                           <StackPane.margin>
-                              <Insets right="10.0" />
-                           </StackPane.margin></Button>
-                     </children>
-                  </StackPane>
-               </children>
-            </HBox>
+            <Button alignment="CENTER" mnemonicParsing="false" prefHeight="40.0" prefWidth="137.0" text="START" BorderPane.alignment="CENTER">
+               <font>
+                  <Font size="27.0" />
+               </font>
+               <styleClass>
+                  <String fx:value="general-button" />
+                  <String fx:value="bold-general-text-font" />
+               </styleClass>
+               <BorderPane.margin>
+                  <Insets bottom="20.0" />
+               </BorderPane.margin>
+            </Button>
          </bottom>
       </BorderPane>
    </children>
