@@ -282,6 +282,6 @@ public abstract class Player implements IPokerPlayer {
     public final boolean isAllIn() { return _isAllIn; }
     
     @Override
-    public final boolean isEliminated() { return _isAllIn; }
+    public final boolean isEliminated() { return _isEliminated; }
     
 }

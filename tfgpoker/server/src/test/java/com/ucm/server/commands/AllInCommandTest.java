@@ -17,7 +17,7 @@ public class AllInCommandTest {
     
 
     @Test
-    public void badFormat(){
+    public void badFormat() {
 
         final int initialBet = 0;
 
@@ -30,7 +30,7 @@ public class AllInCommandTest {
     }
 
     @Test
-    public void fromZero(){
+    public void fromZero() {
 
         final int initialBet = 0;
         int maxBet = 0;
@@ -51,7 +51,7 @@ public class AllInCommandTest {
     }
 
     @Test
-    public void fromSome(){
+    public void fromSome() {
 
         final int initialBet = 200;
         int maxBet = 0;
@@ -71,7 +71,7 @@ public class AllInCommandTest {
     }
 
     @Test
-    public void fromZero_previousBet(){
+    public void fromZero_previousBet() {
 
         final int initialBet = 0;
         int maxBet = 20;
@@ -91,7 +91,7 @@ public class AllInCommandTest {
     }
 
     @Test
-    public void fromSome_previousBet(){
+    public void fromSome_previousBet() {
 
         final int initialBet = 200;
         int maxBet = 20;
@@ -111,7 +111,7 @@ public class AllInCommandTest {
     }
 
     @Test
-    public void fromZero_previousAllIn(){
+    public void fromZero_previousAllIn() {
 
         final int initialBet = 0;
         int maxBet = INITIAL_MONEY;
@@ -131,7 +131,7 @@ public class AllInCommandTest {
     }
 
     @Test
-    public void fromZome_previousAllIn(){
+    public void fromZome_previousAllIn() {
 
         final int initialBet = 100;
         int maxBet = INITIAL_MONEY;

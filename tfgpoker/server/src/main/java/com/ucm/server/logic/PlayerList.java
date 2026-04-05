@@ -301,12 +301,12 @@ public class PlayerList {
     private void updateHandState() {
 
         Node iNode = _first;
-        if(!iNode._player.isEliminated()){
+        if(!iNode._player.isEliminated()) {
             _potManager.updatePlayerPot(iNode._player.getPlayerId(), iNode._player.placeOnBetMoney(), iNode._player.isFolded());
         }
 
         iNode = iNode._next;
-        while(iNode != _first){
+        while(iNode != _first) {
             if(!iNode._player.isEliminated()){
                 _potManager.updatePlayerPot(iNode._player.getPlayerId(), iNode._player.placeOnBetMoney(), iNode._player.isFolded());
             }
