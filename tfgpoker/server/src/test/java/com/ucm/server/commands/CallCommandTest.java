@@ -17,7 +17,7 @@ public class CallCommandTest {
 
 
     @Test
-    public void NotAllowBadFormat(){
+    public void NotAllowBadFormat() {
 
         final int initialBet = 0;
 
@@ -30,7 +30,7 @@ public class CallCommandTest {
     }
 
     @Test
-    public void permitBlankSpacesWithGoodFormat(){
+    public void permitBlankSpacesWithGoodFormat() {
 
         final int initialBet = 0;
 
@@ -43,7 +43,7 @@ public class CallCommandTest {
     }
 
     @Test
-    public void correctFormatMinusAndMayus(){
+    public void correctFormatMinusAndMayus() {
 
         final int initialBet = 0;
 
@@ -56,7 +56,7 @@ public class CallCommandTest {
     }
 
     @Test
-    public void correctCallNoPreviousBet(){
+    public void correctCallNoPreviousBet() {
         
         final int initialBet = 0;
         int maxBet = 200;
@@ -76,7 +76,7 @@ public class CallCommandTest {
     }
 
     @Test
-    public void correctCallWithPreviousBet(){
+    public void correctCallWithPreviousBet() {
         
         final int initialBet = 100;
         int maxBet = 200;

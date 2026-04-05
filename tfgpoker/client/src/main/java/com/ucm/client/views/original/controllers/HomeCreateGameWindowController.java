@@ -69,18 +69,20 @@ public class HomeCreateGameWindowController extends GenericController {
         }));
     }
 
-    private void initializeBlindsValue(){
-        comboBlindsValue.getItems().add("1/2");
-        int[] blinds = {5, 10, 25, 50, 100};
+    private void initializeBlindsValue() {
+
+        int[] blinds = {1, 5, 10, 25, 50, 100};
         String defaultValue = "DEFAULT";
+
+        comboBlindsValue.getItems().add(defaultValue);
+        comboBlindsValue.setValue(defaultValue);
         for (int blind : blinds){
             comboBlindsValue.getItems().add(blind + "/" + (blind * 2));
         }
-        comboBlindsValue.getItems().add(defaultValue);
-        comboBlindsValue.setValue(defaultValue);
     }
 
-    private void initializeLevelDuration(){
+    private void initializeLevelDuration() {
+        
         String defaultValue = "DEFAULT";
         comboLevelDuration.getItems().addAll(
             "15",
@@ -94,7 +96,8 @@ public class HomeCreateGameWindowController extends GenericController {
         comboLevelDuration.setValue(defaultValue);
     }
 
-    private void initializeHikePercentage(){
+    private void initializeHikePercentage() {
+
         String defaultValue = "DEFAULT";
         comboHikePercentage.getItems().addAll(
             "25",

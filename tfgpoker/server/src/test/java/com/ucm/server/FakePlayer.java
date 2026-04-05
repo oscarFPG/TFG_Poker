@@ -17,6 +17,7 @@ public class FakePlayer extends Player {
     public FakePlayer(final int ID, int offBet, int onBet) {
         super(ID, String.format("FakePlayer%d", ID), offBet);
 
+        _onBetMoney = onBet;
         commands = new ArrayList<>();
     }
 

@@ -51,7 +51,7 @@ public class PokerGame {
     public static GameConfig receiveGameConfig(InputStream input, OutputStream output) throws IOException {
 
         String name = SocketUtils.receiveString(input);
-        String id = SocketUtils.receiveString(input);
+        int id = SocketUtils.receiveInt(input);
         boolean allowBots = (SocketUtils.receiveInt(input) == 1) ? true : false;
 
         GameConfig config = new GameConfig();

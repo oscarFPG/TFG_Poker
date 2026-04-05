@@ -15,7 +15,7 @@ public class CheckCommandTest {
     private static final int INITIAL_MONEY = 1000;
 
     @Test
-    public void notAllowBadFormat(){
+    public void notAllowBadFormat() {
 
         final int initialBet = 0;
 
@@ -29,7 +29,7 @@ public class CheckCommandTest {
     }
 
     @Test
-    public void fromZeroWithoutPreviousBet(){
+    public void fromZeroWithoutPreviousBet() {
 
         final int initialBet = 0;
         final int maxBet = 0;
@@ -49,7 +49,7 @@ public class CheckCommandTest {
     }
 
     @Test
-    public void fromSomeMoney(){
+    public void fromSomeMoney() {
 
         final int initialBet = 200;
         final int maxBet = initialBet;
@@ -61,8 +61,8 @@ public class CheckCommandTest {
         boolean valid = command.validate(maxBet);
         
         assertEquals(false, valid);
-        assertEquals(200, player.getMoneyOnBet());
-        assertEquals(INITIAL_MONEY - 200, player.getMoneyOffBet());
+        assertEquals(initialBet, player.getMoneyOnBet());
+        assertEquals(INITIAL_MONEY - initialBet, player.getMoneyOffBet());
     }
 
 }
