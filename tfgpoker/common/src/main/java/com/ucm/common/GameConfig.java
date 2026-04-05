@@ -10,6 +10,7 @@ public class GameConfig {
     public int _initialMoney;
     public boolean _allowBots;
     
+    
     public static int checkRoomName(String roomName){
 
         if(roomName.length() < 3) {

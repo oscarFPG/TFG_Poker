@@ -37,7 +37,13 @@ public class PokerGame {
     public static void sendGameConfig(GameConfig config, OutputStream out) throws IOException {
     
         SocketUtils.sendInteger(out, GameType.PETITION_CREATE_GAME);
+        int allowBotsCode = (config._allowBots) ? 1 : 0;
+
         SocketUtils.sendString(out, config._roomName);
+        SocketUtils.sendString(out, config._roomId);
+        SocketUtils.sendInteger(out, allowBotsCode);
+    
+
         // TODO
         // Aqui habria que enviar los demas datos...
         // Id, numero de jugadores, etc...
@@ -46,10 +52,13 @@ public class PokerGame {
     public static GameConfig receiveGameConfig(InputStream input, OutputStream output) throws IOException {
 
         String name = SocketUtils.receiveString(input);
-        //int roomNameCode = GameConfig.checkRoomName();
+        String id = SocketUtils.receiveString(input);
+        boolean allowBots = (SocketUtils.receiveInt(input) == 1) ? true : false;
 
         GameConfig config = new GameConfig();
         config._roomName = name;
+        config._roomId = id;
+        config._allowBots = allowBots;
 
         return config;
     }

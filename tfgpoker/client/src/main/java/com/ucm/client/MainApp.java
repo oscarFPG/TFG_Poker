@@ -11,9 +11,8 @@ import javafx.stage.Stage;
 public class MainApp extends Application {
 
     
-
     /*
-    Run javafx: .\mvnw.cmd -pl client -Prun javafx:run
+        Run javafx: .\mvnw.cmd -pl client javafx:run
     */
     @Override
     public void start(Stage primaryStage) throws Exception {

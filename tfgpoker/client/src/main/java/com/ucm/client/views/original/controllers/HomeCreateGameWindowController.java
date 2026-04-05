@@ -92,10 +92,15 @@ public class HomeCreateGameWindowController extends GenericController {
     public void saveHomeConfig() {
 
         String roomName = textFieldRoomName.getText();
-
+        String roomId = "#####";    // ESTO TIENE QUE LEERSE DE LA INTERFAZ !!!
+        boolean allowBots = false;  // ESTO TIENE QUE LEERSE DE LA INTERFAZ !!!
 
         if(GameConfig.isValidRoomName(roomName)) {
+
             _clientInfo.gameConfig._roomName = roomName;
+            _clientInfo.gameConfig._roomId = roomId;
+            _clientInfo.gameConfig._allowBots = allowBots;
+
             try {
                 PokerGame.sendGameConfig(_clientInfo.gameConfig, _clientInfo.socket.getOutputStream());
             }
