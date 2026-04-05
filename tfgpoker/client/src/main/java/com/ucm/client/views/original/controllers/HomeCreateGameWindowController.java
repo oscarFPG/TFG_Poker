@@ -32,17 +32,26 @@ public class HomeCreateGameWindowController extends GenericController {
     }
 
     @FXML
-    public void saveHomeConfig(){
+    public void saveHomeConfig() {
+
         String roomName = textFieldRoomName.getText();
-        if(GameConfig.isValidRoomName(roomName)){
+        String roomId = "#####";    // ESTO TIENE QUE LEERSE DE LA INTERFAZ !!!
+        boolean allowBots = false;  // ESTO TIENE QUE LEERSE DE LA INTERFAZ !!!
+
+        if(GameConfig.isValidRoomName(roomName)) {
+
             _clientInfo.gameConfig._roomName = roomName;
+            _clientInfo.gameConfig._roomId = roomId;
+            _clientInfo.gameConfig._allowBots = allowBots;
+
             try {
                 PokerGame.sendGameConfig(_clientInfo.gameConfig, _clientInfo.socket.getOutputStream());
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 System.out.println( String.format("Error server room name %s\n", e.getMessage()) );
             }
         }
-        else{
+        else {
             if(GameConfig.checkRoomName(roomName) == GameType.ERROR_NAME_TOO_SHORT){
                 System.out.println("Name too short, try again");
             }

@@ -12,7 +12,7 @@ public class MainController {
     private StatusController statusController;
     private static final String path = "/original/fxml/";
 
-    public MainController(Stage stage){
+    public MainController(Stage stage) {
         this.stage = stage;
         this.statusController = new StatusController();
     }

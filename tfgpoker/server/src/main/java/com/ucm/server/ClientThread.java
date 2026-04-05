@@ -93,7 +93,12 @@ public class ClientThread implements Runnable{
                     else {
                         SocketUtils.sendInteger(output, GameType.CONFIRMATION_CREATE_GAME);
                         _isHost = true;
-                        log.debug("Configuration valid! Creating {}'s game room...", _playerName);
+                        log.debug("Configuration valid!");
+                        log.debug("Room configuration: Room name=\'{}\' | Room id={} | Allow bots={}",
+                            config._roomName, 
+                            config._roomId,
+                            config._allowBots
+                        );
                     }
 
                     break;
