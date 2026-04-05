@@ -68,7 +68,13 @@ public class ClientThread implements Runnable{
                 case GameType.PETITION_PLAYER_NAME:
                     
                     String name = PokerGame.receiveName(input, output);
-                    if(name != null) {
+                    if(PokerGame.checkNameIsTooShort(name)) {
+                        SocketUtils.sendInteger(output, GameType.ERROR_NAME_TOO_SHORT);
+                    }
+                    else if(PokerGame.checkNameIsTooLong(name)) {
+                        SocketUtils.sendInteger(output, GameType.ERROR_NAME_TOO_LONG);
+                    }
+                    else {
                         _playerName = name;
                         log.debug("Client with name {} authenticated!", _playerName);
                     }
