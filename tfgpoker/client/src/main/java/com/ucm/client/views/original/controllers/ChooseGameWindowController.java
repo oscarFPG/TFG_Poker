@@ -2,6 +2,7 @@ package com.ucm.client.views.original.controllers;
 
 import java.io.IOException;
 
+import com.ucm.client.ClientInfo;
 import com.ucm.common.GameType;
 import com.ucm.common.SocketUtils;
 
@@ -13,10 +14,13 @@ public class ChooseGameWindowController extends GenericController {
     @FXML
     private Button btnCreateGame;
 
+    @FXML
+    private void initialize(){
+        _clientInfo = ClientInfo.getInstance();
+    }
 
     @FXML
     private void onCreateGame() {
-        
        _mainController.chooseCreateGame();
     }
 

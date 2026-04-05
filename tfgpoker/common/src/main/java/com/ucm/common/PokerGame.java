@@ -40,7 +40,6 @@ public class PokerGame {
         int allowBotsCode = (config._allowBots) ? 1 : 0;
 
         SocketUtils.sendString(out, config._roomName);
-        SocketUtils.sendString(out, config._roomId);
         SocketUtils.sendInteger(out, allowBotsCode);
     
 
@@ -57,7 +56,6 @@ public class PokerGame {
 
         GameConfig config = new GameConfig();
         config._roomName = name;
-        config._roomId = id;
         config._allowBots = allowBots;
 
         return config;

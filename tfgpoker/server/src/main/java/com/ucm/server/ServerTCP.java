@@ -67,16 +67,12 @@ public class ServerTCP {
                     Estas son conexiones generales, deberia aplicarse este filtro a la solicitud JOIN_GAME.
                     Esto hay que cambiarlo, simplemente esta aqui como ejemplo de como se haría
                 */
-                if(_connectionsCounter.get() >= 2) {
-                    socket.close();
-                    log.debug("Client connection refused: maximum number of connections reached");
-                }
-                else {
+
                     _executor.execute( new ClientThread(socket) );
                     _connectionsCounter.incrementAndGet();
                 
                     log.debug("New client connected!");
-                }
+                
                 
             }
             catch(IOException e) {

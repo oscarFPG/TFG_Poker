@@ -10,22 +10,8 @@ public class GameConfig {
     public int _initialMoney;
     public boolean _allowBots;
     
-    
-    public static int checkRoomName(String roomName){
-
-        if(roomName.length() < 3) {
-            return GameType.ERROR_NAME_TOO_SHORT;
-        }
-        else if(10 < roomName.length()) {
-            return GameType.ERROR_NAME_TOO_LONG;
-        }
-        else {
-            return GameType.CONFIRMATION_NAME_VALID;
-        }
-    }
-
     public static boolean isValidRoomName(String roomName){
-        return (roomName.length() >= 3 && roomName.length() <= 10);
+        return !roomName.trim().isEmpty();
     }
 
     /**

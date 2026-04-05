@@ -68,6 +68,7 @@ public class ProfileSecondWindowController extends GenericController {
         try {
             _clientInfo.socket = PokerGame.connect(serverIP);
             PokerGame.sendName(_clientInfo.name, _clientInfo.socket);
+            //acordarse de recibir estado del servidor y pasar a la siguiente interfaz, solo, si todo va bien
         }
         catch(IOException e) {
             System.out.printf("Error connecting to the socket: %s", e.getMessage());
