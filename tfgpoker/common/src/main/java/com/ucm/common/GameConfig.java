@@ -11,7 +11,7 @@ public class GameConfig {
     public boolean _allowBots;
     
     
-    public static int checkRoomName(String roomName){
+    public static int checkRoomName(String roomName) {
 
         if(roomName.length() < 3) {
             return GameType.ERROR_NAME_TOO_SHORT;
@@ -24,7 +24,7 @@ public class GameConfig {
         }
     }
 
-    public static boolean isValidRoomName(String roomName){
+    public static boolean isValidRoomName(String roomName) {
         return (roomName.length() >= 3 && roomName.length() <= 10);
     }
 

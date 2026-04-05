@@ -12,7 +12,7 @@ public class ClientInfo{
     public String name;
     public Socket socket;
 
-    public static ClientInfo instance;
+    private static ClientInfo instance;
 
     private ClientInfo() {}
 
