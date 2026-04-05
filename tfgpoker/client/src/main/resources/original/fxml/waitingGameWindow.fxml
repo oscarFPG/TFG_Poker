@@ -19,7 +19,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.WaitingGameWindowController">
    <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0">
          <center>
@@ -31,7 +31,7 @@
                      </image>
                   </ImageView>
                   <Label layoutX="461.0" layoutY="255.0" prefHeight="96.0" prefWidth="409.0" styleClass="username-label" text="Waiting for the rest of the players to start..." />
-                  <StackPane layoutX="177.0" layoutY="467.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer1" layoutX="177.0" layoutY="467.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>
@@ -119,7 +119,7 @@
                         </Circle>
                      </children>
                   </StackPane>
-                  <StackPane layoutX="382.0" layoutY="48.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer4" layoutX="382.0" layoutY="48.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>
@@ -207,7 +207,7 @@
                         </Circle>
                      </children>
                   </StackPane>
-                  <StackPane layoutX="63.0" layoutY="158.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer3" layoutX="63.0" layoutY="158.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>
@@ -295,7 +295,7 @@
                         </Circle>
                      </children>
                   </StackPane>
-                  <StackPane layoutX="63.0" layoutY="297.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer2" layoutX="63.0" layoutY="297.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>
@@ -383,7 +383,7 @@
                         </Circle>
                      </children>
                   </StackPane>
-                  <StackPane layoutX="719.0" layoutY="58.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer5" layoutX="719.0" layoutY="58.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>
@@ -471,7 +471,7 @@
                         </Circle>
                      </children>
                   </StackPane>
-                  <StackPane layoutX="505.0" layoutY="467.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer0" layoutX="505.0" layoutY="467.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>
@@ -564,7 +564,7 @@
                         </Circle>
                      </children>
                   </StackPane>
-                  <StackPane layoutX="823.0" layoutY="467.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer8" layoutX="823.0" layoutY="467.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>
@@ -652,7 +652,7 @@
                         </Circle>
                      </children>
                   </StackPane>
-                  <StackPane layoutX="991.0" layoutY="158.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer6" layoutX="991.0" layoutY="158.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>
@@ -740,7 +740,7 @@
                         </Circle>
                      </children>
                   </StackPane>
-                  <StackPane layoutX="1003.0" layoutY="308.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer7" layoutX="1003.0" layoutY="308.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>

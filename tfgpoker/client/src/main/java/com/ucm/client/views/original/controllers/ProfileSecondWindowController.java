@@ -71,29 +71,20 @@ public class ProfileSecondWindowController extends GenericController {
             //acordarse de recibir estado del servidor y pasar a la siguiente interfaz, solo, si todo va bien
         }
         catch(IOException e) {
-            System.out.printf("Error connecting to the socket: %s", e.getMessage());
+            System.out.printf("Error connecting to the socket: %s\n", e.getMessage());
         }
         
         next();
     }
-
 
     @FXML
     private void cancel() {
         Platform.exit();
     }
 
+    @Override
+    public void onNextEvent() {}
 
     @Override
-    public void onNextEvent() {
-
-
-    }
-
-
-    @Override
-    public void onBackEvent() {
-   
-        
-    }
+    public void onBackEvent() {}
 }
