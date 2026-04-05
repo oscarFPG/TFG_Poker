@@ -19,7 +19,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.WaitingGameWindowController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.WaitingGameWindowController">
    <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0">
          <center>
@@ -473,7 +473,7 @@
                   </StackPane>
                   <StackPane fx:id="pokerPlayer0" layoutX="505.0" layoutY="467.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
-                        <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
+                        <HBox id="usersOwn" alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0" style="-fx-effect: dropshadow(gaussian, rgba(240,184,255,0.8), 25, 0.5, 0, 0);">
                            <styleClass>
                               <String fx:value="oval-pane" />
                               <String fx:value="container-gradiant-colors" />
@@ -530,32 +530,22 @@
                                  <stops>
                                     <Stop>
                                        <color>
-                                          <Color red="0.706944465637207" green="0.023148147389292717" blue="1.0" />
+                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
                                        </color>
                                     </Stop>
-                                    <Stop offset="0.12751677852348994">
-                                       <color>
-                                          <Color red="0.706944465637207" green="0.023148147389292717" blue="1.0" />
-                                       </color>
-                                    </Stop>
-                                    <Stop offset="0.2631568178097888">
+                                    <Stop offset="0.44772057619905054">
                                        <color>
                                           <Color red="1.0" green="0.9800000190734863" blue="1.0" />
                                        </color>
                                     </Stop>
-                                    <Stop offset="0.5332910459977082">
+                                    <Stop offset="0.5721271893926994">
                                        <color>
-                                          <Color red="0.6639254093170166" green="0.06396199017763138" blue="0.9210526347160339" />
-                                       </color>
-                                    </Stop>
-                                    <Stop offset="0.8791946308724832">
-                                       <color>
-                                          <Color red="0.6342470645904541" green="0.057139378041028976" blue="0.8815789222717285" />
+                                          <Color red="1.0" green="0.9900000095367432" blue="1.0" />
                                        </color>
                                     </Stop>
                                     <Stop offset="1.0">
                                        <color>
-                                          <Color red="0.6342470645904541" green="0.057139378041028976" blue="0.8815789222717285" />
+                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
                                        </color>
                                     </Stop>
                                  </stops>
