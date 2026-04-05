@@ -6,7 +6,7 @@ public class GameConfig {
      * Variables para crear partida: Home
     */
     public String _roomName;
-    public String _roomId;
+    public int _roomId;
     public int _initialMoney;
     public boolean _allowBots;
     
