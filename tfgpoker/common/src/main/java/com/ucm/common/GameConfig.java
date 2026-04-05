@@ -6,12 +6,12 @@ public class GameConfig {
      * Variables para crear partida: Home
     */
     public String _roomName;
-    public String _roomId;
+    public int _roomId;
     public int _initialMoney;
     public boolean _allowBots;
     
     
-    public static int checkRoomName(String roomName){
+    public static int checkRoomName(String roomName) {
 
         if(roomName.length() < 3) {
             return GameType.ERROR_NAME_TOO_SHORT;
@@ -24,7 +24,7 @@ public class GameConfig {
         }
     }
 
-    public static boolean isValidRoomName(String roomName){
+    public static boolean isValidRoomName(String roomName) {
         return (roomName.length() >= 3 && roomName.length() <= 10);
     }
 

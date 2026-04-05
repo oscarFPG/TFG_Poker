@@ -8,18 +8,90 @@ import com.ucm.common.PokerGame;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
 
 public class HomeCreateGameWindowController extends GenericController {
 
     @FXML
     private Button btnBackChooseGame;
+
     @FXML
     private Button btnNextHome;
+
     @FXML
     private Button btnSaveHome;
+
     @FXML
     private TextField textFieldRoomName;
+
+    @FXML
+    private Spinner<Integer> spinnerInitialMoney;
+
+    @FXML
+    private ComboBox<String> comboBlindsValue;
+
+    @FXML
+    private ComboBox<String> comboLevelDuration;
+
+    @FXML
+    private ComboBox<String> comboHikePercentage;
+
+    @FXML
+    private void initialize() {
+        initializeSpinner();
+        initializeBlindsValue();
+        initializeLevelDuration();
+        initializeHikePercentage();
+    }
+
+    private void initializeSpinner() {
+
+        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(100, 100000000, 100);
+        spinnerInitialMoney.setValueFactory(valueFactory);
+    }
+
+    private void initializeBlindsValue() {
+
+        int[] blinds = {1, 5, 10, 25, 50, 100};
+        String defaultValue = "DEFAULT";
+
+        comboBlindsValue.getItems().add(defaultValue);
+        comboBlindsValue.setValue(defaultValue);
+        for (int blind : blinds){
+            comboBlindsValue.getItems().add(blind + "/" + (blind * 2));
+        }
+    }
+
+    private void initializeLevelDuration() {
+        
+        String defaultValue = "DEFAULT";
+        comboLevelDuration.getItems().addAll(
+            "15",
+            "20",
+            "30",
+            "60",
+            "120",
+            "180"
+        );
+        comboLevelDuration.setValue(defaultValue);
+    }
+
+    private void initializeHikePercentage() {
+
+        String defaultValue = "DEFAULT";
+        comboHikePercentage.getItems().addAll(
+            "25",
+            "33",
+            "50",
+            "67",
+            "80",
+            "100"
+        );
+        comboHikePercentage.setValue(defaultValue);
+    }
 
     @FXML
     public void returnChooseGame(){
@@ -35,7 +107,7 @@ public class HomeCreateGameWindowController extends GenericController {
     public void saveHomeConfig() {
 
         String roomName = textFieldRoomName.getText();
-        String roomId = "#####";    // ESTO TIENE QUE LEERSE DE LA INTERFAZ !!!
+        int roomId = 12;            // ESTO TIENE QUE LEERSE DE LA INTERFAZ !!!
         boolean allowBots = false;  // ESTO TIENE QUE LEERSE DE LA INTERFAZ !!!
 
         if(GameConfig.isValidRoomName(roomName)) {
