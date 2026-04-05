@@ -19,12 +19,14 @@ public class ClientThread implements Runnable{
 
     private static final Logger log = LogManager.getLogger(ClientThread.class);
 
-
     public Socket _socket;
     public String _playerName;
+    public boolean _isHost;
 
     public ClientThread(Socket socket) {
         _socket = socket;
+        _playerName = null;
+        _isHost = false;
     }
 
 
@@ -90,6 +92,7 @@ public class ClientThread implements Runnable{
                     }
                     else {
                         SocketUtils.sendInteger(output, GameType.CONFIRMATION_CREATE_GAME);
+                        _isHost = true;
                         log.debug("Configuration valid! Creating {}'s game room...", _playerName);
                     }
 
