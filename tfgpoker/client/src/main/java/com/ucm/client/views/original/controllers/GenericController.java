@@ -10,7 +10,8 @@ public abstract class GenericController {
 
     public void setMainController(MainController mainController) {
         _mainController = mainController;
-        _clientInfo = ClientInfo.getInstance();
+        _clientInfo = _mainController.gClientInfo();
+        onViewShown();
     }
 
     public void next() {
@@ -23,6 +24,14 @@ public abstract class GenericController {
         _mainController.back();
         _mainController.updateView();
         onBackEvent();
+    }
+
+    protected void chooseCreateGame () {
+        _mainController.chooseCreateGame();
+    }
+
+    protected void onViewShown(){
+        
     }
 
     public abstract void onNextEvent();

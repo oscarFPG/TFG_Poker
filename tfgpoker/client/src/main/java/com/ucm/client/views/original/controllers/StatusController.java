@@ -40,7 +40,7 @@ public class StatusController {
             break;
 
         case CREATE_GAME:
-            currentState = State.WAITING_GAME;
+            currentState = State.ADD_BOTS;
             break;
 
         case ADD_BOTS:

@@ -14,6 +14,7 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
+import javafx.util.converter.IntegerStringConverter;
 
 public class HomeCreateGameWindowController extends GenericController {
 
@@ -28,7 +29,7 @@ public class HomeCreateGameWindowController extends GenericController {
     private Button btnNextHome;
 
     @FXML
-    private Button btnSaveHome;
+    private Button btnStartHome;
 
     @FXML
     private TextField textFieldRoomName;
@@ -47,17 +48,25 @@ public class HomeCreateGameWindowController extends GenericController {
 
     @FXML
     private void initialize() {
-    
-        _clientInfo = ClientInfo.getInstance();
-        initializeRoomName();
+        btnStartHome.setDisable(true);
         initializeBlindsValue();
         initializeLevelDuration();
         initializeHikePercentage();
         initializeSpinner();
     }
 
+    @Override
+    protected void onViewShown() {
+        initializeRoomName();
+    }
+
     private void initializeRoomName(){
-        textFieldRoomName.setText(_clientInfo.name + "'s room");
+        String roomName = _clientInfo.gameConfig._roomName;
+        if(!GameConfig.isValidRoomName(roomName)) {
+            roomName = _clientInfo.name + "'s room";
+            _clientInfo.gameConfig._roomName = roomName;
+        }
+        textFieldRoomName.setText(roomName);
         textFieldRoomName.selectAll();
         textFieldRoomName.setTextFormatter(new TextFormatter<String>(change -> {
             String newText = change.getControlNewText();
@@ -72,7 +81,6 @@ public class HomeCreateGameWindowController extends GenericController {
     }
 
     private void initializeBlindsValue() {
-
         int[] blinds = {1, 5, 10, 25, 50, 100};
         String defaultValue = "DEFAULT";
 
@@ -84,7 +92,6 @@ public class HomeCreateGameWindowController extends GenericController {
     }
 
     private void initializeLevelDuration() {
-        
         String defaultValue = "DEFAULT";
         comboLevelDuration.getItems().addAll(
             "15",
@@ -99,7 +106,6 @@ public class HomeCreateGameWindowController extends GenericController {
     }
 
     private void initializeHikePercentage() {
-
         String defaultValue = "DEFAULT";
         comboHikePercentage.getItems().addAll(
             "25",
@@ -114,37 +120,35 @@ public class HomeCreateGameWindowController extends GenericController {
     }
 
     private void initializeSpinner() {
-        
-        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(100, 100000000, 100);
-        TextFormatter<Integer> formatter = new TextFormatter<>(change -> {
-            String newText = change.getControlNewText();
-            
-            if (Integer.parseInt(newText) < MIN_INITIAL_MONEY || Integer.parseInt(newText) > MAX_INITIAL_MONEY) {
-                return null;
-            }
-            if (!newText.matches("\\d*")) {
-                return null;
-            }
-            return change;
-        });
-        spinnerInitialMoney.getEditor().setTextFormatter(formatter);
+        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(MIN_INITIAL_MONEY, MAX_INITIAL_MONEY, MIN_INITIAL_MONEY);
         spinnerInitialMoney.setValueFactory(valueFactory);
         spinnerInitialMoney.setEditable(true);
+        TextFormatter<Integer> formatter = new TextFormatter<>(new IntegerStringConverter(), MIN_INITIAL_MONEY, change -> {
+            String newText = change.getControlNewText();
+            if (newText.matches("\\d*")) {
+                return change;
+            }
+            return null;
+        });
+        spinnerInitialMoney.getEditor().setTextFormatter(formatter);
+        formatter.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue == null) return;
+            int clampedValue = Math.clamp(newValue, MIN_INITIAL_MONEY, MAX_INITIAL_MONEY);
+            valueFactory.setValue(clampedValue);
+        });
     }
 
     @FXML
-    public void returnChooseGame(){
+    public void returnChooseGame() {
         back();
     }
 
     @FXML
-    public void jumpToBots(){
+    public void jumpToBots() {
         next();
     }
 
-    @FXML
-    public void saveHomeConfig() {
-
+    private void saveHomeConfig() {
         String roomName = textFieldRoomName.getText();
         boolean allowBots = false;  // ESTO TIENE QUE LEERSE DE LA INTERFAZ !!!
 
@@ -155,21 +159,16 @@ public class HomeCreateGameWindowController extends GenericController {
 
         _clientInfo.gameConfig._roomName = roomName;
         _clientInfo.gameConfig._allowBots = allowBots;
-
-        try {
-            PokerGame.sendGameConfig(_clientInfo.gameConfig, _clientInfo.socket.getOutputStream());
-        }
-        catch (IOException e) {
-            System.out.println( String.format("Error server room name %s\n", e.getMessage()) );
-        }
     }
 
     @Override
     public void onNextEvent() {
+        saveHomeConfig();
     }
 
     @Override
     public void onBackEvent() {
+        saveHomeConfig();
     }
 
 }

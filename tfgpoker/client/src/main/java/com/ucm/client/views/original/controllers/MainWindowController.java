@@ -14,15 +14,6 @@ public class MainWindowController extends GenericController {
     @FXML
     private Text playerNamePlaceholder;
 
-
-    @FXML
-    public void initialize() {
-        
-        _clientInfo = ClientInfo.getInstance();
-        playerNamePlaceholder.setText( _clientInfo.name );
-    }
-    
-
     @FXML
     private void chooseGame() {
         next();
@@ -34,5 +25,11 @@ public class MainWindowController extends GenericController {
 
     @Override
     public void onBackEvent() {}
+
+    @Override
+    public void setMainController(MainController mainController) {
+        super.setMainController(mainController);
+        playerNamePlaceholder.setText(_clientInfo.name);
+    }
 
 }

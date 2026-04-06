@@ -12,10 +12,9 @@ public class StartWindowController extends GenericController {
     @FXML
     private Button startButton;
 
-    public void initialize() {
-        startButton.setOnAction(e -> {
-           next();
-        });
+    @FXML
+    private void startApp() {
+        next();
     }
 
     @Override

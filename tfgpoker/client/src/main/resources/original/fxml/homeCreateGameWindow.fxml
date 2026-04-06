@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.HomeCreateGameWindowController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.HomeCreateGameWindowController">
    <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0">
          <top>
@@ -43,7 +43,7 @@
             </VBox>
          </top>
          <bottom>
-            <Button fx:id="btnSaveHome" alignment="CENTER" mnemonicParsing="false" onAction="#saveHomeConfig" prefHeight="26.0" prefWidth="134.0" text="START" BorderPane.alignment="CENTER">
+            <Button fx:id="btnStartHome" alignment="CENTER" mnemonicParsing="false" prefHeight="26.0" prefWidth="134.0" text="START" BorderPane.alignment="CENTER">
                <font>
                   <Font size="27.0" />
                </font>
@@ -52,7 +52,7 @@
                   <String fx:value="bold-general-text-font" />
                </styleClass>
                <BorderPane.margin>
-                  <Insets bottom="5.0" />
+                  <Insets bottom="10.0" />
                </BorderPane.margin></Button>
          </bottom>
          <center>

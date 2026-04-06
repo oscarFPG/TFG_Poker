@@ -16,12 +16,6 @@ import javafx.scene.control.TextField;
 
 public class ProfileSecondWindowController extends GenericController {
 
-
-    public class Config {
-
-        public boolean alloBots;
-    }
-
     @FXML
     private TextField ipLabel;
 
@@ -61,20 +55,20 @@ public class ProfileSecondWindowController extends GenericController {
             serverIP = PokerGame.LOCAL_HOST;
         }
 
-        _clientInfo = ClientInfo.getInstance();
         _clientInfo.ip = serverIP;
         _clientInfo.name = name;
 
         try {
             _clientInfo.socket = PokerGame.connect(serverIP);
             PokerGame.sendName(_clientInfo.name, _clientInfo.socket);
+            next();
             //acordarse de recibir estado del servidor y pasar a la siguiente interfaz, solo, si todo va bien
         }
         catch(IOException e) {
             System.out.printf("Error connecting to the socket: %s\n", e.getMessage());
         }
         
-        next();
+        
     }
 
     @FXML

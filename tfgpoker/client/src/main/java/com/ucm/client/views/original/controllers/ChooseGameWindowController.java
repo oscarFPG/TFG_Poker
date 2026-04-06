@@ -15,13 +15,8 @@ public class ChooseGameWindowController extends GenericController {
     private Button btnCreateGame;
 
     @FXML
-    private void initialize(){
-        _clientInfo = ClientInfo.getInstance();
-    }
-
-    @FXML
     private void onCreateGame() {
-       _mainController.chooseCreateGame();
+       chooseCreateGame();
     }
 
 

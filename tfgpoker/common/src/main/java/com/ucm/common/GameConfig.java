@@ -11,6 +11,7 @@ public class GameConfig {
     public boolean _allowBots;
     
     public static boolean isValidRoomName(String roomName){
+        if(roomName == null) { return false; }
         return !roomName.trim().isEmpty();
     }
 

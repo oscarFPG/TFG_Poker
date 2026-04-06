@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" styleClass="root" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.AddBotsCreateGameWindowController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" styleClass="root" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.AddBotsCreateGameWindowController">
          <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0">
          <top>
@@ -253,16 +253,7 @@
          <bottom>
                   <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="40.0" BorderPane.alignment="CENTER">
                      <children>
-                        <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="137.0" text="SAVE">
-                           <styleClass>
-                              <String fx:value="general-button" />
-                              <String fx:value="bold-general-text-font" />
-                           </styleClass>
-                     <font>
-                        <Font size="27.0" />
-                     </font>
-                        </Button>
-                        <Button mnemonicParsing="false" prefHeight="45.0" prefWidth="145.0" text="CANCEL">
+                        <Button fx:id="btnStartAddBots" mnemonicParsing="false" prefHeight="40.0" prefWidth="137.0" text="START">
                            <styleClass>
                               <String fx:value="general-button" />
                               <String fx:value="bold-general-text-font" />

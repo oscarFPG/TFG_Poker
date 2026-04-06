@@ -1,5 +1,7 @@
 package com.ucm.client.views.original.controllers;
 
+import com.ucm.client.ClientInfo;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
@@ -7,8 +9,17 @@ public class AddTableCreateGameWindowController extends GenericController {
 
     @FXML
     private Button btnBackPlayers;
+
     @FXML
     private Button btnNextCards;
+
+    @FXML
+    private Button btnStartAddTables;
+
+    @FXML
+    private void initialize() {
+        btnStartAddTables.setDisable(true);
+    }
 
     @FXML
     public void jumpToPlayers(){
