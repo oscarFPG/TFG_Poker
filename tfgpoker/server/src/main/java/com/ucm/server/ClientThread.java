@@ -106,8 +106,6 @@ public class ClientThread implements Runnable {
                     // Misma logica...
                     break;
 
-                
-
                 default:
                     log.debug("Request {} unknown", request);
                     break;

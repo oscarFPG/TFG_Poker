@@ -1,9 +1,7 @@
 package com.ucm.client.views.original.controllers;
 
 import javafx.stage.Stage;
-
 import com.ucm.client.ClientInfo;
-
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 
@@ -89,7 +87,7 @@ public class MainController {
         }
     }
 
-    public ClientInfo getClientInfo() {
+    public ClientInfo gClientInfo(){
         return _clientInfo;
     }
 
@@ -101,9 +99,9 @@ public class MainController {
         statusController.back();
     }
 
+    
     public void chooseCreateGame() {
         statusController.stateCreateGame();
         updateView();
     }
-
 }

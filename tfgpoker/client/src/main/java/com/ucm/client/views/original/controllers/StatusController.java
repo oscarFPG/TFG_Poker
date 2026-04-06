@@ -1,6 +1,5 @@
 package com.ucm.client.views.original.controllers;
 
-
 public class StatusController {
 
     public enum State {

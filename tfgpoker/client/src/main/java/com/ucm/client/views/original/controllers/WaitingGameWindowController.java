@@ -2,100 +2,75 @@ package com.ucm.client.views.original.controllers;
 
 import com.ucm.client.ClientInfo;
 
+import javafx.beans.Observable;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 
 
 public class WaitingGameWindowController extends GenericController {
 
     @FXML
-    private Label playerName0;
-    @FXML
-    private Label playerMoney0;
+    private Label playerNamePlaceholder;
 
     @FXML
-    private Label playerName1;
-    @FXML
-    private Label playerMoney1;
+    private StackPane pokerPlayer0;
 
     @FXML
-    private Label playerName2;
-    @FXML
-    private Label playerMoney2;
+    private StackPane pokerPlayer1;
 
     @FXML
-    private Label playerName3;
-    @FXML
-    private Label playerMoney3;
+    private StackPane pokerPlayer2;
 
     @FXML
-    private Label playerName4;
-    @FXML
-    private Label playerMoney4;
+    private StackPane pokerPlayer3;
 
     @FXML
-    private Label playerName5;
-    @FXML
-    private Label playerMoney5;
+    private StackPane pokerPlayer4;
 
     @FXML
-    private Label playerName6;
-    @FXML
-    private Label playerMoney6;
+    private StackPane pokerPlayer5;
 
     @FXML
-    private Label playerName7;
-    @FXML
-    private Label playerMoney7;
+    private StackPane pokerPlayer6;
 
     @FXML
-    private Label playerName8;
+    private StackPane pokerPlayer7;
+
     @FXML
-    private Label playerMoney8;
+    private StackPane pokerPlayer8;
 
 
     @FXML
     public void initialize() {
 
         _clientInfo = ClientInfo.getInstance();
-
-        playerName0.setText( _clientInfo.name );
-        playerMoney0.setText( String.valueOf(1000) );
-
-        waitForPlayers();
-        System.out.printf("Saliendo de estar esperando...\n");
+        playerNamePlaceholder.setText( _clientInfo.name );
+    
+        updatePlayerInfo(pokerPlayer0, _clientInfo.name);
     }
 
-    private void waitForPlayers() {
 
-        try {
+    private void updatePlayerInfo(StackPane playerStackPane, String name) {
 
-            Thread waitThread = new Thread(() -> {
 
-            try {
-                System.out.printf("Waiting...\n");
-                Thread.sleep(1000);
-            }
-            catch (InterruptedException e) {
-                System.out.printf("Error: %s\n", e.getMessage());
-            }
-        });
-            waitThread.start();
-            waitThread.join();
-        }
-        catch (InterruptedException e) {
-            System.out.printf("Error: %s\n", e.getMessage());
-        }
     }
 
     @Override
     public void onNextEvent() {
-        
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'onNextEvent'");
     }
+
 
     @Override
     public void onBackEvent() {
-        
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'onBackEvent'");
     }
+
+
 
 }
