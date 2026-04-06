@@ -18,16 +18,20 @@ public class GameType {
 
     public static final int EVENT_TYPE = 100;
     public static final int EVENT_PLAYER_JOINED = 101;
+    public static final int EVENT_GAME_STARTS = 102;
 
     public static final int CONFIRMATION_TYPE = 200;
     public static final int CONFIRMATION_NAME_VALID = 201;
     public static final int CONFIRMATION_WAITING_GAME = 202;
+    public static final int CONFIRMATION_HOST_PLAYER = 203;
+    public static final int CONFIRMATION_NO_HOST_PLAYER = 204;
+
 
     public static final int ERROR_TYPE = 500;
-    public static final int ERROR_NAME_TOO_SHORT = 502;     // Name error codes
-    public static final int ERROR_NAME_TOO_LONG = 503;
-    public static final int ERROR_GAME_NOT_CREATED = 504;
-    public static final int ERROR_GAME_NOT_JOINED = 505;
+    public static final int ERROR_NAME_TOO_SHORT = 501;     // Name error codes
+    public static final int ERROR_NAME_TOO_LONG = 502;
+    public static final int ERROR_GAME_NOT_CREATED = 503;
+    public static final int ERROR_GAME_NOT_JOINED = 504;
 
     /* ---------------- GAME CODES ----------------  */
     // Player roles

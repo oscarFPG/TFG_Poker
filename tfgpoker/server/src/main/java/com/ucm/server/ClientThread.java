@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.logging.log4j.LogManager;
@@ -25,14 +26,14 @@ public class ClientThread implements Runnable {
     public String _playerName;
     public boolean _isHost;
 
-    public AtomicInteger _playersOnRoomCounter;
+    public List<ClientThread> _roomList;
 
-    public ClientThread(Socket socket, AtomicInteger playersOnRoom) {
+    public ClientThread(Socket socket, List<ClientThread> players) {
         _socket = socket;
         _playerName = null;
         _isHost = false;
 
-        _playersOnRoomCounter = playersOnRoom;
+        _roomList = players;
     }
 
 
@@ -100,26 +101,76 @@ public class ClientThread implements Runnable {
                     }
                     else {
                         SocketUtils.sendInteger(output, GameType.CONFIRMATION_WAITING_GAME);
+                        SocketUtils.sendInteger(output, GameType.CONFIRMATION_HOST_PLAYER);
+                        
                         _isHost = true;
-                        _playerID = _playersOnRoomCounter.getAndIncrement();
+                        _roomList.add(this);
+                        _playerID = _roomList.size();
+                        
                         SocketUtils.sendInteger(output, _playerID);
 
                         log.debug("Configuration valid!");
-                        log.debug("Players on the room: {}", _playersOnRoomCounter.get());
+                        log.debug("Players on the room: {}", _roomList.size());
                         log.debug("Room configuration: Room name=\'{}\' | Allow bots={}",
                             config._roomName,
                             config._allowBots
                         );
+
+                        showPlayersInRoom();
                     }
 
                     break;
 
                 case GameType.PETITION_JOIN_GAME:
                     
-                    if(0 < _playersOnRoomCounter.get()) {
+                    if(0 < _roomList.size()) {
                         SocketUtils.sendInteger(output, GameType.CONFIRMATION_WAITING_GAME);
-                        _playerID = _playersOnRoomCounter.getAndIncrement();
+                        SocketUtils.sendInteger(output, GameType.CONFIRMATION_NO_HOST_PLAYER);
+                       _roomList.add(this);
+                        _playerID = _roomList.size();
                         SocketUtils.sendInteger(output, _playerID);
+
+                        showPlayersInRoom();
+
+                        // EXAMPLE OF PLAYER JOINED !!!
+                        log.warn("Simulation waiting on event...");
+                        Thread.sleep(3000);
+                        synchronized(_roomList) {
+                            for(ClientThread cl : _roomList) {
+                                if(!cl._isHost) {
+                                    SocketUtils.sendInteger(output, GameType.EVENT_PLAYER_JOINED);
+                                    SocketUtils.sendInteger(output, 3);
+                                    SocketUtils.sendString(output, "Nuevo1");
+                                }
+                            }
+                        }
+                        log.warn("Info sent!");
+
+                        log.warn("Simulation waiting on event 2...");
+                        Thread.sleep(1000);
+                        synchronized(_roomList) {
+                            for(ClientThread cl : _roomList) {
+                                if(!cl._isHost) {
+                                    SocketUtils.sendInteger(output, GameType.EVENT_PLAYER_JOINED);
+                                    SocketUtils.sendInteger(output, 4);
+                                    SocketUtils.sendString(output, "Nuevo2");
+                                }
+                            }
+                        }
+                        log.warn("Info sent!");
+
+                        log.warn("Simulation waiting on event 3...");
+                        Thread.sleep(4000);
+                        synchronized(_roomList) {
+                            for(ClientThread cl : _roomList) {
+                                if(!cl._isHost) {
+                                    SocketUtils.sendInteger(output, GameType.EVENT_GAME_STARTS);
+                                }
+                            }
+                        }
+                        log.warn("Info sent!");
+
+
                     }
                     else {
                         SocketUtils.sendInteger(output, GameType.ERROR_GAME_NOT_JOINED);
@@ -134,16 +185,35 @@ public class ClientThread implements Runnable {
 
             }
         }
-        catch(IOException e) {
+        catch(IOException | InterruptedException e) {
             log.error("Handling client connection: {}", e.getMessage());  
         }
         finally {
+            closeConnection();
+        }
 
-            try {
-                _socket.close();
-            }
-            catch(IOException e) {
-                log.error("Closing client socket: {}", e.getMessage());
+    }
+
+    private void closeConnection() {
+
+        if(_socket == null || _socket.isClosed())
+            return;
+
+
+        try {
+            _socket.close();
+        }
+        catch(IOException e) {
+            log.error("Closing client socket: {}", e.getMessage());
+        }
+    }
+
+    private void showPlayersInRoom() {
+
+        // Thread-safe print
+        synchronized(_roomList) {
+            for(ClientThread cl : _roomList){
+                log.debug("Player {} in room", cl._playerName);
             }
         }
 

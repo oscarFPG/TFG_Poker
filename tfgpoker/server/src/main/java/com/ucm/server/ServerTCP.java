@@ -9,6 +9,9 @@ import com.ucm.common.GameType;
 import java.net.http.*;
 import java.net.*;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -24,14 +27,14 @@ public class ServerTCP {
     private ServerSocket _serverSocket;
     private ExecutorService _executor;
 
-    private AtomicInteger _playersInRoom;
+    private List<ClientThread> _roomPlayers;
 
 
     public ServerTCP(final int port) throws IOException, InterruptedException {
         _serverPort = port;
         _serverSocket = new ServerSocket(port);
         _executor = Executors.newFixedThreadPool(GameType.MAX_PLAYERS);
-        _playersInRoom = new AtomicInteger(0);
+        _roomPlayers = Collections.synchronizedList( new ArrayList<>() );
 
         log.debug("Server started on port {}", port);
         _serverIP = showServerIP();
@@ -61,8 +64,7 @@ public class ServerTCP {
             try {
 
                 Socket socket = _serverSocket.accept();
-
-               _executor.execute( new ClientThread(socket, _playersInRoom) );
+               _executor.execute( new ClientThread(socket, _roomPlayers) );
             
                 log.debug("New client connected!");
             }

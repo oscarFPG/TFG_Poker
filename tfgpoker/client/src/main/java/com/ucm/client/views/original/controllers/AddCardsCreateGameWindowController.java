@@ -36,6 +36,14 @@ public class AddCardsCreateGameWindowController extends GenericController {
             else if(response == GameType.CONFIRMATION_WAITING_GAME) {
                 System.out.printf("Server response: All correct! Creating room...\n");
 
+                int clientType = SocketUtils.receiveInt(_clientInfo.socket.getInputStream());
+                if(clientType == GameType.CONFIRMATION_HOST_PLAYER) {
+                    _clientInfo.isHost = true;
+                }
+                else {
+                    System.out.printf("Server response: clientType unknown %d\n", clientType);
+                }
+
                 next();
             }
         }

@@ -12,6 +12,7 @@ public class ClientInfo {
     public String ip;
     public String name;
     public Socket socket;
+    public boolean isHost;
 
     private static ClientInfo instance;
 
