@@ -22,14 +22,41 @@
  * Estilo para botones como "START", "CANCEL" o "SAVE"
  */
 .general-button {
-   -fx-background-color:
-      linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100% ),
-      radial-gradient(center 50% 40%, radius 120%,#691179 0%,#661076 25%,#3A0878 60%,#20034F 100% );
-   -fx-background-radius: 10, 9;
-   -fx-background-insets: 0, 2;
-   -fx-text-fill: #e5e5e5;
-   -fx-alignment: center;
-   -fx-font-family: "Constantia Bold";
+    -fx-background-color:
+        linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100% ),
+        radial-gradient(center 50% 40%, radius 120%,#691179 0%,#661076 25%,#3A0878 60%,#20034F 100% );
+    -fx-background-radius: 10, 9;
+    -fx-background-insets: 0, 2;
+
+    -fx-text-fill: #e5e5e5;
+    -fx-font-family: "Constantia Bold";
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+    -fx-effect: none;
+
+    -fx-alignment: center;
+}
+
+/* Evitar cambios de estilo heredados */
+.general-button:hover,
+.general-button:pressed,
+.general-button:focused,
+.general-button:armed {
+    -fx-background-color:
+        linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100% ),
+        radial-gradient(center 50% 40%, radius 120%,#691179 0%,#661076 25%,#3A0878 60%,#20034F 100% );
+    -fx-background-radius: 10, 9;
+    -fx-background-insets: 0, 2;
+
+    -fx-text-fill: #e5e5e5;
+    -fx-font-family: "Constantia Bold";
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+    -fx-effect: none;
+
+    -fx-scale-x: 1;
+    -fx-scale-y: 1;
+    -fx-padding: 0;
 }
 
 /**

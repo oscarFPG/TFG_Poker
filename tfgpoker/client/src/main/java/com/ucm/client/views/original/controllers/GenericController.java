@@ -26,13 +26,15 @@ public abstract class GenericController {
         onBackEvent();
     }
 
-    protected void chooseCreateGame () {
+    protected void chooseCreateGame() {
         _mainController.chooseCreateGame();
     }
 
-    protected void onViewShown(){
-        
+    protected void chooseJoinGame() {
+        _mainController.chooseJoinGame();
     }
+
+    protected void onViewShown() {}
 
     public abstract void onNextEvent();
     public abstract void onBackEvent();

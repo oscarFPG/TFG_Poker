@@ -3,7 +3,9 @@ package com.ucm.client.views.original.controllers;
 import java.io.IOException;
 
 import com.ucm.client.ClientInfo;
+import com.ucm.common.GameType;
 import com.ucm.common.PokerGame;
+import com.ucm.common.SocketUtils;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -23,11 +25,25 @@ public class AddCardsCreateGameWindowController extends GenericController {
     
     @FXML
     private void sendClientInfo() {
+
         try {
             PokerGame.sendGameConfig(_clientInfo.gameConfig, _clientInfo.socket.getOutputStream());
+
+            int response = SocketUtils.receiveInt(_clientInfo.socket.getInputStream());
+            if(response == GameType.ERROR_GAME_NOT_CREATED) {
+                System.out.printf("Server response: Error creating game!\n");
+            }
+            else if(response == GameType.CONFIRMATION_WAITING_GAME) {
+                System.out.printf("Server response: All correct! Creating room...\n");
+
+                next();
+            }
         }
         catch (IOException e) {
-            System.out.println( String.format("Error server room name %s\n", e.getMessage()) );
+            System.out.println( String.format("Error server room name: %s\n", e.getMessage()) );
+        }
+        catch(NullPointerException e) {
+            System.out.println( String.format("Minor problem with socket ONLY for development: %s\n", e.getMessage()) );
         }
     }
 

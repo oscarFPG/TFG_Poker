@@ -154,6 +154,7 @@ public class HomeCreateGameWindowController extends GenericController {
     }
 
     private void saveHomeConfig() {
+        
         String roomName = textFieldRoomName.getText();
         String userName = labelUserName.getText();
         boolean allowBots = false;  // ESTO TIENE QUE LEERSE DE LA INTERFAZ !!!

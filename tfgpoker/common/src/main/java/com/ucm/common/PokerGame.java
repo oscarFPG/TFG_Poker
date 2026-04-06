@@ -63,6 +63,15 @@ public class PokerGame {
         return config;
     }
 
+    public static void sendWaitingRoomConfirmation(Socket socket) throws IOException {
+        SocketUtils.sendInteger(socket.getOutputStream(), GameType.CONFIRMATION_WAITING_GAME);
+    }
+
+    public static int receiveWaitingRoomConfirmation(Socket socket) throws IOException {
+       
+        int response = SocketUtils.receiveInt(socket.getInputStream());
+        return response;
+    }
 
     /* Auxiliar methods */
     public static boolean checkIpValid(final String IP){

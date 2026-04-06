@@ -1,6 +1,9 @@
 package com.ucm.client.views.original.controllers;
 
+import java.io.IOException;
+
 import com.ucm.client.ClientInfo;
+import com.ucm.common.SocketUtils;
 
 import javafx.beans.Observable;
 import javafx.fxml.FXML;
@@ -13,62 +16,60 @@ import javafx.scene.layout.StackPane;
 public class WaitingGameWindowController extends GenericController {
 
     @FXML
-    private Label playerNamePlaceholder;
+    private Label playerName0, playerMoney0;
 
     @FXML
-    private StackPane pokerPlayer0;
+    private Label playerName1, playerMoney1;
 
     @FXML
-    private StackPane pokerPlayer1;
+    private Label playerName2, playerMoney2;
 
     @FXML
-    private StackPane pokerPlayer2;
+    private Label playerName3, playerMoney3;
 
     @FXML
-    private StackPane pokerPlayer3;
+    private Label playerName4, playerMoney4;
 
     @FXML
-    private StackPane pokerPlayer4;
+    private Label playerName5, playerMoney5;
 
     @FXML
-    private StackPane pokerPlayer5;
+    private Label playerName6, playerMoney6;
 
     @FXML
-    private StackPane pokerPlayer6;
+    private Label playerName7, playerMoney7;
 
     @FXML
-    private StackPane pokerPlayer7;
-
-    @FXML
-    private StackPane pokerPlayer8;
+    private Label playerName8, playerMoney8;
 
 
-    @FXML
-    public void initialize() {
+    @Override
+    protected void onViewShown() {
 
-        _clientInfo = ClientInfo.getInstance();
-        playerNamePlaceholder.setText( _clientInfo.name );
-    
-        updatePlayerInfo(pokerPlayer0, _clientInfo.name);
+        playerName0.setText( _clientInfo.name );
+        playerMoney0.setText( String.valueOf( _clientInfo.gameConfig._initialMoney ) );
+
+        try {
+            _clientInfo.id = SocketUtils.receiveInt(_clientInfo.socket.getInputStream());
+
+            System.out.printf("Player ID is %d\n", _clientInfo.id);
+        }
+        catch(Exception e) {
+            System.out.printf("Error: %s\n", e.getMessage());
+        }
+
     }
 
-
-    private void updatePlayerInfo(StackPane playerStackPane, String name) {
-
-
-    }
 
     @Override
     public void onNextEvent() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onNextEvent'");
+        
     }
 
 
     @Override
     public void onBackEvent() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onBackEvent'");
+       
     }
 
 

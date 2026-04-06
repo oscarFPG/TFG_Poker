@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.Socket;
 
 import com.ucm.client.ClientInfo;
+import com.ucm.common.GameType;
 import com.ucm.common.PokerGame;
 import com.ucm.common.SocketUtils;
 
@@ -61,14 +62,26 @@ public class ProfileSecondWindowController extends GenericController {
         try {
             _clientInfo.socket = PokerGame.connect(serverIP);
             PokerGame.sendName(_clientInfo.name, _clientInfo.socket);
-            next();
-            //acordarse de recibir estado del servidor y pasar a la siguiente interfaz, solo, si todo va bien
+            
+            int response = SocketUtils.receiveInt(_clientInfo.socket.getInputStream());
+            if(response == GameType.ERROR_NAME_TOO_SHORT) {
+                System.out.printf("Server response: Name is too short!\n");
+            }
+            else if(response == GameType.ERROR_NAME_TOO_LONG) {
+                System.out.printf("Server response: Name is too long!\n");
+            }
+            else if(response == GameType.CONFIRMATION_NAME_VALID) {
+                System.out.printf("Server response: Name is valid!\n");
+
+                next();
+            }
+            else {
+                System.out.printf("Unknown server response : %d\n", response);
+            }
         }
-        catch(IOException e) {
+        catch(Exception e) {
             System.out.printf("Error connecting to the socket: %s\n", e.getMessage());
         }
-        
-        
     }
 
     @FXML

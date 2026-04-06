@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,14 +20,19 @@ public class ClientThread implements Runnable {
 
     private static final Logger log = LogManager.getLogger(ClientThread.class);
 
+    public int _playerID;
     public Socket _socket;
     public String _playerName;
     public boolean _isHost;
 
-    public ClientThread(Socket socket) {
+    public AtomicInteger _playersOnRoomCounter;
+
+    public ClientThread(Socket socket, AtomicInteger playersOnRoom) {
         _socket = socket;
         _playerName = null;
         _isHost = false;
+
+        _playersOnRoomCounter = playersOnRoom;
     }
 
 
@@ -77,7 +83,9 @@ public class ClientThread implements Runnable {
                         SocketUtils.sendInteger(output, GameType.ERROR_NAME_TOO_LONG);
                     }
                     else {
+                        SocketUtils.sendInteger(output, GameType.CONFIRMATION_NAME_VALID);
                         _playerName = name;
+
                         log.debug("Client with name {} authenticated!", _playerName);
                     }
                      
@@ -91,9 +99,13 @@ public class ClientThread implements Runnable {
                         log.error("Configuration was not valid");
                     }
                     else {
-                        SocketUtils.sendInteger(output, GameType.CONFIRMATION_CREATE_GAME);
+                        SocketUtils.sendInteger(output, GameType.CONFIRMATION_WAITING_GAME);
                         _isHost = true;
+                        _playerID = _playersOnRoomCounter.getAndIncrement();
+                        SocketUtils.sendInteger(output, _playerID);
+
                         log.debug("Configuration valid!");
+                        log.debug("Players on the room: {}", _playersOnRoomCounter.get());
                         log.debug("Room configuration: Room name=\'{}\' | Allow bots={}",
                             config._roomName,
                             config._allowBots
@@ -103,7 +115,16 @@ public class ClientThread implements Runnable {
                     break;
 
                 case GameType.PETITION_JOIN_GAME:
-                    // Misma logica...
+                    
+                    if(0 < _playersOnRoomCounter.get()) {
+                        SocketUtils.sendInteger(output, GameType.CONFIRMATION_WAITING_GAME);
+                        _playerID = _playersOnRoomCounter.getAndIncrement();
+                        SocketUtils.sendInteger(output, _playerID);
+                    }
+                    else {
+                        SocketUtils.sendInteger(output, GameType.ERROR_GAME_NOT_JOINED);
+                    }
+
                     break;
 
                 default:

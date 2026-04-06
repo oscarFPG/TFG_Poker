@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.ChooseGameWindowController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.ChooseGameWindowController">
          <children>
       <HBox prefHeight="100.0" prefWidth="200.0">
          <children>
@@ -487,7 +487,7 @@
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </HBox.margin>
                            <children>
-                                    <Button mnemonicParsing="false" prefHeight="69.0" prefWidth="263.0" text="JOIN GAME">
+                                    <Button fx:id="btnJoinGame" mnemonicParsing="false" onAction="#onJoinGame" prefHeight="69.0" prefWidth="263.0" text="JOIN GAME">
                                        <styleClass>
                                           <String fx:value="general-button" />
                                           <String fx:value="super-bold-general-text-font" />

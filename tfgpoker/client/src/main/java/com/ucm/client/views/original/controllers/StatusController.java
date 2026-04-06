@@ -55,6 +55,10 @@ public class StatusController {
             currentState = State.ADD_CARDS;
             break;
 
+        case ADD_CARDS:
+            currentState = State.WAITING_GAME;
+            break;
+
         case WAITING_GAME:
             currentState = State.GAME;
             break;
@@ -111,6 +115,10 @@ public class StatusController {
 
     public void stateCreateGame() {
         currentState = State.CREATE_GAME;
+    }
+
+    public void stateJoinGame() {
+        currentState = State.WAITING_GAME;
     }
 
     public State getCurrentState() {

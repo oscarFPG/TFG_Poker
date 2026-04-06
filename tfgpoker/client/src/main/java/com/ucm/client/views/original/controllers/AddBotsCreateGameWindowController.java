@@ -43,4 +43,5 @@ public class AddBotsCreateGameWindowController extends GenericController {
     public void onBackEvent() {
         
     }
+
 }

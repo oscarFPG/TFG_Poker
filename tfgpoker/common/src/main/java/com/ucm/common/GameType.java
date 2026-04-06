@@ -21,13 +21,13 @@ public class GameType {
 
     public static final int CONFIRMATION_TYPE = 200;
     public static final int CONFIRMATION_NAME_VALID = 201;
-    public static final int CONFIRMATION_CREATE_GAME = 202;
+    public static final int CONFIRMATION_WAITING_GAME = 202;
 
     public static final int ERROR_TYPE = 500;
     public static final int ERROR_NAME_TOO_SHORT = 502;     // Name error codes
     public static final int ERROR_NAME_TOO_LONG = 503;
     public static final int ERROR_GAME_NOT_CREATED = 504;
-
+    public static final int ERROR_GAME_NOT_JOINED = 505;
 
     /* ---------------- GAME CODES ----------------  */
     // Player roles

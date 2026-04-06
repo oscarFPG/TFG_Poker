@@ -99,4 +99,10 @@ public class MainController {
         statusController.stateCreateGame();
         updateView();
     }
+
+    public void chooseJoinGame() {
+        statusController.stateJoinGame();
+        updateView();
+    }
+
 }

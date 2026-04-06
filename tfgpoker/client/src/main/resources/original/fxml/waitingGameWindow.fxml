@@ -19,7 +19,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.WaitingGameWindowController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.WaitingGameWindowController">
    <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0">
          <center>
@@ -41,9 +41,9 @@
                            <children>
                               <VBox alignment="CENTER" prefHeight="56.0" prefWidth="138.0" spacing="10.0">
                                  <children>
-                                    <Label styleClass="bold-general-text-font" text="Label" />
+                                    <Label fx:id="playerName1" styleClass="bold-general-text-font" text="Label" />
                                     <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
-                                    <Label styleClass="bold-general-text-font" text="Label" />
+                                    <Label fx:id="playerMoney1" styleClass="bold-general-text-font" text="Label" />
                                  </children>
                               </VBox>
                            </children>
@@ -129,9 +129,9 @@
                            <children>
                               <VBox alignment="CENTER" prefHeight="56.0" prefWidth="138.0" spacing="10.0">
                                  <children>
-                                    <Label styleClass="bold-general-text-font" text="Label" />
+                                    <Label fx:id="playerName4" styleClass="bold-general-text-font" text="Label" />
                                     <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
-                                    <Label styleClass="bold-general-text-font" text="Label" />
+                                    <Label fx:id="playerMoney4" styleClass="bold-general-text-font" text="Label" />
                                  </children>
                               </VBox>
                            </children>
@@ -217,9 +217,9 @@
                            <children>
                               <VBox alignment="CENTER" prefHeight="56.0" prefWidth="138.0" spacing="10.0">
                                  <children>
-                                    <Label styleClass="bold-general-text-font" text="Label" />
+                                    <Label fx:id="playerName3" styleClass="bold-general-text-font" text="Label" />
                                     <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
-                                    <Label styleClass="bold-general-text-font" text="Label" />
+                                    <Label fx:id="playerMoney3" styleClass="bold-general-text-font" text="Label" />
                                  </children>
                               </VBox>
                            </children>
@@ -305,9 +305,9 @@
                            <children>
                               <VBox alignment="CENTER" prefHeight="56.0" prefWidth="138.0" spacing="10.0">
                                  <children>
-                                    <Label styleClass="bold-general-text-font" text="Label" />
+                                    <Label fx:id="playerName2" styleClass="bold-general-text-font" text="Label" />
                                     <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
-                                    <Label styleClass="bold-general-text-font" text="Label" />
+                                    <Label fx:id="playerMoney2" styleClass="bold-general-text-font" text="Label" />
                                  </children>
                               </VBox>
                            </children>
@@ -393,9 +393,9 @@
                            <children>
                               <VBox alignment="CENTER" prefHeight="56.0" prefWidth="138.0" spacing="10.0">
                                  <children>
-                                    <Label styleClass="bold-general-text-font" text="Label" />
+                                    <Label fx:id="playerName5" styleClass="bold-general-text-font" text="Label" />
                                     <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
-                                    <Label styleClass="bold-general-text-font" text="Label" />
+                                    <Label fx:id="playerMoney5" styleClass="bold-general-text-font" text="Label" />
                                  </children>
                               </VBox>
                            </children>
@@ -481,9 +481,9 @@
                            <children>
                               <VBox alignment="CENTER" prefHeight="56.0" prefWidth="138.0" spacing="10.0">
                                  <children>
-                                    <Label styleClass="bold-general-text-font" text="Label" />
+                                    <Label fx:id="playerName0" styleClass="bold-general-text-font" text="Label" />
                                     <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
-                                    <Label styleClass="bold-general-text-font" text="Label" />
+                                    <Label fx:id="playerMoney0" styleClass="bold-general-text-font" text="Label" />
                                  </children>
                               </VBox>
                            </children>
@@ -564,9 +564,9 @@
                            <children>
                               <VBox alignment="CENTER" prefHeight="56.0" prefWidth="138.0" spacing="10.0">
                                  <children>
-                                    <Label styleClass="bold-general-text-font" text="Label" />
+                                    <Label fx:id="playerName8" styleClass="bold-general-text-font" text="Label" />
                                     <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
-                                    <Label styleClass="bold-general-text-font" text="Label" />
+                                    <Label fx:id="playerMoney8" styleClass="bold-general-text-font" text="Label" />
                                  </children>
                               </VBox>
                            </children>
@@ -652,9 +652,9 @@
                            <children>
                               <VBox alignment="CENTER" prefHeight="56.0" prefWidth="138.0" spacing="10.0">
                                  <children>
-                                    <Label styleClass="bold-general-text-font" text="Label" />
+                                    <Label fx:id="playerName6" styleClass="bold-general-text-font" text="Label" />
                                     <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
-                                    <Label styleClass="bold-general-text-font" text="Label" />
+                                    <Label fx:id="playerMoney6" styleClass="bold-general-text-font" text="Label" />
                                  </children>
                               </VBox>
                            </children>
@@ -740,9 +740,9 @@
                            <children>
                               <VBox alignment="CENTER" prefHeight="56.0" prefWidth="138.0" spacing="10.0">
                                  <children>
-                                    <Label styleClass="bold-general-text-font" text="Label" />
+                                    <Label fx:id="playerName7" styleClass="bold-general-text-font" text="Label" />
                                     <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
-                                    <Label styleClass="bold-general-text-font" text="Label" />
+                                    <Label fx:id="playerMoney7" styleClass="bold-general-text-font" text="Label" />
                                  </children>
                               </VBox>
                            </children>

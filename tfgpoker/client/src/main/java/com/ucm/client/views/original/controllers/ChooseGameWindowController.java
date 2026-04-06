@@ -15,8 +15,33 @@ public class ChooseGameWindowController extends GenericController {
     private Button btnCreateGame;
 
     @FXML
+    private Button btnJoinGame;
+
+    @FXML
     private void onCreateGame() {
-       chooseCreateGame();
+        chooseCreateGame();
+    }
+
+    @FXML
+    private void onJoinGame() {
+
+        try {
+
+            SocketUtils.sendInteger(_clientInfo.socket.getOutputStream(), GameType.PETITION_JOIN_GAME);
+
+            int response = SocketUtils.receiveInt(_clientInfo.socket.getInputStream());
+            if(response == GameType.CONFIRMATION_WAITING_GAME) {
+                System.out.printf("Server responspe: Client joined succesfully!\n");
+                chooseJoinGame();
+            }
+            else if(response == GameType.ERROR_GAME_NOT_JOINED) {
+                System.out.printf("Server responspe: Client cannot join!\n");
+            }
+
+        }
+        catch (IOException e) {
+            System.out.printf("Error receiving response from server: %s\n", e.getMessage());    
+        }
     }
 
 

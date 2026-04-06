@@ -24,14 +24,14 @@ public class ServerTCP {
     private ServerSocket _serverSocket;
     private ExecutorService _executor;
 
-    private AtomicInteger _connectionsCounter;
+    private AtomicInteger _playersInRoom;
 
 
     public ServerTCP(final int port) throws IOException, InterruptedException {
         _serverPort = port;
         _serverSocket = new ServerSocket(port);
         _executor = Executors.newFixedThreadPool(GameType.MAX_PLAYERS);
-        _connectionsCounter = new AtomicInteger(0);
+        _playersInRoom = new AtomicInteger(0);
 
         log.debug("Server started on port {}", port);
         _serverIP = showServerIP();
@@ -62,8 +62,7 @@ public class ServerTCP {
 
                 Socket socket = _serverSocket.accept();
 
-               _executor.execute( new ClientThread(socket) );
-                _connectionsCounter.incrementAndGet();
+               _executor.execute( new ClientThread(socket, _playersInRoom) );
             
                 log.debug("New client connected!");
             }
