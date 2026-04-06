@@ -10,7 +10,6 @@ public class MainController {
     
     private Stage stage;
     private StatusController statusController;
-    private final ClientInfo _clientInfo = ClientInfo.getInstance();
     private static final String path = "/original/fxml/";
 
     public MainController(Stage stage) {
@@ -85,10 +84,6 @@ public class MainController {
         catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public ClientInfo gClientInfo(){
-        return _clientInfo;
     }
 
     public void next() {

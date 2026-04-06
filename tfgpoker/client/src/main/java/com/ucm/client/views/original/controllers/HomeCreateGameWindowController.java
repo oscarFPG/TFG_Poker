@@ -61,11 +61,12 @@ public class HomeCreateGameWindowController extends GenericController {
 
     @Override
     protected void onViewShown() {
+
         initializeRoomName();
         labelUserName.setText(_clientInfo.name);
     }
 
-    private void initializeRoomName(){
+    private void initializeRoomName() {
         String roomName = _clientInfo.gameConfig._roomName;
         if(!GameConfig.isValidRoomName(roomName)) {
             roomName = _clientInfo.name + "'s room";

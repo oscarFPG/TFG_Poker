@@ -10,7 +10,7 @@ public abstract class GenericController {
 
     public void setMainController(MainController mainController) {
         _mainController = mainController;
-        _clientInfo = _mainController.gClientInfo();
+        _clientInfo = ClientInfo.getInstance();
         onViewShown();
     }
 
