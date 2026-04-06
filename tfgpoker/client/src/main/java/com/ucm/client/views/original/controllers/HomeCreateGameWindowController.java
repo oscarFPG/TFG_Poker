@@ -16,6 +16,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.util.converter.IntegerStringConverter;
 
+
 public class HomeCreateGameWindowController extends GenericController {
 
     private static final int MAX_ROOM_NAME_LENGTH = 17;
@@ -60,7 +61,8 @@ public class HomeCreateGameWindowController extends GenericController {
         initializeRoomName();
     }
 
-    private void initializeRoomName(){
+    private void initializeRoomName() {
+
         String roomName = _clientInfo.gameConfig._roomName;
         if(!GameConfig.isValidRoomName(roomName)) {
             roomName = _clientInfo.name + "'s room";
@@ -81,6 +83,7 @@ public class HomeCreateGameWindowController extends GenericController {
     }
 
     private void initializeBlindsValue() {
+
         int[] blinds = {1, 5, 10, 25, 50, 100};
         String defaultValue = "DEFAULT";
 
@@ -92,6 +95,7 @@ public class HomeCreateGameWindowController extends GenericController {
     }
 
     private void initializeLevelDuration() {
+
         String defaultValue = "DEFAULT";
         comboLevelDuration.getItems().addAll(
             "15",
@@ -106,6 +110,7 @@ public class HomeCreateGameWindowController extends GenericController {
     }
 
     private void initializeHikePercentage() {
+
         String defaultValue = "DEFAULT";
         comboHikePercentage.getItems().addAll(
             "25",
@@ -120,6 +125,7 @@ public class HomeCreateGameWindowController extends GenericController {
     }
 
     private void initializeSpinner() {
+
         SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(MIN_INITIAL_MONEY, MAX_INITIAL_MONEY, MIN_INITIAL_MONEY);
         spinnerInitialMoney.setValueFactory(valueFactory);
         spinnerInitialMoney.setEditable(true);
@@ -157,8 +163,17 @@ public class HomeCreateGameWindowController extends GenericController {
             roomName = _clientInfo.name + "'s room";
         }
 
-        _clientInfo.gameConfig._roomName = roomName;
-        _clientInfo.gameConfig._allowBots = allowBots;
+        try {
+            _clientInfo.gameConfig._roomName = roomName;
+            _clientInfo.gameConfig._allowBots = allowBots;
+
+            PokerGame.sendGameConfig(_clientInfo.gameConfig, _clientInfo.socket.getOutputStream());
+        }
+        catch (Exception e) {
+            System.out.println( String.format("Error: %s\n", e.getMessage()) );
+        }
+
+        next();
     }
 
     @Override

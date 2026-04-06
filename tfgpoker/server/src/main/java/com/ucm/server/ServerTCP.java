@@ -62,18 +62,10 @@ public class ServerTCP {
 
                 Socket socket = _serverSocket.accept();
 
-                /*
-                    Esta logica de rechazar mas conexiones no iria aqui.
-                    Estas son conexiones generales, deberia aplicarse este filtro a la solicitud JOIN_GAME.
-                    Esto hay que cambiarlo, simplemente esta aqui como ejemplo de como se haría
-                */
-
-                    _executor.execute( new ClientThread(socket) );
-                    _connectionsCounter.incrementAndGet();
-                
-                    log.debug("New client connected!");
-                
-                
+                _executor.execute( new ClientThread(socket) );
+                _connectionsCounter.incrementAndGet();
+            
+                log.debug("New client connected!");
             }
             catch(IOException e) {
                 log.error("Error accepting client connection: {}", e.getMessage());
