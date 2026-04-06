@@ -68,6 +68,13 @@
             <version>1.12.2</version>
         </dependency>
 
+        <!-- JSON-->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20240303</version>
+        </dependency>
+
     </dependencies>
 
     <!-- Plugins -->

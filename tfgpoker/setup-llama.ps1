@@ -41,7 +41,7 @@ Write-Host "Creando Modelfile..."
 @"
 FROM ./llama3-8b-pokerbench-sft-q4_k_m.gguf
 PARAMETER temperature 0.1
-SYSTEM "You are an expert poker player. Respond with your action in <action></action> tags."
+SYSTEM "You are an expert poker player. Respond with your action in <action>answer</action> tags."
 "@ | Out-File -Encoding utf8 Modelfile
 
 # Crear modelo en Ollama
