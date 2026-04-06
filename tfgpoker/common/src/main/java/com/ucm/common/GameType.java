@@ -25,6 +25,7 @@ public class GameType {
     public static final int CONFIRMATION_WAITING_GAME = 202;
     public static final int CONFIRMATION_HOST_PLAYER = 203;
     public static final int CONFIRMATION_NO_HOST_PLAYER = 204;
+    public static final int CONFIRMATION_GAME_STARTS = 205;
 
 
     public static final int ERROR_TYPE = 500;
@@ -32,6 +33,7 @@ public class GameType {
     public static final int ERROR_NAME_TOO_LONG = 502;
     public static final int ERROR_GAME_NOT_CREATED = 503;
     public static final int ERROR_GAME_NOT_JOINED = 504;
+    public static final int ERROR_GAME_CANNOT_START = 505;
 
     /* ---------------- GAME CODES ----------------  */
     // Player roles

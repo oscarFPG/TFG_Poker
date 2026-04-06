@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.ucm.common.GameConfig;
 import com.ucm.common.GameType;
+import com.ucm.common.PlayerInfo;
 import com.ucm.common.PokerGame;
 import com.ucm.common.SocketUtils;
 
@@ -102,21 +103,18 @@ public class ClientThread implements Runnable {
                     else {
                         SocketUtils.sendInteger(output, GameType.CONFIRMATION_WAITING_GAME);
                         SocketUtils.sendInteger(output, GameType.CONFIRMATION_HOST_PLAYER);
-                        
                         _isHost = true;
-                        _roomList.add(this);
                         _playerID = _roomList.size();
-                        
+                        _roomList.add(this);
                         SocketUtils.sendInteger(output, _playerID);
 
+                        showPlayersInRoom();
                         log.debug("Configuration valid!");
                         log.debug("Players on the room: {}", _roomList.size());
                         log.debug("Room configuration: Room name=\'{}\' | Allow bots={}",
                             config._roomName,
                             config._allowBots
                         );
-
-                        showPlayersInRoom();
                     }
 
                     break;
@@ -126,56 +124,40 @@ public class ClientThread implements Runnable {
                     if(0 < _roomList.size()) {
                         SocketUtils.sendInteger(output, GameType.CONFIRMATION_WAITING_GAME);
                         SocketUtils.sendInteger(output, GameType.CONFIRMATION_NO_HOST_PLAYER);
-                       _roomList.add(this);
                         _playerID = _roomList.size();
+                        _roomList.add(this);
                         SocketUtils.sendInteger(output, _playerID);
 
+                        broadcastPlayerJoined();
                         showPlayersInRoom();
-
-                        // EXAMPLE OF PLAYER JOINED !!!
-                        log.warn("Simulation waiting on event...");
-                        Thread.sleep(3000);
-                        synchronized(_roomList) {
-                            for(ClientThread cl : _roomList) {
-                                if(!cl._isHost) {
-                                    SocketUtils.sendInteger(output, GameType.EVENT_PLAYER_JOINED);
-                                    SocketUtils.sendInteger(output, 3);
-                                    SocketUtils.sendString(output, "Nuevo1");
-                                }
-                            }
-                        }
-                        log.warn("Info sent!");
-
-                        log.warn("Simulation waiting on event 2...");
-                        Thread.sleep(1000);
-                        synchronized(_roomList) {
-                            for(ClientThread cl : _roomList) {
-                                if(!cl._isHost) {
-                                    SocketUtils.sendInteger(output, GameType.EVENT_PLAYER_JOINED);
-                                    SocketUtils.sendInteger(output, 4);
-                                    SocketUtils.sendString(output, "Nuevo2");
-                                }
-                            }
-                        }
-                        log.warn("Info sent!");
-
-                        log.warn("Simulation waiting on event 3...");
-                        Thread.sleep(4000);
-                        synchronized(_roomList) {
-                            for(ClientThread cl : _roomList) {
-                                if(!cl._isHost) {
-                                    SocketUtils.sendInteger(output, GameType.EVENT_GAME_STARTS);
-                                }
-                            }
-                        }
-                        log.warn("Info sent!");
-
-
                     }
                     else {
                         SocketUtils.sendInteger(output, GameType.ERROR_GAME_NOT_JOINED);
                     }
 
+                    break;
+                
+                case GameType.EVENT_GAME_STARTS:
+                    
+                    if(!_isHost) {
+
+                        SocketUtils.sendInteger(_socket.getOutputStream(), GameType.ERROR_GAME_CANNOT_START);
+                        log.debug("This client cannot request");
+
+                        break;
+                    }
+
+                    synchronized(_roomList) {
+
+                        if(2 <= _roomList.size()) {
+                            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.CONFIRMATION_GAME_STARTS);
+                            log.debug("Game starts!");
+                        }
+                        else {
+                            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.ERROR_GAME_CANNOT_START);
+                            log.debug("Game cannot start! Missing players");
+                        }
+                    }
                     break;
 
                 default:
@@ -185,13 +167,38 @@ public class ClientThread implements Runnable {
 
             }
         }
-        catch(IOException | InterruptedException e) {
+        catch(IOException e) {
             log.error("Handling client connection: {}", e.getMessage());  
         }
         finally {
             closeConnection();
         }
 
+    }
+
+    private void broadcastPlayerJoined() {
+
+        Thread notify = new Thread(() -> {
+
+            synchronized(_roomList) {
+
+                try {
+                    for(ClientThread target : _roomList) {
+                        for(ClientThread ct : _roomList) {
+                            SocketUtils.sendInteger(target._socket.getOutputStream(), GameType.EVENT_PLAYER_JOINED);
+                            PokerGame.sendPlayerInRoomInfo( new PlayerInfo(ct._playerID, ct._playerName), target._socket);
+                        }
+                        
+                    }
+                }
+                catch(IOException e) {
+                    log.error("Error sending info to all players");
+                }
+            }
+
+        });
+
+        notify.start();
     }
 
     private void closeConnection() {

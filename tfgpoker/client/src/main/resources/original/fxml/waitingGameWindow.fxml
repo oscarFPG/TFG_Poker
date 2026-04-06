@@ -887,7 +887,7 @@
             </HBox>
          </top>
          <bottom>
-            <Button fx:id="startButton" alignment="CENTER" mnemonicParsing="false" prefHeight="40.0" prefWidth="137.0" text="START" BorderPane.alignment="CENTER">
+            <Button fx:id="startButton" alignment="CENTER" mnemonicParsing="false" onAction="#startGame" prefHeight="40.0" prefWidth="137.0" text="START" BorderPane.alignment="CENTER">
                <font>
                   <Font size="27.0" />
                </font>

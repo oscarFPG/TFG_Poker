@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
-
 
 
 public class ServerTCP {
@@ -57,9 +55,9 @@ public class ServerTCP {
         return serverIP;
     }
 
-    public void start() {
+    public List<ClientThread> startPregame() {
 
-        while(true) {
+        while(!_serverSocket.isClosed()) {
 
             try {
 
@@ -73,6 +71,7 @@ public class ServerTCP {
             }
         }
 
+        return _roomPlayers;
     }
 
 }

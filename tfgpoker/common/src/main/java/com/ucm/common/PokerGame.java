@@ -8,12 +8,10 @@ import java.net.Socket;
 
 public class PokerGame {
 
-    
     public static final String LOCAL_HOST = "localhost"; 
 
-    
-    private PokerGame() {}
 
+    private PokerGame() {}
 
 
     public static Socket connect(final String serverIP) throws IOException {
@@ -71,6 +69,27 @@ public class PokerGame {
        
         int response = SocketUtils.receiveInt(socket.getInputStream());
         return response;
+    }
+
+    public static void sendPlayerInRoomInfo(PlayerInfo p, Socket socket) throws IOException {
+
+        SocketUtils.sendInteger(socket.getOutputStream(), GameType.EVENT_PLAYER_JOINED);
+        SocketUtils.sendInteger(socket.getOutputStream(), p.id);
+        SocketUtils.sendString(socket.getOutputStream(), p.name);
+    }
+
+    public static PlayerInfo receivePlayerInRoomInfo(InputStream input, OutputStream output) throws IOException {
+
+        int response = SocketUtils.receiveInt(input);
+        if(response != GameType.EVENT_PLAYER_JOINED) {
+            return null;
+        }
+        
+        
+        int id = SocketUtils.receiveInt(input);
+        String name = SocketUtils.receiveString(input);
+
+        return new PlayerInfo(id, name);
     }
 
     /* Auxiliar methods */

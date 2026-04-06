@@ -6,6 +6,8 @@ import java.io.OutputStream;
 
 import com.ucm.client.ClientInfo;
 import com.ucm.common.GameType;
+import com.ucm.common.PlayerInfo;
+import com.ucm.common.PokerGame;
 import com.ucm.common.SocketUtils;
 
 import javafx.application.Platform;
@@ -51,6 +53,18 @@ public class WaitingGameWindowController extends GenericController {
     private Label playerName8, playerMoney8;
 
 
+    @FXML
+    private void startGame() {
+        
+        try {
+            SocketUtils.sendInteger(_clientInfo.socket.getOutputStream(), GameType.EVENT_GAME_STARTS);
+        }
+        catch(IOException e) {
+
+        } 
+    }
+
+
     @Override
     protected void onViewShown() {
 
@@ -61,6 +75,16 @@ public class WaitingGameWindowController extends GenericController {
             waitNewPlayersInfo();
         });
         infoThread.start();
+    }
+
+    @Override
+    public void onNextEvent() {
+        
+    }
+
+    @Override
+    public void onBackEvent() {
+       
     }
 
 
@@ -76,6 +100,35 @@ public class WaitingGameWindowController extends GenericController {
 
             if(_clientInfo.isHost) {
                 System.out.printf("Server response: This client is the host of the game!\n");
+
+                boolean kepWaiting = true;
+                while(kepWaiting) {
+
+                    int event = SocketUtils.receiveInt(input);
+                    if(event == GameType.EVENT_PLAYER_JOINED) {
+
+                        PlayerInfo p = PokerGame.receivePlayerInRoomInfo(input, output);
+                        System.out.printf(
+                            "Event PLAYER_JOINED! Player %s with ID %d has joined the game!\n", 
+                            p.name, 
+                            p.id
+                        );
+
+                        Platform.runLater(() -> {
+                            showPlayer(p.id, p.name);
+                        });
+                    }
+                    else if(event == GameType.CONFIRMATION_GAME_STARTS) {
+                        System.out.printf("Event GAME_STARTS!\n");
+                        kepWaiting = false;
+                    }
+                    else if(event == GameType.ERROR_GAME_CANNOT_START) {
+                        System.out.printf("Game cannot start! Missing players\n");
+                    }
+                    else {
+                        System.out.printf("Event %d unknown!\n", event);
+                    }
+                }
             }
             else {
                 System.out.printf("Server response: This client is a guest!\n");
@@ -90,20 +143,18 @@ public class WaitingGameWindowController extends GenericController {
                     int event = SocketUtils.receiveInt(input);
                     if(event == GameType.EVENT_PLAYER_JOINED) {
 
-                        int exampleID = SocketUtils.receiveInt(input);
-                        String exampleName =  SocketUtils.receiveString(input);
+                        PlayerInfo p = PokerGame.receivePlayerInRoomInfo(input, output);
                         System.out.printf(
                             "Event PLAYER_JOINED! Player %s with ID %d has joined the game!\n", 
-                            exampleName, 
-                            exampleID
+                            p.name, 
+                            p.id
                         );
 
-
                         Platform.runLater(() -> {
-                            showPlayer(exampleID, exampleName);
+                            showPlayer(p.id, p.name);
                         });
                     }
-                    else if(event == GameType.EVENT_GAME_STARTS) {
+                    else if(event == GameType.CONFIRMATION_GAME_STARTS) {
                         System.out.printf("Event GAME_STARTS!\n");
                         kepWaiting = false;
                     }
@@ -160,18 +211,5 @@ public class WaitingGameWindowController extends GenericController {
         }
 
     }
-
-    @Override
-    public void onNextEvent() {
-        
-    }
-
-
-    @Override
-    public void onBackEvent() {
-       
-    }
-
-
 
 }
