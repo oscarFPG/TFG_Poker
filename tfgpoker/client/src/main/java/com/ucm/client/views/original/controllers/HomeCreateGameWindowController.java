@@ -9,6 +9,7 @@ import com.ucm.common.PokerGame;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
@@ -39,6 +40,12 @@ public class HomeCreateGameWindowController extends GenericController {
     private Label labelUserName;
 
     @FXML
+    private Spinner<Integer> spinnerInitialMoney;
+
+    @FXML
+    private CheckBox checkBoxAllowBots;
+
+    @FXML
     private ComboBox<String> comboBlindsValue;
 
     @FXML
@@ -47,23 +54,16 @@ public class HomeCreateGameWindowController extends GenericController {
     @FXML
     private ComboBox<String> comboHikePercentage;
 
-    @FXML
-    private Spinner<Integer> spinnerInitialMoney;
-
-    @FXML
-    private void initialize() {
+    @Override
+    protected void onViewShown() {
         btnStartHome.setDisable(true);
+        initializeRoomName();
+        labelUserName.setText(_clientInfo.name);
+        checkBoxAllowBots.setSelected(_clientInfo.gameConfig._allowBots);
+        initializeSpinner();
         initializeBlindsValue();
         initializeLevelDuration();
         initializeHikePercentage();
-        initializeSpinner();
-    }
-
-    @Override
-    protected void onViewShown() {
-
-        initializeRoomName();
-        labelUserName.setText(_clientInfo.name);
     }
 
     private void initializeRoomName() {
@@ -87,17 +87,18 @@ public class HomeCreateGameWindowController extends GenericController {
     }
 
     private void initializeBlindsValue() {
+        comboBlindsValue.getItems().clear();
         int[] blinds = {1, 5, 10, 25, 50, 100};
-        String defaultValue = "DEFAULT";
-        comboBlindsValue.setValue(defaultValue);
         for (int blind : blinds){
             comboBlindsValue.getItems().add(blind + "/" + (blind * 2));
         }
-        comboBlindsValue.getItems().add(defaultValue);
+        String restoreBlindsValue = _clientInfo.gameConfig._blindsValue;
+        if( restoreBlindsValue != null) {
+            comboBlindsValue.setValue(restoreBlindsValue);
+        }
     }
 
     private void initializeLevelDuration() {
-        String defaultValue = "DEFAULT";
         comboLevelDuration.getItems().addAll(
             "15",
             "20",
@@ -106,12 +107,13 @@ public class HomeCreateGameWindowController extends GenericController {
             "120",
             "180"
         );
-        comboLevelDuration.getItems().add(defaultValue);
-        comboLevelDuration.setValue(defaultValue);
+        String restoreLevelDuration = _clientInfo.gameConfig._levelDuration;
+        if( restoreLevelDuration != null) {
+            comboLevelDuration.setValue(restoreLevelDuration);
+        }
     }
 
     private void initializeHikePercentage() {
-        String defaultValue = "DEFAULT";
         comboHikePercentage.getItems().addAll(
             "25",
             "33",
@@ -120,20 +122,23 @@ public class HomeCreateGameWindowController extends GenericController {
             "80",
             "100"
         );
-        comboHikePercentage.getItems().add(defaultValue);
-        comboHikePercentage.setValue(defaultValue);
+        String restorehikePercentage = _clientInfo.gameConfig._hikePercentage;
+        if( restorehikePercentage != null) {
+            comboHikePercentage.setValue(restorehikePercentage);
+        }
     }
 
     private void initializeSpinner() {
-        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(MIN_INITIAL_MONEY, MAX_INITIAL_MONEY, MIN_INITIAL_MONEY);
+        int initialValue = _clientInfo.gameConfig._initialMoney;
+        if(initialValue < MIN_INITIAL_MONEY || initialValue > MAX_INITIAL_MONEY) {
+            initialValue = MIN_INITIAL_MONEY;
+        }
+        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(MIN_INITIAL_MONEY, MAX_INITIAL_MONEY, initialValue);
         spinnerInitialMoney.setValueFactory(valueFactory);
         spinnerInitialMoney.setEditable(true);
-        TextFormatter<Integer> formatter = new TextFormatter<>(new IntegerStringConverter(), MIN_INITIAL_MONEY, change -> {
+        TextFormatter<Integer> formatter = new TextFormatter<>(new IntegerStringConverter(), initialValue, change -> {
             String newText = change.getControlNewText();
-            if (newText.matches("\\d*")) {
-                return change;
-            }
-            return null;
+            return newText.matches("\\d*") ? change : null;
         });
         spinnerInitialMoney.getEditor().setTextFormatter(formatter);
         formatter.valueProperty().addListener((obs, oldValue, newValue) -> {
@@ -156,16 +161,32 @@ public class HomeCreateGameWindowController extends GenericController {
     private void saveHomeConfig() {
         String roomName = textFieldRoomName.getText();
         String userName = labelUserName.getText();
-        boolean allowBots = false;  // ESTO TIENE QUE LEERSE DE LA INTERFAZ !!!
+        Integer initialMoney = spinnerInitialMoney.getValue();
+        boolean allowBots = checkBoxAllowBots.isSelected();
+        String blindsValue = comboBlindsValue.getValue();
+        String levelDuration = comboLevelDuration.getValue();
+        String hikePercentage = comboHikePercentage.getValue();
 
         boolean validRoomName = GameConfig.isValidRoomName(roomName);
         if(roomName == null || !validRoomName) {
             roomName = _clientInfo.name + "'s room";
         }
-
+        if (blindsValue == null || blindsValue.isEmpty()) {
+            blindsValue = _clientInfo.gameConfig._blindsValue;
+        }
+        if (levelDuration == null || levelDuration.isEmpty()) {
+            levelDuration = _clientInfo.gameConfig._levelDuration;
+        }
+        if (hikePercentage == null || hikePercentage.isEmpty()) {
+            hikePercentage = _clientInfo.gameConfig._hikePercentage;
+        }
         _clientInfo.gameConfig._roomName = roomName;
         _clientInfo.gameConfig._userName = userName;
+        _clientInfo.gameConfig._initialMoney = initialMoney;
         _clientInfo.gameConfig._allowBots = allowBots;
+        _clientInfo.gameConfig._blindsValue = blindsValue;
+        _clientInfo.gameConfig._levelDuration = levelDuration;
+        _clientInfo.gameConfig._hikePercentage = hikePercentage;
     }
 
     @Override
