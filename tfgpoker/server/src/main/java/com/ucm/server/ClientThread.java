@@ -95,7 +95,7 @@ public class ClientThread implements Runnable {
                         _isHost = true;
                         log.debug("Configuration valid!");
                         log.debug("Room configuration: Room name=\'{}\' | Allow bots={}",
-                            config._roomName, 
+                            config._roomName,
                             config._allowBots
                         );
                     }

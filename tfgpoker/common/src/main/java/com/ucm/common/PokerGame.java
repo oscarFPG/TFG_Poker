@@ -40,6 +40,7 @@ public class PokerGame {
         int allowBotsCode = (config._allowBots) ? 1 : 0;
 
         SocketUtils.sendString(out, config._roomName);
+        SocketUtils.sendString(out, config._userName);
         SocketUtils.sendInteger(out, allowBotsCode);
     
 
@@ -50,12 +51,13 @@ public class PokerGame {
 
     public static GameConfig receiveGameConfig(InputStream input, OutputStream output) throws IOException {
 
-        String name = SocketUtils.receiveString(input);
-        int id = SocketUtils.receiveInt(input);
+        String roomName = SocketUtils.receiveString(input);
+        String userName = SocketUtils.receiveString(input);
         boolean allowBots = (SocketUtils.receiveInt(input) == 1) ? true : false;
 
         GameConfig config = new GameConfig();
-        config._roomName = name;
+        config._roomName = roomName;
+        config._userName = userName;
         config._allowBots = allowBots;
 
         return config;
