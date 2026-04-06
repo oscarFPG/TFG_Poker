@@ -21,7 +21,9 @@ import javafx.util.converter.IntegerStringConverter;
 public class HomeCreateGameWindowController extends GenericController {
 
     private static final int MAX_ROOM_NAME_LENGTH = 17;
+
     private static final int MIN_INITIAL_MONEY = 100;
+
     private static final int MAX_INITIAL_MONEY = 1000000;
 
     @FXML
@@ -49,6 +51,9 @@ public class HomeCreateGameWindowController extends GenericController {
     private ComboBox<String> comboBlindsValue;
 
     @FXML
+    private Button btnDinamicBlinds;
+
+    @FXML
     private ComboBox<String> comboLevelDuration;
 
     @FXML
@@ -64,6 +69,7 @@ public class HomeCreateGameWindowController extends GenericController {
         initializeBlindsValue();
         initializeLevelDuration();
         initializeHikePercentage();
+        updateDinamicBlinds();
     }
 
     private void initializeRoomName() {
@@ -108,7 +114,7 @@ public class HomeCreateGameWindowController extends GenericController {
             "180"
         );
         String restoreLevelDuration = _clientInfo.gameConfig._levelDuration;
-        if( restoreLevelDuration != null) {
+        if( restoreLevelDuration != null  && !comboLevelDuration.isDisable()) {
             comboLevelDuration.setValue(restoreLevelDuration);
         }
     }
@@ -123,7 +129,7 @@ public class HomeCreateGameWindowController extends GenericController {
             "100"
         );
         String restorehikePercentage = _clientInfo.gameConfig._hikePercentage;
-        if( restorehikePercentage != null) {
+        if( restorehikePercentage != null && !comboHikePercentage.isDisable()) {
             comboHikePercentage.setValue(restorehikePercentage);
         }
     }
@@ -146,6 +152,20 @@ public class HomeCreateGameWindowController extends GenericController {
             int clampedValue = Math.clamp(newValue, MIN_INITIAL_MONEY, MAX_INITIAL_MONEY);
             valueFactory.setValue(clampedValue);
         });
+    }
+
+    @FXML
+    public void onDinamicBlinds () {
+        boolean dinamicBlindsEnabled = !_clientInfo.gameConfig._dinamicBlinds;
+        _clientInfo.gameConfig._dinamicBlinds = dinamicBlindsEnabled;
+        updateDinamicBlinds();
+    }
+    
+    private void updateDinamicBlinds(){
+        boolean enabled =  _clientInfo.gameConfig._dinamicBlinds;
+        comboLevelDuration.setDisable(!enabled);
+        comboHikePercentage.setDisable(!enabled);
+        btnDinamicBlinds.setText(enabled ? "yes" : "no");
     }
 
     @FXML

@@ -114,7 +114,7 @@
                               </HBox>
                               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                    <Button mnemonicParsing="false" text="Yes">
+                                    <Button fx:id="btnDinamicBlinds" mnemonicParsing="false" onAction="#onDinamicBlinds" text="no">
                                        <styleClass>
                                           <String fx:value="container-colors" />
                                           <String fx:value="general-text-font" />
