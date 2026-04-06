@@ -10,6 +10,7 @@ import com.ucm.common.PokerGame;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
@@ -35,6 +36,9 @@ public class HomeCreateGameWindowController extends GenericController {
     private TextField textFieldRoomName;
 
     @FXML
+    private Label labelUserName;
+
+    @FXML
     private ComboBox<String> comboBlindsValue;
 
     @FXML
@@ -58,6 +62,7 @@ public class HomeCreateGameWindowController extends GenericController {
     @Override
     protected void onViewShown() {
         initializeRoomName();
+        labelUserName.setText(_clientInfo.name);
     }
 
     private void initializeRoomName(){
@@ -83,12 +88,11 @@ public class HomeCreateGameWindowController extends GenericController {
     private void initializeBlindsValue() {
         int[] blinds = {1, 5, 10, 25, 50, 100};
         String defaultValue = "DEFAULT";
-
-        comboBlindsValue.getItems().add(defaultValue);
         comboBlindsValue.setValue(defaultValue);
         for (int blind : blinds){
             comboBlindsValue.getItems().add(blind + "/" + (blind * 2));
         }
+        comboBlindsValue.getItems().add(defaultValue);
     }
 
     private void initializeLevelDuration() {
@@ -150,6 +154,7 @@ public class HomeCreateGameWindowController extends GenericController {
 
     private void saveHomeConfig() {
         String roomName = textFieldRoomName.getText();
+        String userName = labelUserName.getText();
         boolean allowBots = false;  // ESTO TIENE QUE LEERSE DE LA INTERFAZ !!!
 
         boolean validRoomName = GameConfig.isValidRoomName(roomName);
@@ -158,6 +163,7 @@ public class HomeCreateGameWindowController extends GenericController {
         }
 
         _clientInfo.gameConfig._roomName = roomName;
+        _clientInfo.gameConfig._userName = userName;
         _clientInfo.gameConfig._allowBots = allowBots;
     }
 
