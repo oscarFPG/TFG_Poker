@@ -559,7 +559,7 @@
     
 }
 
-.icon-special-colors {
+.icon-special-colors:selected {
    -fx-background-color: linear-gradient( to top right,
     #310a93,
     #8500d7 ,
@@ -576,6 +576,12 @@
 
     -fx-background-insets: 0;
 }
+
+.icon-special-colors:hover, #swingBarButton:hover, #cardInfoIcon:hover {
+   -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
 
 .round-icon {
     -fx-shape: "M50,0 A50,50 0 1,1 49.99,0 Z";
@@ -682,6 +688,7 @@
 .scroll-bar .thumb:hover {
     -fx-background-color: #1a1a1a;
 }
+
 
 /* Click */
 .scroll-bar .thumb:pressed {
