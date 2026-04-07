@@ -4,11 +4,28 @@ import com.ucm.server.gameobjects.BotLLM;
 import com.ucm.server.gameobjects.Card;
 import com.ucm.server.gameobjects.PlayerRole;
 
+import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
+
+
 public class GeminiLLM extends BotLLM {
 
 
     public GeminiLLM(int id, int money, String apiKey) {
         super(id, "GeminiLLM", money, apiKey);
+    }
+
+
+    @Override
+    public String actionMakePlay(int sb, int bb, int maxBet) {
+        
+        ChatModel gemini = GoogleAiGeminiChatModel.builder()
+                                .apiKey( _apiKey )
+                                .modelName("gemini-2.5-flash")
+                                .build();
+
+        String response = gemini.chat("This is an API test for po ker, response only with call, fold or raise <amount>");
+        return response;
     }
 
     @Override
@@ -33,12 +50,6 @@ public class GeminiLLM extends BotLLM {
     public void notifyMoneyAmount(int amount) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'notifyMoneyAmount'");
-    }
-
-    @Override
-    public String actionMakePlay(int sb, int bb, int maxBet) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'actionMakePlay'");
     }
 
     @Override
