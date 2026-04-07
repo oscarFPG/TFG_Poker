@@ -47,11 +47,9 @@ public class AddBotsCreateGameWindowController extends GenericController {
     protected void onViewShown() {
         btnStartAddBots.setDisable(true);
         initializeSpinners();
-        
     }
 
     private void initializeSpinners() {
- 
         valueFactoryBot1 = new SpinnerValueFactory.IntegerSpinnerValueFactory(MIN_NUM_BOTS, MAX_NUM_BOTS, _clientInfo.gameConfig._numBots1);
         valueFactoryBot2 = new SpinnerValueFactory.IntegerSpinnerValueFactory(MIN_NUM_BOTS, MAX_NUM_BOTS, _clientInfo.gameConfig._numBots2);
         valueFactoryBot3 = new SpinnerValueFactory.IntegerSpinnerValueFactory(MIN_NUM_BOTS, MAX_NUM_BOTS, _clientInfo.gameConfig._numBots3);
