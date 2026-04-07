@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
+
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" styleClass="root" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.MainWindowController">
+         <children>
+      <HBox prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <BorderPane id="borderPanePanel" fx:id="borderPanePanel" prefHeight="756.0" prefWidth="1227.0" HBox.hgrow="ALWAYS">
+               <top>
+                  <VBox alignment="CENTER" prefHeight="146.0" prefWidth="1344.0" spacing="15.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" prefHeight="117.0" prefWidth="1339.0" spacing="5.0">
+                           <children>
+                        
+                                                                                    
+                                                                      
+                              <Pane prefHeight="100.0" prefWidth="279.0">
+                                 <children>
+                                    <ImageView fitHeight="108.0" fitWidth="108.0" layoutX="32.0" layoutY="12.0" pickOnBounds="true" preserveRatio="true" styleClass="icono-perfil">
+                                       <image>
+                                          <Image url="@../../images/imagenPerfil.png" />
+                                       </image>
+                                    </ImageView>
+                                    <Label alignment="CENTER" layoutX="153.0" layoutY="34.0" prefHeight="32.0" prefWidth="121.0" styleClass="username-label">
+                                       <graphic>
+                                          <Text fx:id="playerNamePlaceholder" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="username-label" text="Players Name" textAlignment="CENTER" wrappingWidth="160.0">
+                                             <font>
+                                                <Font size="17.0" />
+                                             </font>
+                                          </Text>
+                                       </graphic>
+                                    </Label>
+                                    <Button layoutX="68.0" layoutY="99.0" maxHeight="57.0" maxWidth="47.0" minHeight="24.0" minWidth="15.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="36.0" styleClass="profile-edit-button">
+                                       <graphic>
+                                          <ImageView fitHeight="22.0" fitWidth="23.0" pickOnBounds="true" preserveRatio="true" rotate="-97.4" styleClass="icono-edicionPerfil">
+                                             <image>
+                                                <Image url="@../../images/pencilEditProfile.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </Pane>
+                           </children>
+                           <VBox.margin>
+                              <Insets left="5.0" />
+                           </VBox.margin>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </top>
+               <center>
+                        <VBox alignment="CENTER" minWidth="-Infinity" prefHeight="546.0" prefWidth="926.0" BorderPane.alignment="CENTER">
+                           <children>
+                              <HBox alignment="CENTER" prefHeight="310.0" prefWidth="926.0" spacing="30.0">
+                                 <children>
+                              <StackPane prefHeight="310.0" prefWidth="234.0">
+                                 <children>
+                                          <VBox alignment="CENTER" prefHeight="310.0" prefWidth="186.0" spacing="4.0" StackPane.alignment="CENTER">
+                                             <children>
+                                          <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="super-bold-general-text-font" text="Constructor Mode" textAlignment="CENTER" wrappingWidth="172.0">
+                                             <font>
+                                                <Font size="30.0" />
+                                             </font>
+                                          </Text>
+                                                <ImageView fitHeight="163.0" fitWidth="192.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../../images/constructorModePro2.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </children>
+                                       <styleClass>
+                                          <String fx:value="semi-oval-pane" />
+                                          <String fx:value="container-colors" />
+                                          <String fx:value="border-neon-effect-purple" />
+                                       </styleClass>
+                                          </VBox>
+                                    <Button alignment="CENTER" mnemonicParsing="false" prefWidth="48.0" textAlignment="CENTER" StackPane.alignment="TOP_RIGHT">
+                                       <graphic>
+                                          <ImageView fitHeight="34.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../../images/iconoInformacionTarjetasModo.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                       <opaqueInsets>
+                                          <Insets />
+                                       </opaqueInsets>
+                                       <StackPane.margin>
+                                          <Insets right="-5.0" top="-5.0" />
+                                       </StackPane.margin>
+                                       <styleClass>
+                                          <String fx:value="icon-colors" />
+                                          <String fx:value="round-icon" />
+                                       </styleClass>
+                                    </Button>
+                                 </children>
+                              </StackPane>
+                              <StackPane id="cardInfo" fx:id="cardInfo" prefHeight="310.0" prefWidth="234.0">
+                                 <children>
+
+                                    <!-- FRONT -->
+                                    <VBox fx:id="cardFront" alignment="CENTER" prefHeight="310.0" prefWidth="186.0" spacing="4.0" StackPane.alignment="CENTER">
+                                       <children>
+                                          <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="super-bold-general-text-font" text="Classic Mode" textAlignment="CENTER" wrappingWidth="172.0">
+                                             <font>
+                                                <Font size="30.0" />
+                                             </font>
+                                          </Text>
+                                          <ImageView fitHeight="171.0" fitWidth="187.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../../images/classicModePro2.png" />
+                                             </image>
+                                          </ImageView>
+                                       </children>
+                                       <styleClass>
+                                          <String fx:value="semi-oval-pane" />
+                                          <String fx:value="container-colors" />
+                                          <String fx:value="border-neon-effect" />
+                                       </styleClass>
+                                    </VBox>
+
+                                    <!-- BACK -->
+                                    <StackPane fx:id="cardBack" visible="false">
+                                       <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="general-text-font" text="Play a traditional No Limit Texas Hold’em (NLHE) game with up to 9 players (humans or bots)" textAlignment="CENTER" wrappingWidth="172.0">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font>
+                                       </Text>
+
+                                      <styleClass>
+                                          <String fx:value="semi-oval-pane" />
+                                          <String fx:value="container-colors" />
+                                          <String fx:value="border-neon-effect" />
+                                       </styleClass>
+                                    </StackPane>
+
+                                    <Button id="cardInfoIcon" fx:id="cardInfoIcon" alignment="CENTER" mnemonicParsing="false" onAction="#flipCard" prefWidth="48.0" textAlignment="CENTER" StackPane.alignment="TOP_RIGHT">
+                                       <graphic>
+                                          <ImageView fitHeight="34.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../../images/iconoInformacionTarjetasModo.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                       <opaqueInsets>
+                                          <Insets />
+                                       </opaqueInsets>
+                                       <styleClass>
+                                          <String fx:value="icon-colors" />
+                                          <String fx:value="round-icon" />
+                                       </styleClass>
+                                       <StackPane.margin>
+                                          <Insets right="-5.0" top="-5.0" />
+                                       </StackPane.margin>
+                                    </Button>
+                                 </children>
+                              </StackPane>
+                              <StackPane prefHeight="310.0" prefWidth="234.0">
+                                 <children>
+                                    <VBox alignment="CENTER" prefHeight="310.0" prefWidth="186.0" spacing="4.0" StackPane.alignment="CENTER">
+                                       <children>
+                                          <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="super-bold-general-text-font" text="Advanced Mode" textAlignment="CENTER" wrappingWidth="172.0">
+                                             <font>
+                                                <Font size="30.0" />
+                                             </font>
+                                          </Text>
+                                          <ImageView fitHeight="196.0" fitWidth="202.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../../images/advancedMode.png" />
+                                             </image>
+                                          </ImageView>
+                                       </children>
+                                       <styleClass>
+                                          <String fx:value="semi-oval-pane" />
+                                          <String fx:value="container-colors" />
+                                          <String fx:value="border-neon-effect-yellow" />
+                                       </styleClass>
+                                    </VBox>
+                                    <Button alignment="CENTER" mnemonicParsing="false" prefWidth="48.0" textAlignment="CENTER" StackPane.alignment="TOP_RIGHT">
+                                       <graphic>
+                                          <ImageView fitHeight="34.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../../images/iconoInformacionTarjetasModo.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                       <opaqueInsets>
+                                          <Insets />
+                                       </opaqueInsets>
+                                       <styleClass>
+                                          <String fx:value="icon-colors" />
+                                          <String fx:value="round-icon" />
+                                       </styleClass>
+                                       <StackPane.margin>
+                                          <Insets right="-5.0" top="-5.0" />
+                                       </StackPane.margin>
+                                    </Button>
+                                 </children>
+                              </StackPane>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </HBox>
+                           </children>
+                        </VBox>
+               </center>
+               <bottom>
+                        <HBox alignment="TOP_CENTER" prefHeight="162.0" prefWidth="926.0" spacing="40.0" BorderPane.alignment="BOTTOM_LEFT">
+                           <children>
+                              <Button fx:id="btnStartMain" mnemonicParsing="false" onAction="#chooseGame" prefHeight="52.0" prefWidth="214.0" text="START" HBox.hgrow="ALWAYS">
+                                 <styleClass>
+                                    <String fx:value="general-button" />
+                                    <String fx:value="super-bold-general-text-font" />
+                                 </styleClass>
+                           <font>
+                              <Font size="30.0" />
+                           </font>
+                              </Button>
+                           </children>
+                        </HBox>
+               </bottom>
+            </BorderPane>
+            <AnchorPane id="swingBar" fx:id="swingBar" minWidth="-Infinity" prefHeight="756.0" prefWidth="110.0" styleClass="folded-menu">
+               <fx:define>
+                  <ToggleGroup fx:id="group1" />
+               </fx:define>
+               <children>
+                  <VBox id="vboxSwing" fx:id="vboxSwing" prefHeight="756.0" prefWidth="395.0">
+                     <children>
+                        <HBox alignment="CENTER_RIGHT" prefHeight="110.0" prefWidth="395.0" spacing="5.0">
+                           <children>
+                        
+                                                     <!-- ICONO CONFIGURACION -->
+                              <ToggleButton id="introductionIcon" fx:id="introductionIcon" mnemonicParsing="false" prefHeight="70.0" prefWidth="82.0">
+                                 <styleClass>
+                                    <String fx:value="square-icon" />
+                                    <String fx:value="icon-colors" />
+                                    <String fx:value="icon-special-colors" />
+                                 </styleClass>
+                              <graphic>
+                                    <ImageView fitHeight="56.0" fitWidth="63.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../images/iconoConfiguracionIntroduccion.png" />
+                                       </image>
+                                    </ImageView>
+                              </graphic>
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="group1" />
+                                 </toggleGroup>
+                                
+                              </ToggleButton>
+                               <ToggleButton id="informationIcon" fx:id="informationIcon" mnemonicParsing="false" prefHeight="70.0" prefWidth="43.0" toggleGroup="$group1">
+                                 <styleClass>
+                                    <String fx:value="icon-special-colors" />
+                                    <String fx:value="icon-colors" />
+                                    <String fx:value="square-icon" />
+                                 </styleClass>
+                                 <graphic>
+                                    <ImageView id="configurationIcon" fitHeight="53.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../images/iconoInformacionIntroduccion.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </ToggleButton>
+                              <ToggleButton id="exitIcon" fx:id="exitIcon" mnemonicParsing="false" prefHeight="73.0" prefWidth="37.0" toggleGroup="$group1">
+                                 <styleClass>
+                                    <String fx:value="square-icon" />
+                                    <String fx:value="icon-colors" />
+                                    <String fx:value="icon-special-colors" />
+                                 </styleClass>
+                                 <graphic>
+                                    <ImageView fitHeight="58.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../images/iconoExit.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </ToggleButton>
+                           </children>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </HBox>
+                        <StackPane id="stackPaneLabel" prefHeight="52.0" prefWidth="395.0">
+                           <children>
+                              <Text id="informationLabel" fx:id="informationLabel" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="super-bold-general-text-font" text="INFORMACION" textAlignment="CENTER" wrappingWidth="368.7999267578125">
+                                 <font>
+                                    <Font size="30.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </StackPane>
+                        <Accordion id="acordeonInformation" fx:id="acordeonInformation" prefHeight="416.0" prefWidth="395.0">
+                          <panes>
+                            <TitledPane animated="false" prefHeight="446.0" prefWidth="395.0" styleClass="general-text-font" text="ABOUT US" textFill="WHITE" wrapText="true">
+                                 <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="227.0" prefWidth="394.0">
+                                       <children>
+
+                                          <TextFlow layoutX="31.0" layoutY="26.0" prefHeight="231.0" prefWidth="337.0" textAlignment="CENTER">
+                                             <children>
+                                                <Text fill="WHITE" styleClass="general-text-font" text="We are three students who share an interest in poker and technology." />
+                                                
+                                                <Text text="&#10;&#10;" />
+                                                
+                                                <Text fill="WHITE" styleClass="general-text-font" text="We enjoy building things, learning along the way, and turning ideas into something real. This project, developed as our Final Degree Project, gave us the chance to combine what we study with something we genuinely like." />
+                                                
+                                                <Text text="&#10;&#10;" />
+                                                
+                                                <Text fill="WHITE" styleClass="general-text-font" text="Who knows—maybe the next world champion could emerge from users experimenting with this application." />
+                                             </children>
+
+                                          </TextFlow> 
+
+                                        </children>
+                                    </AnchorPane>
+                                 </content>
+                                 <font>
+                                    <Font size="26.0" />
+                                 </font>
+                            </TitledPane>
+                            <TitledPane animated="false" minHeight="-Infinity" prefHeight="132.0" prefWidth="395.0" text="CREDITS" textFill="WHITE">
+                                 <content>
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="109.0" prefWidth="394.0">
+                                       <children>
+                                          <TextFlow layoutX="38.0" layoutY="74.0" prefHeight="74.0" prefWidth="328.0" textAlignment="CENTER">
+                                                <children>
+                                                   <Text fill="WHITE" styleClass="general-text-font" text="This application uses Cactus Kev's Poker Hand Evaluator for hand ranking." />
+                                                   
+                                                   <Text text="&#10;&#10;" />
+                                                   
+                                                   <Text fill="WHITE" styleClass="general-text-font" text="It also incorporates fine-tuned language models for decision-making, available on Hugging Face and GitHub." />
+                                                </children>
+                                             </TextFlow>
+                                        </children>
+                                    </AnchorPane>
+                                 </content>
+                            </TitledPane>
+                            <TitledPane animated="false" prefHeight="291.0" prefWidth="395.0" text="LICENCES" textAlignment="CENTER" textFill="WHITE">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <Text fill="WHITE" layoutX="44.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="general-text-font" text="Third-party components used in this application are subject to their respective licensing terms" textAlignment="CENTER" wrappingWidth="324.0000011920929" />
+                                 </AnchorPane>
+                              </content>
+                            </TitledPane>
+                          </panes>
+                        </Accordion>
+                     </children>
+                  </VBox>
+                  <Button id="swingBarButton" fx:id="swingBarButton" layoutX="-29.0" layoutY="311.0" mnemonicParsing="false" onAction="#toggleMenu" prefHeight="98.0" prefWidth="49.0" styleClass="dropdown-menu-button">
+                     <graphic>
+                        <Button id="arrowBackBlack" mnemonicParsing="false" prefHeight="43.0" prefWidth="66.0">
+                           <styleClass>
+                              <String fx:value="arrow-back" />
+                              <String fx:value="arrow-colors-black" />
+                           </styleClass>
+                        </Button>
+                     </graphic>
+                  </Button>
+                  <StackPane id="paragraphLabelStack" fx:id="paragraphLabelStack" layoutX="33.0" layoutY="124.0" prefHeight="490.0" prefWidth="339.0">
+                       <children>
+                        <Text id="paragraphLabel" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="general-text-font" text="This application allows users to play No Limit Texas Hold’em (NLHE) games against both humans and bots.It is designed to support the integration of different types of agents, from simple rule-based bots to more advanced AI models such as neural networks or large language models.Its goal is to serve as both an educational and entertainment tool, while enabling experimentation with decision-making in imperfect information games." textAlignment="CENTER" wrappingWidth="316.80004930496216">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </StackPane>
+               </children>
+            </AnchorPane>
+         </children>
+      </HBox>
+      <ImageView fitHeight="90.0" fitWidth="130.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="BOTTOM_LEFT">
+         <image>
+            <Image url="@../../images/logoPoker.png" />
+         </image>
+         <StackPane.margin>
+            <Insets bottom="20.0" left="20.0" right="5.0" top="5.0" />
+         </StackPane.margin>
+      </ImageView>
+      
+         </children>
+</StackPane>

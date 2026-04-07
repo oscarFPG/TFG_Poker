@@ -1,0 +1,22 @@
+# Ignorar compilaciones y binarios
+target/
+*.class
+
+# Ignorar archivos temporales de IDEs
+.idea/
+.vscode/
+*.log
+*.tmp
+*.bak
+.vscode/credentials.json
+tfgpoker/server/src/main/resources/credentials.json
+
+# Ignorar otros archivos comunes
+.DS_Store
+Thumbs.db
+
+# Modelos de IA (muy pesados)
+model/
+model-llama/
+model-qwen/
+*.gguf

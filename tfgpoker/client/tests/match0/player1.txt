@@ -1,0 +1,8 @@
+
+P1
+1
+start
+call
+call
+k
+raise 100

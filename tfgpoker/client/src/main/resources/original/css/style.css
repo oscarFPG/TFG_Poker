@@ -1,0 +1,707 @@
+.root {
+   -fx-background-image: url("../../images/fondoPoker.png");
+   -fx-background-size: cover;
+   -fx-background-position: center;
+   
+}
+
+/**
+ * Estilo para el menú lateral plegado
+ */
+.folded-menu {
+   -fx-background-color:
+      linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100% ),
+      radial-gradient(center 50% 40%, radius 120%,#691179 0%,#661076 25%,#3A0878 60%,#20034F 100% );
+   -fx-background-insets: 0, 2;
+}
+
+.profileEdit{
+    -fx-background-image: url("../../images/fondoBlackPoker.png");
+}
+/**
+ * Estilo para botones como "START", "CANCEL" o "SAVE"
+ */
+.general-button {
+    -fx-background-color:
+        linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100% ),
+        radial-gradient(center 50% 40%, radius 120%,#691179 0%,#661076 25%,#3A0878 60%,#20034F 100% );
+    -fx-background-radius: 10, 9;
+    -fx-background-insets: 0, 2;
+
+    -fx-text-fill: #e5e5e5;
+    -fx-font-family: "Constantia Bold";
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+    -fx-effect: none;
+
+    -fx-alignment: center;
+}
+
+/* Evitar cambios de estilo heredados */
+.general-button:hover,
+.general-button:pressed,
+.general-button:focused,
+.general-button:armed {
+    -fx-background-color:
+        linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100% ),
+        radial-gradient(center 50% 40%, radius 120%,#691179 0%,#661076 25%,#3A0878 60%,#20034F 100% );
+    -fx-background-radius: 10, 9;
+    -fx-background-insets: 0, 2;
+
+    -fx-text-fill: #e5e5e5;
+    -fx-font-family: "Constantia Bold";
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+    -fx-effect: none;
+
+    -fx-scale-x: 1;
+    -fx-scale-y: 1;
+    -fx-padding: 0;
+}
+
+/**
+ * Estilo para el botón de información de cada modo de juego
+ */
+.mode-info-button {
+   -fx-shape:  "M50,0 A50,50 0 1,1 49.99,0 Z";
+   -fx-background-color: 
+      linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100% ),
+      radial-gradient(center 50% 40%, radius 120%,#691179 0%,#661076 25%,#3A0878 60%,#20034F 100% );
+   -fx-background-insets: 0, 2;
+}
+
+/**
+ * Estilo para el botón hexagonal de edición de perfil, incluye el la imagen del lápiz
+ */
+.profile-edit-button {
+    -fx-shape: "M 50 0 L 100 25 L 100 75 L 50 100 L 0 75 L 0 25 Z";
+    -fx-background-color: #896E1D;
+}
+
+/**
+ * Estilo para los botones para plegar y desplegar las diferentes secciones de información del menú desplegable de la pantalla principal
+ */
+.fold-button-intro,
+.unfold-button-intro {
+   -fx-shape: "M0 28.87 L16.67 0 L33.33 28.87 Z";
+
+}
+
+.dropdown-menu-button{
+   -fx-background-color:
+   linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100% ),
+   radial-gradient(center 50% 40%, radius 120%,#691179 0%,#661076 25%,#3A0878 60%,#20034F 100% );
+   -fx-background-radius: 7, 6;
+   -fx-background-insets: 0, 2;
+   -fx-text-fill: #e5e5e5;
+   -fx-alignment: center;
+   -fx-font-family: "Constantia Bold";
+   -fx-font-size: 12px; 
+}
+
+/**
+ * Estilo para el botón "code" de "JOIN GAME" en la parte de partida privada
+ */
+.code-button {
+   -fx-background-color:
+      linear-gradient(to top, #DC8CFE 0%, #FFF8FF 50%, #FFF8FF 50%, #DC8CFE 100%), #1B0359;
+   -fx-background-insets: 0, 2;
+   -fx-background-radius: 6, 5;
+   -fx-text-fill: #e5e5e5;
+   -fx-alignment: center;
+   -fx-font-family: "Constantia";
+   -fx-font-size: 14px; 
+}
+
+/**
+ * Estilo para la forma triangular plegable de las secciones de información del menú desplegable de la pantalla principal
+ */
+
+.fold-triangle-shape,
+.unfold-triangle-shape {
+   -fx-fill: radial-gradient(center 52.76% 52.84%, radius 100%, #661076 0%, #691179 30%, #3A0878 64%, #20034F 96%, #20034F 100%);
+   -fx-stroke: linear-gradient(to top right, #DC8CFE, #FFF8FF, #DC8CFE );
+   -fx-stroke-width: 2;
+}
+
+/**
+ * Estilo para la etiqueta del nombre de usuario
+ */
+.username-label {
+   -fx-background-color: rgba(162,130,190,0.38);
+   -fx-background-radius: 6, 5;
+   -fx-text-fill: #e5e5e5;
+   -fx-alignment: center;
+   -fx-font-family: "Constantia";
+   -fx-font-size: 21px;
+}
+
+.general-text-font {
+    -fx-text-fill: #e5e5e5;
+    -fx-font-family: "Constantia";
+}
+
+.bold-general-text-font {
+    -fx-text-fill: #e5e5e5;
+    -fx-alignment: center;
+    -fx-font-family: "Constantia Bold";
+}
+
+.super-bold-general-text-font {
+    -fx-text-fill: #e5e5e5;
+    -fx-alignment: center;
+    -fx-font-family: "Constantia";
+    -fx-font-weight: 900;
+}
+
+.transparent-background{
+    -fx-background-color: transparent;
+    -fx-control-inner-background: transparent;
+}
+
+/**
+ * Estilo para los títulos de cada escena del juego
+ */
+.title-label {
+   -fx-background-color:
+      linear-gradient(to top, #DC8CFE 0%, #FFF8FF 50%, #FFF8FF 50%, #DC8CFE 100%), #1B0359;
+   -fx-background-insets: 0, 2;
+   -fx-text-fill: #e5e5e5;
+   -fx-alignment: center;
+   -fx-font-family: "Constantia";
+   -fx-font-size: 36px;
+
+}
+
+/**
+ * Estilo para los subtítulos de cada escena del juego
+ */
+.subtitle-label {
+   -fx-background-color:
+      linear-gradient(to top, #DC8CFE 0%, #FFF8FF 50%, #FFF8FF 50%, #DC8CFE 100%), #1B0359;
+   -fx-background-insets: 0, 2;
+   -fx-text-fill: #e5e5e5;
+   -fx-alignment: center;
+   -fx-font-family: "Constantia";
+   -fx-font-size: 20px; 
+}
+
+/**
+ * Estilo para las descripciones con recuadro rectangular visibles en cada sección de información del menú desplegable de la pantalla principal o en el historial durante el juego
+ */
+.rect-description-label {
+   -fx-background-color:
+      linear-gradient(to top, #DC8CFE 0%, #FFF8FF 50%, #FFF8FF 50%, #DC8CFE 100%), #321B69;
+   -fx-background-insets: 0, 2;
+   -fx-text-fill: #e5e5e5;
+   -fx-alignment: center;
+   -fx-font-family: "Constantia";
+   -fx-font-size: 20px; 
+}
+
+/**
+ * Estilo para las descripciones con recuadro redondeado visible en las ventanas "JOIN GAME"  o "CREATE GAME"
+ */
+.rounded-description-label {
+   -fx-background-color:
+      linear-gradient(to top, #DC8CFE 0%, #FFF8FF 50%, #FFF8FF 50%, #DC8CFE 100%), #321B69;
+   -fx-background-insets: 0, 2;
+   -fx-background-radius: 10, 9;
+   -fx-text-fill: #e5e5e5;
+   -fx-alignment: center;
+   -fx-font-family: "Constantia";
+   -fx-font-size: 20px; 
+}
+
+/**
+ * Estilo para el color de la linea que separa el nombre del jugador y el dinero en la tarjeta de jugador durante la partida
+ */
+.spacer {
+    -fx-background-color: #e5e5e5;
+}
+
+/*FLECHAS ----------------------------------------------------------------------------------------------------- */
+
+.arrow-colors{
+    -fx-background-color:radial-gradient(
+        center 50% 50%, radius 70%, 
+        repeat, 
+        #66287a 0%, 
+        #692f79 25.8%, 
+        #3a0878 74.5%, 
+        #1e034f 94.8%, 
+        #201f4f 99.5%, 
+        #201f4f 100%
+    );
+    
+    -fx-border-color: linear-gradient(
+        from 91.5% 26.5% to 60.2% 74.9%, 
+        #dc8cfe 0%, 
+        #fff8ff 55.3%, 
+        #fff8ff 74.5%, 
+        #dc8cfe 100%
+    );
+
+    -fx-background-insets: 0;
+    -fx-border-width: 3;
+
+}
+
+.arrow-colors-black{
+    -fx-background-color: radial-gradient(
+        center 50% 50%, radius 50%, 
+        repeat, 
+        #2f1363 94.8%, 
+        #19183c 99.5%, 
+        #201f4f 100%
+    );
+    
+    -fx-border-color: linear-gradient(
+        from 91.5% 26.5% to 60.2% 74.9%, 
+        #dc8cfe 0%, 
+        #fff8ff 55.3%, 
+        #fff8ff 74.5%, 
+        #dc8cfe 100%
+    );
+
+    -fx-background-insets: 0;
+    -fx-border-width: 3;
+
+}
+
+.arrow-back {
+    -fx-shape: "M 25 19 L 13 29 L 25 39 L 20 45 L 0 29 L 19 13 Z";
+}
+
+.arrow-next{
+    -fx-shape: "M10 5 L30 15 L10 25 Z";
+}
+
+/* CONTENEDORES / LAYOUTS ------------------------------------------------------------------------------------------------------ */
+
+.container-colors {
+    -fx-background-color: #1b0359;
+    -fx-border-color: linear-gradient(to top,
+    #DC8CFE 0%,
+    #FFF8FF 50%,
+    #FFF8FF 50%,
+    #DC8CFE 100%);
+    -fx-border-width: 2; 
+   
+}
+
+.text-ranking{
+    -fx-text-fill:  rgba(201, 172, 214, 0.902);
+}
+
+.container-semitransparent-colors {
+    -fx-background-color: rgba(13, 0, 28, 0.742);
+   -fx-border-color: linear-gradient(to top,
+    #DC8CFE 0%,
+    #FFF8FF 50%,
+    #FFF8FF 50%,
+    #DC8CFE 100%);
+   -fx-border-width: 2; 
+}
+
+.container-semitransparent-colors-purple {
+    -fx-background-color: rgba(15, 2, 34, 0.73);
+    -fx-border-color: linear-gradient(to top,
+    #DC8CFE 0%,
+    #FFF8FF 50%,
+    #FFF8FF 50%,
+    #DC8CFE 100%);
+    -fx-border-width: 2; 
+}
+
+.cardsInfoRanking:hover{
+    -fx-scale-x: 1.08;
+    -fx-scale-y: 1.08;
+}
+
+.container-softer-colors {
+    -fx-background-color: #480b77;
+    -fx-border-color: linear-gradient(to top,
+    #DC8CFE 0%,
+    #FFF8FF 50%,
+    #FFF8FF 50%,
+    #DC8CFE 100%);
+    -fx-border-width: 2; 
+}
+
+.container-gradiant-colors {
+    -fx-background-color:radial-gradient(
+        center 50% 50%, radius 60%, 
+        repeat, 
+        #661076 0%, 
+        #691179 25.8%, 
+        #3a0878 74.5%, 
+        #1e034f 94.8%, 
+        #20034f 99.5%, 
+        #20034f 100%
+    );
+    
+    -fx-border-color: linear-gradient(to top,
+    #DC8CFE 0%,
+    #FFF8FF 50%,
+    #FFF8FF 50%,
+    #DC8CFE 100%);
+
+    -fx-background-insets: 0;
+    -fx-border-width: 2; 
+}
+
+.accordion .titled-pane > .title {
+    -fx-background-color: linear-gradient(#5a007a, #2b0052);
+    -fx-border-color: #DC8CFE;
+    -fx-border-width: 1.5;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.accordion .titled-pane > .content {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-font-size: 16px;
+}
+
+.accordion .titled-pane > .title > .arrow-button .arrow{
+    -fx-background-color:radial-gradient(
+        center 50% 50%, radius 60%, 
+        repeat, 
+        #66287a 0%, 
+        #692f79 25.8%, 
+        #3a0878 74.5%, 
+        #1e034f 94.8%, 
+        #201f4f 99.5%, 
+        #201f4f 100%
+    );
+    
+    -fx-border-color: linear-gradient(to top,
+    #DC8CFE 0%,
+    #FFF8FF 50%,
+    #FFF8FF 50%,
+    #DC8CFE 100%);
+
+    -fx-background-insets: 0;
+    -fx-border-width: 2; 
+    -fx-padding: 13; /* más grande */
+}
+
+.container-light-gradiant-colors {
+    -fx-background-color:radial-gradient(
+        center 50% 50%, radius 60%, 
+        repeat, 
+        #a0378e 0%, 
+        #983c93 25.8%, 
+        #843c98 74.5%, 
+        #50046e 94.8%
+    );
+    
+    -fx-border-color: linear-gradient(to top,
+    #DC8CFE 0%,
+    #FFF8FF 50%,
+    #FFF8FF 50%,
+    #DC8CFE 100%);
+    -fx-background-insets: 0;
+    -fx-border-width: 2; 
+}
+
+.border-neon-effect {
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.4), 20, 0.5, 0, 0);
+}
+
+.border-neon-effect-yellow{
+    -fx-effect: dropshadow(gaussian, rgba(229, 255, 0, 0.525), 20, 0.5, 0, 0);
+    -fx-border-color: linear-gradient(to top,
+    #d4ff008f 0%,
+    #FFF8FF 50%,
+    #FFF8FF 50%,
+    #ffea0096 100%);
+}
+
+.border-neon-effect-purple{
+    -fx-effect: dropshadow(gaussian, rgba(4, 108, 255, 0.671), 20, 0.5, 0, 0);
+}
+
+/*contenedores cuadrados*/
+.square-pane {
+    -fx-padding: 10; 
+}
+
+/*contenedores ovalados*/
+.oval-pane {
+    -fx-background-radius: 50; 
+    -fx-border-radius: 50;       
+    -fx-padding: 10; 
+}    
+
+/*contenedores semi ovalados*/
+.semi-oval-pane {
+    -fx-background-radius: 10; 
+    -fx-border-radius: 10;    
+    -fx-padding: 10; 
+}
+
+/*contenedores ciruclares*/
+.round-pane{
+    -fx-shape: "M50,0 A50,50 0 1,1 49.99,0 Z";
+}
+
+.parallelogram-pane{
+   -fx-shape: "M -36.457 37 L -238.113 37 L -300 100 L -81.011 99.667 Z";
+}
+
+/*contenedores para texto que introduce el usuario sin borde*/
+.text-container{
+    -fx-border-width: 0; 
+    -fx-background-color:  rgba(188, 4, 255, 0.367);
+}
+
+/*Estilos para el contenedor Spinner*/
+.spinner.container-colors {
+    -fx-border-color: linear-gradient(to top,
+        #DC8CFE 0%,
+        #FFF8FF 50%,
+        #DC8CFE 100%);
+    -fx-border-width: 2;
+    -fx-text-fill: #e5e5e5;
+    -fx-background-radius: 6;
+}
+
+.spinner.container-colors .text-field {
+    -fx-background-color: #1b0359;
+    -fx-text-fill: #e5e5e5;
+    -fx-font-family: "Constantia Bold";
+    -fx-font-size: 14px;
+}
+
+.spinner.container-colors .increment-arrow-button,
+.spinner.container-colors .decrement-arrow-button {
+    -fx-background-color: #1b0359;
+}
+
+.spinner.container-colors .increment-arrow,
+.spinner.container-colors .decrement-arrow {
+    -fx-background-color: #DC8CFE;
+}
+
+/*Estilo para el color de la flecha del contenedor combobox*/
+.combo-box.container-colors .arrow {
+    -fx-background-color: #DC8CFE;
+}
+
+/*Estilo para la lista de elementos del combobox*/
+.combo-box.container-colors .list-cell {
+    -fx-background-color: #1b0359;
+    -fx-border-color: linear-gradient(to top,
+        #DC8CFE 0%,
+        #FFF8FF 50%,
+        #DC8CFE 100%);
+    -fx-text-fill: #e5e5e5;
+    -fx-font-size: 14px;
+}
+
+/*Estilo para el elemento del checkbox seleccionado*/
+.combo-box.container-colors .list-cell:filled:selected,
+.combo-box.container-colors .list-cell:filled:selected:hover,
+.combo-box.container-colors .list-cell:filled:selected:focused {
+    -fx-font-family: "Constantia";
+    -fx-font-size: 14px;
+}
+
+/*Estilo para el checkbox general*/
+.check-box.container-colors {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: #e5e5e5;
+}
+
+/*Estilo para el cuadro del checkbox*/
+.check-box.container-colors .box {
+    -fx-background-color: #1b0359;
+    -fx-border-color: linear-gradient(to top,
+        #DC8CFE 0%,
+        #FFF8FF 50%,
+        #DC8CFE 100%);
+    -fx-border-width: 2;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+/*Estilo para la marca del checkbox*/
+.check-box.container-colors:selected .mark {
+    -fx-background-color: #DC8CFE;
+}
+
+#usersOwn{
+    -fx-effect:  dropshadow(gaussian, rgba(240,184,255,0.8), 25, 0.5, 0, 0);
+}
+/*ICONOS GENERALES ------------------------------------------------------------------------------------------------------------------------------ */
+
+.icon-colors {
+    -fx-background-color:
+    radial-gradient(
+    center 50% 40%,
+    radius 120%,
+    #691179 0%,
+    #220470 60%,
+    #20034F 100%);
+
+    -fx-border-color: linear-gradient(to top,
+    #DC8CFE 0%,
+    #FFF8FF 50%,
+    #FFF8FF 50%,
+    #DC8CFE 100%);
+
+     -fx-background-insets: 0;
+    
+}
+
+.icon-special-colors:selected {
+   -fx-background-color: linear-gradient( to top right,
+    #310a93,
+    #8500d7 ,
+    #ff1fc2,
+    #220470
+    );
+
+   -fx-border-color: linear-gradient(to top,
+    #DC8CFE 0%,
+    #FFF8FF 50%,
+    #FFF8FF 50%,
+    #DC8CFE 100%
+    );
+
+    -fx-background-insets: 0;
+}
+
+.icon-special-colors:hover, #swingBarButton:hover, #cardInfoIcon:hover {
+   -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+
+.round-icon {
+    -fx-shape: "M50,0 A50,50 0 1,1 49.99,0 Z";
+    -fx-border-width: 3;
+}
+
+.square-icon {
+    -fx-background-radius: 15; 
+    -fx-border-radius: 10;
+    -fx-border-width: 3;
+}
+
+/*SLIDER BOARD ------------------------------------------------------------------------------------------------------------------------------ */
+
+/* Slider track */
+.slider .track {
+    -fx-background-color:
+    radial-gradient(
+    center 50% 40%,
+    radius 120%,
+    #691179 0%,
+    #220470 60%,
+    #20034F 100%);
+   -fx-border-color: linear-gradient(to top,
+    #DC8CFE 0%,
+    #FFF8FF 50%,
+    #FFF8FF 50%,
+    #DC8CFE 100%);
+    -fx-border-width: 2;
+    -fx-background-radius: 5;
+    -fx-pref-height: 10;
+}
+
+/* Slider thumb (el circulito) */
+.slider .thumb {
+    -fx-background-color:  #220470;
+     -fx-border-color: linear-gradient(to top,
+    #DC8CFE 0%,
+    #FFF8FF 50%,
+    #FFF8FF 50%,
+    #DC8CFE 100%);
+     -fx-border-radius: 15;
+    -fx-background-radius: 15;
+     -fx-border-width: 2;
+    -fx-pref-width: 20;
+    -fx-pref-height: 20;
+}
+
+.slider-gradiant-colors {
+    -fx-background-color:radial-gradient(
+        center 50% 50%, radius 80%, 
+        repeat, 
+        #66287a 0%, 
+        #692f79 25.8%, 
+        #3a0878 74.5%, 
+        #1e034f 94.8%, 
+        #201f4f 99.5%, 
+        #201f4f 100%
+    );
+    
+    -fx-border-color: linear-gradient(to top,
+    #DC8CFE 0%,
+    #FFF8FF 50%,
+    #FFF8FF 50%,
+    #DC8CFE 100%);
+
+    -fx-background-insets: 0;
+    -fx-border-width: 4; 
+}
+
+.slider-colors {
+    -fx-background-color: #1b0359;
+   -fx-border-color: linear-gradient(to top,
+    #DC8CFE 0%,
+    #FFF8FF 50%,
+    #FFF8FF 50%,
+    #DC8CFE 100%);
+   -fx-border-width: 4; 
+}
+
+/*SCROLL BAR --------------------------------------------------------------------------------------------*/
+
+.scroll-bar {
+    -fx-background-color:#1b0359;
+    -fx-pref-width: 20; 
+}
+
+.scroll-bar .track {
+    -fx-background-color: transparent;
+    -fx-border-color: #d16bff; 
+    -fx-border-width: 2;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #480b77;
+   -fx-border-color: linear-gradient(to top,
+    #DC8CFE 0%,
+    #FFF8FF 50%,
+    #FFF8FF 50%,
+    #DC8CFE 100%);
+}
+
+/* Hover del thumb */
+.scroll-bar .thumb:hover {
+    -fx-background-color: #1a1a1a;
+}
+
+
+/* Click */
+.scroll-bar .thumb:pressed {
+    -fx-background-color: #262626;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-opacity: 0;
+    -fx-padding: 0;
+}
+
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-opacity: 0;
+}
