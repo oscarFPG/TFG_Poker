@@ -124,5 +124,11 @@ public class GeminiLLM extends BotLLM {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getDescription'");
     }
+
+    @Override
+    public void notifyPlayerAction(PlayerRole role, String action, double amount) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'notifyPlayerAction'");
+    }
     
 }
