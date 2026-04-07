@@ -4,7 +4,14 @@ package com.ucm.server;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.ucm.common.GameConfig;
+import com.ucm.common.GameInfo;
 import com.ucm.common.GameType;
+import com.ucm.common.SocketUtils;
+
+import com.ucm.server.exceptions.EvaluatorException;
+import com.ucm.server.logic.Game;
+import com.ucm.server.control.Controller;
 
 import java.net.http.*;
 import java.net.*;
@@ -56,14 +63,14 @@ public class ServerTCP {
         return serverIP;
     }
 
-    public List<ClientThread> startPregame() {
+    public List<ClientThread> startPregame(GameConfig config) {
 
         while(!_serverSocket.isClosed()) {
 
             try {
 
                 Socket socket = _serverSocket.accept();
-               _executor.execute( new ClientThread(socket, _roomPlayers, _serverSocket) );
+               _executor.execute( new ClientThread(socket, _roomPlayers, _serverSocket, config) );
             
                 log.debug("New client connected!");
             }
@@ -74,6 +81,22 @@ public class ServerTCP {
         log.debug("Terminating pregame phase...");
 
         return _roomPlayers;
+    }
+
+    public void startGame(final GameInfo info) {
+
+        log.debug("--- Poker game ---");
+
+        try {
+            Game game = new Game();
+            Controller controller = new Controller(game, info.players);
+            controller.run();
+        }
+        catch(EvaluatorException e) {
+            log.error("{}", e.getMessage());
+        }
+        
+
     }
 
 }

@@ -139,6 +139,11 @@ public class WaitingGameWindowController extends GenericController {
             }
             System.out.printf("Game has to start!\n");
 
+            SocketUtils.sendInteger(output, GameType.CONFIRMATION_PLAYER_STARTS);
+
+            Platform.runLater(() -> {
+                next();
+            });
         }
         catch(Exception e) {
             System.out.printf("Error: %s\n", e.getMessage());

@@ -6,6 +6,8 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.ucm.common.GameConfig;
+import com.ucm.common.GameInfo;
 import com.ucm.common.GameType;
 
 
@@ -29,21 +31,29 @@ public class ServerMain {
      */
     public static void main(String[] args) {
 
-        try {
-            ServerTCP server = new ServerTCP(GameType.PORT);
+        while(true) {
 
-            List<ClientThread> clients = server.startPregame();
-            log.debug("Pregame ended!");
+            try {
+                ServerTCP server = new ServerTCP(GameType.PORT);
+                
+                GameConfig config = new GameConfig();
+                List<ClientThread> clients = server.startPregame(config);
+                log.debug("Pregame ended!");
 
-            for(ClientThread ct : clients) {
-                log.debug("Player {}", ct._playerName);
+                // Convert data
+                GameInfo gameInfo = new GameInfo( new GameConfig(config) );
+                for(ClientThread ct : clients) {
+                    gameInfo.addPlayer(ct._playerName, ct._socket);
+                }
+
+                log.debug("Poker game starting!");
+                server.startGame(gameInfo);
+                log.debug("Poker game finished!");
             }
-
+            catch(IOException | InterruptedException e) {
+                log.error("Error starting the server: {}", e.getMessage());
+            }
         }
-        catch(IOException | InterruptedException e) {
-            log.error("Error starting the server: {}", e.getMessage());
-        }   
     }
-
 
 }

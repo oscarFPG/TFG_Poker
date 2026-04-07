@@ -30,40 +30,19 @@ public class ClientThread implements Runnable {
 
     public List<ClientThread> _roomList;
     public ServerSocket _serverSocket;
+    public GameConfig _gameConfig;
 
-    public ClientThread(Socket socket, List<ClientThread> players, ServerSocket gameSocket) {
+
+    public ClientThread(Socket socket, List<ClientThread> players, ServerSocket gameSocket, GameConfig config) {
         _socket = socket;
         _playerName = null;
         _isHost = false;
 
         _roomList = players;
         _serverSocket = gameSocket;
+        _gameConfig = config;
     }
 
-
-    /*
-        Este metodo gestiona a cada cliente.
-        Idealmente, todas las peticiones deben ser STATELESS,:
-            Esto es: no debería almacenarse el estado de nada(o casi nada)
-                        para que la respuesta a una petición concreta sea siempre a misma.
-
-        Por ejemplo:
-        - Si el cliente pulsa el boton 'Create Game' por primera vez, el servidor debe responder simplemente con OK o ERROR.
-        - Suponiendo que haya respondido OK, el servidor pasaría a una ventana siguiente
-        - Si ahora el cliente vuelve para atras en la interfaz y vuelve a hacer lo mismo(Asi infinitas veces) la respuesta será la misma.
-
-        Esto no siempre va a ser posible, habrá momentos en los que haya almacenar cosas
-        (Por ejemplo, cuando el cliente cree una partida habrá que alamcenar quien 
-        es para que ese sea el único que pueda realizar las peticiones y recibir las respuestas)
-    
-        En estos casos, debemos tener siempre en cuenta de que estos datos tenemos que poder descartarlos segun el contexto
-    
-        ¡¡ IMPORTANTE !!
-        Para probar el funcionamiento utilizar la interfaz, ya que esta se comporta muy distinto respecto a la consola.
-        Para probar el funcionamiento de las peticiones, comprobaciones, etc... viene bien.
-        Ir haciendo incrementalmente la lógica probada con la interfaz.
-
-    */
     @Override
     public void run() {
         
@@ -71,8 +50,8 @@ public class ClientThread implements Runnable {
             InputStream input = _socket.getInputStream();
             OutputStream output = _socket.getOutputStream();
 
-            boolean clientConnected = true;
-            while (clientConnected) {
+            boolean clientWaitingGame = true;
+            while (clientWaitingGame) {
                 
                 int request = SocketUtils.receiveInt(input);
                 log.debug("Received request: {}", request);
@@ -109,6 +88,7 @@ public class ClientThread implements Runnable {
                         _isHost = true;
                         _playerID = _roomList.size();
                         _roomList.add(this);
+                        _gameConfig = config;
                         SocketUtils.sendInteger(output, _playerID);
 
                         showPlayersInRoom();
@@ -159,6 +139,7 @@ public class ClientThread implements Runnable {
                             }
                             log.debug("Game starts!");
                         
+                            
                             _serverSocket.close();
                             log.debug("ServerSocket closed!");
                         }
@@ -169,6 +150,10 @@ public class ClientThread implements Runnable {
                     }
                     break;
 
+                case GameType.CONFIRMATION_PLAYER_STARTS:
+                    clientWaitingGame = false;
+                    break;
+
                 default:
                     log.debug("Request {} unknown", request);
                     break;
@@ -177,10 +162,8 @@ public class ClientThread implements Runnable {
             }
         }
         catch(IOException e) {
-            log.error("Handling client connection: {}", e.getMessage());
-        }
-        finally {
 
+            log.error("Handling client connection: {}", e.getMessage());
             if(_isHost) {
 
                 synchronized(_roomList) {
@@ -193,6 +176,7 @@ public class ClientThread implements Runnable {
                 closeConnection(_socket);
             }
         }
+        log.debug("Client thread terminating...");
 
     }
 

@@ -3,7 +3,7 @@ package com.ucm.server.control;
 
 import com.ucm.server.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.server.logic.Game;
-import com.ucm.server.middleclasses.ClientStruct;
+import com.ucm.common.ClientStruct;
 import com.ucm.server.players.HumanPlayer;
 
 import org.apache.logging.log4j.ThreadContext;
@@ -22,6 +22,7 @@ public class Controller {
      */
     private Game _game;
 
+    
     public Controller(Game game, List<ClientStruct> players) {
         _game = game;
         addPlayersToGame(players);

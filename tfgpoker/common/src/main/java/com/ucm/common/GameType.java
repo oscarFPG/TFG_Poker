@@ -26,7 +26,7 @@ public class GameType {
     public static final int CONFIRMATION_HOST_PLAYER = 203;
     public static final int CONFIRMATION_NO_HOST_PLAYER = 204;
     public static final int CONFIRMATION_GAME_STARTS = 205;
-
+    public static final int CONFIRMATION_PLAYER_STARTS = 206;
 
     public static final int ERROR_TYPE = 500;
     public static final int ERROR_NAME_TOO_SHORT = 501;     // Name error codes

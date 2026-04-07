@@ -56,10 +56,12 @@ public class HomeCreateGameWindowController extends GenericController {
 
     @Override
     protected void onViewShown() {
+
         btnStartHome.setDisable(true);
-        initializeRoomName();
         labelUserName.setText(_clientInfo.name);
         checkBoxAllowBots.setSelected(_clientInfo.gameConfig._allowBots);
+
+        initializeRoomName();
         initializeSpinner();
         initializeBlindsValue();
         initializeLevelDuration();

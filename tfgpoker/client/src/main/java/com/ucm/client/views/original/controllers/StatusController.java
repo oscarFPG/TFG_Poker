@@ -62,6 +62,10 @@ public class StatusController {
         case WAITING_GAME:
             currentState = State.GAME;
             break;
+
+        case GAME:
+            currentState = State.START_APP;
+            break;
         }
         
     }

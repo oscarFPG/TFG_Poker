@@ -82,7 +82,7 @@ public class MainController {
             stage.show();
         } 
         catch (Exception e) {
-            e.printStackTrace();
+            System.out.printf("Error trying to load view: %s\n", e.getMessage());
         }
     }
 
