@@ -68,7 +68,6 @@ public class ProfileSecondWindowController extends GenericController {
             System.out.printf("Error connecting to the socket: %s\n", e.getMessage());
         }
         
-        
     }
 
     @FXML

@@ -8,6 +8,7 @@ public class GameConfig {
     private static final boolean DEFAULT_DINAMIC_VALUE = false;
     private static final String DEFAULT_LEVEL_DURATION = "15";
     private static final String DEFAULT_HIKE_PERCENTAGE = "25";
+    private static final int DEFAULT_NUM_BOTS = 0;
     /**
      * Variables para crear partida: Home
     */
@@ -29,7 +30,10 @@ public class GameConfig {
     /**
      * Variables para crear partida: Add bots
     */
-
+    public int _numBots1 = DEFAULT_NUM_BOTS;
+    public int _numBots2 = DEFAULT_NUM_BOTS;
+    public int _numBots3 = DEFAULT_NUM_BOTS;
+    
     /*
         - Por defecto es estatico (1 y 2)
         - Dinamicas
