@@ -5,15 +5,7 @@ import com.ucm.server.gameobjects.Card;
 import com.ucm.server.gameobjects.PlayerRole;
 import com.ucm.server.gameobjects.Suit;
 
-/**
- * Translates all in-game types(Classes, Records, etc...) in communication types(Any communication-oriented type defined in GameTypes.h)
- * 
- * IMPLEMENTACION !!!!!!! TEMPORAL !!!!!!!
- * DEFINIR INTERFAZ 'NETWORK_ENCONDE' PARA QUE CADA OBJETO DEFINA COMO SE CODIFICA EN UN BYTE O INTEGER PARA ENVIARLO
- *  Por ejemplo, clase Card:
- *        bits:   7 6 5 4 | 3 2 1 0
- *                  suit  |  value
- */
+
 public class GameAdapter {
     
     private GameAdapter(){}

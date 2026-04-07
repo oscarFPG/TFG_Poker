@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.HomeCreateGameWindowController">
+   <children>
+      <BorderPane prefHeight="200.0" prefWidth="200.0">
+         <top>
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+               <children>
+                  <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                     <children>
+                        <Button fx:id="btnBackChooseGame" mnemonicParsing="false" onAction="#returnChooseGame" prefHeight="48.0" prefWidth="40.0">
+                           <styleClass>
+                              <String fx:value="arrow-back" />
+                              <String fx:value="arrow-colors" />
+                           </styleClass>
+                        </Button>
+                        <Label styleClass="general-text-font" />
+                     </children>
+                     <VBox.margin>
+                        <Insets left="5.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <Label alignment="CENTER" prefHeight="60.0" prefWidth="372.0" styleClass="bold-general-text-font" text="CREATE GAME">
+                     <font>
+                        <Font size="58.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+         </top>
+         <bottom>
+            <Button fx:id="btnStartHome" alignment="CENTER" mnemonicParsing="false" prefHeight="26.0" prefWidth="134.0" text="START" BorderPane.alignment="CENTER">
+               <font>
+                  <Font size="27.0" />
+               </font>
+               <styleClass>
+                  <String fx:value="general-button" />
+                  <String fx:value="bold-general-text-font" />
+               </styleClass>
+               <BorderPane.margin>
+                  <Insets bottom="10.0" />
+               </BorderPane.margin></Button>
+         </bottom>
+         <center>
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+               <children>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                     <children>
+                        <Label alignment="CENTER" prefHeight="82.0" prefWidth="493.0" styleClass="title-label" text="HOME" textAlignment="CENTER" />
+                        <Button fx:id="btnNextHome" alignment="CENTER" mnemonicParsing="false" onAction="#jumpToBots" prefHeight="44.0" prefWidth="36.0" rotate="180.0">
+                           <styleClass>
+                              <String fx:value="arrow-back" />
+                              <String fx:value="arrow-colors" />
+                           </styleClass>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <VBox alignment="CENTER" prefHeight="405.0" prefWidth="689.0" spacing="6.0" styleClass="rounded-description-label">
+                           <children>
+                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+                                 <children>
+                                    <Label styleClass="bold-general-text-font" text="Room" />
+                                    <TextField fx:id="textFieldRoomName" styleClass="username-label" />
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </HBox>
+                              <HBox alignment="CENTER" prefHeight="24.0" prefWidth="445.0" spacing="20.0">
+                                 <children>
+                                    <Label styleClass="bold-general-text-font" text="Created by:" />
+                                    <Label fx:id="labelUserName" styleClass="general-text-font" text="username" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" prefHeight="41.0" prefWidth="487.0" spacing="15.0">
+                                 <children>
+                                    <Label styleClass="general-text-font" text="Initial money for players:" />
+                                    <Spinner fx:id="spinnerInitialMoney" styleClass="container-colors" />
+                                 </children>
+                              </HBox>
+                              <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
+                                 <children>
+                                    <CheckBox fx:id="checkBoxAllowBots" mnemonicParsing="false" styleClass="container-colors" text="Allow bots" />
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets bottom="10.0" />
+                                 </VBox.margin>
+                              </VBox>
+                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+                                 <children>
+                                    <Label styleClass="general-text-font" text="Blinds value" />
+                                    <ComboBox fx:id="comboBlindsValue" prefHeight="42.0" prefWidth="179.0" visibleRowCount="3">
+                                       <styleClass>
+                                          <String fx:value="general-text-font" />
+                                          <String fx:value="container-colors" />
+                                       </styleClass></ComboBox>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <Button mnemonicParsing="false" text="Yes">
+                                       <styleClass>
+                                          <String fx:value="container-colors" />
+                                          <String fx:value="general-text-font" />
+                                          <String fx:value="square-icon" />
+                                       </styleClass>
+                                       <graphic>
+                                          <Label styleClass="general-text-font" text="Dinamic blinds:" />
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" layoutX="10.0" layoutY="269.0" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+                                 <children>
+                                    <Label styleClass="general-text-font" text="Level duration (min)" />
+                                    <ComboBox fx:id="comboLevelDuration" prefWidth="179.0" visibleRowCount="3">
+                                       <styleClass>
+                                          <String fx:value="general-text-font" />
+                                          <String fx:value="container-colors" />
+                                       </styleClass></ComboBox>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" layoutX="10.0" layoutY="311.0" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+                                 <children>
+                                    <Label styleClass="general-text-font" text="Hike percentage (%)" />
+                                    <ComboBox fx:id="comboHikePercentage" prefWidth="179.0" visibleRowCount="3">
+                                       <styleClass>
+                                          <String fx:value="general-text-font" />
+                                          <String fx:value="container-colors" />
+                                       </styleClass></ComboBox>
+                                 </children>
+                              </HBox>
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" top="10.0" />
+                           </padding>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </center>
+      </BorderPane>
+   </children>
+</StackPane>
