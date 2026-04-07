@@ -17,6 +17,7 @@ import java.util.concurrent.*;
 
 public class ServerTCP {
 
+    
 
     private static final Logger log = LogManager.getLogger(ServerTCP.class);
 
@@ -62,7 +63,7 @@ public class ServerTCP {
             try {
 
                 Socket socket = _serverSocket.accept();
-               _executor.execute( new ClientThread(socket, _roomPlayers) );
+               _executor.execute( new ClientThread(socket, _roomPlayers, _serverSocket) );
             
                 log.debug("New client connected!");
             }
@@ -70,6 +71,7 @@ public class ServerTCP {
                 log.error("Error accepting client connection: {}", e.getMessage());
             }
         }
+        log.debug("Terminating pregame phase...");
 
         return _roomPlayers;
     }

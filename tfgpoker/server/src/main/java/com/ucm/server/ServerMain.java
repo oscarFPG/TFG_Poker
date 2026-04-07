@@ -1,12 +1,12 @@
 package com.ucm.server;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ucm.common.GameType;
-import com.ucm.server.evaluator.Evaluator;
 
 
 public class ServerMain {
@@ -31,9 +31,13 @@ public class ServerMain {
 
         try {
             ServerTCP server = new ServerTCP(GameType.PORT);
-            Evaluator evaluator = Evaluator.getInstance();
 
-            server.startPregame();
+            List<ClientThread> clients = server.startPregame();
+            log.debug("Pregame ended!");
+
+            for(ClientThread ct : clients) {
+                log.debug("Player {}", ct._playerName);
+            }
 
         }
         catch(IOException | InterruptedException e) {

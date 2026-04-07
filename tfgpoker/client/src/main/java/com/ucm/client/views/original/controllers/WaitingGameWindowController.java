@@ -100,35 +100,6 @@ public class WaitingGameWindowController extends GenericController {
 
             if(_clientInfo.isHost) {
                 System.out.printf("Server response: This client is the host of the game!\n");
-
-                boolean kepWaiting = true;
-                while(kepWaiting) {
-
-                    int event = SocketUtils.receiveInt(input);
-                    if(event == GameType.EVENT_PLAYER_JOINED) {
-
-                        PlayerInfo p = PokerGame.receivePlayerInRoomInfo(input, output);
-                        System.out.printf(
-                            "Event PLAYER_JOINED! Player %s with ID %d has joined the game!\n", 
-                            p.name, 
-                            p.id
-                        );
-
-                        Platform.runLater(() -> {
-                            showPlayer(p.id, p.name);
-                        });
-                    }
-                    else if(event == GameType.CONFIRMATION_GAME_STARTS) {
-                        System.out.printf("Event GAME_STARTS!\n");
-                        kepWaiting = false;
-                    }
-                    else if(event == GameType.ERROR_GAME_CANNOT_START) {
-                        System.out.printf("Game cannot start! Missing players\n");
-                    }
-                    else {
-                        System.out.printf("Event %d unknown!\n", event);
-                    }
-                }
             }
             else {
                 System.out.printf("Server response: This client is a guest!\n");
@@ -136,35 +107,38 @@ public class WaitingGameWindowController extends GenericController {
                 Platform.runLater(() -> {
                     startButton.setVisible(false);
                 });
-
-                boolean kepWaiting = true;
-                while(kepWaiting) {
-
-                    int event = SocketUtils.receiveInt(input);
-                    if(event == GameType.EVENT_PLAYER_JOINED) {
-
-                        PlayerInfo p = PokerGame.receivePlayerInRoomInfo(input, output);
-                        System.out.printf(
-                            "Event PLAYER_JOINED! Player %s with ID %d has joined the game!\n", 
-                            p.name, 
-                            p.id
-                        );
-
-                        Platform.runLater(() -> {
-                            showPlayer(p.id, p.name);
-                        });
-                    }
-                    else if(event == GameType.CONFIRMATION_GAME_STARTS) {
-                        System.out.printf("Event GAME_STARTS!\n");
-                        kepWaiting = false;
-                    }
-                    else {
-                        System.out.printf("Event %d unknown!\n", event);
-                    }
-                }
-                System.out.printf("Game has to start!\n");
-
             }
+
+            boolean kepWaiting = true;
+            while(kepWaiting) {
+
+                int event = SocketUtils.receiveInt(input);
+                if(event == GameType.EVENT_PLAYER_JOINED) {
+
+                    PlayerInfo p = PokerGame.receivePlayerInRoomInfo(input, output);
+                    System.out.printf(
+                        "Event PLAYER_JOINED! Player %s with ID %d has joined the game!\n", 
+                        p.name, 
+                        p.id
+                    );
+
+                    Platform.runLater(() -> {
+                        showPlayer(p.id, p.name);
+                    });
+                }
+                else if(event == GameType.CONFIRMATION_GAME_STARTS) {
+                    System.out.printf("Event GAME_STARTS!\n");
+                    kepWaiting = false;
+                }
+                else if(event == GameType.ERROR_GAME_CANNOT_START) {
+                    System.out.printf("Game cannot start! Missing players\n");
+                }
+                else {
+                    System.out.printf("Event %d unknown!\n", event);
+                }
+            }
+            System.out.printf("Game has to start!\n");
+
         }
         catch(Exception e) {
             System.out.printf("Error: %s\n", e.getMessage());

@@ -3,6 +3,7 @@ package com.ucm.server;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -28,13 +29,15 @@ public class ClientThread implements Runnable {
     public boolean _isHost;
 
     public List<ClientThread> _roomList;
+    public ServerSocket _serverSocket;
 
-    public ClientThread(Socket socket, List<ClientThread> players) {
+    public ClientThread(Socket socket, List<ClientThread> players, ServerSocket gameSocket) {
         _socket = socket;
         _playerName = null;
         _isHost = false;
 
         _roomList = players;
+        _serverSocket = gameSocket;
     }
 
 
@@ -150,8 +153,14 @@ public class ClientThread implements Runnable {
                     synchronized(_roomList) {
 
                         if(2 <= _roomList.size()) {
-                            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.CONFIRMATION_GAME_STARTS);
+
+                            for(ClientThread ct : _roomList) {
+                                SocketUtils.sendInteger(ct._socket.getOutputStream(), GameType.CONFIRMATION_GAME_STARTS);
+                            }
                             log.debug("Game starts!");
+                        
+                            _serverSocket.close();
+                            log.debug("ServerSocket closed!");
                         }
                         else {
                             SocketUtils.sendInteger(_socket.getOutputStream(), GameType.ERROR_GAME_CANNOT_START);
@@ -168,10 +177,21 @@ public class ClientThread implements Runnable {
             }
         }
         catch(IOException e) {
-            log.error("Handling client connection: {}", e.getMessage());  
+            log.error("Handling client connection: {}", e.getMessage());
         }
         finally {
-            closeConnection();
+
+            if(_isHost) {
+
+                synchronized(_roomList) {
+                    for(ClientThread ct : _roomList) {
+                        closeConnection(ct._socket);
+                    }
+                }
+            }
+            else {
+                closeConnection(_socket);
+            }
         }
 
     }
@@ -201,14 +221,15 @@ public class ClientThread implements Runnable {
         notify.start();
     }
 
-    private void closeConnection() {
+    private void closeConnection(Socket socket) {
 
-        if(_socket == null || _socket.isClosed())
+        if(socket == null || socket.isClosed())
             return;
 
 
         try {
-            _socket.close();
+            socket.close();
+            log.error("Closing connection with client");
         }
         catch(IOException e) {
             log.error("Closing client socket: {}", e.getMessage());
