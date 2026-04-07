@@ -124,7 +124,7 @@
                                     </Button>
                                  </children>
                               </StackPane>
-                              <StackPane fx:id="cardInfo" id="cardInfo" prefHeight="310.0" prefWidth="234.0">
+                              <StackPane id="cardInfo" fx:id="cardInfo" prefHeight="310.0" prefWidth="234.0">
                                  <children>
 
                                     <!-- FRONT -->
@@ -150,9 +150,7 @@
 
                                     <!-- BACK -->
                                     <StackPane fx:id="cardBack" visible="false">
-                                       <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="general-text-font" 
-                                       text="Play a traditional No Limit Texas Hold’em (NLHE) game with up to 9 players (humans or bots)" 
-                                       textAlignment="CENTER" wrappingWidth="172.0">
+                                       <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="general-text-font" text="Play a traditional No Limit Texas Hold’em (NLHE) game with up to 9 players (humans or bots)" textAlignment="CENTER" wrappingWidth="172.0">
                                              <font>
                                                 <Font size="20.0" />
                                              </font>
@@ -165,7 +163,7 @@
                                        </styleClass>
                                     </StackPane>
 
-                                    <Button  onAction="#flipCard" fx:id="cardInfoIcon" id="cardInfoIcon" alignment="CENTER" mnemonicParsing="false" prefWidth="48.0" textAlignment="CENTER" StackPane.alignment="TOP_RIGHT">
+                                    <Button id="cardInfoIcon" fx:id="cardInfoIcon" alignment="CENTER" mnemonicParsing="false" onAction="#flipCard" prefWidth="48.0" textAlignment="CENTER" StackPane.alignment="TOP_RIGHT">
                                        <graphic>
                                           <ImageView fitHeight="34.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
@@ -370,7 +368,7 @@
                         </Button>
                      </graphic>
                   </Button>
-                  <StackPane id="paragraphLabelStack" fx:id="paragraphLabelStack" layoutX="21.0" layoutY="124.0" opacity="0.0" prefHeight="490.0" prefWidth="369.0">
+                  <StackPane id="paragraphLabelStack" fx:id="paragraphLabelStack" layoutX="21.0" layoutY="124.0" prefHeight="490.0" prefWidth="369.0">
                      <children>
                         <Text id="paragraphLabel" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="general-text-font" text="This application allows users to play No Limit Texas Hold’em (NLHE) games against both humans and bots.It is designed to support the integration of different types of agents, from simple rule-based bots to more advanced AI models such as neural networks or large language models.Its goal is to serve as both an educational and entertainment tool, while enabling experimentation with decision-making in imperfect information games." textAlignment="CENTER" wrappingWidth="325.59997487068176">
                            <font>
