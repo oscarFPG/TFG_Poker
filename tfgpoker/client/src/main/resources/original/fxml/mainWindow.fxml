@@ -40,11 +40,6 @@
                                           <Image url="@../../images/imagenPerfil.png" />
                                        </image>
                                     </ImageView>
-                                    <ImageView fitHeight="40.0" fitWidth="71.0" layoutX="140.0" layoutY="79.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../../images/monedasPerfil.png" />
-                                       </image>
-                                    </ImageView>
                                     <Label alignment="CENTER" layoutX="153.0" layoutY="34.0" prefHeight="32.0" prefWidth="121.0" styleClass="username-label">
                                        <graphic>
                                           <Text fx:id="playerNamePlaceholder" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="username-label" text="Players Name" textAlignment="CENTER" wrappingWidth="160.0">
@@ -63,11 +58,6 @@
                                           </ImageView>
                                        </graphic>
                                     </Button>
-                                    <Text fill="WHITE" layoutX="181.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="bold-general-text-font" text="600k" textAlignment="CENTER" wrappingWidth="103.20001220703125">
-                                       <font>
-                                          <Font size="17.0" />
-                                       </font>
-                                    </Text>
                                  </children>
                               </Pane>
                            </children>
