@@ -37,13 +37,15 @@ public class GameType {
 
     /* ---------------- GAME CODES ----------------  */
     // Player roles
-    public static final int PLAYER_ROLE_NO_ROLE = 80;
-    public static final int PLAYER_ROLE_DEALER = 81;
-    public static final int PLAYER_ROLE_SMALL_BLIND = 82;
-    public static final int PLAYER_ROLE_BIG_BLIND = 83;
-    public static final int PLAYER_ROLE_UNDER_THE_GUN = 84;
-    public static final int PLAYER_ROLE_MIDDLE_POSITION = 85;
-    public static final int PLAYER_ROLE_CUT_OFF = 86;
+    public static final int PLAYER_ROLE_UNDER_THE_GUN = 80;
+    public static final int PLAYER_ROLE_UNDER_THE_GUN_1 = 81;
+    public static final int PLAYER_ROLE_UNDER_THE_GUN_2 = 82;
+    public static final int PLAYER_ROLE_LOJACK = 83;
+    public static final int PLAYER_ROLE_HIJACK = 84;
+    public static final int PLAYER_ROLE_CUT_OFF = 85;
+    public static final int PLAYER_ROLE_DEALER = 86;
+    public static final int PLAYER_ROLE_SMALL_BLIND = 87;
+    public static final int PLAYER_ROLE_BIG_BLIND = 88;
 
     // Card suits
     public static final int HEARTS = 100;

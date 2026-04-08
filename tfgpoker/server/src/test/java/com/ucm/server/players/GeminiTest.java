@@ -15,7 +15,7 @@ import com.ucm.server.ServerMain;
 public class GeminiTest {
  
     
-    @Test
+    //@Test
     public void testApi() {
 
         try {

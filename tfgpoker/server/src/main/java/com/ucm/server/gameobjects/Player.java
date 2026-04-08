@@ -83,7 +83,7 @@ public abstract class Player implements IPokerPlayer {
         _name = name;
         _offBetMoney = money;
         _onBetMoney = 0;
-        _role = PlayerRole.NO_ROLE;
+        _role = null;
         _cards = new Card[2];
         _numCards = 0;
 

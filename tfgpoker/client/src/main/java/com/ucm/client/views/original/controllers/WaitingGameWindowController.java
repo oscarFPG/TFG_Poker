@@ -53,6 +53,9 @@ public class WaitingGameWindowController extends GenericController {
     private Label playerName8, playerMoney8;
 
 
+    private Thread _infoThread;
+
+
     @FXML
     private void startGame() {
         
@@ -60,8 +63,8 @@ public class WaitingGameWindowController extends GenericController {
             SocketUtils.sendInteger(_clientInfo.socket.getOutputStream(), GameType.EVENT_GAME_STARTS);
         }
         catch(IOException e) {
-
-        } 
+            System.out.printf("Error sending EVENT_GAME_STARTS to server: %s\n", e.getMessage());
+        }
     }
 
 
@@ -71,21 +74,17 @@ public class WaitingGameWindowController extends GenericController {
         playerName0.setText( _clientInfo.name );
         playerMoney0.setText( String.valueOf( _clientInfo.gameConfig._initialMoney ) );
 
-        Thread infoThread = new Thread(() -> {
+        _infoThread = new Thread(() -> {
             waitNewPlayersInfo();
         });
-        infoThread.start();
+        _infoThread.start();
     }
 
     @Override
-    public void onNextEvent() {
-        
-    }
+    public void onNextEvent() {}
 
     @Override
-    public void onBackEvent() {
-       
-    }
+    public void onBackEvent() {}
 
 
     private void waitNewPlayersInfo() {
@@ -145,7 +144,7 @@ public class WaitingGameWindowController extends GenericController {
                 next();
             });
         }
-        catch(Exception e) {
+        catch(IOException e) {
             System.out.printf("Error: %s\n", e.getMessage());
         }
     }

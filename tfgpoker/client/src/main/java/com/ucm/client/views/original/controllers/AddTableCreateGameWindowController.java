@@ -16,8 +16,9 @@ public class AddTableCreateGameWindowController extends GenericController {
     @FXML
     private Button btnStartAddTables;
 
-    @FXML
-    private void initialize() {
+
+    @Override
+    protected void onViewShown() {
         btnStartAddTables.setDisable(true);
     }
 

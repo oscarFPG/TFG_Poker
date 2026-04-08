@@ -267,7 +267,10 @@ public class LlamaPokerLLM extends BotLLM {
             case SMALL_BLIND -> "SB";
             case BIG_BLIND -> "BB";
             case UNDER_THE_GUN -> "UTG";
-            case MIDDLE_POSITION -> "HJ";
+            case UNDER_THE_GUN_1 -> "UTG+1";
+            case UNDER_THE_GUN_2 -> "UTG+2";
+            case LOJACK -> "LJ";
+            case HIJACK -> "HJ";
             case CUT_OFF -> "CO";
             default -> "UNKNOWN";
         };

@@ -18,11 +18,12 @@ public class AddCardsCreateGameWindowController extends GenericController {
     @FXML
     private Button btnStartAddCards;
 
-    @FXML
-    private void initialize() {
+
+    @Override
+    protected void onViewShown() {
         btnStartAddCards.setDisable(false);
     }
-    
+
     @FXML
     private void sendClientInfo() {
 

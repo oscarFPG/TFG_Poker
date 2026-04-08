@@ -5,19 +5,21 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.common.GameType;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.Suit;
 import com.ucm.common.SocketUtils;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 
 
 public class InGameWindowController extends GenericController {
+
+    @FXML
+    private Label usernamePlaceHolder;
 
     @FXML
     private Button btnFold;
@@ -27,6 +29,9 @@ public class InGameWindowController extends GenericController {
 
     @FXML
     private Button btnRaise;
+
+
+    private Thread _gameThread;
 
 
     @FXML
@@ -48,10 +53,12 @@ public class InGameWindowController extends GenericController {
     @Override
     protected void onViewShown() {
 
-        Thread gameThread = new Thread(() -> {
+        usernamePlaceHolder.setText( _clientInfo.name );
+
+        _gameThread = new Thread(() -> {
             pokerGame(_clientInfo.name, _clientInfo.socket);
         });
-        gameThread.start();
+        _gameThread.start();
     }
 
     private void pokerGame(String name, Socket socket) {
@@ -160,7 +167,6 @@ public class InGameWindowController extends GenericController {
     private void playRound(Card card1, Card card2, Socket socket) throws OnlyOnePlayerLeftException, IOException {
 
         boolean handEndsByFold = false;
-		boolean blindsOnPlay = true;
 		int sb, bb, maxBet;
 		int offBetMoney, onBetMoney;
 

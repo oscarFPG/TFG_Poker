@@ -16,8 +16,9 @@ public class AddPlayersCreateGameWindowController extends GenericController  {
     @FXML
     private Button btnStartAddPlayers;
 
-    @FXML
-    private void initialize() {
+
+    @Override
+    protected void onViewShown() {
         btnStartAddPlayers.setDisable(true);
     }
 

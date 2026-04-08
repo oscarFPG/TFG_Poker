@@ -30,10 +30,10 @@ public class MainWindowController extends GenericController {
     @FXML
     private ToggleButton informationIcon;
 
-     @FXML
+    @FXML
     private ToggleButton exitIcon;
 
-     @FXML
+    @FXML
     private Text informationLabel;
 
     @FXML

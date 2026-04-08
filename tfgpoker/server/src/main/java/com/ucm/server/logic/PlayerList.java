@@ -99,15 +99,15 @@ public class PlayerList {
 
     public void assignRolesToAllPlayers() {
 
-        int n = activePlayersCounter();
+        int numPlayers = activePlayersCounter();
         Node _current = _first;
 
         // NO HAY DEALER --> SOLO SB Y BB
-        if (n == 0 || n == 1)
+        if (numPlayers == 0 || numPlayers == 1)
             return;
 
 
-        if (n == 2) {
+        if (numPlayers == 2) {
             _current._player.receiveRole(PlayerRole.SMALL_BLIND);
             _current._player.notifyPlayerRole(PlayerRole.SMALL_BLIND);
             log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.SMALL_BLIND.name());
@@ -119,19 +119,7 @@ public class PlayerList {
         }
         else {
 
-            List<PlayerRole> roles = new ArrayList<>(
-                List.of(
-                    PlayerRole.DEALER, 
-                    PlayerRole.SMALL_BLIND, 
-                    PlayerRole.BIG_BLIND,
-                    PlayerRole.UNDER_THE_GUN,
-                    PlayerRole.MIDDLE_POSITION,
-                    PlayerRole.CUT_OFF,
-                    PlayerRole.NO_ROLE,
-                    PlayerRole.NO_ROLE,
-                    PlayerRole.NO_ROLE
-                )
-            );
+            List<PlayerRole> roles = PlayerRole.getRolesDistribution(numPlayers);
 
             PlayerRole currentRole = roles.removeFirst();
             _current._player.receiveRole(currentRole);
