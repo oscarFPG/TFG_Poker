@@ -82,20 +82,28 @@ public class ClientThread implements Runnable {
                         log.error("Configuration was not valid");
                     }
                     else {
-                        SocketUtils.sendInteger(output, GameType.CONFIRMATION_WAITING_GAME);
-                        SocketUtils.sendInteger(output, GameType.CONFIRMATION_HOST_PLAYER);
+
+                        // DO NOT COPY THE CONFIG REFERENCE, IT MUST BE STAY SHARED BETWEEN ALL CLIENT THREADS !!
+                        _gameConfig._roomId = (int)(Math.random() * 10000);
+                        _gameConfig._roomName = config._roomName;
+
+
                         _isHost = true;
                         _playerID = _roomList.size();
                         _roomList.add(this);
-                        _gameConfig = config;
+
+                        SocketUtils.sendInteger(output, GameType.CONFIRMATION_WAITING_GAME);
+                        SocketUtils.sendInteger(output, _gameConfig._roomId);
+                        SocketUtils.sendInteger(output, GameType.CONFIRMATION_HOST_PLAYER);
                         SocketUtils.sendInteger(output, _playerID);
 
                         showPlayersInRoom();
+
                         log.debug("Configuration valid!");
-                        log.debug("Players on the room: {}", _roomList.size());
-                        log.debug("Room configuration: Room name=\'{}\' | Allow bots={}",
-                            config._roomName,
-                            config._allowBots
+                        log.debug("Room {}: Name=[{}], AllowBots=[{}]",
+                            _gameConfig._roomId,
+                            _gameConfig._roomName,
+                            _gameConfig._allowBots
                         );
                     }
 
@@ -104,7 +112,10 @@ public class ClientThread implements Runnable {
                 case GameType.PETITION_JOIN_GAME:
                     
                     if(0 < _roomList.size()) {
+
                         SocketUtils.sendInteger(output, GameType.CONFIRMATION_WAITING_GAME);
+                        PokerPreGame.sendGameConfigToJoinedPlayer(_gameConfig, output);
+
                         SocketUtils.sendInteger(output, GameType.CONFIRMATION_NO_HOST_PLAYER);
                         _playerID = _roomList.size();
                         _roomList.add(this);
@@ -186,9 +197,11 @@ public class ClientThread implements Runnable {
             synchronized(_roomList) {
 
                 try {
-                    for(ClientThread target : _roomList) {
-                        for(ClientThread ct : _roomList) {
-                            SocketUtils.sendInteger(target._socket.getOutputStream(), GameType.EVENT_PLAYER_JOINED);
+                    for (ClientThread target : _roomList) {
+
+                        SocketUtils.sendInteger(target._socket.getOutputStream(), GameType.EVENT_PLAYER_JOINED);
+                        SocketUtils.sendInteger(target._socket.getOutputStream(), _roomList.size());
+                        for (ClientThread ct : _roomList) {
                             PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(ct._playerID, ct._playerName), target._socket);
                         }
                         

@@ -36,15 +36,18 @@ public class ServerMain {
             try {
                 ServerTCP server = new ServerTCP(GameType.PORT);
                 
-                GameConfig config = new GameConfig();
-                List<ClientThread> clients = server.startPregame(config);
+                List<ClientThread> clients = server.startPregame();
+                GameConfig config = server.getGameConfigDeepCopy();
                 log.debug("Pregame ended!");
 
-                // Convert data
+                // Convert data -> This is for human players
                 GameInfo gameInfo = new GameInfo( new GameConfig(config) );
                 for(ClientThread ct : clients) {
                     gameInfo.addPlayer(ct._playerName, ct._socket);
                 }
+
+                // Add logic to add bots if needed
+                // TODO
 
                 log.debug("Poker game starting!");
                 server.startGame(gameInfo);

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class PokerPreGame {
@@ -40,11 +42,6 @@ public class PokerPreGame {
         SocketUtils.sendString(out, config._roomName);
         SocketUtils.sendString(out, config._userName);
         SocketUtils.sendInteger(out, allowBotsCode);
-    
-
-        // TODO
-        // Aqui habria que enviar los demas datos...
-        // Id, numero de jugadores, etc...
     }
 
     public static GameConfig receiveGameConfig(InputStream input, OutputStream output) throws IOException {
@@ -57,6 +54,24 @@ public class PokerPreGame {
         config._roomName = roomName;
         config._userName = userName;
         config._allowBots = allowBots;
+
+        return config;
+    }
+
+    public static void sendGameConfigToJoinedPlayer(GameConfig config, OutputStream out) throws IOException {
+    
+        SocketUtils.sendInteger(out, config._roomId);
+        SocketUtils.sendString(out, config._roomName);
+    }
+
+    public static GameConfig receiveGameConfigAsJoinedPlayer(InputStream input, OutputStream output) throws IOException {
+
+        int roomId = SocketUtils.receiveInt(input);
+        String roomName = SocketUtils.receiveString(input);
+
+        GameConfig config = new GameConfig();
+        config._roomId = roomId;
+        config._roomName = roomName;
 
         return config;
     }
@@ -90,6 +105,19 @@ public class PokerPreGame {
         String name = SocketUtils.receiveString(input);
 
         return new PlayerInfo(id, name);
+    }
+
+    public static List<PlayerInfo> receivePlayerListWaiting(InputStream input, OutputStream output) throws IOException {
+
+        List<PlayerInfo> playerPositions = new ArrayList<>();
+        int numPlayers = SocketUtils.receiveInt(input);
+
+        for(int i = 0; i < numPlayers; i++) {
+            PlayerInfo p = PokerPreGame.receivePlayerInRoomInfo(input, output);
+            playerPositions.add( p );
+        }
+
+        return playerPositions;
     }
 
     /* Auxiliar methods */

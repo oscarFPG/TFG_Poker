@@ -1,6 +1,7 @@
 package com.ucm.client.views.original.controllers;
 
 import java.io.IOException;
+import java.net.Socket;
 
 import com.ucm.client.ClientInfo;
 import com.ucm.common.GameType;
@@ -35,6 +36,9 @@ public class AddCardsCreateGameWindowController extends GenericController {
                 System.out.printf("Server response: Error creating game!\n");
             }
             else if(response == GameType.CONFIRMATION_WAITING_GAME) {
+
+                _clientInfo.gameConfig._roomId = SocketUtils.receiveInt(_clientInfo.socket.getInputStream());
+
                 System.out.printf("Server response: All correct! Creating room...\n");
 
                 int clientType = SocketUtils.receiveInt(_clientInfo.socket.getInputStream());

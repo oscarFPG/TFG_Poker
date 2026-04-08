@@ -16,7 +16,7 @@ public enum PlayerRole {
     SMALL_BLIND(),
     BIG_BLIND();
     
-
+    
 
     public static PlayerRole getPlayerRoleFromCode(final int roleCode) {
 
