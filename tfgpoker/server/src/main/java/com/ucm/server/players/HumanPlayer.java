@@ -7,10 +7,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ucm.common.SocketUtils;
+import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.control.GameAdapter;
-import com.ucm.server.gameobjects.Card;
 import com.ucm.server.gameobjects.Player;
-import com.ucm.server.gameobjects.PlayerRole;
 import com.ucm.server.logic.Game;
 
 

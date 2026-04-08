@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import com.ucm.client.ClientInfo;
 import com.ucm.common.GameType;
-import com.ucm.common.PokerGame;
+import com.ucm.common.PokerPreGame;
 import com.ucm.common.SocketUtils;
 
 import javafx.fxml.FXML;
@@ -27,7 +27,7 @@ public class AddCardsCreateGameWindowController extends GenericController {
     private void sendClientInfo() {
 
         try {
-            PokerGame.sendGameConfig(_clientInfo.gameConfig, _clientInfo.socket.getOutputStream());
+            PokerPreGame.sendGameConfig(_clientInfo.gameConfig, _clientInfo.socket.getOutputStream());
 
             int response = SocketUtils.receiveInt(_clientInfo.socket.getInputStream());
             if(response == GameType.ERROR_GAME_NOT_CREATED) {

@@ -1,6 +1,8 @@
 package com.ucm.server.gameobjects;
 
 
+import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.interfaces.IPokerPlayer;
 
 

@@ -6,10 +6,10 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.commands.Command;
-import com.ucm.server.exceptions.OnlyOnePlayerLeftException;
-import com.ucm.server.gameobjects.Card;
-import com.ucm.server.gameobjects.PlayerRole;
+import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.server.interfaces.IPokerPlayer;
 import com.ucm.server.middleclasses.CommandResult;
 import com.ucm.server.middleclasses.HandInfo;
@@ -260,7 +260,7 @@ public class PlayerList {
                 --playersRemaining; 
                 if (playersRemaining == 1) {
                     updateHandState();
-                    throw new OnlyOnePlayerLeftException("Only one player left to play mid round");
+                    throw new OnlyOnePlayerLeftException();
                 }
             }
 

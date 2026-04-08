@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
 import com.ucm.common.GameConfig;
 import com.ucm.common.GameType;
 import com.ucm.common.PlayerInfo;
-import com.ucm.common.PokerGame;
+import com.ucm.common.PokerPreGame;
 import com.ucm.common.SocketUtils;
 
 
@@ -59,11 +59,11 @@ public class ClientThread implements Runnable {
                 switch (request) {
                 case GameType.PETITION_PLAYER_NAME:
                     
-                    String name = PokerGame.receiveName(input, output);
-                    if(PokerGame.checkNameIsTooShort(name)) {
+                    String name = PokerPreGame.receiveName(input, output);
+                    if(PokerPreGame.checkNameIsTooShort(name)) {
                         SocketUtils.sendInteger(output, GameType.ERROR_NAME_TOO_SHORT);
                     }
-                    else if(PokerGame.checkNameIsTooLong(name)) {
+                    else if(PokerPreGame.checkNameIsTooLong(name)) {
                         SocketUtils.sendInteger(output, GameType.ERROR_NAME_TOO_LONG);
                     }
                     else {
@@ -77,7 +77,7 @@ public class ClientThread implements Runnable {
             
                 case GameType.PETITION_CREATE_GAME:
                     
-                    GameConfig config = PokerGame.receiveGameConfig(input, output);
+                    GameConfig config = PokerPreGame.receiveGameConfig(input, output);
                     if(config == null) {
                         SocketUtils.sendInteger(output, GameType.ERROR_GAME_NOT_CREATED);
                         log.error("Configuration was not valid");
@@ -190,7 +190,7 @@ public class ClientThread implements Runnable {
                     for(ClientThread target : _roomList) {
                         for(ClientThread ct : _roomList) {
                             SocketUtils.sendInteger(target._socket.getOutputStream(), GameType.EVENT_PLAYER_JOINED);
-                            PokerGame.sendPlayerInRoomInfo( new PlayerInfo(ct._playerID, ct._playerName), target._socket);
+                            PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(ct._playerID, ct._playerName), target._socket);
                         }
                         
                     }

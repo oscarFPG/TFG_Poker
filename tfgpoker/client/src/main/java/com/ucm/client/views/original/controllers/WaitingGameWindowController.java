@@ -7,7 +7,7 @@ import java.io.OutputStream;
 import com.ucm.client.ClientInfo;
 import com.ucm.common.GameType;
 import com.ucm.common.PlayerInfo;
-import com.ucm.common.PokerGame;
+import com.ucm.common.PokerPreGame;
 import com.ucm.common.SocketUtils;
 
 import javafx.application.Platform;
@@ -115,7 +115,7 @@ public class WaitingGameWindowController extends GenericController {
                 int event = SocketUtils.receiveInt(input);
                 if(event == GameType.EVENT_PLAYER_JOINED) {
 
-                    PlayerInfo p = PokerGame.receivePlayerInRoomInfo(input, output);
+                    PlayerInfo p = PokerPreGame.receivePlayerInRoomInfo(input, output);
                     System.out.printf(
                         "Event PLAYER_JOINED! Player %s with ID %d has joined the game!\n", 
                         p.name, 

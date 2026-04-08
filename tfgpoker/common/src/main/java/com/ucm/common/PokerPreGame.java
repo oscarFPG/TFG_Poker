@@ -6,12 +6,12 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 
-public class PokerGame {
+public class PokerPreGame {
 
     public static final String LOCAL_HOST = "localhost"; 
 
 
-    private PokerGame() {}
+    private PokerPreGame() {}
 
 
     public static Socket connect(final String serverIP) throws IOException {

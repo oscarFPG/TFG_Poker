@@ -14,8 +14,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import com.ucm.server.FakePlayer;
-import com.ucm.server.exceptions.OnlyOnePlayerLeftException;
-import com.ucm.server.gameobjects.PlayerRole;
+import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
+import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.middleclasses.PlayerEvaluation;
 
 

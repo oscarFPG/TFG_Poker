@@ -8,9 +8,9 @@ import java.io.InputStreamReader;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.Suit;
 import com.ucm.server.ServerMain;
-import com.ucm.server.gameobjects.Card;
-import com.ucm.server.gameobjects.Suit;
 import com.ucm.server.interfaces.IPokerPlayer;
 import com.ucm.server.middleclasses.HandInfo;
 import com.ucm.server.middleclasses.PlayerEvaluation;

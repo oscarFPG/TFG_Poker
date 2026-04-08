@@ -1,7 +1,7 @@
 package com.ucm.server.interfaces;
 
-import com.ucm.server.gameobjects.Card;
-import com.ucm.server.gameobjects.PlayerRole;
+import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.PlayerRole;
 
 
 public interface IPokerPlayer extends IPokerActions, IPokerNotification {

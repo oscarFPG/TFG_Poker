@@ -1,8 +1,8 @@
 package com.ucm.server.players;
 
+import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.gameobjects.BotLLM;
-import com.ucm.server.gameobjects.Card;
-import com.ucm.server.gameobjects.PlayerRole;
 
 public class GeminiLLM extends BotLLM {
 

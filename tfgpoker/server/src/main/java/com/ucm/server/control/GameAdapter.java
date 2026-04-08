@@ -1,9 +1,9 @@
 package com.ucm.server.control;
 
 import com.ucm.common.GameType;
-import com.ucm.server.gameobjects.Card;
-import com.ucm.server.gameobjects.PlayerRole;
-import com.ucm.server.gameobjects.Suit;
+import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.PlayerRole;
+import com.ucm.common.gameobjects.Suit;
 
 
 public class GameAdapter {

@@ -1,8 +1,13 @@
-package com.ucm.server.gameobjects;
+package com.ucm.common.gameobjects;
 
+import com.ucm.common.GameType;
 
 public enum Suit {
-    HEARTS('h', 0), DIAMONDS('d', 1), CLUBS('c', 2), SPADES('s', 3);
+    
+    HEARTS('h', GameType.HEARTS), 
+    DIAMONDS('d', GameType.DIAMONDS), 
+    CLUBS('c', GameType.CLUBS), 
+    SPADES('s', GameType.SPADES);
 
     private char _letra;
     private int _indx;
@@ -27,6 +32,26 @@ public enum Suit {
         }
     }
     
+    public static Suit getSuitFromCode(final int code) {
+        
+        switch (code) {
+        case GameType.HEARTS:
+            return Suit.HEARTS;
+    
+        case GameType.DIAMONDS:
+            return Suit.DIAMONDS;
+
+        case GameType.CLUBS:
+            return Suit.CLUBS;
+
+        case GameType.SPADES:
+            return Suit.SPADES;
+
+        default:
+            return null;
+        }
+    }
+
     public char getLetra() {
         return _letra;
     }

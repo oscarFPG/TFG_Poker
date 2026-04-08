@@ -1,4 +1,5 @@
-package com.ucm.server.gameobjects;
+package com.ucm.common.gameobjects;
+
 
 /**
  * Simple class that represents a poker card in the game.
