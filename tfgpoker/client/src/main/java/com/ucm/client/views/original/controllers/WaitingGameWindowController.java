@@ -78,6 +78,17 @@ public class WaitingGameWindowController extends GenericController {
             waitNewPlayersInfo();
         });
         _infoThread.start();
+    
+        _stage.setOnCloseRequest(event -> {
+            System.out.printf("Intentando cerrar!\n");
+            try {
+                _clientInfo.socket.close();
+            }
+            catch (IOException e) {
+                System.out.printf("Cerrando sockets!\n");    
+            }
+            System.out.printf("Cerrado ¿?\n");
+        });
     }
 
     @Override

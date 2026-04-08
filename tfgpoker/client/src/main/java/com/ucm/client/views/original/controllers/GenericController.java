@@ -2,14 +2,17 @@ package com.ucm.client.views.original.controllers;
 
 import com.ucm.client.ClientInfo;
 
+import javafx.stage.Stage;
+
 public abstract class GenericController {
 
     protected MainController _mainController;
-    
+    protected Stage _stage;
     protected ClientInfo _clientInfo;
 
-    public void setMainController(MainController mainController) {
+    public void setMainController(MainController mainController, Stage stage) {
         _mainController = mainController;
+        _stage = stage;
         _clientInfo = ClientInfo.getInstance();
         onViewShown();
     }
