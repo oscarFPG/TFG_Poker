@@ -82,6 +82,7 @@ public class ProfileSecondWindowController extends GenericController {
         catch(Exception e) {
             System.out.printf("Error connecting to the socket: %s\n", e.getMessage());
         }
+        
     }
 
     @FXML

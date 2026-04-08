@@ -17,7 +17,6 @@ public abstract class BotLLM extends Bot {
     }
 
 
-
     public abstract String actionMakePlay(int sb, int bb, int maxBet);
 
     public abstract void notifySmallBlindBet(final int amount);
@@ -33,5 +32,6 @@ public abstract class BotLLM extends Bot {
     public abstract void notifyGameWinner();
     public abstract void notifyGameLoser();
     public abstract void notifyHandEndsByFolds();
+    public abstract void notifyPlayerAction(PlayerRole role, String action, double amount);
     
 }

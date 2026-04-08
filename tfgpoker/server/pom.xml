@@ -46,6 +46,13 @@
             <version>2.25.2</version>
         </dependency>
 
+        <!-- JSON-->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20240303</version>
+        </dependency>
+
         <!-- Jackson to read JSON files -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
