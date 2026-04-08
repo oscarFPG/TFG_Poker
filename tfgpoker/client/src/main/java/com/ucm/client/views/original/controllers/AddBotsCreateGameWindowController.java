@@ -40,13 +40,22 @@ public class AddBotsCreateGameWindowController extends GenericController {
     @FXML
     private Spinner<Integer> spinnerBot2;
 
-        @FXML
+    @FXML
     private Spinner<Integer> spinnerBot3;
 
     @Override
     protected void onViewShown() {
         btnStartAddBots.setDisable(true);
         initializeSpinners();
+        boolean allowBots = _clientInfo.gameConfig._allowBots;
+        spinnerBot1.setDisable(!allowBots);
+        spinnerBot2.setDisable(!allowBots);
+        spinnerBot3.setDisable(!allowBots);
+        if(!allowBots) {
+            valueFactoryBot1.setValue(0);
+            valueFactoryBot2.setValue(0);
+            valueFactoryBot3.setValue(0);
+        }
     }
 
     private void initializeSpinners() {

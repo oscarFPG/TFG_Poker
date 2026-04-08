@@ -73,48 +73,6 @@
                            <children>
                               <HBox alignment="CENTER" prefHeight="310.0" prefWidth="926.0" spacing="30.0">
                                  <children>
-                              <StackPane prefHeight="310.0" prefWidth="234.0">
-                                 <children>
-                                          <VBox alignment="CENTER" prefHeight="310.0" prefWidth="186.0" spacing="4.0" StackPane.alignment="CENTER">
-                                             <children>
-                                          <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="super-bold-general-text-font" text="Constructor Mode" textAlignment="CENTER" wrappingWidth="172.0">
-                                             <font>
-                                                <Font size="30.0" />
-                                             </font>
-                                          </Text>
-                                                <ImageView fitHeight="163.0" fitWidth="192.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../../images/constructorModePro2.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </children>
-                                       <styleClass>
-                                          <String fx:value="semi-oval-pane" />
-                                          <String fx:value="container-colors" />
-                                          <String fx:value="border-neon-effect-purple" />
-                                       </styleClass>
-                                          </VBox>
-                                    <Button alignment="CENTER" mnemonicParsing="false" prefWidth="48.0" textAlignment="CENTER" StackPane.alignment="TOP_RIGHT">
-                                       <graphic>
-                                          <ImageView fitHeight="34.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../../images/iconoInformacionTarjetasModo.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                       <opaqueInsets>
-                                          <Insets />
-                                       </opaqueInsets>
-                                       <StackPane.margin>
-                                          <Insets right="-5.0" top="-5.0" />
-                                       </StackPane.margin>
-                                       <styleClass>
-                                          <String fx:value="icon-colors" />
-                                          <String fx:value="round-icon" />
-                                       </styleClass>
-                                    </Button>
-                                 </children>
-                              </StackPane>
                               <StackPane id="cardInfo" fx:id="cardInfo" prefHeight="310.0" prefWidth="234.0">
                                  <children>
 
@@ -155,48 +113,6 @@
                                     </StackPane>
 
                                     <Button id="cardInfoIcon" fx:id="cardInfoIcon" alignment="CENTER" mnemonicParsing="false" onAction="#flipCard" prefWidth="48.0" textAlignment="CENTER" StackPane.alignment="TOP_RIGHT">
-                                       <graphic>
-                                          <ImageView fitHeight="34.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../../images/iconoInformacionTarjetasModo.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                       <opaqueInsets>
-                                          <Insets />
-                                       </opaqueInsets>
-                                       <styleClass>
-                                          <String fx:value="icon-colors" />
-                                          <String fx:value="round-icon" />
-                                       </styleClass>
-                                       <StackPane.margin>
-                                          <Insets right="-5.0" top="-5.0" />
-                                       </StackPane.margin>
-                                    </Button>
-                                 </children>
-                              </StackPane>
-                              <StackPane prefHeight="310.0" prefWidth="234.0">
-                                 <children>
-                                    <VBox alignment="CENTER" prefHeight="310.0" prefWidth="186.0" spacing="4.0" StackPane.alignment="CENTER">
-                                       <children>
-                                          <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="super-bold-general-text-font" text="Advanced Mode" textAlignment="CENTER" wrappingWidth="172.0">
-                                             <font>
-                                                <Font size="30.0" />
-                                             </font>
-                                          </Text>
-                                          <ImageView fitHeight="196.0" fitWidth="202.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../../images/advancedMode.png" />
-                                             </image>
-                                          </ImageView>
-                                       </children>
-                                       <styleClass>
-                                          <String fx:value="semi-oval-pane" />
-                                          <String fx:value="container-colors" />
-                                          <String fx:value="border-neon-effect-yellow" />
-                                       </styleClass>
-                                    </VBox>
-                                    <Button alignment="CENTER" mnemonicParsing="false" prefWidth="48.0" textAlignment="CENTER" StackPane.alignment="TOP_RIGHT">
                                        <graphic>
                                           <ImageView fitHeight="34.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true">
                                              <image>

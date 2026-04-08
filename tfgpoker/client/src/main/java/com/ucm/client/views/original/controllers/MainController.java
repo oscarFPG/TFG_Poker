@@ -104,5 +104,4 @@ public class MainController {
         statusController.stateJoinGame();
         updateView();
     }
-
 }

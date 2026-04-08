@@ -15,9 +15,10 @@ public abstract class GenericController {
     }
 
     public void next() {
+        onNextEvent();
         _mainController.next();
         _mainController.updateView();
-        onNextEvent();
+  
     }
 
     public void back() {
@@ -33,7 +34,7 @@ public abstract class GenericController {
     protected void chooseJoinGame() {
         _mainController.chooseJoinGame();
     }
-
+    
     protected void onViewShown() {}
 
     public abstract void onNextEvent();
