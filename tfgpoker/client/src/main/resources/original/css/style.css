@@ -351,6 +351,30 @@
     -fx-border-width: 2; 
 }
 
+.container-gradiant-colors-off {
+    -fx-background-color: radial-gradient(
+        center 50% 50%, radius 60%, 
+        repeat, 
+        #35353a 0%, 
+        #16161b 25.8%, 
+        #474755 74.5%, 
+        #0a0a0d 94.8%, 
+        #2e2e3b 99.5%, 
+        #08080a 100%
+    );
+    
+    -fx-border-color: linear-gradient(to top,
+        #3a3a40 0%,
+        #2a2a30 50%,
+        #2a2a30 50%,
+        #3a3a40 100%
+    );
+
+    -fx-background-insets: 0;
+    -fx-border-width: 2;
+    -fx-opacity: 0.8;
+}
+
 .accordion .titled-pane > .title {
     -fx-background-color: linear-gradient(#5a007a, #2b0052);
     -fx-border-color: #DC8CFE;

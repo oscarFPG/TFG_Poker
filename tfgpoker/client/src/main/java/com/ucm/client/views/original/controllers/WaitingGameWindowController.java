@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import javax.script.Bindings;
+
 import com.ucm.client.ClientInfo;
 import com.ucm.common.GameType;
 import com.ucm.common.PlayerInfo;
@@ -14,13 +16,13 @@ import com.ucm.common.PokerPreGame;
 import com.ucm.common.SocketUtils;
 
 import javafx.application.Platform;
-import javafx.beans.Observable;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Circle;
+
 
 
 public class WaitingGameWindowController extends GenericController {
@@ -33,6 +35,33 @@ public class WaitingGameWindowController extends GenericController {
 
     @FXML
     private Label roomIdPlaceholder;
+
+    @FXML
+    private StackPane pokerPlayer0;
+
+    @FXML
+    private StackPane pokerPlayer1;
+
+    @FXML
+    private StackPane pokerPlayer2;
+
+    @FXML
+    private StackPane pokerPlayer3;
+
+    @FXML
+    private StackPane pokerPlayer4;
+
+    @FXML
+    private StackPane pokerPlayer5;
+
+    @FXML
+    private StackPane pokerPlayer6;
+
+    @FXML
+    private StackPane pokerPlayer7;
+
+    @FXML
+    private StackPane pokerPlayer8;
 
     // Always the client position
     @FXML
@@ -85,6 +114,7 @@ public class WaitingGameWindowController extends GenericController {
 
         playerName0.setText( _clientInfo.name );
         playerMoney0.setText( String.valueOf( _clientInfo.gameConfig._initialMoney ) );
+        pokerPlayer0.setOpacity( 1 );
 
         roomNamePlaceholder.setText( _clientInfo.gameConfig._roomName );
         roomIdPlaceholder.setText( String.valueOf( _clientInfo.gameConfig._roomId ) );
@@ -120,7 +150,9 @@ public class WaitingGameWindowController extends GenericController {
 
             Label nameLabel = getNameLabelByPosition(i);
             Label moneyLabel = getMoneyLabelByPosition(i);
+            StackPane playerStackPane = getPlayerStackPaneByPosition(i);
 
+            playerStackPane.setOpacity( 0.6 );
             nameLabel.setText("");
             moneyLabel.setText("");
         }
@@ -182,6 +214,21 @@ public class WaitingGameWindowController extends GenericController {
         }
     }
 
+    private StackPane getPlayerStackPaneByPosition(final int position) {
+        switch(position) {
+            case 0: return pokerPlayer0;
+            case 1: return pokerPlayer1;
+            case 2: return pokerPlayer2;
+            case 3: return pokerPlayer3;
+            case 4: return pokerPlayer4;
+            case 5: return pokerPlayer5;
+            case 6: return pokerPlayer6;
+            case 7: return pokerPlayer7;
+            case 8: return pokerPlayer8;
+            default: throw new IllegalArgumentException("Invalid player position");
+        }
+    }
+
     private Label getNameLabelByPosition(final int position) {
         switch(position) {
             case 0: return playerName0;
@@ -233,10 +280,12 @@ public class WaitingGameWindowController extends GenericController {
 
             Label nameLabel = getNameLabelByPosition(beforePosition);
             Label moneyLabel = getMoneyLabelByPosition(beforePosition);
+            StackPane playerStackPane = getPlayerStackPaneByPosition(beforePosition);
 
             Platform.runLater(() -> {
                 nameLabel.setText(p.name);
                 moneyLabel.setText(String.valueOf(_clientInfo.gameConfig._initialMoney));
+                playerStackPane.setOpacity( 1 );
             });
 
             ++beforePosition;
@@ -250,10 +299,12 @@ public class WaitingGameWindowController extends GenericController {
 
             Label nameLabel = getNameLabelByPosition(nextPosition);
             Label moneyLabel = getMoneyLabelByPosition(nextPosition);
+            StackPane playerStackPane = getPlayerStackPaneByPosition(nextPosition);
 
             Platform.runLater(() -> {
                 nameLabel.setText(p.name);
                 moneyLabel.setText(String.valueOf(_clientInfo.gameConfig._initialMoney));
+                playerStackPane.setOpacity( 1 );
             });
 
             --nextPosition;
