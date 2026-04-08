@@ -1,5 +1,6 @@
 package com.ucm.server.gameobjects;
 
+import com.ucm.common.gameobjects.PlayerRole;
 
 public abstract class BotLLM extends Bot {
 

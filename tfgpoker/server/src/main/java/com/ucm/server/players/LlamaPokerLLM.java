@@ -12,9 +12,11 @@ import java.util.regex.Pattern;
 
 import org.json.JSONObject;
 
+import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.gameobjects.BotLLM;
-import com.ucm.server.gameobjects.Card;
-import com.ucm.server.gameobjects.PlayerRole;
+
+
 
 public class LlamaPokerLLM extends BotLLM {
 

@@ -1,12 +1,15 @@
 package com.ucm.server.logic;
-import com.ucm.server.gameobjects.Card;
-import com.ucm.server.gameobjects.PlayerRole;
-import com.ucm.server.gameobjects.Suit;
+
+
+import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.PlayerRole;
+import com.ucm.common.gameobjects.Suit;
 import com.ucm.server.players.LlamaPokerLLM;
+
 
 public class TestLLamaBot {
 
-        public static void main(String[] args) {
+    public static void main(String[] args) {
 
         LlamaPokerLLM bot = new LlamaPokerLLM(1, 100);
 
