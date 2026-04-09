@@ -1,6 +1,7 @@
 package com.ucm.server.commands;
 
 
+import com.ucm.common.GameType;
 import com.ucm.server.interfaces.IPokerActions;
 import com.ucm.server.middleclasses.CommandResult;
 
@@ -65,12 +66,12 @@ public class AllInCommand extends Command {
 
     @Override
     public String getCommandFormat() {
-        return "allin";
+        return GameType.ALL_IN_ACTION_FULL;
     }
 
     @Override
     public String getCommandFormatShortcut() {
-        return "a";
+        return GameType.ALL_IN_ACTION_SHORTCUT;
     }
 
 }

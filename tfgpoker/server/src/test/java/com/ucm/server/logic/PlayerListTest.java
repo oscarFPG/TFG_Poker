@@ -14,8 +14,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import com.ucm.server.FakePlayer;
-import com.ucm.server.exceptions.OnlyOnePlayerLeftException;
-import com.ucm.server.gameobjects.PlayerRole;
+import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
+import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.middleclasses.PlayerEvaluation;
 
 
@@ -23,104 +23,19 @@ public class PlayerListTest {
  
     private static final int INITIAL_MONEY = 1000;
 
-    private static final List<PlayerRole> _rolePositions = new ArrayList<>(
-        List.of(
-            PlayerRole.DEALER,
-            PlayerRole.SMALL_BLIND,
-            PlayerRole.BIG_BLIND,
-            PlayerRole.UNDER_THE_GUN,
-            PlayerRole.MIDDLE_POSITION,
-            PlayerRole.CUT_OFF,
-            PlayerRole.NO_ROLE,
-            PlayerRole.NO_ROLE,
-            PlayerRole.NO_ROLE
-        )
-    );
-
     static Stream<Arguments> playerRoleProvider() {
         return Stream.of(
-            Arguments.of(2, 
-                List.of(
-                    PlayerRole.SMALL_BLIND, 
-                    PlayerRole.BIG_BLIND
-                )
-            ),
-            Arguments.of(3, 
-                List.of(
-                    PlayerRole.DEALER,
-                    PlayerRole.SMALL_BLIND, 
-                    PlayerRole.BIG_BLIND
-                )
-            ),
-            Arguments.of(4, 
-                List.of(
-                    PlayerRole.DEALER, 
-                    PlayerRole.SMALL_BLIND, 
-                    PlayerRole.BIG_BLIND,
-                    PlayerRole.UNDER_THE_GUN
-                )
-            ),
-            Arguments.of(5, 
-                List.of(
-                    PlayerRole.DEALER, 
-                    PlayerRole.SMALL_BLIND, 
-                    PlayerRole.BIG_BLIND,
-                    PlayerRole.UNDER_THE_GUN,
-                    PlayerRole.MIDDLE_POSITION
-                )
-            ),
-            Arguments.of(6, 
-                List.of(
-                    PlayerRole.DEALER, 
-                    PlayerRole.SMALL_BLIND, 
-                    PlayerRole.BIG_BLIND,
-                    PlayerRole.UNDER_THE_GUN,
-                    PlayerRole.MIDDLE_POSITION,
-                    PlayerRole.CUT_OFF
-                )
-            ),
-            Arguments.of(7, 
-                List.of(
-                    PlayerRole.DEALER, 
-                    PlayerRole.SMALL_BLIND, 
-                    PlayerRole.BIG_BLIND,
-                    PlayerRole.UNDER_THE_GUN,
-                    PlayerRole.MIDDLE_POSITION,
-                    PlayerRole.CUT_OFF,
-                    PlayerRole.NO_ROLE
-                )
-            ),
-            Arguments.of(8, 
-                List.of(
-                    PlayerRole.DEALER, 
-                    PlayerRole.SMALL_BLIND, 
-                    PlayerRole.BIG_BLIND,
-                    PlayerRole.UNDER_THE_GUN,
-                    PlayerRole.MIDDLE_POSITION,
-                    PlayerRole.CUT_OFF,
-                    PlayerRole.NO_ROLE,
-                    PlayerRole.NO_ROLE
-                )
-            ),
-            Arguments.of(9, 
-                List.of(
-                    PlayerRole.DEALER, 
-                    PlayerRole.SMALL_BLIND, 
-                    PlayerRole.BIG_BLIND,
-                    PlayerRole.UNDER_THE_GUN,
-                    PlayerRole.MIDDLE_POSITION,
-                    PlayerRole.CUT_OFF,
-                    PlayerRole.NO_ROLE,
-                    PlayerRole.NO_ROLE,
-                    PlayerRole.NO_ROLE
-                )
-            )
+            Arguments.of(2, PlayerRole.getRolesDistribution(2) ),
+            Arguments.of(3, PlayerRole.getRolesDistribution(3) ),
+            Arguments.of(4, PlayerRole.getRolesDistribution(4) ),
+            Arguments.of(5, PlayerRole.getRolesDistribution(5) ),
+            Arguments.of(6, PlayerRole.getRolesDistribution(6) ),
+            Arguments.of(7, PlayerRole.getRolesDistribution(7) ),
+            Arguments.of(8, PlayerRole.getRolesDistribution(8) ),
+            Arguments.of(9, PlayerRole.getRolesDistribution(9) )
         );
     }
 
-    private List<PlayerRole> getSubListWithSize(final int size) {
-        return _rolePositions.subList(0, size);
-    }
 
     private List<FakePlayer> getPlayerSubsetWithSize(final int size) {
         
@@ -129,6 +44,10 @@ public class PlayerListTest {
             players.add( new FakePlayer(1, INITIAL_MONEY, 0) );
 
         return players;
+    }
+
+    private List<PlayerRole> getPlayerRoleDistributionWithSize(final int size) {
+        return PlayerRole.getRolesDistribution(size);
     }
 
     @ParameterizedTest
@@ -178,7 +97,7 @@ public class PlayerListTest {
     void roleAssigmentsOnPassTurn(int numPlayers) {
 
         List<FakePlayer> players = getPlayerSubsetWithSize(numPlayers);
-        List<PlayerRole> roles = getSubListWithSize(numPlayers);
+        List<PlayerRole> roles = getPlayerRoleDistributionWithSize(numPlayers);
         PlayerList playerList = new PlayerList(numPlayers);
         for(FakePlayer p : players)
             playerList.addPlayer(p);

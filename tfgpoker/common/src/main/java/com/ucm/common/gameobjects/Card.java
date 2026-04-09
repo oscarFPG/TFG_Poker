@@ -1,4 +1,6 @@
-package com.ucm.server.gameobjects;
+package com.ucm.common.gameobjects;
+
+import com.ucm.common.GameType;
 
 /**
  * Simple class that represents a poker card in the game.
@@ -175,4 +177,98 @@ public class Card {
     public boolean getAvailable() {
         return _available;
     }
+
+    public static int getCardValueFromCode(int valueCode) {
+
+        switch (valueCode) {
+        case GameType.NUMBER_ACE:
+            return 1;
+
+        case GameType.NUMBER_TWO:
+            return 2;
+
+        case GameType.NUMBER_THREE:
+            return 3;
+
+        case GameType.NUMBER_FOUR:
+            return 4;
+
+        case GameType.NUMBER_FIVE:
+            return 5;
+
+        case GameType.NUMBER_SIX:
+            return 6;
+
+        case GameType.NUMBER_SEVEN:
+            return 7;
+
+        case GameType.NUMBER_EIGHT:
+            return 8;
+
+        case GameType.NUMBER_NINE:
+            return 9;
+
+        case GameType.NUMBER_TEN:
+            return 10;
+
+        case GameType.NUMBER_J:
+            return 11;
+
+        case GameType.NUMBER_Q:
+            return 12;
+
+        case GameType.NUMBER_K:
+            return 13;
+
+        default:
+            return -1;
+        }
+    }
+
+    public int getCardValueNetworkCode() {
+        switch (_number) {
+        case 1:
+            return GameType.NUMBER_ACE;
+
+        case 2:
+            return GameType.NUMBER_TWO;
+        
+        case 3:
+            return GameType.NUMBER_THREE;
+
+        case 4:
+            return GameType.NUMBER_FOUR;
+
+        case 5: 
+            return GameType.NUMBER_FIVE;
+
+        case 6:
+            return GameType.NUMBER_SIX;
+
+        case 7:
+            return GameType.NUMBER_SEVEN;
+
+        case 8:
+            return GameType.NUMBER_EIGHT;
+        
+        case 9:
+            return GameType.NUMBER_NINE;
+
+        case 10:
+            return GameType.NUMBER_TEN;
+
+        case 11:
+            return GameType.NUMBER_J;
+
+        case 12:
+            return GameType.NUMBER_Q;
+
+        case 13:
+            return GameType.NUMBER_K;
+
+        default:
+            return -1;
+        }
+    }
+
 }

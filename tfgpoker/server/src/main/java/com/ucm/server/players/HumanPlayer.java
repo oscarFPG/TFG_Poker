@@ -7,10 +7,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ucm.common.SocketUtils;
+import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.control.GameAdapter;
-import com.ucm.server.gameobjects.Card;
 import com.ucm.server.gameobjects.Player;
-import com.ucm.server.gameobjects.PlayerRole;
 import com.ucm.server.logic.Game;
 
 
@@ -83,7 +83,7 @@ public class HumanPlayer extends Player {
     public void notifyPlayerRole(final PlayerRole role) {
         
         try {
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerRoleToCode(role));
+            SocketUtils.sendInteger(_socket.getOutputStream(), role.getNetworkCode());
         }
         catch (IOException e) {
             log.error("Receiving the role for {} player: {}", _name, e.getMessage());
@@ -94,8 +94,8 @@ public class HumanPlayer extends Player {
     public void notifyPlayerCard(final Card c) {
         
         try {
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.cardValueToCode(c));
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.cardSuitToCode(c));
+            SocketUtils.sendInteger(_socket.getOutputStream(), c.getCardValueNetworkCode());
+            SocketUtils.sendInteger(_socket.getOutputStream(), c.getSuit().getNetworkCode());
         }
         catch (IOException e) {
             log.error("Giving the card {} to player {}: {}", c.toString(), _name, e.getMessage());
@@ -106,8 +106,8 @@ public class HumanPlayer extends Player {
     public void notifyTableCard(final Card c) {
         
         try {
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.cardValueToCode(c));
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.cardSuitToCode(c));
+            SocketUtils.sendInteger(_socket.getOutputStream(), c.getCardValueNetworkCode());
+            SocketUtils.sendInteger(_socket.getOutputStream(), c.getSuit().getNetworkCode());
         }
         catch(IOException e) {
             log.error("Trying to send a table card to {}: {}", _name,  e.getMessage());

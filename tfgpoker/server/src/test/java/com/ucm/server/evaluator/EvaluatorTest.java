@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.ucm.server.gameobjects.Card;
-import com.ucm.server.gameobjects.Suit;
+import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.Suit;
 
 
 public class EvaluatorTest {

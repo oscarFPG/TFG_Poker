@@ -36,12 +36,12 @@
                         </ImageView>
                         <VBox prefHeight="154.0" prefWidth="144.0" spacing="10.0">
                            <children>
-                              <Label alignment="CENTER" prefHeight="40.0" styleClass="username-label" text="Label">
+                              <Label fx:id="usernamePlaceHolder" alignment="CENTER" prefHeight="40.0" styleClass="username-label" text="username">
                                  <padding>
                                     <Insets left="5.0" right="5.0" />
                                  </padding>
                               </Label>
-                              <HBox alignment="CENTER_LEFT" prefHeight="33.0" prefWidth="98.0">
+                              <HBox alignment="CENTER_LEFT" mouseTransparent="true" prefHeight="33.0" prefWidth="98.0">
                                  <children>
                                     <ImageView fitHeight="33.0" fitWidth="56.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -206,7 +206,7 @@
                               </HBox>
                               <HBox alignment="CENTER" prefHeight="119.0" prefWidth="690.0" spacing="8.0">
                                  <children>
-                                    <Button prefHeight="74.0" prefWidth="86.0" text="FOLD" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                                    <Button fx:id="btnFold" onAction="#foldAction" prefHeight="74.0" prefWidth="86.0" text="FOLD" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                                        <styleClass>
                                           <String fx:value="semi-oval-pane" />
                                           <String fx:value="slider-gradiant-colors" />
@@ -215,7 +215,7 @@
                                           <Font name="System Bold" size="13.0" />
                                        </font>
                                     </Button>
-                                    <Button prefHeight="74.0" prefWidth="86.0" text="CALL" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                                    <Button fx:id="btnCall" onAction="#callAction" prefHeight="74.0" prefWidth="86.0" text="CALL" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                                        <styleClass>
                                           <String fx:value="semi-oval-pane" />
                                           <String fx:value="slider-gradiant-colors" />
@@ -224,7 +224,7 @@
                                           <Font name="System Bold" size="13.0" />
                                        </font>
                                     </Button>
-                                    <Button prefHeight="74.0" prefWidth="86.0" text="RAISE" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                                    <Button fx:id="btnRaise" onAction="#raiseAction" prefHeight="74.0" prefWidth="86.0" text="RAISE" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                                        <styleClass>
                                           <String fx:value="semi-oval-pane" />
                                           <String fx:value="slider-gradiant-colors" />
@@ -278,7 +278,7 @@
                         <Insets />
                      </StackPane.margin>
                   </HBox>
-                  <HBox alignment="CENTER_LEFT" prefHeight="93.0" prefWidth="633.0" StackPane.alignment="CENTER">
+                  <HBox alignment="CENTER_LEFT" mouseTransparent="true" prefHeight="93.0" prefWidth="633.0" StackPane.alignment="CENTER">
                      <children>
                         <ImageView fitHeight="85.0" fitWidth="148.0" pickOnBounds="true" preserveRatio="true">
                            <image>

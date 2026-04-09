@@ -1,7 +1,7 @@
 package com.ucm.server.control;
 
 
-import com.ucm.server.exceptions.OnlyOnePlayerLeftException;
+import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.server.logic.Game;
 import com.ucm.common.ClientStruct;
 import com.ucm.server.players.HumanPlayer;

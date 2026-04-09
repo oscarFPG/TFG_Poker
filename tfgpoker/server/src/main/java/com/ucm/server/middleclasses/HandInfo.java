@@ -1,6 +1,6 @@
 package com.ucm.server.middleclasses;
 
-import com.ucm.server.gameobjects.Card;
+import com.ucm.common.gameobjects.Card;
 
 /**
  * Represents the information associated with a player's hand.

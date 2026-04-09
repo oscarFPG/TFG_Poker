@@ -8,13 +8,13 @@ import javafx.scene.Scene;
 
 public class MainController {
     
-    private Stage stage;
+    private Stage _stage;
     private StatusController statusController;
     private static final String path = "/original/fxml/";
 
     public MainController(Stage stage) {
-        this.stage = stage;
-        this.statusController = new StatusController();
+        _stage = stage;
+        statusController = new StatusController();
     }
 
 
@@ -76,10 +76,11 @@ public class MainController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
             Scene scene = new Scene(loader.load());
+            _stage.setScene(scene);
+
             GenericController controller = loader.getController();
-            controller.setMainController(this);
-            stage.setScene(scene);
-            stage.show();
+            controller.setMainController(this, _stage);
+            _stage.show();
         } 
         catch (Exception e) {
             System.out.printf("Error trying to load view: %s\n", e.getMessage());

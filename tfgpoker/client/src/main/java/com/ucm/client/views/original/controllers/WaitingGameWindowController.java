@@ -3,21 +3,26 @@ package com.ucm.client.views.original.controllers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
+
+import javax.script.Bindings;
 
 import com.ucm.client.ClientInfo;
 import com.ucm.common.GameType;
 import com.ucm.common.PlayerInfo;
-import com.ucm.common.PokerGame;
+import com.ucm.common.PokerPreGame;
 import com.ucm.common.SocketUtils;
 
 import javafx.application.Platform;
-import javafx.beans.Observable;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Circle;
+
 
 
 public class WaitingGameWindowController extends GenericController {
@@ -25,6 +30,40 @@ public class WaitingGameWindowController extends GenericController {
     @FXML
     private Button startButton;
 
+    @FXML
+    private Label roomNamePlaceholder;
+
+    @FXML
+    private Label roomIdPlaceholder;
+
+    @FXML
+    private StackPane pokerPlayer0;
+
+    @FXML
+    private StackPane pokerPlayer1;
+
+    @FXML
+    private StackPane pokerPlayer2;
+
+    @FXML
+    private StackPane pokerPlayer3;
+
+    @FXML
+    private StackPane pokerPlayer4;
+
+    @FXML
+    private StackPane pokerPlayer5;
+
+    @FXML
+    private StackPane pokerPlayer6;
+
+    @FXML
+    private StackPane pokerPlayer7;
+
+    @FXML
+    private StackPane pokerPlayer8;
+
+    // Always the client position
     @FXML
     private Label playerName0, playerMoney0;
 
@@ -53,6 +92,9 @@ public class WaitingGameWindowController extends GenericController {
     private Label playerName8, playerMoney8;
 
 
+    private Thread _infoThread;
+
+
     @FXML
     private void startGame() {
         
@@ -60,31 +102,61 @@ public class WaitingGameWindowController extends GenericController {
             SocketUtils.sendInteger(_clientInfo.socket.getOutputStream(), GameType.EVENT_GAME_STARTS);
         }
         catch(IOException e) {
-
-        } 
+            System.out.printf("Error sending EVENT_GAME_STARTS to server: %s\n", e.getMessage());
+        }
     }
 
 
     @Override
     protected void onViewShown() {
 
+        clearAllLabels();
+
         playerName0.setText( _clientInfo.name );
         playerMoney0.setText( String.valueOf( _clientInfo.gameConfig._initialMoney ) );
+        pokerPlayer0.setOpacity( 1 );
 
-        Thread infoThread = new Thread(() -> {
+        roomNamePlaceholder.setText( _clientInfo.gameConfig._roomName );
+        roomIdPlaceholder.setText( String.valueOf( _clientInfo.gameConfig._roomId ) );
+
+        _infoThread = new Thread(() -> {
             waitNewPlayersInfo();
         });
-        infoThread.start();
+        _infoThread.start();
+    
+        _stage.setOnCloseRequest(event -> {
+
+            System.out.printf("Intentando cerrar!\n");
+            try {
+                _clientInfo.socket.close();
+            }
+            catch (IOException e) {
+                System.out.printf("Cerrando sockets!\n");    
+            }
+            System.out.printf("Cerrado ¿?\n");
+        });
+
     }
 
     @Override
-    public void onNextEvent() {
-        
-    }
+    public void onNextEvent() {}
 
     @Override
-    public void onBackEvent() {
-       
+    public void onBackEvent() {}
+
+
+    private void clearAllLabels() {
+
+        for(int i = 0; i < 9; i++) {
+
+            Label nameLabel = getNameLabelByPosition(i);
+            Label moneyLabel = getMoneyLabelByPosition(i);
+            StackPane playerStackPane = getPlayerStackPaneByPosition(i);
+
+            playerStackPane.setOpacity( 0.6 );
+            nameLabel.setText("");
+            moneyLabel.setText("");
+        }
     }
 
 
@@ -115,16 +187,9 @@ public class WaitingGameWindowController extends GenericController {
                 int event = SocketUtils.receiveInt(input);
                 if(event == GameType.EVENT_PLAYER_JOINED) {
 
-                    PlayerInfo p = PokerGame.receivePlayerInRoomInfo(input, output);
-                    System.out.printf(
-                        "Event PLAYER_JOINED! Player %s with ID %d has joined the game!\n", 
-                        p.name, 
-                        p.id
-                    );
-
-                    Platform.runLater(() -> {
-                        showPlayer(p.id, p.name);
-                    });
+                    List<PlayerInfo> playerPositions = PokerPreGame.receivePlayerListWaiting(input, output);
+                    showPlayers(playerPositions);
+                    
                 }
                 else if(event == GameType.CONFIRMATION_GAME_STARTS) {
                     System.out.printf("Event GAME_STARTS!\n");
@@ -141,54 +206,112 @@ public class WaitingGameWindowController extends GenericController {
 
             SocketUtils.sendInteger(output, GameType.CONFIRMATION_PLAYER_STARTS);
 
-            Platform.runLater(() -> {
-                next();
-            });
+            next();
         }
-        catch(Exception e) {
+        catch(IOException e) {
             System.out.printf("Error: %s\n", e.getMessage());
+        }
+
+        System.out.printf("Finished waiting for players info!\n");
+    }
+
+    private StackPane getPlayerStackPaneByPosition(final int position) {
+        switch(position) {
+            case 0: return pokerPlayer0;
+            case 1: return pokerPlayer1;
+            case 2: return pokerPlayer2;
+            case 3: return pokerPlayer3;
+            case 4: return pokerPlayer4;
+            case 5: return pokerPlayer5;
+            case 6: return pokerPlayer6;
+            case 7: return pokerPlayer7;
+            case 8: return pokerPlayer8;
+            default: throw new IllegalArgumentException("Invalid player position");
         }
     }
 
-    private void showPlayer(final int ID, final String name) {
+    private Label getNameLabelByPosition(final int position) {
+        switch(position) {
+            case 0: return playerName0;
+            case 1: return playerName1;
+            case 2: return playerName2;
+            case 3: return playerName3;
+            case 4: return playerName4;
+            case 5: return playerName5;
+            case 6: return playerName6;
+            case 7: return playerName7;
+            case 8: return playerName8;
+            default: throw new IllegalArgumentException("Invalid player position");
+        }
+    }
 
-        if(ID == 0) {
-            playerName0.setText(name);
-            playerMoney0.setText( String.valueOf( _clientInfo.gameConfig._initialMoney ) );
+    private Label getMoneyLabelByPosition(final int position) {
+        switch(position) {
+            case 0: return playerMoney0;
+            case 1: return playerMoney1;
+            case 2: return playerMoney2;
+            case 3: return playerMoney3;
+            case 4: return playerMoney4;
+            case 5: return playerMoney5;
+            case 6: return playerMoney6;
+            case 7: return playerMoney7;
+            case 8: return playerMoney8;
+            default: throw new IllegalArgumentException("Invalid player position");
         }
-        else if(ID == 1) {
-            playerName1.setText(name);
-            playerMoney1.setText( String.valueOf( _clientInfo.gameConfig._initialMoney ) );
-        }
-        else if(ID == 2) {
-            playerName2.setText(name);
-            playerMoney2.setText( String.valueOf( _clientInfo.gameConfig._initialMoney ) );
-        }
-        else if(ID == 3) {
-            playerName3.setText(name);
-            playerMoney3.setText( String.valueOf( _clientInfo.gameConfig._initialMoney ) );
-        }
-        else if(ID == 4) {
-            playerName4.setText(name);
-            playerMoney4.setText( String.valueOf( _clientInfo.gameConfig._initialMoney ) );
-        }
-        else if(ID == 5) {
-            playerName5.setText(name);
-            playerMoney5.setText( String.valueOf( _clientInfo.gameConfig._initialMoney ) );
-        }
-        else if(ID == 6) {
-            playerName6.setText(name);
-            playerMoney6.setText( String.valueOf( _clientInfo.gameConfig._initialMoney ) );
-        }
-        else if(ID == 7) {
-            playerName7.setText(name);
-            playerMoney7.setText( String.valueOf( _clientInfo.gameConfig._initialMoney ) );
-        }
-        else if(ID == 8) {
-            playerName8.setText(name);
-            playerMoney8.setText( String.valueOf( _clientInfo.gameConfig._initialMoney ) );
+    }
+
+    private void showPlayers(final List<PlayerInfo> players) {
+
+        int myID = _clientInfo.id;
+        int myIndex = IntStream.range(0, players.size())
+                        .filter(i -> players.get(i).id == myID)
+                        .findFirst()
+                        .orElse(-1);
+
+        if(myIndex == -1){
+            System.out.printf("We are not in the list! Something is wrong...\n");
+            return;
         }
 
+        // Show players behind me(in the list) : position 1, 2, 3, ...
+        int beforePosition = 1;
+        for(int i = myIndex - 1; 0 <= i; i--) {
+
+            PlayerInfo p = players.get(i);
+
+            Label nameLabel = getNameLabelByPosition(beforePosition);
+            Label moneyLabel = getMoneyLabelByPosition(beforePosition);
+            StackPane playerStackPane = getPlayerStackPaneByPosition(beforePosition);
+
+            Platform.runLater(() -> {
+                nameLabel.setText(p.name);
+                moneyLabel.setText(String.valueOf(_clientInfo.gameConfig._initialMoney));
+                playerStackPane.setOpacity( 1 );
+            });
+
+            ++beforePosition;
+        }
+
+        // Show players ahead of me(in the list) : position 8, 7, 6, ...
+        int nextPosition = 8;
+        for(int i = myIndex + 1; i < players.size(); i++) {
+
+            PlayerInfo p = players.get(i);
+
+            Label nameLabel = getNameLabelByPosition(nextPosition);
+            Label moneyLabel = getMoneyLabelByPosition(nextPosition);
+            StackPane playerStackPane = getPlayerStackPaneByPosition(nextPosition);
+
+            Platform.runLater(() -> {
+                nameLabel.setText(p.name);
+                moneyLabel.setText(String.valueOf(_clientInfo.gameConfig._initialMoney));
+                playerStackPane.setOpacity( 1 );
+            });
+
+            --nextPosition;
+        }
+
+        
     }
 
 }

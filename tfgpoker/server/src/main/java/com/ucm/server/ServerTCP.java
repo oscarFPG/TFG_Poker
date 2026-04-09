@@ -34,6 +34,7 @@ public class ServerTCP {
     private ExecutorService _executor;
 
     private List<ClientThread> _roomPlayers;
+    private GameConfig _gameConfig;
 
 
     public ServerTCP(final int port) throws IOException, InterruptedException {
@@ -41,6 +42,7 @@ public class ServerTCP {
         _serverSocket = new ServerSocket(port);
         _executor = Executors.newFixedThreadPool(GameType.MAX_PLAYERS);
         _roomPlayers = Collections.synchronizedList( new ArrayList<>() );
+        _gameConfig = new GameConfig();
 
         log.debug("Server started on port {}", port);
         _serverIP = showServerIP();
@@ -63,14 +65,14 @@ public class ServerTCP {
         return serverIP;
     }
 
-    public List<ClientThread> startPregame(GameConfig config) {
+    public List<ClientThread> startPregame() {
 
         while(!_serverSocket.isClosed()) {
 
             try {
 
                 Socket socket = _serverSocket.accept();
-               _executor.execute( new ClientThread(socket, _roomPlayers, _serverSocket, config) );
+               _executor.execute( new ClientThread(socket, _roomPlayers, _serverSocket, _gameConfig) );
             
                 log.debug("New client connected!");
             }
@@ -81,6 +83,10 @@ public class ServerTCP {
         log.debug("Terminating pregame phase...");
 
         return _roomPlayers;
+    }
+
+    public GameConfig getGameConfigDeepCopy() {
+        return new GameConfig(_gameConfig);
     }
 
     public void startGame(final GameInfo info) {

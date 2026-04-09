@@ -20,6 +20,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class MainWindowController extends GenericController {
@@ -30,10 +31,10 @@ public class MainWindowController extends GenericController {
     @FXML
     private ToggleButton informationIcon;
 
-     @FXML
+    @FXML
     private ToggleButton exitIcon;
 
-     @FXML
+    @FXML
     private Text informationLabel;
 
     @FXML
@@ -215,8 +216,8 @@ public class MainWindowController extends GenericController {
     public void onBackEvent() {}
 
     @Override
-    public void setMainController(MainController mainController) {
-        super.setMainController(mainController);
+    public void setMainController(MainController mainController, Stage stage) {
+        super.setMainController(mainController, stage);
         playerNamePlaceholder.setText(_clientInfo.name);
     }
 

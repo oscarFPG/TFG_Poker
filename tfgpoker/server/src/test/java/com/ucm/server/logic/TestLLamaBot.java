@@ -1,12 +1,15 @@
 package com.ucm.server.logic;
-import com.ucm.server.gameobjects.Card;
-import com.ucm.server.gameobjects.PlayerRole;
-import com.ucm.server.gameobjects.Suit;
+
+
+import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.PlayerRole;
+import com.ucm.common.gameobjects.Suit;
 import com.ucm.server.players.LlamaPokerLLM;
+
 
 public class TestLLamaBot {
 
-        public static void main(String[] args) {
+    public static void main(String[] args) {
 
         LlamaPokerLLM bot = new LlamaPokerLLM(1, 100);
 
@@ -14,7 +17,7 @@ public class TestLLamaBot {
         // ESCENARIO 1 (RAISE)
         // =========================
         
-        bot.notifyPlayerRole(PlayerRole.MIDDLE_POSITION); // HJ
+        bot.notifyPlayerRole(PlayerRole.HIJACK); // HJ
 
         bot.notifyPlayerCard(new Card(11, Suit.CLUBS)); // Jc
         bot.notifyPlayerCard(new Card(10, Suit.CLUBS)); // Tc
@@ -25,17 +28,17 @@ public class TestLLamaBot {
         bot.notifyTableCard(new Card(11, Suit.DIAMONDS)); // Jd
 
         bot.notifySmallBlindBet(1);
-        bot.notifyBigBlindBet(1);
+        bot.notifyBigBlindBet(2);
 
-        bot.notifyPlayerAction(PlayerRole.MIDDLE_POSITION, "raise", 2.0);
+        bot.notifyPlayerAction(PlayerRole.UNDER_THE_GUN, "raise", 2.0);
         bot.notifyPlayerAction(PlayerRole.DEALER, "call", 2.0);
 
-        bot.notifyPlayerAction(PlayerRole.MIDDLE_POSITION, "check", 0);
+        bot.notifyPlayerAction(PlayerRole.UNDER_THE_GUN_1, "check", 0);
         bot.notifyPlayerAction(PlayerRole.DEALER, "bet", 4);
-        bot.notifyPlayerAction(PlayerRole.MIDDLE_POSITION, "raise", 13);
+        bot.notifyPlayerAction(PlayerRole.UNDER_THE_GUN_2, "raise", 13);
         bot.notifyPlayerAction(PlayerRole.DEALER, "call", 13);
 
-        bot.notifyPlayerAction(PlayerRole.MIDDLE_POSITION, "check", 0);
+        bot.notifyPlayerAction(PlayerRole.LOJACK, "check", 0);
         bot.notifyPlayerAction(PlayerRole.DEALER, "bet", 23);
 
         System.out.println("SCENARIO 1: " + bot.actionMakePlay(1, 1, 100));

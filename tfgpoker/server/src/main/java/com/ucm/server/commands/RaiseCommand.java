@@ -4,6 +4,7 @@ package com.ucm.server.commands;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.ucm.common.GameType;
 import com.ucm.server.interfaces.IPokerActions;
 import com.ucm.server.middleclasses.CommandResult;
 
@@ -90,12 +91,12 @@ public class RaiseCommand extends Command {
 
     @Override
     public String getCommandFormat() {
-        return "raise";
+        return GameType.RAISE_ACTION_FULL;
     }
 
     @Override
     public String getCommandFormatShortcut() {
-        return "r";
+        return GameType.RAISE_ACTION_SHORTCUT;
     }
 
 }

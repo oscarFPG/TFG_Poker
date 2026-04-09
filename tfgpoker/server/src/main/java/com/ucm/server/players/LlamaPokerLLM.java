@@ -12,9 +12,11 @@ import java.util.regex.Pattern;
 
 import org.json.JSONObject;
 
+import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.gameobjects.BotLLM;
-import com.ucm.server.gameobjects.Card;
-import com.ucm.server.gameobjects.PlayerRole;
+
+
 
 public class LlamaPokerLLM extends BotLLM {
 
@@ -265,7 +267,10 @@ public class LlamaPokerLLM extends BotLLM {
             case SMALL_BLIND -> "SB";
             case BIG_BLIND -> "BB";
             case UNDER_THE_GUN -> "UTG";
-            case MIDDLE_POSITION -> "HJ";
+            case UNDER_THE_GUN_1 -> "UTG+1";
+            case UNDER_THE_GUN_2 -> "UTG+2";
+            case LOJACK -> "LJ";
+            case HIJACK -> "HJ";
             case CUT_OFF -> "CO";
             default -> "UNKNOWN";
         };

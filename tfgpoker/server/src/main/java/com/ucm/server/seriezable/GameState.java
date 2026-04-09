@@ -3,7 +3,7 @@ package com.ucm.server.seriezable;
 import java.io.Serializable;
 import java.util.List;
 
-import com.ucm.server.gameobjects.Card;
+import com.ucm.common.gameobjects.Card;
 import com.ucm.server.logic.PlayerList;
 
 

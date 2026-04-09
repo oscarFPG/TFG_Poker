@@ -4,6 +4,9 @@ import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.Suit;
 import com.ucm.server.logic.Game;
 
 /**

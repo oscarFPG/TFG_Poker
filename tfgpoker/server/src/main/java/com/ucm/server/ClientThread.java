@@ -6,7 +6,6 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 import com.ucm.common.GameConfig;
 import com.ucm.common.GameType;
 import com.ucm.common.PlayerInfo;
-import com.ucm.common.PokerGame;
+import com.ucm.common.PokerPreGame;
 import com.ucm.common.SocketUtils;
 
 
@@ -34,6 +33,7 @@ public class ClientThread implements Runnable {
 
 
     public ClientThread(Socket socket, List<ClientThread> players, ServerSocket gameSocket, GameConfig config) {
+        _playerID = -1;
         _socket = socket;
         _playerName = null;
         _isHost = false;
@@ -59,11 +59,11 @@ public class ClientThread implements Runnable {
                 switch (request) {
                 case GameType.PETITION_PLAYER_NAME:
                     
-                    String name = PokerGame.receiveName(input, output);
-                    if(PokerGame.checkNameIsTooShort(name)) {
+                    String name = PokerPreGame.receiveName(input, output);
+                    if(PokerPreGame.checkNameIsTooShort(name)) {
                         SocketUtils.sendInteger(output, GameType.ERROR_NAME_TOO_SHORT);
                     }
-                    else if(PokerGame.checkNameIsTooLong(name)) {
+                    else if(PokerPreGame.checkNameIsTooLong(name)) {
                         SocketUtils.sendInteger(output, GameType.ERROR_NAME_TOO_LONG);
                     }
                     else {
@@ -77,26 +77,34 @@ public class ClientThread implements Runnable {
             
                 case GameType.PETITION_CREATE_GAME:
                     
-                    GameConfig config = PokerGame.receiveGameConfig(input, output);
+                    GameConfig config = PokerPreGame.receiveGameConfig(input, output);
                     if(config == null) {
                         SocketUtils.sendInteger(output, GameType.ERROR_GAME_NOT_CREATED);
                         log.error("Configuration was not valid");
                     }
                     else {
-                        SocketUtils.sendInteger(output, GameType.CONFIRMATION_WAITING_GAME);
-                        SocketUtils.sendInteger(output, GameType.CONFIRMATION_HOST_PLAYER);
+
+                        // DO NOT COPY THE CONFIG REFERENCE, IT MUST BE STAY SHARED BETWEEN ALL CLIENT THREADS !!
+                        _gameConfig._roomId = (int)(Math.random() * 10000);
+                        _gameConfig._roomName = config._roomName;
+
+
                         _isHost = true;
                         _playerID = _roomList.size();
                         _roomList.add(this);
-                        _gameConfig = config;
+
+                        SocketUtils.sendInteger(output, GameType.CONFIRMATION_WAITING_GAME);
+                        SocketUtils.sendInteger(output, _gameConfig._roomId);
+                        SocketUtils.sendInteger(output, GameType.CONFIRMATION_HOST_PLAYER);
                         SocketUtils.sendInteger(output, _playerID);
 
                         showPlayersInRoom();
+
                         log.debug("Configuration valid!");
-                        log.debug("Players on the room: {}", _roomList.size());
-                        log.debug("Room configuration: Room name=\'{}\' | Allow bots={}",
-                            config._roomName,
-                            config._allowBots
+                        log.debug("Room {}: Name=[{}], AllowBots=[{}]",
+                            _gameConfig._roomId,
+                            _gameConfig._roomName,
+                            _gameConfig._allowBots
                         );
                     }
 
@@ -105,7 +113,10 @@ public class ClientThread implements Runnable {
                 case GameType.PETITION_JOIN_GAME:
                     
                     if(0 < _roomList.size()) {
+
                         SocketUtils.sendInteger(output, GameType.CONFIRMATION_WAITING_GAME);
+                        PokerPreGame.sendGameConfigToJoinedPlayer(_gameConfig, output);
+
                         SocketUtils.sendInteger(output, GameType.CONFIRMATION_NO_HOST_PLAYER);
                         _playerID = _roomList.size();
                         _roomList.add(this);
@@ -137,8 +148,7 @@ public class ClientThread implements Runnable {
                             for(ClientThread ct : _roomList) {
                                 SocketUtils.sendInteger(ct._socket.getOutputStream(), GameType.CONFIRMATION_GAME_STARTS);
                             }
-                            log.debug("Game starts!");
-                        
+                            log.debug("All players notified of game starts!");
                             
                             _serverSocket.close();
                             log.debug("ServerSocket closed!");
@@ -187,10 +197,12 @@ public class ClientThread implements Runnable {
             synchronized(_roomList) {
 
                 try {
-                    for(ClientThread target : _roomList) {
-                        for(ClientThread ct : _roomList) {
-                            SocketUtils.sendInteger(target._socket.getOutputStream(), GameType.EVENT_PLAYER_JOINED);
-                            PokerGame.sendPlayerInRoomInfo( new PlayerInfo(ct._playerID, ct._playerName), target._socket);
+                    for (ClientThread target : _roomList) {
+
+                        SocketUtils.sendInteger(target._socket.getOutputStream(), GameType.EVENT_PLAYER_JOINED);
+                        SocketUtils.sendInteger(target._socket.getOutputStream(), _roomList.size());
+                        for (ClientThread ct : _roomList) {
+                            PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(ct._playerID, ct._playerName), target._socket);
                         }
                         
                     }

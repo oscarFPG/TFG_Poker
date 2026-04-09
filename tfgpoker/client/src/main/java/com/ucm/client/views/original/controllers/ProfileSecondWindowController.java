@@ -5,7 +5,7 @@ import java.net.Socket;
 
 import com.ucm.client.ClientInfo;
 import com.ucm.common.GameType;
-import com.ucm.common.PokerGame;
+import com.ucm.common.PokerPreGame;
 import com.ucm.common.SocketUtils;
 
 import javafx.application.Platform;
@@ -51,17 +51,17 @@ public class ProfileSecondWindowController extends GenericController {
         String serverIP = ipLabel.getText();
         String name = nameLabel.getText();
 
-        boolean validIP = PokerGame.checkIpValid(serverIP);
+        boolean validIP = PokerPreGame.checkIpValid(serverIP);
         if(!validIP) {
-            serverIP = PokerGame.LOCAL_HOST;
+            serverIP = PokerPreGame.LOCAL_HOST;
         }
 
         _clientInfo.ip = serverIP;
         _clientInfo.name = name;
 
         try {
-            _clientInfo.socket = PokerGame.connect(serverIP);
-            PokerGame.sendName(_clientInfo.name, _clientInfo.socket);
+            _clientInfo.socket = PokerPreGame.connect(serverIP);
+            PokerPreGame.sendName(_clientInfo.name, _clientInfo.socket);
             
             int response = SocketUtils.receiveInt(_clientInfo.socket.getInputStream());
             if(response == GameType.ERROR_NAME_TOO_SHORT) {

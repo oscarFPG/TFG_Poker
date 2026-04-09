@@ -6,10 +6,10 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.commands.Command;
-import com.ucm.server.exceptions.OnlyOnePlayerLeftException;
-import com.ucm.server.gameobjects.Card;
-import com.ucm.server.gameobjects.PlayerRole;
+import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.server.interfaces.IPokerPlayer;
 import com.ucm.server.middleclasses.CommandResult;
 import com.ucm.server.middleclasses.HandInfo;
@@ -99,15 +99,15 @@ public class PlayerList {
 
     public void assignRolesToAllPlayers() {
 
-        int n = activePlayersCounter();
+        int numPlayers = activePlayersCounter();
         Node _current = _first;
 
         // NO HAY DEALER --> SOLO SB Y BB
-        if (n == 0 || n == 1)
+        if (numPlayers == 0 || numPlayers == 1)
             return;
 
 
-        if (n == 2) {
+        if (numPlayers == 2) {
             _current._player.receiveRole(PlayerRole.SMALL_BLIND);
             _current._player.notifyPlayerRole(PlayerRole.SMALL_BLIND);
             log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.SMALL_BLIND.name());
@@ -119,19 +119,7 @@ public class PlayerList {
         }
         else {
 
-            List<PlayerRole> roles = new ArrayList<>(
-                List.of(
-                    PlayerRole.DEALER, 
-                    PlayerRole.SMALL_BLIND, 
-                    PlayerRole.BIG_BLIND,
-                    PlayerRole.UNDER_THE_GUN,
-                    PlayerRole.MIDDLE_POSITION,
-                    PlayerRole.CUT_OFF,
-                    PlayerRole.NO_ROLE,
-                    PlayerRole.NO_ROLE,
-                    PlayerRole.NO_ROLE
-                )
-            );
+            List<PlayerRole> roles = PlayerRole.getRolesDistribution(numPlayers);
 
             PlayerRole currentRole = roles.removeFirst();
             _current._player.receiveRole(currentRole);
@@ -260,7 +248,7 @@ public class PlayerList {
                 --playersRemaining; 
                 if (playersRemaining == 1) {
                     updateHandState();
-                    throw new OnlyOnePlayerLeftException("Only one player left to play mid round");
+                    throw new OnlyOnePlayerLeftException();
                 }
             }
 
