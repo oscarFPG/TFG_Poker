@@ -33,6 +33,7 @@ public class ClientThread implements Runnable {
 
 
     public ClientThread(Socket socket, List<ClientThread> players, ServerSocket gameSocket, GameConfig config) {
+        _playerID = -1;
         _socket = socket;
         _playerName = null;
         _isHost = false;
@@ -147,8 +148,7 @@ public class ClientThread implements Runnable {
                             for(ClientThread ct : _roomList) {
                                 SocketUtils.sendInteger(ct._socket.getOutputStream(), GameType.CONFIRMATION_GAME_STARTS);
                             }
-                            log.debug("Game starts!");
-                        
+                            log.debug("All players notified of game starts!");
                             
                             _serverSocket.close();
                             log.debug("ServerSocket closed!");

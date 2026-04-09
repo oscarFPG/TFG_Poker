@@ -90,10 +90,15 @@ public class GameType {
     public static final int PLAYER_LOSES_GAME = 331;
 
     // Player actions
-    public static final int FOLD_ACTION = 400;
-    public static final int CHECK_ACTION = 401;
-    public static final int ALL_IN_ACTION = 402;
-    public static final int CALL_ACTION = 403;
-    public static final int RAISE_ACTION = 404;
+    public static final String FOLD_ACTION_FULL = "fold";
+    public static final String FOLD_ACTION_SHORTCUT = "f";
+    public static final String CHECK_ACTION_FULL = "check";
+    public static final String CHECK_ACTION_SHORTCUT = "k";
+    public static final String ALL_IN_ACTION_FULL = "all-in";
+    public static final String ALL_IN_ACTION_SHORTCUT = "a";
+    public static final String CALL_ACTION_FULL = "call";
+    public static final String CALL_ACTION_SHORTCUT = "c";
+    public static final String RAISE_ACTION_FULL = "raise"; // This requires an amount parameter: e.g: "raise 100"
+    public static final String RAISE_ACTION_SHORTCUT = "r"; // This requires an amount parameter: e.g: "raise 100"
 
 }

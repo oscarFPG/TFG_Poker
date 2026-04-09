@@ -7,16 +7,19 @@ import java.net.Socket;
 
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.common.GameType;
+import com.ucm.common.PokerGame;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.Suit;
 import com.ucm.common.SocketUtils;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
 
 public class InGameWindowController extends GenericController {
+
 
     @FXML
     private Label usernamePlaceHolder;
@@ -31,35 +34,62 @@ public class InGameWindowController extends GenericController {
     private Button btnRaise;
 
 
-    private Thread _gameThread;
+    private Thread _gameThread = null;
 
 
     @FXML
-    public void onFoldAction() {
-        System.out.printf("Fold button pressed!\n");
+    private void foldAction() {
+        System.out.printf("FOLD\n"); 
     }
 
     @FXML
-    public void onCallAction() {
-        System.out.printf("Call button pressed!\n");
+    private void callAction() {
+        System.out.printf("CALL\n");
     }
 
     @FXML
-    public void onRaiseAction() {
-        System.out.printf("Raise button pressed!\n");
+    private void raiseAction() {
+        System.out.printf("RAISE\n");
     }
 
 
     @Override
     protected void onViewShown() {
 
+        System.out.printf("Start!\n");
+
         usernamePlaceHolder.setText( _clientInfo.name );
+
+        _stage.setOnCloseRequest(event -> {
+
+            try {
+                if(_clientInfo.socket != null && !_clientInfo.socket.isClosed())
+                    _clientInfo.socket.close();
+
+                if(_gameThread != null && _gameThread.isAlive())
+                    _gameThread.interrupt();
+            }
+            catch (IOException e) {
+                System.out.printf("Error closing socket: %s\n", e.getMessage());
+            }
+        });
 
         _gameThread = new Thread(() -> {
             pokerGame(_clientInfo.name, _clientInfo.socket);
         });
         _gameThread.start();
     }
+
+    @Override
+    public void onNextEvent() {
+        
+    }
+
+    @Override
+    public void onBackEvent() {
+        
+    }
+
 
     private void pokerGame(String name, Socket socket) {
 
@@ -84,25 +114,55 @@ public class InGameWindowController extends GenericController {
 
                     // Player role and cards
                     roleCode = SocketUtils.receiveInt(input);
-                    playerCards[0] = receiveCard(input);
-                    playerCards[1] = receiveCard(input);
+                    playerCards[0] = PokerGame.receiveCard(input);
+                    playerCards[1] = PokerGame.receiveCard(input);
+                    System.out.printf("Assigned role code %d\n", roleCode);
+                    System.out.printf(
+                        "Received cards: %s - %s\n",
+                        playerCards[0].toString(), 
+                        playerCards[1].toString()
+                    );
 
                     // Preflop
                     System.out.printf("-- Preflop --\n");
                     playRound(playerCards[0], playerCards[1], socket);
-                    tableCardValues[0] = receiveCard(input);
-                    tableCardValues[1] = receiveCard(input);
-                    tableCardValues[2] = receiveCard(input);
-                    
+                    tableCardValues[0] = PokerGame.receiveCard(input);
+                    tableCardValues[1] = PokerGame.receiveCard(input);
+                    tableCardValues[2] = PokerGame.receiveCard(input);
+                    System.out.printf(
+                        "table cards: %s %s %s %s %s\n",
+                        tableCardValues[0].toString(), 
+                        tableCardValues[1].toString(),
+                        tableCardValues[2].toString(),
+                        Card.MissingCardToString(),
+                        Card.MissingCardToString()
+                    );
+
                     // Flop
                     System.out.printf("-- Flop --\n");
                     playRound(playerCards[0], playerCards[1], socket);
-                    tableCardValues[3] = receiveCard(input);
+                    tableCardValues[3] = PokerGame.receiveCard(input);
+                    System.out.printf(
+                        "table cards: %s %s %s %s %s\n",
+                        tableCardValues[0].toString(), 
+                        tableCardValues[1].toString(),
+                        tableCardValues[2].toString(),
+                        tableCardValues[3].toString(),
+                        Card.MissingCardToString()
+                    );
 
                     // Turn
                     System.out.printf("-- Turn --\n");
                     playRound(playerCards[0], playerCards[1], socket);
-                    tableCardValues[4] = receiveCard(input);
+                    tableCardValues[4] = PokerGame.receiveCard(input);
+                    System.out.printf(
+                        "table cards: %s %s %s %s %s\n",
+                        tableCardValues[0].toString(), 
+                        tableCardValues[1].toString(),
+                        tableCardValues[2].toString(),
+                        tableCardValues[3].toString(),
+                        tableCardValues[4].toString()
+                    );
 
                     // River
                     System.out.printf("-- River --\n");
@@ -156,15 +216,18 @@ public class InGameWindowController extends GenericController {
                         System.out.printf("Error receiving the rank after a fold exception: %s", ex.getMessage());
                     }
                 }
-            }
+                catch(InterruptedException e) {
+                    System.out.printf("Game thread interrupted: %s\n", e.getMessage());
+                }
 
+            }
         }
         catch(IOException e) {
             System.out.printf("Error on game: %s\n", e.getMessage());
         }
     }
 
-    private void playRound(Card card1, Card card2, Socket socket) throws OnlyOnePlayerLeftException, IOException {
+    private void playRound(Card card1, Card card2, Socket socket) throws OnlyOnePlayerLeftException, IOException, InterruptedException {
 
         boolean handEndsByFold = false;
 		int sb, bb, maxBet;
@@ -195,34 +258,14 @@ public class InGameWindowController extends GenericController {
 				offBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
 				onBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
 
-				boolean valid = false;
-				while(!valid) {
-
-					String command = "";    // Read input from buttons
-					String baseCommand = command.split(" ")[0];
-
-					valid = true;
-					if (baseCommand.equalsIgnoreCase("raise") || baseCommand.equalsIgnoreCase("r")) {
-						SocketUtils.sendString(socket.getOutputStream(), command);
-					}
-					else if (baseCommand.equalsIgnoreCase("fold") || baseCommand.equalsIgnoreCase("f")) {
-						SocketUtils.sendString(socket.getOutputStream(), command);
-					}
-					else if (baseCommand.equalsIgnoreCase("check") || baseCommand.equalsIgnoreCase("k")) {
-						SocketUtils.sendString(socket.getOutputStream(), command);
-					}
-					else if (baseCommand.equalsIgnoreCase("call") || baseCommand.equalsIgnoreCase("c")) {
-						SocketUtils.sendString(socket.getOutputStream(), command);
-					}
-					else if (baseCommand.equalsIgnoreCase("all in") || baseCommand.equalsIgnoreCase("a")) {
-						SocketUtils.sendString(socket.getOutputStream(), command);
-					}
-					else {
-						System.out.printf("Command %s not valid! Try again\n", command);
-						valid = false;
-					}
-				}
+                // TODO
+                //String command = selectCommand(socket);
 				
+                while(true) {
+                    System.out.printf("Waiting to put a command...\n");
+                    Thread.sleep(2000);
+                }
+
 			}
 			else if(serverCode == GameType.HAND_ENDS_BY_FOLD) {
 				handEndsByFold = true;
@@ -240,23 +283,48 @@ public class InGameWindowController extends GenericController {
 			throw new OnlyOnePlayerLeftException();
     }
 
-    private Card receiveCard(InputStream in) throws IOException {
-        
-		int valueCode = SocketUtils.receiveInt(in);
-		int suitCode = SocketUtils.receiveInt(in);
-		return new Card(valueCode, Suit.getSuitFromCode(suitCode));
+    // TODO : !!!!!
+    private String selectCommand(Socket socket) {
+
+        String command = null;
+        try {
+
+            boolean valid = false;
+            while(!valid) {
+
+                command = "";   // TODO : get command from the UI
+                String baseCommand = command.split(" ")[0];
+
+                valid = true;
+                if (baseCommand.equalsIgnoreCase("raise") || baseCommand.equalsIgnoreCase("r")) {
+                    SocketUtils.sendString(socket.getOutputStream(), command);
+                }
+                else if (baseCommand.equalsIgnoreCase("fold") || baseCommand.equalsIgnoreCase("f")) {
+                    SocketUtils.sendString(socket.getOutputStream(), command);
+                }
+                else if (baseCommand.equalsIgnoreCase("check") || baseCommand.equalsIgnoreCase("k")) {
+                    SocketUtils.sendString(socket.getOutputStream(), command);
+                }
+                else if (baseCommand.equalsIgnoreCase("call") || baseCommand.equalsIgnoreCase("c")) {
+                    SocketUtils.sendString(socket.getOutputStream(), command);
+                }
+                else if (baseCommand.equalsIgnoreCase("all in") || baseCommand.equalsIgnoreCase("a")) {
+                    SocketUtils.sendString(socket.getOutputStream(), command);
+                }
+                else {
+                    System.out.printf("Command %s not valid! Try again\n", command);
+                    valid = false;
+                }
+            }
+        }
+        catch(IOException e) {
+            System.out.printf("Error sending the command: %s\n", e.getMessage());
+        }
+
+        return command;
     }
 
-    @Override
-    public void onNextEvent() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onNextEvent'");
-    }
 
-    @Override
-    public void onBackEvent() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onBackEvent'");
-    }
+    
     
 }

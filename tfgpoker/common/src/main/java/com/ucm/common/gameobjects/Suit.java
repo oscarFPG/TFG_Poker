@@ -4,30 +4,33 @@ import com.ucm.common.GameType;
 
 public enum Suit {
     
-    HEARTS('h', GameType.HEARTS), 
-    DIAMONDS('d', GameType.DIAMONDS), 
-    CLUBS('c', GameType.CLUBS), 
-    SPADES('s', GameType.SPADES);
+    HEARTS('h', 0, GameType.HEARTS), 
+    DIAMONDS('d', 1, GameType.DIAMONDS), 
+    CLUBS('c', 2, GameType.CLUBS), 
+    SPADES('s', 3, GameType.SPADES);
 
     private char _letra;
     private int _indx;
-    private char simbolo;
+    private char _simbolo;
+    private int _networkCode;
 
-    Suit(char letra, int index) {
+    private Suit(char letra, int index, int networkCode) {
+
         this._letra = letra;
         this._indx = index;
+        this._networkCode = networkCode;
         switch (letra) {
         case 'h':
-            simbolo = '\u2665';
+            _simbolo = '\u2665';
             break;
         case 'd':
-            simbolo = '\u2666';
+            _simbolo = '\u2666';
             break;
         case 'c':
-            simbolo = '\u2663';
+            _simbolo = '\u2663';
             break;
         case 's':
-            simbolo = '\u2660';
+            _simbolo = '\u2660';
             break;
         }
     }
@@ -57,10 +60,14 @@ public enum Suit {
     }
 
     public char getSimbolo() {
-        return simbolo;
+        return _simbolo;
     }
 
     public int getIndex() {
         return _indx;
     }  
+
+    public int getNetworkCode() {
+        return _networkCode;
+    }
 }

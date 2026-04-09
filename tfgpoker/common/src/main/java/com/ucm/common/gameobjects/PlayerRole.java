@@ -6,17 +6,22 @@ import com.ucm.common.GameType;
 
 public enum PlayerRole {
 
-    UNDER_THE_GUN(),
-    UNDER_THE_GUN_1(),
-    UNDER_THE_GUN_2(),
-    LOJACK(),
-    HIJACK(),
-    CUT_OFF(),
-    DEALER(),
-    SMALL_BLIND(),
-    BIG_BLIND();
-    
-    
+    UNDER_THE_GUN(GameType.PLAYER_ROLE_UNDER_THE_GUN),
+    UNDER_THE_GUN_1(GameType.PLAYER_ROLE_UNDER_THE_GUN_1),
+    UNDER_THE_GUN_2(GameType.PLAYER_ROLE_UNDER_THE_GUN_2),
+    LOJACK(GameType.PLAYER_ROLE_LOJACK),
+    HIJACK(GameType.PLAYER_ROLE_HIJACK),
+    CUT_OFF(GameType.PLAYER_ROLE_CUT_OFF),
+    DEALER(GameType.PLAYER_ROLE_DEALER),
+    SMALL_BLIND(GameType.PLAYER_ROLE_SMALL_BLIND),
+    BIG_BLIND(GameType.PLAYER_ROLE_BIG_BLIND);
+
+    int networkCode;
+
+    PlayerRole(final int code) {
+        networkCode = code;
+    }
+
 
     public static PlayerRole getPlayerRoleFromCode(final int roleCode) {
 
@@ -137,4 +142,7 @@ public enum PlayerRole {
         
     }
 
+    public int getNetworkCode() {
+        return networkCode;
+    }
 }

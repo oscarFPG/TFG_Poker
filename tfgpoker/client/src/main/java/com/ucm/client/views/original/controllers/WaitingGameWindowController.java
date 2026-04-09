@@ -135,6 +135,7 @@ public class WaitingGameWindowController extends GenericController {
             }
             System.out.printf("Cerrado ¿?\n");
         });
+
     }
 
     @Override
@@ -205,13 +206,13 @@ public class WaitingGameWindowController extends GenericController {
 
             SocketUtils.sendInteger(output, GameType.CONFIRMATION_PLAYER_STARTS);
 
-            Platform.runLater(() -> {
-                next();
-            });
+            next();
         }
         catch(IOException e) {
             System.out.printf("Error: %s\n", e.getMessage());
         }
+
+        System.out.printf("Finished waiting for players info!\n");
     }
 
     private StackPane getPlayerStackPaneByPosition(final int position) {

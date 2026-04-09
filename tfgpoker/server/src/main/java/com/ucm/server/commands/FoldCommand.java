@@ -1,6 +1,7 @@
 package com.ucm.server.commands;
 
 
+import com.ucm.common.GameType;
 import com.ucm.server.interfaces.IPokerActions;
 import com.ucm.server.middleclasses.CommandResult;
 
@@ -51,12 +52,12 @@ public class FoldCommand extends Command {
 
     @Override
     public String getCommandFormat() {
-        return "fold";
+        return GameType.FOLD_ACTION_FULL;
     }
 
     @Override
     public String getCommandFormatShortcut() {
-        return "f";
+        return GameType.FOLD_ACTION_SHORTCUT;
     }
 
 }
