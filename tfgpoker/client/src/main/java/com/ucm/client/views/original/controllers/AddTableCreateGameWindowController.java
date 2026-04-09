@@ -14,6 +14,9 @@ public class AddTableCreateGameWindowController extends GenericController {
     private static final String DEFAULT_TABLE_IMAGE = "/images/tableGame.png";
 
     @FXML
+    private Button btnBackChooseGame;
+
+    @FXML
     private Button btnBackPlayers;
 
     @FXML
@@ -41,17 +44,21 @@ public class AddTableCreateGameWindowController extends GenericController {
     @Override
     protected void onViewShown() {
         btnStartAddTables.setDisable(true);
+        if(_clientInfo.gameConfig._selectedTable == null){
+            _clientInfo.gameConfig._selectedTable = DEFAULT_TABLE_IMAGE;
+        }
         initializeImage();
     }
 
     private void initializeImage() {
+
         _images = List.of(
             "/images/tableGame.png",
             "/images/tableGameBlue.png",
             "/images/tableGameGreen.png",
             "/images/tableGameRed.png"
         );
-        if(_clientInfo.gameConfig._selectedTable == null) {
+        if(_clientInfo.gameConfig._selectedTable == null || DEFAULT_TABLE_IMAGE.equals(_clientInfo.gameConfig._selectedTable)) {
             _index = -1;
         }
         else {
@@ -121,6 +128,11 @@ public class AddTableCreateGameWindowController extends GenericController {
         else{
             btnSelectTable.setText("SELECT");
         }
+    }
+
+    @FXML
+    public void returnChooseGame() {
+        backWindow();
     }
 
     private void saveAddTable() {

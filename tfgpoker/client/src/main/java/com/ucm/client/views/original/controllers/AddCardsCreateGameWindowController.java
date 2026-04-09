@@ -18,6 +18,9 @@ public class AddCardsCreateGameWindowController extends GenericController {
     private static final String DEFAULT_CARD_IMAGE = "/images/reversePokerCardGame.png";
 
     @FXML
+    private Button btnBackChooseGame;
+    
+    @FXML
     private Button btnBackTable;
 
     @FXML
@@ -42,6 +45,9 @@ public class AddCardsCreateGameWindowController extends GenericController {
     @Override
     protected void onViewShown() {
         btnStartAddCards.setDisable(false);
+        if(_clientInfo.gameConfig._selectedCard == null){
+            _clientInfo.gameConfig._selectedCard = DEFAULT_CARD_IMAGE;
+        }
         initializeImage();
     }
 
@@ -52,7 +58,7 @@ public class AddCardsCreateGameWindowController extends GenericController {
             "/images/reversePokerCardGreen.png",
             "/images/reversePokerCardRed.png"
         );
-        if(_clientInfo.gameConfig._selectedCard == null) {
+        if(_clientInfo.gameConfig._selectedCard == null || DEFAULT_CARD_IMAGE.equals(_clientInfo.gameConfig._selectedCard)) {
             _index = -1;
         }
         else {
@@ -121,6 +127,11 @@ public class AddCardsCreateGameWindowController extends GenericController {
         else{
             btnSelectCard.setText("SELECT");
         }
+    }
+
+    @FXML
+    public void returnChooseGame() {
+        backWindow();
     }
 
     private void saveAddTable() {

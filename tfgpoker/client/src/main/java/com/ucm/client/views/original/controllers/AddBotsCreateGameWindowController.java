@@ -26,6 +26,9 @@ public class AddBotsCreateGameWindowController extends GenericController {
     SpinnerValueFactory.IntegerSpinnerValueFactory valueFactoryBot3;
 
     @FXML
+    private Button btnBackChooseGame;
+
+    @FXML
     private Button btnBackHome;
 
     @FXML
@@ -84,6 +87,11 @@ public class AddBotsCreateGameWindowController extends GenericController {
         valueFactoryBot1.setMax(bot1 + remainingBots);
         valueFactoryBot2.setMax(bot2 + remainingBots);
         valueFactoryBot3.setMax(bot3 + remainingBots);
+    }
+
+    @FXML
+    public void returnChooseGame() {
+        backWindow();
     }
 
     @FXML

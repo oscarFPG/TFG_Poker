@@ -21,13 +21,14 @@ public abstract class GenericController {
     }
 
     public void back() {
-        onBackEvent();
         _mainController.back();
         _mainController.updateView();
+        onBackEvent();
     }
 
     public void backWindow() {
-        _clientInfo.gameConfig.restart();
+        _clientInfo.gameConfig._roomName = _clientInfo.name + "'s room";
+        _clientInfo.gameConfig.reset();
         _mainController.backWindow();
         _mainController.updateView();
     }

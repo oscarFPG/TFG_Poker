@@ -60,7 +60,7 @@ public class GameConfig {
         return !roomName.trim().isEmpty();
     }
 
-    public void restart() {
+    public void reset() {
         _initialMoney = DEFAULT_INITIAL_MONEY;
         _allowBots = DEFAULT_ALLOW_BOTS;
         _blindsValue = DEFAULT_BLINDS_VALUE;

@@ -16,6 +16,9 @@ public class AddPlayersCreateGameWindowController extends GenericController  {
     SpinnerValueFactory.IntegerSpinnerValueFactory valueFactoryPlayer;
 
     @FXML
+    private Button btnBackChooseGame;
+
+    @FXML
     private Button btnBackBots;
 
     @FXML
@@ -63,6 +66,11 @@ public class AddPlayersCreateGameWindowController extends GenericController  {
     private void saveAddPlayers() {
         _clientInfo.gameConfig._numPlayers = spinnerAddPlayers.getValue();
 
+    }
+
+    @FXML
+    public void returnChooseGame() {
+        backWindow();
     }
 
     @FXML

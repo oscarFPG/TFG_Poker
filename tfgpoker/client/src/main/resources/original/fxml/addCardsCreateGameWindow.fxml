@@ -34,13 +34,16 @@
                <children>
                   <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                      <children>
-                        <Button mnemonicParsing="false" prefHeight="48.0" prefWidth="40.0">
+                        <Button fx:id="btnBackChooseGame" mnemonicParsing="false" onAction="#returnChooseGame" prefHeight="48.0" prefWidth="40.0">
                            <styleClass>
                               <String fx:value="arrow-back" />
                               <String fx:value="arrow-colors" />
                            </styleClass>
                         </Button>
-                        <Label styleClass="general-text-font" text="direction" />
+                        <Label styleClass="general-text-font" text="Create/Join Game">
+                           <font>
+                              <Font size="20.0" />
+                           </font></Label>
                      </children>
                      <VBox.margin>
                         <Insets left="5.0" />
