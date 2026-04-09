@@ -11,6 +11,8 @@ import javafx.scene.image.ImageView;
 
 public class AddTableCreateGameWindowController extends GenericController {
 
+    private static final String DEFAULT_TABLE_IMAGE = "/images/tableGame.png";
+
     @FXML
     private Button btnBackPlayers;
 
@@ -29,7 +31,10 @@ public class AddTableCreateGameWindowController extends GenericController {
     @FXML
     private ImageView imageTable;
 
-    private List<Image> _images;
+    @FXML
+    private Button btnSelectTable;
+
+    private List<String> _images;
 
     private int _index = 0;
 
@@ -41,27 +46,88 @@ public class AddTableCreateGameWindowController extends GenericController {
 
     private void initializeImage() {
         _images = List.of(
-            new Image(getClass().getResource("/images/tableGame.png").toExternalForm()),
-            new Image(getClass().getResource("/images/tableGameBlue.png").toExternalForm()),
-            new Image(getClass().getResource("/images/tableGameGreen.png").toExternalForm()),
-            new Image(getClass().getResource("/images/tableGameRed.png").toExternalForm())
+            "/images/tableGame.png",
+            "/images/tableGameBlue.png",
+            "/images/tableGameGreen.png",
+            "/images/tableGameRed.png"
         );
-        imageTable.setImage(_images.get(_index));
+        if(_clientInfo.gameConfig._selectedTable == null) {
+            _index = -1;
+        }
+        else {
+            _index = _images.indexOf(_clientInfo.gameConfig._selectedTable);
+        }
+        showCurrentTable();
     }
 
     @FXML
     private void nextImage() {
+        if(_index == -1) {_index = 0;}
         _index = (_index + 1) % _images.size();
-        imageTable.setImage(_images.get(_index));
+        showCurrentTable();
     }
 
     @FXML
     private void backImage() {
+        if(_index == -1) {_index = 0;}
         _index = (_index - 1 + _images.size()) % _images.size();
-        imageTable.setImage(_images.get(_index));
+        showCurrentTable();
     }
 
+    @FXML
+    private void onSelectTable () {
+        if(_index == -1) {
+            if(DEFAULT_TABLE_IMAGE.equals(_clientInfo.gameConfig._selectedTable)){
+                _clientInfo.gameConfig._selectedTable = null;
+            }
+            else{
+                _clientInfo.gameConfig._selectedTable = DEFAULT_TABLE_IMAGE;
+            }
+        }
+        else {
+            String currentTableImage = _images.get(_index);
+            if(currentTableImage.equals(_clientInfo.gameConfig._selectedTable)) {_clientInfo.gameConfig._selectedTable = null;}
+            else {_clientInfo.gameConfig._selectedTable = currentTableImage;}
+        }
+        updteSelectImage();
+    }
     
+
+    private void  showCurrentTable() {
+        String currentPath;
+        if(_index == -1) {
+            currentPath = DEFAULT_TABLE_IMAGE;
+        }
+        else {
+            currentPath = _images.get(_index);
+        }
+        imageTable.setImage(new Image(getClass().getResource(currentPath).toExternalForm()));
+        updteSelectImage();
+    }
+
+    private void updteSelectImage() {
+        imageTable.getStyleClass().remove("table-selected");
+        boolean isSelected;
+        if (_index == - 1) {
+            isSelected = DEFAULT_TABLE_IMAGE.equals(_clientInfo.gameConfig._selectedTable);
+        }
+        else {
+            isSelected = _clientInfo.gameConfig._selectedTable != null && _images.get(_index).equals(_clientInfo.gameConfig._selectedTable);
+        }
+        if(isSelected){
+            imageTable.getStyleClass().add("table-selected");
+            btnSelectTable.setText("SELECTED");
+        }
+        else{
+            btnSelectTable.setText("SELECT");
+        }
+    }
+
+    private void saveAddTable() {
+        if(_clientInfo.gameConfig._selectedTable == null) {
+            _clientInfo.gameConfig._selectedTable = DEFAULT_TABLE_IMAGE;
+        }
+    }
 
     @FXML
     public void jumpToPlayers(){
@@ -75,12 +141,12 @@ public class AddTableCreateGameWindowController extends GenericController {
 
     @Override
     public void onNextEvent() {
-        
+        saveAddTable();
     }
 
     @Override
     public void onBackEvent() {
-        
+        saveAddTable();
     }
     
 }
