@@ -36,6 +36,10 @@ public class GameConfig {
      * Variables para crear partida: Add tables
     */
     public String _selectedTable = null;
+    /**
+     * Variables para crear partida: Add tables
+    */
+    public String _selectedCard = null;
 
     public GameConfig() {}
 
