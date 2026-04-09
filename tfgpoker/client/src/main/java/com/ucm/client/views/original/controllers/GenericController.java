@@ -18,13 +18,18 @@ public abstract class GenericController {
         onNextEvent();
         _mainController.next();
         _mainController.updateView();
-  
     }
 
     public void back() {
+        onBackEvent();
         _mainController.back();
         _mainController.updateView();
-        onBackEvent();
+    }
+
+    public void backWindow() {
+        _clientInfo.gameConfig.restart();
+        _mainController.backWindow();
+        _mainController.updateView();
     }
 
     protected void chooseCreateGame() {

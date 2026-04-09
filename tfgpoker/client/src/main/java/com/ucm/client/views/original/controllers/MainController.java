@@ -104,4 +104,9 @@ public class MainController {
         statusController.stateJoinGame();
         updateView();
     }
+
+    public void backWindow() {
+        statusController.stateChooseGame();
+        updateView();
+    }
 }

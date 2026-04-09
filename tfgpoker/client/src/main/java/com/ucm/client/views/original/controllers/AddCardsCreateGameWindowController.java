@@ -62,14 +62,14 @@ public class AddCardsCreateGameWindowController extends GenericController {
     }
 
     @FXML
-    private void nextImage() {
+    private void nextImageCard() {
         if(_index == -1) {_index = 0;}
         _index = (_index + 1) % _images.size();
         showCurrentTable();
     }
 
     @FXML
-    private void backImage() {
+    private void backImageCard() {
         if(_index == -1) {_index = 0;}
         _index = (_index - 1 + _images.size()) % _images.size();
         showCurrentTable();

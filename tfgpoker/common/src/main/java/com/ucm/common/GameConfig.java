@@ -60,14 +60,19 @@ public class GameConfig {
         return !roomName.trim().isEmpty();
     }
 
+    public void restart() {
+        _initialMoney = DEFAULT_INITIAL_MONEY;
+        _allowBots = DEFAULT_ALLOW_BOTS;
+        _blindsValue = DEFAULT_BLINDS_VALUE;
+        _dinamicBlinds = DEFAULT_DINAMIC_VALUE;
+        _levelDuration = DEFAULT_LEVEL_DURATION;
+        _hikePercentage = DEFAULT_HIKE_PERCENTAGE;
+        _numBots1 = DEFAULT_NUM_BOTS;
+        _numBots2 = DEFAULT_NUM_BOTS;
+        _numBots3 = DEFAULT_NUM_BOTS;
+        _numPlayers = DEFAULT_NUM_PLAYERS;
+        _selectedTable = null;
+        _selectedCard = null;
+    }
 
-    
-    /*
-        - Por defecto es estatico (1 y 2)
-        - Dinamicas
-            - Decidir valor de small y big -> menu desplegable
-            - Cada cuanto aumentan (minutos) -> menu desplegable
-            - Que factor de aumento (0%, 200%) -> menu desplegable
-    */
-    
 }

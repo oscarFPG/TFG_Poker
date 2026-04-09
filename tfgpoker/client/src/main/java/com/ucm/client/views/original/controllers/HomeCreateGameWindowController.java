@@ -176,7 +176,7 @@ public class HomeCreateGameWindowController extends GenericController {
 
     @FXML
     public void returnChooseGame() {
-        back();
+        backWindow();
     }
 
     @FXML
