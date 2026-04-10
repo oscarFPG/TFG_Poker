@@ -54,13 +54,13 @@ public class Game {
 
         String[] parts = _gameConfig._blindsValue.split("/");
 
-        addPlayer(gameInfo);
 
         _initialSmallBlind = Integer.parseInt(parts[0]);
         _initialBigBlind = Integer.parseInt(parts[0]);
         _handCounter = 0;
 
         _playerList = new PlayerList(_gameConfig._numPlayers);
+        addPlayerInitial(gameInfo);
         _deck = new Deck();
         _tableCards = new Card[MAX_CARDS_IN_TABLE];
         _tableCardsCounter = 0;
@@ -80,7 +80,7 @@ public class Game {
         
     }
 
-    private void addPlayer(GameInfo gameInfo) {
+    private void addPlayerInitial(GameInfo gameInfo) {
         int id = 0;
         for(ClientStruct cs : gameInfo.players) {
             _playerList.addPlayer( new HumanPlayer(id, cs.name(), cs.socket(), gameInfo.gameConfig._initialMoney));

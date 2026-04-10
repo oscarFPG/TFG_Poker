@@ -10,7 +10,7 @@ import javafx.scene.control.SpinnerValueFactory;
 
 public class AddPlayersCreateGameWindowController extends GenericController  {
 
-    private static final int MIN_NUM_PLAYERS = 0;
+    private static final int MIN_NUM_PLAYERS = 1;
     private static final int MAX_NUM_PLAYERS = 8;
 
     SpinnerValueFactory.IntegerSpinnerValueFactory valueFactoryPlayer;

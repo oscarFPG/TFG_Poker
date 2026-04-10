@@ -38,12 +38,13 @@ public class PokerPreGame {
     
         SocketUtils.sendInteger(out, GameType.PETITION_CREATE_GAME);
         int allowBotsCode = (config._allowBots) ? 1 : 0;
-
+        int dinamicBlinds = (config._dinamicBlinds) ? 1 : 0;
         SocketUtils.sendString(out, config._roomName);
         SocketUtils.sendString(out, config._userName);
         SocketUtils.sendInteger(out, config._initialMoney);
         SocketUtils.sendInteger(out, allowBotsCode);
         SocketUtils.sendString(out, config._blindsValue);
+        SocketUtils.sendInteger(out, dinamicBlinds);
         SocketUtils.sendString(out, config._levelDuration);
         SocketUtils.sendString(out, config._hikePercentage);
     }
@@ -55,15 +56,18 @@ public class PokerPreGame {
         int initialMoney = SocketUtils.receiveInt(input);
         boolean allowBots = (SocketUtils.receiveInt(input) == 1) ? true : false;
         String blindsValue = SocketUtils.receiveString(input);
+        boolean dinamicBlinds = (SocketUtils.receiveInt(input) == 1) ? true : false;
         String levelDuration = SocketUtils.receiveString(input);
         String hikePercentage = SocketUtils.receiveString(input);
 
         GameConfig config = new GameConfig();
+
         config._roomName = roomName;
         config._userName = userName;
         config._initialMoney = initialMoney;
         config._allowBots = allowBots;
         config._blindsValue = blindsValue;
+        config._dinamicBlinds = dinamicBlinds;
         config._levelDuration = levelDuration;
         config._hikePercentage = hikePercentage;
 
@@ -71,25 +75,44 @@ public class PokerPreGame {
     }
 
     public static void sendGameConfigToJoinedPlayer(GameConfig config, OutputStream out) throws IOException {
-    
+
         SocketUtils.sendInteger(out, config._roomId);
+        int allowBotsCode = (config._allowBots) ? 1 : 0;
+        int dinamicBlinds = (config._dinamicBlinds) ? 1 : 0;
         SocketUtils.sendString(out, config._roomName);
+        SocketUtils.sendString(out, config._userName);
         SocketUtils.sendInteger(out, config._initialMoney);
+        SocketUtils.sendInteger(out, allowBotsCode);
         SocketUtils.sendString(out, config._blindsValue);
+        SocketUtils.sendInteger(out, dinamicBlinds);
+        SocketUtils.sendString(out, config._levelDuration);
+        SocketUtils.sendString(out, config._hikePercentage);
     }
 
     public static GameConfig receiveGameConfigAsJoinedPlayer(InputStream input, OutputStream output) throws IOException {
 
         int roomId = SocketUtils.receiveInt(input);
         String roomName = SocketUtils.receiveString(input);
+        String userName = SocketUtils.receiveString(input);
         int initialMoney = SocketUtils.receiveInt(input);
+        boolean allowBots = (SocketUtils.receiveInt(input) == 1) ? true : false;
         String blindsValue = SocketUtils.receiveString(input);
+        boolean dinamicBlinds = (SocketUtils.receiveInt(input) == 1) ? true : false;
+        String levelDuration = SocketUtils.receiveString(input);
+        String hikePercentage = SocketUtils.receiveString(input);
 
         GameConfig config = new GameConfig();
+
         config._roomId = roomId;
         config._roomName = roomName;
+        config._userName = userName;
         config._initialMoney = initialMoney;
+        config._allowBots = allowBots;
         config._blindsValue = blindsValue;
+        config._dinamicBlinds = dinamicBlinds;
+        config._levelDuration = levelDuration;
+        config._hikePercentage = hikePercentage;
+
 
         return config;
     }
