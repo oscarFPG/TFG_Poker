@@ -7,10 +7,10 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.commands.Command;
-import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.server.interfaces.IPokerPlayer;
 import com.ucm.server.middleclasses.CommandResult;
 import com.ucm.server.middleclasses.HandInfo;
@@ -707,11 +707,14 @@ public class PlayerList {
     do {
         IPokerPlayer player = current._player;
 
-        if (!player.isEliminated()) {
-            double equity = equityMap.getOrDefault(player.getPlayerId(), 0.0);
-            player.notifyEquity(equity);
-        }
+         double equity;
 
+        if (player.isFolded()) {
+            equity = 0.0;
+        } else {
+            equity = equityMap.getOrDefault(player.getPlayerId(), 0.0);
+        }
+       
         current = current._next;
 
     } while (current != _first);
