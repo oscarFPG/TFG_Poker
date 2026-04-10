@@ -107,6 +107,7 @@ public class PlayerList {
             return;
 
 
+        List<PlayerRole> roles = PlayerRole.getRolesDistribution(numPlayers);
         if (numPlayers == 2) {
             _current._player.receiveRole(PlayerRole.SMALL_BLIND);
             _current._player.notifyPlayerRole(PlayerRole.SMALL_BLIND);
@@ -118,8 +119,6 @@ public class PlayerList {
             log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.BIG_BLIND.name());
         }
         else {
-
-            List<PlayerRole> roles = PlayerRole.getRolesDistribution(numPlayers);
 
             PlayerRole currentRole = roles.removeFirst();
             _current._player.receiveRole(currentRole);
@@ -278,6 +277,8 @@ public class PlayerList {
             
             String commandString = player.actionMakePlay(sb, bb, maxBet);
             String[] commandFormatted = commandString.split(" ");
+
+            log.debug("Player {} with command: {}", player.getPlayerName(), commandString);
 
             command = Command.parseCommand(commandFormatted, player);
             command = command.validate(maxBet) ? command : null;

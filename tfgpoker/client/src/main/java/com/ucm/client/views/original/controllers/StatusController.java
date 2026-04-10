@@ -20,7 +20,7 @@ public class StatusController {
 
 
     public StatusController() {
-        currentState = State.GAME;
+        currentState = State.START_APP;
     }
 
 

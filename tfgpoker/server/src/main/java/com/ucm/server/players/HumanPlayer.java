@@ -59,6 +59,8 @@ public class HumanPlayer extends Player {
             SocketUtils.sendInteger(_socket.getOutputStream(), _onBetMoney);
 
             commandInput = SocketUtils.receiveString( _socket.getInputStream() );
+            log.debug("Command received from player {}: {}", _name, commandInput);
+
         }
         catch (IOException e) {
             log.error("Receiving the command for {} player: {}", _name, e.getMessage());

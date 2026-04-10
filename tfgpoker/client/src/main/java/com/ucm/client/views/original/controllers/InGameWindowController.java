@@ -4,11 +4,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.common.GameType;
 import com.ucm.common.PokerGame;
 import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.common.gameobjects.Suit;
 import com.ucm.common.SocketUtils;
 
@@ -35,21 +38,24 @@ public class InGameWindowController extends GenericController {
 
 
     private Thread _gameThread = null;
-
+    private BlockingQueue<String> _commandQueue = new LinkedBlockingQueue<>();
 
     @FXML
     private void foldAction() {
-        System.out.printf("FOLD\n"); 
+        
+        _commandQueue.offer("fold");
     }
 
     @FXML
     private void callAction() {
-        System.out.printf("CALL\n");
+        _commandQueue.offer("call");
     }
 
     @FXML
     private void raiseAction() {
-        System.out.printf("RAISE\n");
+
+        int ejemplo = 5;
+        _commandQueue.offer( String.format("raise %d", ejemplo) );
     }
 
 
@@ -81,22 +87,18 @@ public class InGameWindowController extends GenericController {
     }
 
     @Override
-    public void onNextEvent() {
-        
-    }
+    public void onNextEvent() {}
 
     @Override
-    public void onBackEvent() {
-        
-    }
+    public void onBackEvent() {}
 
 
     private void pokerGame(String name, Socket socket) {
 
-        int roleCode;
 		int currentMoney;
 		int rankingCode;
 		int gameStatusCode;
+        PlayerRole role;
 		Card[] playerCards = new Card[2];
 		Card[] tableCardValues = new Card[5];
         try {
@@ -104,19 +106,16 @@ public class InGameWindowController extends GenericController {
             InputStream input = socket.getInputStream();
             OutputStream output = socket.getOutputStream();
 
-            int role = SocketUtils.receiveInt(input);
-            System.out.printf("Role received: %d\n", role);
-
             boolean endOfGame = false;
             while(!endOfGame) {
 
                 try {
 
                     // Player role and cards
-                    roleCode = SocketUtils.receiveInt(input);
+                    role = PokerGame.receivePlayerRole(input);
                     playerCards[0] = PokerGame.receiveCard(input);
                     playerCards[1] = PokerGame.receiveCard(input);
-                    System.out.printf("Assigned role code %d\n", roleCode);
+                    System.out.printf("Assigned role: %s\n", role.toString());
                     System.out.printf(
                         "Received cards: %s - %s\n",
                         playerCards[0].toString(), 
@@ -258,13 +257,7 @@ public class InGameWindowController extends GenericController {
 				offBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
 				onBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
 
-                // TODO
-                //String command = selectCommand(socket);
-				
-                while(true) {
-                    System.out.printf("Waiting to put a command...\n");
-                    Thread.sleep(2000);
-                }
+                String command = selectCommand(socket);
 
 			}
 			else if(serverCode == GameType.HAND_ENDS_BY_FOLD) {
@@ -283,17 +276,20 @@ public class InGameWindowController extends GenericController {
 			throw new OnlyOnePlayerLeftException();
     }
 
-    // TODO : !!!!!
-    private String selectCommand(Socket socket) {
+    private String selectCommand(Socket socket) throws InterruptedException {
 
+        System.out.printf("Waiting to client to make a move...\n");
         String command = null;
         try {
 
             boolean valid = false;
             while(!valid) {
 
-                command = "";   // TODO : get command from the UI
+                command = _commandQueue.take();
                 String baseCommand = command.split(" ")[0];
+
+                System.out.printf("Full command received: %s\n", command);
+                System.out.printf("Base command extracted: %s\n", baseCommand);
 
                 valid = true;
                 if (baseCommand.equalsIgnoreCase("raise") || baseCommand.equalsIgnoreCase("r")) {
