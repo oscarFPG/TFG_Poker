@@ -1,4 +1,4 @@
-package com.ucm.server.logic;
+package com.ucm.server.players;
 
 
 import com.ucm.common.gameobjects.Card;

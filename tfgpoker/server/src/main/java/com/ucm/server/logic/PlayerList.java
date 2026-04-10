@@ -2,6 +2,7 @@ package com.ucm.server.logic;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -695,6 +696,26 @@ public class PlayerList {
         winner._player.receivePriceMoney(amount);
         winner._player.setIsWinner(true);
     }
+
+
+    public void notifyEquityToPlayers(Map<Integer, Double> equityMap) {
+
+    if (isEmpty()) return;
+
+    Node current = _first;
+
+    do {
+        IPokerPlayer player = current._player;
+
+        if (!player.isEliminated()) {
+            double equity = equityMap.getOrDefault(player.getPlayerId(), 0.0);
+            player.notifyEquity(equity);
+        }
+
+        current = current._next;
+
+    } while (current != _first);
+}
 
 
     public boolean isEmpty() { return size() == 0; }

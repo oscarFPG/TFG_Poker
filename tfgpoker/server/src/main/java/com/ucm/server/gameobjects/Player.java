@@ -109,6 +109,7 @@ public abstract class Player implements IPokerPlayer {
     public abstract void notifyGameWinner();
     public abstract void notifyGameLoser();
     public abstract void notifyHandEndsByFolds();
+    public abstract void notifyEquity(double equity);
 
 
     /**

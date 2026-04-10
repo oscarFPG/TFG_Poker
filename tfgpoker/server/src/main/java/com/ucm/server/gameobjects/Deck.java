@@ -1,5 +1,7 @@
 package com.ucm.server.gameobjects;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
@@ -129,6 +131,28 @@ public class Deck {
                 _deck[i][j].setAvailable(true);
             }
         }
+    }
+
+    /**
+     * 
+     * 
+     * 
+     * @return 
+     */
+    public List<Card> getAvailableCards() {
+
+        List<Card> available = new ArrayList<>(NUM_SUITS * NUM_VALUES);
+
+        for (int i = 0; i < NUM_SUITS; i++) {
+            for (int j = 0; j < NUM_VALUES; j++) {
+
+                if (_deck[i][j].getAvailable()) {
+                    available.add(_deck[i][j]);
+                }
+            }
+        }
+
+        return available;
     }
 
 }
