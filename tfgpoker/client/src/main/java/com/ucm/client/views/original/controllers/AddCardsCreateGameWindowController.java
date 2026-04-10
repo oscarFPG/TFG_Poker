@@ -10,6 +10,7 @@ import com.ucm.common.PokerPreGame;
 import com.ucm.common.SocketUtils;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -141,39 +142,60 @@ public class AddCardsCreateGameWindowController extends GenericController {
         }
     }
 
+    private int totalPlayers() {
+        return _clientInfo.gameConfig._numPlayers +  _clientInfo.gameConfig._numBots1 + _clientInfo.gameConfig._numBots2 + _clientInfo.gameConfig._numBots3;
+    }
+
+    private void showNotEnoughPlayers() {
+        Alert alert = new Alert (Alert.AlertType.WARNING);
+        alert.setTitle("Cannot start game");
+        alert.setHeaderText("Not enough players in the table");
+        alert.setContentText("You must add at least one bot or one player before starting the game");
+        alert.showAndWait();
+    }
+
     @FXML
     private void sendClientInfo() {
 
-        try {
-            PokerPreGame.sendGameConfig(_clientInfo.gameConfig, _clientInfo.socket.getOutputStream());
+        boolean canStart = totalPlayers() > 0;
 
-            int response = SocketUtils.receiveInt(_clientInfo.socket.getInputStream());
-            if(response == GameType.ERROR_GAME_NOT_CREATED) {
-                System.out.printf("Server response: Error creating game!\n");
-            }
-            else if(response == GameType.CONFIRMATION_WAITING_GAME) {
+        if(!canStart) {
+            showNotEnoughPlayers();
+        }
+        else{
+            try {
+                PokerPreGame.sendGameConfig(_clientInfo.gameConfig, _clientInfo.socket.getOutputStream());
 
-                _clientInfo.gameConfig._roomId = SocketUtils.receiveInt(_clientInfo.socket.getInputStream());
-
-                System.out.printf("Server response: All correct! Creating room...\n");
-
-                int clientType = SocketUtils.receiveInt(_clientInfo.socket.getInputStream());
-                if(clientType == GameType.CONFIRMATION_HOST_PLAYER) {
-                    _clientInfo.isHost = true;
+                int response = SocketUtils.receiveInt(_clientInfo.socket.getInputStream());
+                if(response == GameType.ERROR_GAME_NOT_CREATED) {
+                    System.out.printf("Server response: Error creating game!\n");
                 }
-                else {
-                    System.out.printf("Server response: clientType unknown %d\n", clientType);
-                }
+                else if(response == GameType.CONFIRMATION_WAITING_GAME) {
 
-                next();
+                    _clientInfo.gameConfig._roomId = SocketUtils.receiveInt(_clientInfo.socket.getInputStream());
+
+                    System.out.printf("Server response: All correct! Creating room...\n");
+
+                    int clientType = SocketUtils.receiveInt(_clientInfo.socket.getInputStream());
+                    if(clientType == GameType.CONFIRMATION_HOST_PLAYER) {
+                        _clientInfo.isHost = true;
+                    }
+                    else {
+                        System.out.printf("Server response: clientType unknown %d\n", clientType);
+                    }
+
+                    next();
+                }
+            }
+            catch (IOException e) {
+                System.out.println( String.format("Error server room name: %s\n", e.getMessage()) );
+            }
+            catch(NullPointerException e) {
+                System.out.println( String.format("Minor problem with socket ONLY for development: %s\n", e.getMessage()) );
             }
         }
-        catch (IOException e) {
-            System.out.println( String.format("Error server room name: %s\n", e.getMessage()) );
-        }
-        catch(NullPointerException e) {
-            System.out.println( String.format("Minor problem with socket ONLY for development: %s\n", e.getMessage()) );
-        }
+
+        
     }
 
     @FXML

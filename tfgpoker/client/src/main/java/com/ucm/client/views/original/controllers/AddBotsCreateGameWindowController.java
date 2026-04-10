@@ -17,7 +17,7 @@ public class AddBotsCreateGameWindowController extends GenericController {
     
     private static final int MIN_NUM_BOTS = 0;
 
-    private static final int MAX_NUM_BOTS = 7;
+    private static final int MAX_NUM_BOTS = 8;
 
     SpinnerValueFactory.IntegerSpinnerValueFactory valueFactoryBot1;
 
