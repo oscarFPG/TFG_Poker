@@ -125,6 +125,10 @@ public class StatusController {
         currentState = State.WAITING_GAME;
     }
 
+    public void stateChooseGame() {
+        currentState = State.CHOOSE_GAME;
+    }
+
     public State getCurrentState() {
         return currentState;
     }

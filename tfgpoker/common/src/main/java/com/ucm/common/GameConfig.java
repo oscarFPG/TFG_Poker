@@ -9,6 +9,7 @@ public class GameConfig {
     private static final String DEFAULT_LEVEL_DURATION = "15";
     private static final String DEFAULT_HIKE_PERCENTAGE = "25";
     private static final int DEFAULT_NUM_BOTS = 0;
+    private static final int DEFAULT_NUM_PLAYERS = 0;
     /**
      * Variables para crear partida: Home
     */
@@ -21,7 +22,24 @@ public class GameConfig {
     public boolean _dinamicBlinds = DEFAULT_DINAMIC_VALUE;
     public String _levelDuration = DEFAULT_LEVEL_DURATION;
     public String _hikePercentage = DEFAULT_HIKE_PERCENTAGE;
-    
+    /**
+     * Variables para crear partida: Add bots
+    */
+    public int _numBots1 = DEFAULT_NUM_BOTS;
+    public int _numBots2 = DEFAULT_NUM_BOTS;
+    public int _numBots3 = DEFAULT_NUM_BOTS;
+    /**
+     * Variables para crear partida: Add players
+    */
+    public int _numPlayers = DEFAULT_NUM_PLAYERS;
+    /**
+     * Variables para crear partida: Add tables
+    */
+    public String _selectedTable = null;
+    /**
+     * Variables para crear partida: Add tables
+    */
+    public String _selectedCard = null;
 
     public GameConfig() {}
 
@@ -42,19 +60,19 @@ public class GameConfig {
         return !roomName.trim().isEmpty();
     }
 
-    /**
-     * Variables para crear partida: Add bots
-    */
-    public int _numBots1 = DEFAULT_NUM_BOTS;
-    public int _numBots2 = DEFAULT_NUM_BOTS;
-    public int _numBots3 = DEFAULT_NUM_BOTS;
-    
-    /*
-        - Por defecto es estatico (1 y 2)
-        - Dinamicas
-            - Decidir valor de small y big -> menu desplegable
-            - Cada cuanto aumentan (minutos) -> menu desplegable
-            - Que factor de aumento (0%, 200%) -> menu desplegable
-    */
-    
+    public void reset() {
+        _initialMoney = DEFAULT_INITIAL_MONEY;
+        _allowBots = DEFAULT_ALLOW_BOTS;
+        _blindsValue = DEFAULT_BLINDS_VALUE;
+        _dinamicBlinds = DEFAULT_DINAMIC_VALUE;
+        _levelDuration = DEFAULT_LEVEL_DURATION;
+        _hikePercentage = DEFAULT_HIKE_PERCENTAGE;
+        _numBots1 = DEFAULT_NUM_BOTS;
+        _numBots2 = DEFAULT_NUM_BOTS;
+        _numBots3 = DEFAULT_NUM_BOTS;
+        _numPlayers = DEFAULT_NUM_PLAYERS;
+        _selectedTable = null;
+        _selectedCard = null;
+    }
+
 }

@@ -15,6 +15,9 @@ import javafx.scene.control.Button;
 public class ChooseGameWindowController extends GenericController {
     
     @FXML
+    private Button btnBackMainWindow;
+
+    @FXML
     private Button btnCreateGame;
 
     @FXML
@@ -58,6 +61,11 @@ public class ChooseGameWindowController extends GenericController {
         catch (IOException e) {
             System.out.printf("Error receiving response from server: %s\n", e.getMessage());    
         }
+    }
+
+    @FXML
+    public void returnMainWindow() {
+        back();
     }
 
 

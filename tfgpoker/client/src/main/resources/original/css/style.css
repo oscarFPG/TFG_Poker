@@ -220,6 +220,14 @@
     -fx-background-color: #e5e5e5;
 }
 
+.table-selected {
+    -fx-effect:  dropshadow(gaussian, rgba(240,184,255,0.8), 25, 0.5, 0, 0);
+}
+
+.card-selected {
+    -fx-effect:  dropshadow(gaussian, rgba(240,184,255,0.8), 25, 0.5, 0, 0);
+}
+
 /*FLECHAS ----------------------------------------------------------------------------------------------------- */
 
 .arrow-colors{

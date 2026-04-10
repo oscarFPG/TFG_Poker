@@ -106,4 +106,8 @@ public class MainController {
         updateView();
     }
 
+    public void backWindow() {
+        statusController.stateChooseGame();
+        updateView();
+    }
 }

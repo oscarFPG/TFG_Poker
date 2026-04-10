@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.ProfileSecondWindowController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.ProfileSecondWindowController">
    <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0">
          <top> 
@@ -40,17 +40,13 @@
                                           <Insets top="10.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../../images/imagenPerfil.png" />
-                                       </image>
-                                    </ImageView>
-                                    <VBox>
+                                    <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                                    <VBox alignment="CENTER">
                                        <VBox.margin>
                                           <Insets />
                                        </VBox.margin>
                                        <children>
-                                          <HBox alignment="CENTER" prefHeight="40.0" prefWidth="318.0" spacing="5.0">
+                                          <HBox alignment="CENTER" prefHeight="40.0" prefWidth="318.0" spacing="35.0">
                                              <children>
                                                 <Label alignment="CENTER" contentDisplay="CENTER" styleClass="bold-general-text-font" text="IP" />
                                                 <TextField fx:id="ipLabel" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="40.0" prefWidth="230.0" styleClass="username-label" />
@@ -100,18 +96,6 @@
                                     </HBox>
                                  </children>
                               </VBox>
-                              <Button alignment="CENTER" mnemonicParsing="false" prefHeight="30.0" prefWidth="28.0" styleClass="profile-edit-button" StackPane.alignment="CENTER">
-                                 <graphic>
-                                    <ImageView fitHeight="31.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../../images/cameraEditProfile.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                                 <StackPane.margin>
-                                    <Insets top="50.0" />
-                                 </StackPane.margin>
-                              </Button>
                            </children>
                         </StackPane>
                      </children>

@@ -65,7 +65,6 @@ public class HomeCreateGameWindowController extends GenericController {
         btnStartHome.setDisable(true);
         labelUserName.setText(_clientInfo.name);
         checkBoxAllowBots.setSelected(_clientInfo.gameConfig._allowBots);
-
         initializeRoomName();
         initializeSpinner();
         initializeBlindsValue();
@@ -171,8 +170,13 @@ public class HomeCreateGameWindowController extends GenericController {
     }
 
     @FXML
+    private void onAllowBots() {
+        _clientInfo.gameConfig._allowBots = checkBoxAllowBots.isSelected();
+    }
+
+    @FXML
     public void returnChooseGame() {
-        back();
+        backWindow();
     }
 
     @FXML
@@ -185,7 +189,6 @@ public class HomeCreateGameWindowController extends GenericController {
         String roomName = textFieldRoomName.getText();
         String userName = labelUserName.getText();
         Integer initialMoney = spinnerInitialMoney.getValue();
-        boolean allowBots = checkBoxAllowBots.isSelected();
         String blindsValue = comboBlindsValue.getValue();
         String levelDuration = comboLevelDuration.getValue();
         String hikePercentage = comboHikePercentage.getValue();
@@ -206,7 +209,6 @@ public class HomeCreateGameWindowController extends GenericController {
         _clientInfo.gameConfig._roomName = roomName;
         _clientInfo.gameConfig._userName = userName;
         _clientInfo.gameConfig._initialMoney = initialMoney;
-        _clientInfo.gameConfig._allowBots = allowBots;
         _clientInfo.gameConfig._blindsValue = blindsValue;
         _clientInfo.gameConfig._levelDuration = levelDuration;
         _clientInfo.gameConfig._hikePercentage = hikePercentage;
