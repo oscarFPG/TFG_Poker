@@ -26,6 +26,10 @@ public class HomeCreateGameWindowController extends GenericController {
 
     private static final int MAX_INITIAL_MONEY = 1000000;
 
+    private static final String DEFAULT_LEVEL_DURATION = "15";
+
+    private static final String DEFAULT_HIKE_PERCENTAGE = "25";
+
     @FXML
     private Button btnBackChooseGame;
 
@@ -164,8 +168,13 @@ public class HomeCreateGameWindowController extends GenericController {
     
     private void updateDinamicBlinds(){
         boolean enabled =  _clientInfo.gameConfig._dinamicBlinds;
+        if(!_clientInfo.gameConfig._dinamicBlinds) {
+            comboLevelDuration.setValue(DEFAULT_LEVEL_DURATION);
+            comboHikePercentage.setValue(DEFAULT_HIKE_PERCENTAGE);
+        }
         comboLevelDuration.setDisable(!enabled);
         comboHikePercentage.setDisable(!enabled);
+
         btnDinamicBlinds.setText(enabled ? "yes" : "no");
     }
 

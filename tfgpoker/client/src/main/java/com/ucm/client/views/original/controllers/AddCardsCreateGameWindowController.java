@@ -123,10 +123,10 @@ public class AddCardsCreateGameWindowController extends GenericController {
         }
         if(isSelected){
             imageCard.getStyleClass().add("card-selected");
-            btnSelectCard.setText("SELECTED");
+            btnSelectCard.setDisable(true);
         }
         else{
-            btnSelectCard.setText("SELECT");
+            btnSelectCard.setDisable(false);
         }
     }
 

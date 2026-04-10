@@ -94,7 +94,7 @@ public class ServerTCP {
         log.debug("--- Poker game ---");
 
         try {
-            Game game = new Game();
+            Game game = new Game(info);
             Controller controller = new Controller(game, info.players);
             controller.run();
         }

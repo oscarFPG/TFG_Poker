@@ -46,7 +46,7 @@
                                           <Insets />
                                        </VBox.margin>
                                        <children>
-                                          <HBox alignment="CENTER" prefHeight="40.0" prefWidth="318.0" spacing="35.0">
+                                          <HBox alignment="CENTER" prefHeight="40.0" prefWidth="318.0" spacing="38.0">
                                              <children>
                                                 <Label alignment="CENTER" contentDisplay="CENTER" styleClass="bold-general-text-font" text="IP" />
                                                 <TextField fx:id="ipLabel" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="40.0" prefWidth="230.0" styleClass="username-label" />

@@ -41,19 +41,31 @@ public class PokerPreGame {
 
         SocketUtils.sendString(out, config._roomName);
         SocketUtils.sendString(out, config._userName);
+        SocketUtils.sendInteger(out, config._initialMoney);
         SocketUtils.sendInteger(out, allowBotsCode);
+        SocketUtils.sendString(out, config._blindsValue);
+        SocketUtils.sendString(out, config._levelDuration);
+        SocketUtils.sendString(out, config._hikePercentage);
     }
 
     public static GameConfig receiveGameConfig(InputStream input, OutputStream output) throws IOException {
 
         String roomName = SocketUtils.receiveString(input);
         String userName = SocketUtils.receiveString(input);
+        int initialMoney = SocketUtils.receiveInt(input);
         boolean allowBots = (SocketUtils.receiveInt(input) == 1) ? true : false;
+        String blindsValue = SocketUtils.receiveString(input);
+        String levelDuration = SocketUtils.receiveString(input);
+        String hikePercentage = SocketUtils.receiveString(input);
 
         GameConfig config = new GameConfig();
         config._roomName = roomName;
         config._userName = userName;
+        config._initialMoney = initialMoney;
         config._allowBots = allowBots;
+        config._blindsValue = blindsValue;
+        config._levelDuration = levelDuration;
+        config._hikePercentage = hikePercentage;
 
         return config;
     }
@@ -62,16 +74,22 @@ public class PokerPreGame {
     
         SocketUtils.sendInteger(out, config._roomId);
         SocketUtils.sendString(out, config._roomName);
+        SocketUtils.sendInteger(out, config._initialMoney);
+        SocketUtils.sendString(out, config._blindsValue);
     }
 
     public static GameConfig receiveGameConfigAsJoinedPlayer(InputStream input, OutputStream output) throws IOException {
 
         int roomId = SocketUtils.receiveInt(input);
         String roomName = SocketUtils.receiveString(input);
+        int initialMoney = SocketUtils.receiveInt(input);
+        String blindsValue = SocketUtils.receiveString(input);
 
         GameConfig config = new GameConfig();
         config._roomId = roomId;
         config._roomName = roomName;
+        config._initialMoney = initialMoney;
+        config._blindsValue = blindsValue;
 
         return config;
     }

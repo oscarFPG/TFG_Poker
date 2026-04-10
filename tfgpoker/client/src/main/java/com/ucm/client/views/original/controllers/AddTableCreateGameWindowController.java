@@ -123,10 +123,10 @@ public class AddTableCreateGameWindowController extends GenericController {
         }
         if(isSelected){
             imageTable.getStyleClass().add("table-selected");
-            btnSelectTable.setText("SELECTED");
+            btnSelectTable.setDisable(true);
         }
         else{
-            btnSelectTable.setText("SELECT");
+            btnSelectTable.setDisable(false);
         }
     }
 

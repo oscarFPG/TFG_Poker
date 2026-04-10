@@ -25,7 +25,6 @@ public class Controller {
     
     public Controller(Game game, List<ClientStruct> players) {
         _game = game;
-        addPlayersToGame(players);
     }
 
     /**
@@ -36,27 +35,6 @@ public class Controller {
      */
     public Controller(Game game, int numPlayers) {
         _game = game;
-        addPlayersToGameLocally(numPlayers);
-    }
-
-
-    private void addPlayersToGame(List<ClientStruct> players) {
-
-        int id = 0;
-        for(ClientStruct cs : players) {
-            _game.addPlayer( new HumanPlayer(id, cs.name(), cs.socket(), 1000) );
-            ++id;
-        }
-    }
-
-    private void addPlayersToGameLocally(int numPlayers) {
-
-        int id = 0;
-        for(int i = 0; i < numPlayers; ++i){
-            _game.addPlayer( new HumanPlayer(id, "Player" + i, null, 1000) );
-            ++id;
-        }
-
     }
 
     public void run() {
@@ -66,7 +44,6 @@ public class Controller {
 
         ThreadContext.put("match", "0");
         ThreadContext.put("hand", String.valueOf(handCounter));
-
 
         log.debug("Assigning roles to all players");
         _game.assignRolesToAllPlayers();
