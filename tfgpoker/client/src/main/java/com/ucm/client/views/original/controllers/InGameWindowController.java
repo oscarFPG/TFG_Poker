@@ -8,6 +8,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
+import com.ucm.common.GameConfig;
 import com.ucm.common.GameType;
 import com.ucm.common.PokerGame;
 import com.ucm.common.gameobjects.Card;
@@ -19,6 +20,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 
 
 public class InGameWindowController extends GenericController {
@@ -27,42 +29,43 @@ public class InGameWindowController extends GenericController {
     @FXML
     private Label usernamePlaceHolder;
 
+    /* Call, Raise, Fold and Check buttons */
     @FXML
     private Button btnFold;
-
     @FXML
     private Button btnCall;
-
     @FXML
     private Button btnRaise;
+
+    /* Min, 1/2 pot and Max buttons */
+    @FXML
+    private Button btnMinBet, btnHalfBet, btnMaxBet;
+
+    /* Money buttons, labels and slider */
+    private int INCREASE_VALUE = 10;
+    @FXML
+    private Label labelMoney;
+    @FXML
+    private Slider sliderMoney;
+    @FXML
+    private Button btnDecreaseMoney;
+    @FXML
+    private Button btnIncreaseMoney;
 
 
     private Thread _gameThread = null;
     private BlockingQueue<String> _commandQueue = new LinkedBlockingQueue<>();
 
-    @FXML
-    private void foldAction() {
-        
-        _commandQueue.offer("fold");
-    }
-
-    @FXML
-    private void callAction() {
-        _commandQueue.offer("call");
-    }
-
-    @FXML
-    private void raiseAction() {
-
-        int ejemplo = 5;
-        _commandQueue.offer( String.format("raise %d", ejemplo) );
-    }
-
 
     @Override
     protected void onViewShown() {
 
-        System.out.printf("Start!\n");
+        GameConfig config = new GameConfig();
+        config.reset();
+
+        initializeSlider(config);
+
+        /*
 
         usernamePlaceHolder.setText( _clientInfo.name );
 
@@ -84,6 +87,89 @@ public class InGameWindowController extends GenericController {
             pokerGame(_clientInfo.name, _clientInfo.socket);
         });
         _gameThread.start();
+
+        */
+    }
+
+
+
+    private void initializeSlider(final GameConfig config) {
+
+        sliderMoney.setMin(0);
+        sliderMoney.setMax(1_000_000);
+        sliderMoney.setValue(0);
+
+        sliderMoney.valueProperty().addListener((obs, oldVal, newVal) -> {
+            labelMoney.setText(String.valueOf(newVal.intValue()));
+        });
+    }
+
+
+    @FXML
+    private void foldAction() {
+
+        if(!_commandQueue.isEmpty())
+            return;
+
+
+        _commandQueue.offer("fold");
+    }
+
+    @FXML
+    private void callAction() {
+
+        if(!_commandQueue.isEmpty())
+            return;
+
+
+        _commandQueue.offer("call");
+    }
+
+    @FXML
+    private void raiseAction() {
+
+        if(!_commandQueue.isEmpty())
+            return;
+
+
+        int ejemplo = 5;
+        _commandQueue.offer( String.format("raise %d", ejemplo) );
+    }
+
+    @FXML
+    private void minBetAction() {
+        int MIN_VALUE = 10;
+        System.out.println("Min bet action");
+        sliderMoney.setValue(MIN_VALUE);
+    }
+
+    @FXML
+    private void halfBetAction() {
+        int HALF_VALUE = 50;
+        System.out.println("Half bet action");
+        sliderMoney.setValue(HALF_VALUE);
+    }
+
+    @FXML
+    private void maxBetAction() {
+        double MAX_VALUE = sliderMoney.getMax();
+        System.out.println("Half bet action");
+        sliderMoney.setValue(MAX_VALUE);
+    }
+
+    @FXML
+    private void decreaseMoneyAction() {
+        double newValue = sliderMoney.getValue() - INCREASE_VALUE;
+        newValue = Math.clamp(newValue, sliderMoney.getMin(), sliderMoney.getMax());
+        sliderMoney.setValue(newValue);
+    }
+
+    @FXML
+    private void increaseMoneyAction() {
+        
+        double newValue = sliderMoney.getValue() + INCREASE_VALUE;
+        newValue = Math.clamp(newValue, sliderMoney.getMin(), sliderMoney.getMax());
+        sliderMoney.setValue(newValue);
     }
 
     @Override
@@ -319,8 +405,5 @@ public class InGameWindowController extends GenericController {
 
         return command;
     }
-
-
-    
     
 }

@@ -21,7 +21,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.InGameWindowController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.InGameWindowController">
    <top>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="1292.0" BorderPane.alignment="CENTER">
          <children>
@@ -87,7 +87,7 @@
       </HBox>
    </top>
    <right>
-      <VBox alignment="CENTER" prefHeight="551.0" prefWidth="379.0" spacing="20.0" styleClass="folded-menu" BorderPane.alignment="CENTER">
+      <VBox alignment="CENTER" prefHeight="551.0" prefWidth="379.0" spacing="20.0" styleClass="folded-menu" visible="false" BorderPane.alignment="CENTER">
          <children>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
                <children>
@@ -165,7 +165,7 @@
                                           </HBox>
                                           <HBox alignment="CENTER_RIGHT" prefHeight="62.0" prefWidth="585.0" spacing="5.0">
                                              <children>
-                                                <Button prefHeight="62.0" prefWidth="67.0" text="MIN" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                                                <Button fx:id="btnMinBet" onAction="#minBetAction" prefHeight="62.0" prefWidth="67.0" text="MIN" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                                                    <styleClass>
                                                       <String fx:value="semi-oval-pane" />
                                                       <String fx:value="slider-gradiant-colors" />
@@ -174,7 +174,7 @@
                                                       <Font name="System Bold" size="13.0" />
                                                    </font>
                                                 </Button>
-                                                <Button prefHeight="62.0" prefWidth="81.0" text="1/2 POT" textAlignment="CENTER" textFill="WHITE">
+                                                <Button fx:id="btnHalfBet" onAction="#halfBetAction" prefHeight="62.0" prefWidth="81.0" text="1/2 POT" textAlignment="CENTER" textFill="WHITE">
                                                    <styleClass>
                                                       <String fx:value="semi-oval-pane" />
                                                       <String fx:value="slider-gradiant-colors" />
@@ -183,7 +183,7 @@
                                                       <Font name="System Bold" size="13.0" />
                                                    </font>
                                                 </Button>
-                                                <Button prefHeight="62.0" prefWidth="67.0" text="MAX" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                                                <Button fx:id="btnMaxBet" onAction="#maxBetAction" prefHeight="62.0" prefWidth="67.0" text="MAX" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                                                    <styleClass>
                                                       <String fx:value="semi-oval-pane" />
                                                       <String fx:value="slider-gradiant-colors" />
@@ -239,12 +239,12 @@
                                           <String fx:value="semi-oval-pane" />
                                        </styleClass>
                                        <children>
-                                          <Label fx:id="lblValor" graphicTextGap="2.0" prefHeight="35.0" prefWidth="57.0" style="-fx-font-size: 20px; -fx-text-fill: white;" text="1200">
+                                          <Label fx:id="labelMoney" graphicTextGap="2.0" prefHeight="35.0" prefWidth="57.0" style="-fx-font-size: 20px; -fx-text-fill: white;" text="0">
                                              <font>
                                                 <Font size="24.0" />
                                              </font>
                                           </Label>
-                                          <Button prefHeight="59.0" prefWidth="67.0" text="-" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                                          <Button fx:id="btnDecreaseMoney" onAction="#decreaseMoneyAction" prefHeight="59.0" prefWidth="67.0" text="-" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                                              <styleClass>
                                                 <String fx:value="semi-oval-pane" />
                                                 <String fx:value="slider-gradiant-colors" />
@@ -253,8 +253,8 @@
                                                 <Font name="System Bold" size="24.0" />
                                              </font>
                                           </Button>
-                                          <Slider fx:id="sliderApuesta" blockIncrement="100" max="5000" min="0" prefHeight="26.0" prefWidth="139.0" value="1200" />
-                                          <Button prefHeight="59.0" prefWidth="68.0" text="+" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                                          <Slider fx:id="sliderMoney" blockIncrement="100" max="5000" min="0" prefHeight="26.0" prefWidth="139.0" value="1200" />
+                                          <Button fx:id="btnIncreaseMoney" onAction="#increaseMoneyAction" prefHeight="59.0" prefWidth="68.0" text="+" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                                              <styleClass>
                                                 <String fx:value="semi-oval-pane" />
                                                 <String fx:value="slider-gradiant-colors" />
