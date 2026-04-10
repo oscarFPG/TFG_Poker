@@ -243,10 +243,13 @@ public class PlayerList {
 
             Command command = askCommandToPlayer(playerOnTurn._player, sb, bb, maxBet);
             CommandResult result = command.execute(sb, bb, maxBet);
+            notifyOtherPlayerActionToAllPlayers(playerOnTurn._player, result, command);
+
             if(result.folds()) {
                 --playersRemaining; 
                 if (playersRemaining == 1) {
                     updateHandState();
+                    notifyHandEndsByFold();
                     throw new OnlyOnePlayerLeftException();
                 }
             }
@@ -326,6 +329,8 @@ public class PlayerList {
         for(PotDistribution dist : distribution){
             givePriceToPlayerWithID(dist.playerID(), dist.potPrize());
         }
+
+        notifyRankingsToAllPlayers();
     }
 
     public void calculatePrizeForPlayerLeft() {
@@ -340,6 +345,8 @@ public class PlayerList {
         PotDistribution distribution = _potManager.calculatePrizeForPlayer(winner._player.getPlayerId());
         givePriceToPlayerWithID(distribution.playerID(), distribution.potPrize());
         winner._player.setIsWinner(true);
+
+        notifyRankingsToAllPlayers();
     }
 
     public boolean checkEndOfGame() {
@@ -381,70 +388,6 @@ public class PlayerList {
             if(iNode._player.getMoneyOnBet() == 0 && iNode._player.getMoneyOffBet() == 0)
                 iNode._player.setIsEliminated(true);
         
-            iNode = iNode._next;
-        }
-    }
-
-    public void notifyRankingsToAllPlayers() {
-
-        Node i = _first;
-        if(i._player.isWinner())
-            i._player.notifyHandWinner();
-        else
-            i._player.notifyHandLoser();
-
-        i._player.notifyMoneyAmount( i._player.getMoneyOffBet() );
-        i = i._next;
-        
-        while(i != _first) {
-
-            if(i._player.isWinner())
-                i._player.notifyHandWinner();
-            else
-                i._player.notifyHandLoser();
-
-            i._player.notifyMoneyAmount( i._player.getMoneyOffBet() );
-            i = i._next;
-        }
-
-    }
-
-    public void notifyHandEndsByFold() {
-        
-        Node iNode = _first;
-
-        iNode._player.notifyHandEndsByFolds();
-        iNode = iNode._next;
-        while(iNode != _first) {
-            iNode._player.notifyHandEndsByFolds();
-            iNode = iNode._next;
-        }
-    }
-
-    public void notifyRoundEnded() {
-
-        _first._player.notifyRoundEnded();
-        Node iNode = _first._next;
-        while (iNode != _first) {
-            iNode._player.notifyRoundEnded();
-            iNode = iNode._next;
-        }
-    }
-
-    public void notifyGameEnds(final boolean gameEnds) {
-
-        Node iNode = _first;
-        if(gameEnds)
-            iNode._player.notifyGameEnded();
-        else
-            iNode._player.notifyGameKeeps();
-
-        iNode = iNode._next;
-        while(iNode != _first) {
-            if(gameEnds)
-                iNode._player.notifyGameEnded();
-            else
-                iNode._player.notifyGameKeeps();
             iNode = iNode._next;
         }
     }
@@ -684,6 +627,88 @@ public class PlayerList {
         winner._player.receivePriceMoney(amount);
         winner._player.setIsWinner(true);
     }
+
+    private void notifyOtherPlayerActionToAllPlayers(IPokerPlayer p, CommandResult result, Command command) {
+
+        Node iNode = _first;
+        if(!iNode._player.isEliminated()) {
+            iNode._player.notifyOtherPlayerAction(p, command, result);
+        }
+
+        iNode = iNode._next;
+        while(iNode != _first) {
+            if(!iNode._player.isEliminated()) {
+                iNode._player.notifyOtherPlayerAction(p, command, result);
+            }
+
+            iNode = iNode._next;
+        }
+    }
+
+    private void notifyRankingsToAllPlayers() {
+
+        Node i = _first;
+        if(i._player.isWinner())
+            i._player.notifyHandWinner();
+        else
+            i._player.notifyHandLoser();
+
+        i._player.notifyMoneyAmount( i._player.getMoneyOffBet() );
+        i = i._next;
+        
+        while(i != _first) {
+
+            if(i._player.isWinner())
+                i._player.notifyHandWinner();
+            else
+                i._player.notifyHandLoser();
+
+            i._player.notifyMoneyAmount( i._player.getMoneyOffBet() );
+            i = i._next;
+        }
+
+    }
+
+    private void notifyHandEndsByFold() {
+        
+        Node iNode = _first;
+
+        iNode._player.notifyHandEndsByFolds();
+        iNode = iNode._next;
+        while(iNode != _first) {
+            iNode._player.notifyHandEndsByFolds();
+            iNode = iNode._next;
+        }
+    }
+
+    private void notifyRoundEnded() {
+
+        _first._player.notifyRoundEnded();
+        Node iNode = _first._next;
+        while (iNode != _first) {
+            iNode._player.notifyRoundEnded();
+            iNode = iNode._next;
+        }
+    }
+
+    public void notifyGameEnds(final boolean gameEnds) {
+
+        Node iNode = _first;
+        if(gameEnds)
+            iNode._player.notifyGameEnded();
+        else
+            iNode._player.notifyGameKeeps();
+
+        iNode = iNode._next;
+        while(iNode != _first) {
+            if(gameEnds)
+                iNode._player.notifyGameEnded();
+            else
+                iNode._player.notifyGameKeeps();
+            iNode = iNode._next;
+        }
+    }
+
 
 
     public boolean isEmpty() { return size() == 0; }

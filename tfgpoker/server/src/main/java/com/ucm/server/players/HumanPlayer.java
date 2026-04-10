@@ -10,7 +10,10 @@ import com.ucm.common.GameType;
 import com.ucm.common.SocketUtils;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
+import com.ucm.server.commands.Command;
 import com.ucm.server.gameobjects.Player;
+import com.ucm.server.interfaces.IPokerPlayer;
+import com.ucm.server.middleclasses.CommandResult;
 
 
 
@@ -131,6 +134,26 @@ public class HumanPlayer extends Player {
         }
         catch(IOException e) {
             log.error("Player {} making the small blind bet: {}", _name, e.getMessage());
+        }
+    }
+
+    @Override
+    public void notifyOtherPlayerAction(IPokerPlayer p, Command command, CommandResult result) {
+        
+        try {
+
+            int raisesValue = result.raises() ? GameType.TRUE : GameType.FALSE;
+            int foldsValue = result.folds() ? GameType.TRUE : GameType.FALSE;
+
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_OTHER_PLAYER);
+            SocketUtils.sendInteger(_socket.getOutputStream(), p.getPlayerId());
+            SocketUtils.sendString(_socket.getOutputStream(), command.getCommandFormat());
+            SocketUtils.sendInteger(_socket.getOutputStream(), result.bet());
+            SocketUtils.sendInteger(_socket.getOutputStream(), raisesValue);
+            SocketUtils.sendInteger(_socket.getOutputStream(), foldsValue);
+        }
+        catch(IOException e) {
+            log.error("Sending other player action: {}", e.getMessage());
         }
     }
 

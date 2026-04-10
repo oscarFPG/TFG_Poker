@@ -14,7 +14,11 @@ import org.json.JSONObject;
 
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
+import com.ucm.server.commands.Command;
 import com.ucm.server.gameobjects.BotLLM;
+import com.ucm.server.gameobjects.Player;
+import com.ucm.server.interfaces.IPokerPlayer;
+import com.ucm.server.middleclasses.CommandResult;
 
 
 
@@ -101,6 +105,8 @@ public class LlamaPokerLLM extends BotLLM {
     @Override public void notifyGameWinner() {}
     @Override public void notifyGameLoser() {}
     @Override public void notifyHandEndsByFolds() {}
+    @Override public void notifyOtherPlayerAction(IPokerPlayer p, Command command, CommandResult result) {}
+    
 
     // ---------------------------------------------METODOS PERSOLANIZADOS PARA ESTE BOT------------------------------------------------
    
@@ -380,4 +386,5 @@ public class LlamaPokerLLM extends BotLLM {
 
         return "fold";
     }
+
 }

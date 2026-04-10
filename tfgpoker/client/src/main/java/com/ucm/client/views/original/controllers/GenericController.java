@@ -46,7 +46,7 @@ public abstract class GenericController {
     
     protected void onViewShown() {}
 
-    public abstract void onNextEvent();
-    public abstract void onBackEvent();
+    protected void onNextEvent(){}
+    protected void onBackEvent() {}
 
 }

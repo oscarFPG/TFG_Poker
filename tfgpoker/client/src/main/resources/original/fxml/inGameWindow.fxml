@@ -128,7 +128,7 @@
                <children>
                   <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="184.0" prefWidth="232.0" scaleX="0.6" scaleY="0.6" StackPane.alignment="CENTER_RIGHT">
                      <children>
-                        <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="171.0" prefWidth="660.0">
+                        <VBox fx:id="buttonsHolder" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="171.0" prefWidth="660.0">
                            <children>
                               <HBox prefHeight="52.0" prefWidth="655.0">
                                  <children>
@@ -136,7 +136,7 @@
                                        <children>
                                           <HBox prefHeight="107.0" prefWidth="583.0">
                                              <children>
-                                                <Button prefHeight="50.0" prefWidth="288.0" text="PREFLOP" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                                                <Button fx:id="btnRound" prefHeight="50.0" prefWidth="288.0" text="PREFLOP" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                                                    <styleClass>
                                                       <String fx:value="parallelogram-pane" />
                                                       <String fx:value="slider-gradiant-colors" />

@@ -136,13 +136,6 @@ public class WaitingGameWindowController extends GenericController {
 
     }
 
-    @Override
-    public void onNextEvent() {}
-
-    @Override
-    public void onBackEvent() {}
-
-
     private void clearAllLabels() {
 
         for(int i = 0; i < 9; i++) {

@@ -129,7 +129,6 @@ public class Game {
         } 
         // Collect remaining bets only if the round ended because all players folded
         catch (OnlyOnePlayerLeftException e) {
-            _playerList.notifyHandEndsByFold();
             _isPreflop = false;
 
             throw e;
@@ -148,7 +147,6 @@ public class Game {
         }
         
         _playerList.manageEliminatedPlayers();
-        _playerList.notifyRankingsToAllPlayers();
     }
 
     public boolean passTurn() {

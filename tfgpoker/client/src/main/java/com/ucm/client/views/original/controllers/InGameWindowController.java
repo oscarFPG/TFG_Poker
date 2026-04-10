@@ -24,6 +24,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 
 
 public class InGameWindowController extends GenericController {
@@ -31,6 +32,9 @@ public class InGameWindowController extends GenericController {
 
     @FXML
     private Label usernamePlaceHolder;
+
+    @FXML
+    private VBox buttonsHolder;
 
     /* Call, Raise, Fold and Check buttons */
     @FXML
@@ -54,6 +58,9 @@ public class InGameWindowController extends GenericController {
     private Button btnDecreaseMoney;
     @FXML
     private Button btnIncreaseMoney;
+
+    @FXML
+    private Button btnRound;
 
     /* All poker players seats */
     // Always playing-client seat
@@ -105,7 +112,7 @@ public class InGameWindowController extends GenericController {
 
     private Thread _gameThread = null;
     private BlockingQueue<String> _commandQueue = new LinkedBlockingQueue<>();
-
+    private boolean _swapCallToCheck = false;
 
     @Override
     protected void onViewShown() {
@@ -161,7 +168,7 @@ public class InGameWindowController extends GenericController {
             return;
 
 
-        _commandQueue.offer("fold");
+        _commandQueue.offer(GameType.CALL_ACTION_FULL);
     }
 
     @FXML
@@ -171,7 +178,10 @@ public class InGameWindowController extends GenericController {
             return;
 
 
-        _commandQueue.offer("call");
+        if(_swapCallToCheck)
+            _commandQueue.offer(GameType.CHECK_ACTION_FULL);    
+        else
+            _commandQueue.offer(GameType.CALL_ACTION_FULL);
     }
 
     @FXML
@@ -182,7 +192,7 @@ public class InGameWindowController extends GenericController {
 
 
         int ejemplo = 5;
-        _commandQueue.offer( String.format("raise %d", ejemplo) );
+        _commandQueue.offer( String.format("%s %d", GameType.RAISE_ACTION_FULL, ejemplo) );
     }
 
     @FXML
@@ -222,14 +232,6 @@ public class InGameWindowController extends GenericController {
     }
 
     
-
-    @Override
-    public void onNextEvent() {}
-
-    @Override
-    public void onBackEvent() {}
-
-
     private void pokerGame(String name, Socket socket) {
 
 		int currentMoney;
@@ -261,6 +263,9 @@ public class InGameWindowController extends GenericController {
 
                     // Preflop
                     System.out.printf("-- Preflop --\n");
+                    Platform.runLater(() -> {
+                        btnRound.setText("PREFLOP");
+                    });
                     playRound(playerCards[0], playerCards[1], socket);
                     tableCardValues[0] = PokerGame.receiveCard(input);
                     tableCardValues[1] = PokerGame.receiveCard(input);
@@ -276,6 +281,9 @@ public class InGameWindowController extends GenericController {
 
                     // Flop
                     System.out.printf("-- Flop --\n");
+                    Platform.runLater(() -> {
+                        btnRound.setText("FLOP");
+                    });
                     playRound(playerCards[0], playerCards[1], socket);
                     tableCardValues[3] = PokerGame.receiveCard(input);
                     System.out.printf(
@@ -289,6 +297,9 @@ public class InGameWindowController extends GenericController {
 
                     // Turn
                     System.out.printf("-- Turn --\n");
+                    Platform.runLater(() -> {
+                        btnRound.setText("TURN");
+                    });
                     playRound(playerCards[0], playerCards[1], socket);
                     tableCardValues[4] = PokerGame.receiveCard(input);
                     System.out.printf(
@@ -302,10 +313,16 @@ public class InGameWindowController extends GenericController {
 
                     // River
                     System.out.printf("-- River --\n");
+                    Platform.runLater(() -> {
+                        btnRound.setText("RIVER");
+                    });
                     playRound(playerCards[0], playerCards[1], socket);
 
                     // Showdown
                     System.out.printf("-- Showdown --\n");
+                    Platform.runLater(() -> {
+                        btnRound.setText("SHOWDOWN");
+                    });
                     rankingCode = SocketUtils.receiveInt(input);
                     currentMoney = SocketUtils.receiveInt(input);
                     if(rankingCode == GameType.PLAYER_WINS_HAND) {
@@ -367,27 +384,42 @@ public class InGameWindowController extends GenericController {
 
         boolean handEndsByFold = false;
 		int sb, bb, maxBet;
-		int offBetMoney, onBetMoney;
+        int offBetMoney, onBetMoney;
+        
+        int otherPlayerID;
+        String otherPlayerCommand;
+        int otherPlayerBet;
+        boolean otherPlayerRaises, otherPlayerFolds;
 
 		int serverCode = SocketUtils.receiveInt(socket.getInputStream());
 		while(serverCode != GameType.ROUND_ENDS && !handEndsByFold) {
 
-			if(serverCode == GameType.TURN_FORCED_SB){
+			if(serverCode == GameType.TURN_FORCED_SB) {
+
 				int amountSB = SocketUtils.receiveInt(socket.getInputStream());
 				System.out.printf("Forced play as the small blind with %d chips\n", amountSB);
 			}
 			else if(serverCode == GameType.TURN_FORCED_BB) {
+
 				int amountBB = SocketUtils.receiveInt(socket.getInputStream());
 				System.out.printf("Forced play as the big blind with %d chips\n", amountBB);
 			}
 			else if(serverCode == GameType.TURN_WAIT) {
+
 				System.out.printf("Wait for the other players to play...\n");
+                Platform.runLater(() -> {
+                    buttonsHolder.setVisible(false);
+                });
+
                 // TODO : Receive the other players actions
                 // notifyOtherPlayerAction()
 			}
 			else if(serverCode == GameType.TURN_PLAY) {
 
 				System.out.printf("It's your turn to play!\n");
+                Platform.runLater(() -> {
+                    buttonsHolder.setVisible(true);
+                });
 
 				// Receive round info
 				sb = SocketUtils.receiveInt( socket.getInputStream() );
@@ -396,12 +428,34 @@ public class InGameWindowController extends GenericController {
 				offBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
 				onBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
 
+                System.out.printf(
+                    "Round info - SB: %d, BB: %d, MaxBet: %d, OffBetMoney: %d, OnBetMoney: %d\n", 
+                    sb, bb, maxBet, offBetMoney, onBetMoney
+                );
+
                 selectCommand(socket, sb, bb, maxBet, offBetMoney, onBetMoney);
+                Platform.runLater(() -> {
+                    buttonsHolder.setVisible(false);
+                });
 			}
 			else if(serverCode == GameType.HAND_ENDS_BY_FOLD) {
 				handEndsByFold = true;
 			}
-			else {
+            else if(serverCode == GameType.TURN_OTHER_PLAYER) {
+
+                otherPlayerID = SocketUtils.receiveInt( socket.getInputStream() );
+                otherPlayerCommand = SocketUtils.receiveString( socket.getInputStream() );
+                otherPlayerBet = SocketUtils.receiveInt( socket.getInputStream() );
+                otherPlayerRaises = (SocketUtils.receiveInt( socket.getInputStream() ) == GameType.TRUE) ? true : false;
+                otherPlayerFolds =  (SocketUtils.receiveInt( socket.getInputStream() ) == GameType.TRUE) ? true : false;
+
+                System.out.printf(
+                    "Other player action - PlayerID: %d, Command: %s, Bet: %d, Raises: %b, Folds: %b\n",
+                    otherPlayerID, otherPlayerCommand, otherPlayerBet, otherPlayerRaises, otherPlayerFolds
+                );
+
+            }
+            else {
 				System.out.printf("Unknown turn code %d\n", serverCode);
 			}
 
@@ -423,11 +477,18 @@ public class InGameWindowController extends GenericController {
         final int onBetMoney
     ) throws InterruptedException {
 
-        System.out.printf("Waiting to client to make a move...\n");
         try {
 
             boolean valid = false;
             while(!valid) {
+
+                // Update buttons to match available actions
+                if(maxBet == 0) {
+                    _swapCallToCheck = true;
+                    Platform.runLater(() -> {
+                        btnCall.setText("CHECK");
+                    });
+                }
 
                 String command = _commandQueue.take();
                 String baseCommand = command.split(" ")[0];
@@ -456,6 +517,11 @@ public class InGameWindowController extends GenericController {
                     valid = false;
                 }
             }
+
+            _swapCallToCheck = false;
+            Platform.runLater(() -> {
+               btnCall.setText("CALL");         
+            });
         }
         catch(IOException e) {
             System.out.printf("Error sending the command: %s\n", e.getMessage());

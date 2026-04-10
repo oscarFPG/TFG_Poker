@@ -89,10 +89,4 @@ public class ProfileSecondWindowController extends GenericController {
     private void cancel() {
         Platform.exit();
     }
-
-    @Override
-    public void onNextEvent() {}
-
-    @Override
-    public void onBackEvent() {}
 }

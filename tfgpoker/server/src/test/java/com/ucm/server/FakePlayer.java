@@ -5,7 +5,10 @@ import java.util.List;
 
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
+import com.ucm.server.commands.Command;
 import com.ucm.server.gameobjects.Player;
+import com.ucm.server.interfaces.IPokerPlayer;
+import com.ucm.server.middleclasses.CommandResult;
 
 
 public class FakePlayer extends Player {
@@ -79,5 +82,8 @@ public class FakePlayer extends Player {
 
     @Override
     public void notifyMoneyAmount(int amount) {}
+
+    @Override
+    public void notifyOtherPlayerAction(IPokerPlayer p, Command command, CommandResult result) {}
     
 }

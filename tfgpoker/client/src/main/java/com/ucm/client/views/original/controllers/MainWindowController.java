@@ -208,12 +208,6 @@ public class MainWindowController extends GenericController {
         next();
     }
 
-    @Override
-    public void onNextEvent() {}
-
-
-    @Override
-    public void onBackEvent() {}
 
     @Override
     public void setMainController(MainController mainController, Stage stage) {

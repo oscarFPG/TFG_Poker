@@ -68,14 +68,4 @@ public class ChooseGameWindowController extends GenericController {
         back();
     }
 
-
-    @Override
-    public void onNextEvent() {
-    }
-
-
-    @Override
-    public void onBackEvent() {
-    }
-
 }
