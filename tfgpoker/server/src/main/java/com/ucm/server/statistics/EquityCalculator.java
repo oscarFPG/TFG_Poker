@@ -192,7 +192,7 @@ public class EquityCalculator {
    private static List<Integer> getWinners(List<PlayerEvaluation> evals) {
 
     int best = evals.stream()
-            .mapToInt(e -> e.playerRank()) // 🔥 FIX
+            .mapToInt(e -> e.playerRank()) 
             .min()
             .orElse(Integer.MAX_VALUE);
 
