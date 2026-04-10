@@ -19,9 +19,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.shape.Circle;
 
 
 
@@ -187,9 +185,8 @@ public class WaitingGameWindowController extends GenericController {
                 int event = SocketUtils.receiveInt(input);
                 if(event == GameType.EVENT_PLAYER_JOINED) {
 
-                    List<PlayerInfo> playerPositions = PokerPreGame.receivePlayerListWaiting(input, output);
-                    showPlayers(playerPositions);
-                    
+                    _clientInfo.playerPositions = PokerPreGame.receivePlayerListWaiting(input, output);
+                    showPlayers(_clientInfo.playerPositions);
                 }
                 else if(event == GameType.CONFIRMATION_GAME_STARTS) {
                     System.out.printf("Event GAME_STARTS!\n");
@@ -312,8 +309,6 @@ public class WaitingGameWindowController extends GenericController {
 
             --nextPosition;
         }
-
-        
     }
 
 }

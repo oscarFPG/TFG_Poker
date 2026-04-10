@@ -6,19 +6,14 @@ import java.net.Socket;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.ucm.common.GameType;
 import com.ucm.common.SocketUtils;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
-import com.ucm.server.control.GameAdapter;
 import com.ucm.server.gameobjects.Player;
-import com.ucm.server.logic.Game;
 
 
-/**
- * This class represents any king of player in the game, whether its a human
- * player or and AI player.
- * It works as a representation of the player entity in the server side.
- */
+
 public class HumanPlayer extends Player {
 
     private static final Logger log = LogManager.getLogger(HumanPlayer.class);
@@ -68,7 +63,6 @@ public class HumanPlayer extends Player {
 
         return commandInput;
     }
-
 
     @Override
     public void notifyMoneyAmount(final int amount) {
@@ -120,7 +114,7 @@ public class HumanPlayer extends Player {
     public void notifySmallBlindBet(final int amount) {
 
         try {
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnForcedSBToCode());
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_FORCED_SB);
             SocketUtils.sendInteger(_socket.getOutputStream(), amount);
         }
         catch(IOException e) {
@@ -132,7 +126,7 @@ public class HumanPlayer extends Player {
     public void notifyBigBlindBet(final int amount) {
         
         try {
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnForcedSBToCode());
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_FORCED_BB);
             SocketUtils.sendInteger(_socket.getOutputStream(), amount);
         }
         catch(IOException e) {
@@ -144,7 +138,7 @@ public class HumanPlayer extends Player {
     public void notifyTurnWait() {
 
         try {
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnWaitToCode());
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_WAIT);
         }
         catch (IOException e) {
             log.error("Sending the WAIT order to player {}: {}", _name, e.getMessage());
@@ -156,7 +150,7 @@ public class HumanPlayer extends Player {
 
         try {
 
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerTurnPlayToCode());
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_PLAY);
         }
         catch (IOException e) {
             log.error("Receiving the command for {} player: {}", _name, e.getMessage());
@@ -167,7 +161,7 @@ public class HumanPlayer extends Player {
     public void notifyRoundEnded() {
  
         try {
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.gameRoundEnded());
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.ROUND_ENDS);
         }
         catch (IOException e) {
             log.error("Notifing ROUND_ENDS to player {}: {}", _name, e.getMessage());
@@ -178,7 +172,7 @@ public class HumanPlayer extends Player {
     public void notifyHandEnded() {
         
         try {
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.gameHandEnded());
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.HAND_ENDS);
         }
         catch(IOException e) {
             log.error("Notifying HAND_ENDS to player {}: {}", _name, e.getMessage());
@@ -189,7 +183,7 @@ public class HumanPlayer extends Player {
     public void notifyGameEnded() {
 
         try {
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.gameEnded());
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.GAME_ENDS);
         }
         catch(IOException e) {
             log.error("Notifying GAME_ENDS to player {}: {}", _name, e.getMessage());
@@ -200,7 +194,7 @@ public class HumanPlayer extends Player {
     public void notifyGameKeeps() {
         
         try {
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.gameKeeps());
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.GAME_KEEPS);
         }
         catch(IOException e) {
             log.error("Notifying GAME_KEEPS to player {}: {}", _name, e.getMessage());
@@ -211,7 +205,7 @@ public class HumanPlayer extends Player {
     public void notifyHandWinner() {
 
         try {
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerWinsHand());
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.PLAYER_WINS_HAND);
         }
         catch(IOException e) {
             log.error("Notifying HAND_WINNER to player {}: {}", _name, e.getMessage());
@@ -222,7 +216,7 @@ public class HumanPlayer extends Player {
     public void notifyHandLoser() {
 
         try {
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerLosesHand());
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.PLAYER_LOSES_HAND);
         }
         catch(IOException e) {
             log.error("Notifying HAND_LOSER to player {}: {}", _name, e.getMessage());
@@ -233,7 +227,7 @@ public class HumanPlayer extends Player {
     public void notifyGameWinner() {
 
         try {
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerWinsGame());
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.PLAYER_WINS_GAME);
         }
         catch(IOException e) {
             log.error("Notifying GAME_WINNER to player {}: {}", _name, e.getMessage());
@@ -244,7 +238,7 @@ public class HumanPlayer extends Player {
     public void notifyGameLoser() {
 
         try {
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.playerLosesGame());
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.PLAYER_LOSES_GAME);
         }
         catch(IOException e) {
             log.error("Notifying GAME_LOSER to player {}: {}", _name, e.getMessage());
@@ -255,7 +249,7 @@ public class HumanPlayer extends Player {
     public void notifyHandEndsByFolds() {
 
         try {
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameAdapter.handEndsByFolds());
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.HAND_ENDS_BY_FOLD);
         }
         catch(IOException e) {
             log.error("Notifying HAND_ENDS_BY_FOLDS to player {}: {}", _name, e.getMessage());
