@@ -707,19 +707,23 @@ public class PlayerList {
     do {
         IPokerPlayer player = current._player;
 
-         double equity;
+        if (!player.isEliminated()) {
 
-        if (player.isFolded()) {
-            equity = 0.0;
-        } else {
-            equity = equityMap.getOrDefault(player.getPlayerId(), 0.0);
+            double equity;
+
+            if (player.isFolded()) {
+                equity = 0.0;
+            } else {
+                equity = equityMap.getOrDefault(player.getPlayerId(), 0.0);
+            }
+
+            player.notifyEquity(equity);
         }
-       
+
         current = current._next;
 
     } while (current != _first);
 }
-
 
     public boolean isEmpty() { return size() == 0; }
     public boolean isFull() { return size() == max(); }
