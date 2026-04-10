@@ -53,6 +53,12 @@ public class GameConfig {
         _blindsValue = (other._blindsValue != null) ? String.copyValueOf(other._blindsValue.toCharArray()) : null;
         _levelDuration = (other._levelDuration != null) ? String.copyValueOf(other._levelDuration.toCharArray()) : null;
         _hikePercentage = (other._hikePercentage != null) ? String.copyValueOf(other._hikePercentage.toCharArray()) : null;
+        _numBots1 = other._numBots1;
+        _numBots2 = other._numBots2;
+        _numBots3 = other._numBots3;
+        _numPlayers = other._numPlayers;
+        _selectedTable = (other._selectedTable != null) ? String.copyValueOf(other._selectedTable.toCharArray()) : null;
+        _selectedCard = (other._selectedCard != null) ? String.copyValueOf(other._selectedCard.toCharArray()) : null;
     }
 
     public static boolean isValidRoomName(String roomName){

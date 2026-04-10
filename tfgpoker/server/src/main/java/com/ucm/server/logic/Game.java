@@ -56,10 +56,10 @@ public class Game {
 
 
         _initialSmallBlind = Integer.parseInt(parts[0]);
-        _initialBigBlind = Integer.parseInt(parts[0]);
+        _initialBigBlind = Integer.parseInt(parts[1]);
         _handCounter = 0;
 
-        _playerList = new PlayerList(_gameConfig._numPlayers);
+        _playerList = new PlayerList(_gameConfig._numPlayers + 1);
         addPlayerInitial(gameInfo);
         _deck = new Deck();
         _tableCards = new Card[MAX_CARDS_IN_TABLE];

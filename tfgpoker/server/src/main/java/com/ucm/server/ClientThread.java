@@ -94,6 +94,12 @@ public class ClientThread implements Runnable {
                         _gameConfig._dinamicBlinds = config._dinamicBlinds;
                         _gameConfig._levelDuration = config._levelDuration;
                         _gameConfig._hikePercentage = config._hikePercentage;
+                        _gameConfig._numBots1 = config._numBots1;
+                        _gameConfig._numBots2 = config._numBots2;
+                        _gameConfig._numBots3 = config._numBots3;
+                        _gameConfig._numPlayers = config._numPlayers;
+                        _gameConfig._selectedTable = config._selectedTable;
+                        _gameConfig._selectedCard = config._selectedCard;
 
                         _isHost = true;
                         _playerID = _roomList.size();
