@@ -25,6 +25,7 @@ public interface IPokerNotification {
 
     public void notifyGameWinner();
     public void notifyGameLoser();
+    public void notifyEquity(double equity);
 
     
 }

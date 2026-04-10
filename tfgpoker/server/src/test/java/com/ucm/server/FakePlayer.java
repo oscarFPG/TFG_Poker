@@ -79,5 +79,10 @@ public class FakePlayer extends Player {
 
     @Override
     public void notifyMoneyAmount(int amount) {}
+
+    @Override
+    public void notifyEquity(double equity) {
+      
+    }
     
 }

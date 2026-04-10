@@ -3,6 +3,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "EquityCalculatorTest",
+            "request": "launch",
+            "mainClass": "com.ucm.server.statistics.EquityCalculatorTest",
+            "projectName": "server"
+        },
+        {
+            "type": "java",
+            "name": "TestLLamaBot",
+            "request": "launch",
+            "mainClass": "com.ucm.server.players.TestLLamaBot",
+            "projectName": "server"
+        },
+        {
+            "type": "java",
             "name": "MainApp",
             "request": "launch",
             "mainClass": "com.ucm.client.MainApp",

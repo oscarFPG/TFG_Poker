@@ -11,7 +11,6 @@ import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.control.GameAdapter;
 import com.ucm.server.gameobjects.Player;
-import com.ucm.server.logic.Game;
 
 
 /**
@@ -258,6 +257,18 @@ public class HumanPlayer extends Player {
         catch(IOException e) {
             log.error("Notifying HAND_ENDS_BY_FOLDS to player {}: {}", _name, e.getMessage());
         }
+    }
+
+    @Override
+    public void notifyEquity(double equity) {
+        try {
+            String equityStr = String.format("%.2f%%", equity * 100);
+            SocketUtils.sendString(_socket.getOutputStream(), equityStr);
+        }
+        catch (IOException e) {
+            log.error("Trying to send the equity value to player {}: {}", _name, e.getMessage());
+        }
+
     }
 
     

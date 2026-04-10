@@ -377,4 +377,9 @@ public class LlamaPokerLLM extends BotLLM {
 
         return "fold";
     }
+
+    @Override
+    public void notifyEquity(double equity) {
+        
+    }
 }

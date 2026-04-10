@@ -141,5 +141,10 @@ public class GeminiLLM extends BotLLM {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'notifyPlayerAction'");
     }
+
+    @Override
+    public void notifyEquity(double equity) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     
 }
