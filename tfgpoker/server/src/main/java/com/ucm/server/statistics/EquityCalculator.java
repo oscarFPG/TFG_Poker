@@ -12,10 +12,36 @@ import com.ucm.server.gameobjects.Deck;
 import com.ucm.server.middleclasses.HandInfo;
 import com.ucm.server.middleclasses.PlayerEvaluation;
 
+/**
+ * Utility class responsible for calculating equity (win probability)
+ * of players in a Texas Hold'em game.
+ * 
+ * <p>
+ * The calculation method depends on the current game street:
+ * <ul>
+ *   <li>River → exact evaluation</li>
+ *   <li>Turn → iterate all possible rivers</li>
+ *   <li>Flop → iterate all possible turn + river combinations</li>
+ *   <li>Preflop / partial → Monte Carlo simulation</li>
+ * </ul>
+ * 
+ * <p>
+ * Equity is returned as a probability between 0.0 and 1.0 for each player.
+ */
+
 public class EquityCalculator {
 
+     /** Number of simulations used in Monte Carlo approximation */
     private static final int MONTE_CARLO_SIMULATIONS = 30000;
 
+    /**
+     * Calculates equity for all players given current board state.
+     *
+     * @param players list of players with their hole cards
+     * @param tableCards community cards (can contain nulls)
+     * @param deck remaining deck
+     * @return map of playerID → equity (0.0 - 1.0)
+     */
     public static Map<Integer, Double> calculateEquity(
             List<HandInfo> players,
             Card[] tableCards,
@@ -38,7 +64,13 @@ public class EquityCalculator {
         }
     }
 
-   //RIVER (FINAL - 0 CARDS LEFT)
+    /**
+     * Calculates exact equity on river (no unknown cards).
+     * 
+     * @param players players in the hand
+     * @param tableCards full board (5 cards)
+     * @return equity distribution
+     */
     private static Map<Integer, Double> calculateRiver(
             List<HandInfo> players,
             Card[] tableCards
@@ -58,7 +90,14 @@ public class EquityCalculator {
         return result;
     }
 
-   //TURN (1 CARD LEFT)
+   /**
+     * Calculates equity on turn by iterating all possible river cards.
+     *
+     * @param players players
+     * @param tableCards board with 4 known cards
+     * @param deck remaining deck
+     * @return normalized equity
+     */
     private static Map<Integer, Double> calculateTurn(
             List<HandInfo> players,
             Card[] tableCards,
@@ -85,7 +124,14 @@ public class EquityCalculator {
         return normalize(wins);
     }
 
-   //FLOP (2 CARDS LEFT)
+   /**
+     * Calculates equity on flop by iterating all possible turn and river combinations.
+     *
+     * @param players players
+     * @param tableCards board with 3 known cards
+     * @param deck remaining deck
+     * @return normalized equity
+     */
     private static Map<Integer, Double> calculateFlop(
             List<HandInfo> players,
             Card[] tableCards,
@@ -119,7 +165,15 @@ public class EquityCalculator {
         return normalize(wins);
     }
 
-   // PREFLOP (MONTE CARLO METHOD - 0 AND 3 CARD LEFT)
+    /**
+     * Calculates equity using Monte Carlo simulation.
+     * Used for preflop or incomplete boards with many unknown cards.
+     *
+     * @param players players
+     * @param tableCards partial board
+     * @param deck remaining deck
+     * @return approximated equity
+     */
     private static Map<Integer, Double> calculateMonteCarlo(
             List<HandInfo> players,
             Card[] tableCards,
@@ -152,6 +206,9 @@ public class EquityCalculator {
     }
 
 
+    /**
+     * Counts missing (null) cards in the board.
+     */
     private static int countMissingCards(Card[] tableCards) {
         int count = 0;
         for (Card c : tableCards) {
@@ -160,6 +217,9 @@ public class EquityCalculator {
         return count;
     }
 
+     /**
+     * Initializes equity result map with 0.0 values.
+     */
     private static Map<Integer, Double> initResult(List<HandInfo> players) {
         Map<Integer, Double> map = new HashMap<>();
         for (HandInfo h : players) {
@@ -168,6 +228,10 @@ public class EquityCalculator {
         return map;
     }
 
+
+     /**
+     * Initializes win counter map.
+     */
     private static Map<Integer, Integer> initWins(List<HandInfo> players) {
         Map<Integer, Integer> map = new HashMap<>();
         for (HandInfo h : players) {
@@ -176,6 +240,13 @@ public class EquityCalculator {
         return map;
     }
 
+
+    /**
+     * Converts win counts into normalized probabilities.
+     *
+     * @param wins map of playerID → number of wins
+     * @return map of playerID → equity (0.0 - 1.0)
+     */
     private static Map<Integer, Double> normalize(Map<Integer, Integer> wins) {
 
         Map<Integer, Double> result = new HashMap<>();
@@ -189,6 +260,10 @@ public class EquityCalculator {
         return result;
     }
 
+
+    /**
+     * Returns the list of winning players (handles ties).
+     */
    private static List<Integer> getWinners(List<PlayerEvaluation> evals) {
 
     int best = evals.stream()
@@ -207,6 +282,10 @@ public class EquityCalculator {
     return winners;
 }
 
+
+     /**
+     * Completes board with given extra cards.
+     */
     private static Card[] completeBoard(Card[] tableCards, Card... extra) {
 
         Card[] board = new Card[5];
@@ -223,6 +302,10 @@ public class EquityCalculator {
         return board;
     }
 
+
+     /**
+     * Fills missing board cards randomly from available deck.
+     */
     private static Card[] fillRandomBoard(
             Card[] tableCards,
             List<Card> available,

@@ -176,7 +176,7 @@ public class Game {
 
         List<HandInfo> players = _playerList.getPlayerHandsInfo();
 
-        if (players.size() <= 1) return; // evitar basura
+        if (players.size() <= 1) return; 
 
         Map<Integer, Double> equity =
             EquityCalculator.calculateEquity(players, _tableCards, _deck);
