@@ -7,6 +7,7 @@ import com.ucm.common.GameConfig;
 import com.ucm.common.PlayerInfo;
 
 
+
 public class ClientInfo {
     
     public GameConfig gameConfig = new GameConfig();

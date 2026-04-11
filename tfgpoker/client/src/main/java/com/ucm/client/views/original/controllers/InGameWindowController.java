@@ -160,7 +160,6 @@ public class InGameWindowController extends GenericController {
         });
     }
 
-
     @FXML
     private void foldAction() {
 
@@ -383,13 +382,6 @@ public class InGameWindowController extends GenericController {
     private void playRound(Card card1, Card card2, Socket socket) throws OnlyOnePlayerLeftException, IOException, InterruptedException {
 
         boolean handEndsByFold = false;
-		int sb, bb, maxBet;
-        int offBetMoney, onBetMoney;
-        
-        int otherPlayerID;
-        String otherPlayerCommand;
-        int otherPlayerBet;
-        boolean otherPlayerRaises, otherPlayerFolds;
 
 		int serverCode = SocketUtils.receiveInt(socket.getInputStream());
 		while(serverCode != GameType.ROUND_ENDS && !handEndsByFold) {
@@ -422,15 +414,29 @@ public class InGameWindowController extends GenericController {
                 });
 
 				// Receive round info
-				sb = SocketUtils.receiveInt( socket.getInputStream() );
-				bb = SocketUtils.receiveInt( socket.getInputStream() );
-				maxBet = SocketUtils.receiveInt( socket.getInputStream() );
-				offBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
-				onBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
+				final int sb = SocketUtils.receiveInt( socket.getInputStream() );
+				final int bb = SocketUtils.receiveInt( socket.getInputStream() );
+				final int maxBet = SocketUtils.receiveInt( socket.getInputStream() );
+				final int offBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
+				final int onBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
+
+                // Do not allow to bet less than the current max bet
+                Platform.runLater(() -> {
+                    sliderMoney.setMin( (double)(Math.min(maxBet, offBetMoney)) );
+                    sliderMoney.setMax( (double)(offBetMoney) );
+
+                    playerMoney0.setText(
+                        String.format(
+                            "%d - %d", 
+                            offBetMoney, onBetMoney
+                        )
+                    );
+                });
 
                 System.out.printf(
-                    "Round info - SB: %d, BB: %d, MaxBet: %d, OffBetMoney: %d, OnBetMoney: %d\n", 
-                    sb, bb, maxBet, offBetMoney, onBetMoney
+                    "-- Round info --\n SB: %d, BB: %d, MaxBet: %d\n OffBetMoney: %d, OnBetMoney: %d\n", 
+                    sb, bb, maxBet, 
+                    offBetMoney, onBetMoney
                 );
 
                 selectCommand(socket, sb, bb, maxBet, offBetMoney, onBetMoney);
@@ -443,11 +449,11 @@ public class InGameWindowController extends GenericController {
 			}
             else if(serverCode == GameType.TURN_OTHER_PLAYER) {
 
-                otherPlayerID = SocketUtils.receiveInt( socket.getInputStream() );
-                otherPlayerCommand = SocketUtils.receiveString( socket.getInputStream() );
-                otherPlayerBet = SocketUtils.receiveInt( socket.getInputStream() );
-                otherPlayerRaises = (SocketUtils.receiveInt( socket.getInputStream() ) == GameType.TRUE) ? true : false;
-                otherPlayerFolds =  (SocketUtils.receiveInt( socket.getInputStream() ) == GameType.TRUE) ? true : false;
+                final int otherPlayerID = SocketUtils.receiveInt( socket.getInputStream() );
+                final String otherPlayerCommand = SocketUtils.receiveString( socket.getInputStream() );
+                final int otherPlayerBet = SocketUtils.receiveInt( socket.getInputStream() );
+                final boolean otherPlayerRaises = (SocketUtils.receiveInt( socket.getInputStream() ) == GameType.TRUE) ? true : false;
+                final boolean otherPlayerFolds =  (SocketUtils.receiveInt( socket.getInputStream() ) == GameType.TRUE) ? true : false;
 
                 System.out.printf(
                     "Other player action - PlayerID: %d, Command: %s, Bet: %d, Raises: %b, Folds: %b\n",
