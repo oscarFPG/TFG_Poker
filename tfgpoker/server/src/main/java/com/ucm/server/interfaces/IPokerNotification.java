@@ -1,34 +1,36 @@
 package com.ucm.server.interfaces;
 
+import java.io.IOException;
+
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.commands.Command;
-import com.ucm.server.gameobjects.Player;
 import com.ucm.server.middleclasses.CommandResult;
+
 
 public interface IPokerNotification {
 
-    public void notifyPlayerRole(final PlayerRole role);
-    public void notifyPlayerCard(final Card c);
-    public void notifyTableCard(final Card c);
-    public void notifySmallBlindBet(final int amount);
-    public void notifyBigBlindBet(final int amount);
-    public void notifyOtherPlayerAction(IPokerPlayer p, Command command, CommandResult result);
-    public void notifyTurnWait();
-    public void notifyTurnPlay();
+    public void notifyPlayerRole(final PlayerRole role) throws IOException;
+    public void notifyPlayerCard(final Card c) throws IOException;
+    public void notifyTableCard(final Card c) throws IOException;
+    public void notifySmallBlindBet(final int amount) throws IOException;
+    public void notifyBigBlindBet(final int amount) throws IOException;
+    public void notifyOtherPlayerAction(IPokerPlayer p, Command command, CommandResult result) throws IOException;
+    public void notifyTurnWait() throws IOException;
+    public void notifyTurnPlay() throws IOException;
 
-    public void notifyRoundEnded();
-    public void notifyHandEnded();
-    public void notifyHandEndsByFolds();
-    public void notifyGameEnded();
-    public void notifyGameKeeps();
+    public void notifyRoundEnded() throws IOException;
+    public void notifyHandEnded() throws IOException;
+    public void notifyHandEndsByFolds() throws IOException;
+    public void notifyGameEnded() throws IOException;
+    public void notifyGameKeeps() throws IOException;
 
-    public void notifyHandWinner();
-    public void notifyHandLoser();
-    public void notifyMoneyAmount(final int amount);
+    public void notifyHandWinner() throws IOException;
+    public void notifyHandLoser() throws IOException;
+    public void notifyMoneyAmount(final int amount) throws IOException;
 
-    public void notifyGameWinner();
-    public void notifyGameLoser();
+    public void notifyGameWinner() throws IOException;
+    public void notifyGameLoser() throws IOException;
 
     
 }

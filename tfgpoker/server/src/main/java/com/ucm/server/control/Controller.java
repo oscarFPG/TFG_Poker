@@ -1,10 +1,10 @@
 package com.ucm.server.control;
 
 
+import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.server.logic.Game;
 import com.ucm.common.ClientStruct;
-import com.ucm.server.players.HumanPlayer;
 
 import org.apache.logging.log4j.ThreadContext;
 import org.apache.logging.log4j.LogManager;
@@ -37,7 +37,15 @@ public class Controller {
         _game = game;
     }
 
-    public void run() {
+
+    public void run() throws CancelGameException {
+
+        log.debug("Game starts!");
+        runGame();
+        log.debug("Game ends!");
+    }
+
+    private void runGame() throws CancelGameException {
 
         int handCounter = 0;
         boolean endOfGame = false;
@@ -45,9 +53,7 @@ public class Controller {
         ThreadContext.put("match", "0");
         ThreadContext.put("hand", String.valueOf(handCounter));
 
-        log.debug("Assigning roles to all players");
         _game.assignRolesToAllPlayers();
-        
         while (!endOfGame) {
 
             log.debug("Starting hand {}", handCounter);
@@ -93,7 +99,6 @@ public class Controller {
             ThreadContext.put("hand", String.valueOf(handCounter));
         }
 
-        log.debug("Game ends!");
     }
 
 }

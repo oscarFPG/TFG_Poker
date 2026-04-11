@@ -14,6 +14,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import com.ucm.server.FakePlayer;
+import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.middleclasses.PlayerEvaluation;
@@ -52,7 +53,7 @@ public class PlayerListTest {
 
     @ParameterizedTest
     @MethodSource("playerRoleProvider")
-    void initialRoleAssigment(int numPlayers, List<PlayerRole> expectedRoles) {
+    void initialRoleAssigment(int numPlayers, List<PlayerRole> expectedRoles) throws CancelGameException {
 
         PlayerList playerList = new PlayerList(numPlayers);
         FakePlayer[] players = new FakePlayer[numPlayers];
@@ -68,7 +69,7 @@ public class PlayerListTest {
     }
 
     @Test
-    void assignNewRolesOnPassTurnWithTwoPlayers() {
+    void assignNewRolesOnPassTurnWithTwoPlayers() throws CancelGameException {
 
         FakePlayer player1 = new FakePlayer(0, INITIAL_MONEY, 0);
         FakePlayer player2 = new FakePlayer(1, INITIAL_MONEY, 0);
@@ -94,7 +95,7 @@ public class PlayerListTest {
 
     @ParameterizedTest(name = "Roles assignment on turns in {0} players")
     @ValueSource(ints = {3, 4, 5, 6, 7, 8, 9})
-    void roleAssigmentsOnPassTurn(int numPlayers) {
+    void roleAssigmentsOnPassTurn(int numPlayers) throws CancelGameException {
 
         List<FakePlayer> players = getPlayerSubsetWithSize(numPlayers);
         List<PlayerRole> roles = getPlayerRoleDistributionWithSize(numPlayers);
@@ -125,7 +126,7 @@ public class PlayerListTest {
 
 
     @Test
-    void call() {
+    void call() throws CancelGameException {
 
         final int SB = 1;
         final int BB = SB * 2;
@@ -160,7 +161,7 @@ public class PlayerListTest {
     }
 
     @Test
-    void raise() {
+    void raise() throws CancelGameException {
         
         final int SB = 1;
         final int BB = SB * 2;
@@ -204,7 +205,7 @@ public class PlayerListTest {
     }
 
     @Test
-    void allin_raise() {
+    void allin_raise() throws CancelGameException {
 
         final int SB = 1;
         final int BB = SB * 2;
@@ -248,7 +249,7 @@ public class PlayerListTest {
     }
 
     @Test
-    void allin1_allin2() {
+    void allin1_allin2() throws CancelGameException {
         
         final int SB = 1;
         final int BB = SB * 2;

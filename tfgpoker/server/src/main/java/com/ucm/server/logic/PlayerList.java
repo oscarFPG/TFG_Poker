@@ -1,5 +1,6 @@
 package com.ucm.server.logic;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +10,8 @@ import org.apache.logging.log4j.Logger;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.commands.Command;
+import com.ucm.common.GameType;
+import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.server.interfaces.IPokerPlayer;
 import com.ucm.server.middleclasses.CommandResult;
@@ -39,6 +42,7 @@ public class PlayerList {
     private Node _last;
     private int _playerCounter;
     private int _maxNumberOfPlayers;
+    private int _alivePlayersCounter;
 
     private PotManager _potManager;
 
@@ -48,6 +52,7 @@ public class PlayerList {
         _last = null;
         _playerCounter = 0;
         _maxNumberOfPlayers = n;
+        _alivePlayersCounter = n;
 
         _potManager = new PotManager(n);
     }
@@ -97,14 +102,13 @@ public class PlayerList {
         delete(iNode);
     }
 
-    public void assignRolesToAllPlayers() {
+    public void assignRolesToAllPlayers() throws CancelGameException {
 
         int numPlayers = activePlayersCounter();
         Node _current = _first;
 
-        // NO HAY DEALER --> SOLO SB Y BB
         if (numPlayers == 0 || numPlayers == 1)
-            return;
+            throw new CancelGameException();
 
 
         List<PlayerRole> roles = PlayerRole.getRolesDistribution(numPlayers);
@@ -148,7 +152,7 @@ public class PlayerList {
         }
     }
 
-    public void shareOutAllCardsFromPlayer(Card c1, Card c2) {
+    public void shareOutAllCardsFromPlayer(Card c1, Card c2) throws CancelGameException{
 
         if (isEmpty())
             return;
@@ -203,7 +207,7 @@ public class PlayerList {
 
     }
 
-    public void playHand(final int sb, final int bb, final boolean isPreflop) throws OnlyOnePlayerLeftException {
+    public void playHand(final int sb, final int bb, final boolean isPreflop) throws OnlyOnePlayerLeftException, CancelGameException {
 
         if(checkAllPlayersAllIn()) { // Avoid asking if all active players have used all their money
             notifyRoundEnded();
@@ -242,6 +246,11 @@ public class PlayerList {
 
 
             Command command = askCommandToPlayer(playerOnTurn._player, sb, bb, maxBet);
+            if(command == null) {
+                log.warn("Something happened with player {} : Making FOLD instead", playerOnTurn._player.getPlayerName());
+                command = Command.parseCommand(new String[] {GameType.FOLD_ACTION_FULL}, playerOnTurn._player);
+            }
+
             CommandResult result = command.execute(sb, bb, maxBet);
             notifyOtherPlayerActionToAllPlayers(playerOnTurn._player, result, command);
 
@@ -274,17 +283,23 @@ public class PlayerList {
         log.debug("It's is {} turn to play", player.getPlayerName());
 
         Command command = null;
-        while (command == null) {
+        try {
 
-            player.notifyTurnPlay();
-            
-            String commandString = player.actionMakePlay(sb, bb, maxBet);
-            String[] commandFormatted = commandString.split(" ");
+            while (command == null) {
 
-            log.debug("Player {} with command: {}", player.getPlayerName(), commandString);
+                player.notifyTurnPlay();
+                
+                String commandString = player.actionMakePlay(sb, bb, maxBet);
+                String[] commandFormatted = commandString.split(" ");
 
-            command = Command.parseCommand(commandFormatted, player);
-            command = command.validate(maxBet) ? command : null;
+                log.debug("Player {} with command: {}", player.getPlayerName(), commandString);
+
+                command = Command.parseCommand(commandFormatted, player);
+                command = command.validate(maxBet) ? command : null;
+            }
+        }
+        catch (IOException e) {
+            log.error("Error happened waiting for player {} : {}", player.getPlayerName(), e.getMessage());
         }
 
         return command;
@@ -309,7 +324,7 @@ public class PlayerList {
         log.debug("All players pots updated!");
     }
 
-    public void passTurn() {
+    public void passTurn() throws CancelGameException {
 
         resetPlayers();
 
@@ -323,7 +338,7 @@ public class PlayerList {
         _potManager.restartPots();
     }
 
-    public void calculatePrizeDistribution(final List<PlayerEvaluation> players) {
+    public void calculatePrizeDistribution(final List<PlayerEvaluation> players) throws CancelGameException {
 
         List<PotDistribution> distribution = _potManager.calculatePrizeDistribution(players);
         for(PotDistribution dist : distribution){
@@ -333,7 +348,7 @@ public class PlayerList {
         notifyRankingsToAllPlayers();
     }
 
-    public void calculatePrizeForPlayerLeft() {
+    public void calculatePrizeForPlayerLeft() throws CancelGameException {
 
         Node winner = ( _first._player.isFolded() && !_first._player.isEliminated() ) ? null : _first;
         Node iNode = _first._next;
@@ -364,7 +379,7 @@ public class PlayerList {
         return (playersNotEliminated == 1);
     }
 
-    public void sendTableCardToAllPlayers(final Card card) {
+    public void sendTableCardToAllPlayers(final Card card) throws CancelGameException {
 
         if(!_first._player.isEliminated())
             _first._player.notifyTableCard(card);
@@ -691,7 +706,7 @@ public class PlayerList {
         }
     }
 
-    public void notifyGameEnds(final boolean gameEnds) {
+    public void notifyGameEnds(final boolean gameEnds) throws CancelGameException {
 
         Node iNode = _first;
         if(gameEnds)
@@ -708,7 +723,6 @@ public class PlayerList {
             iNode = iNode._next;
         }
     }
-
 
 
     public boolean isEmpty() { return size() == 0; }
