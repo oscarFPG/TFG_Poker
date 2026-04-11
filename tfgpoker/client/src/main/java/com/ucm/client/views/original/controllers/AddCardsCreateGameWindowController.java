@@ -151,6 +151,8 @@ public class AddCardsCreateGameWindowController extends GenericController {
         alert.setTitle("Cannot start game");
         alert.setHeaderText("Not enough players in the table");
         alert.setContentText("You must add at least one bot or one player before starting the game");
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/original/css/style.css").toExternalForm());
+        alert.getDialogPane().getStyleClass().add("custom-alert");
         alert.showAndWait();
     }
 
