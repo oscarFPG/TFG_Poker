@@ -10,6 +10,9 @@ import org.apache.logging.log4j.Logger;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.server.evaluator.Evaluator;
 import com.ucm.server.exceptions.EvaluatorException;
+import com.ucm.common.ClientStruct;
+import com.ucm.common.GameConfig;
+import com.ucm.common.GameInfo;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.server.gameobjects.Deck;
 import com.ucm.server.middleclasses.HandInfo;
@@ -43,14 +46,21 @@ public class Game {
     private int _currentSB;
     private int _currentBB;
     
+    private GameConfig _gameConfig;
     
-    public Game() throws EvaluatorException {
-        
-        _initialSmallBlind = Game.INITIAL_SB;
-        _initialBigBlind = Game.INITIAL_BB;
+    public Game(GameInfo gameInfo) throws EvaluatorException {
+
+        _gameConfig = gameInfo.gameConfig;
+
+        String[] parts = _gameConfig._blindsValue.split("/");
+
+
+        _initialSmallBlind = Integer.parseInt(parts[0]);
+        _initialBigBlind = Integer.parseInt(parts[1]);
         _handCounter = 0;
 
-        _playerList = new PlayerList(Game.NUM_MAX_PLAYERS);
+        _playerList = new PlayerList(_gameConfig._numPlayers + 1);
+        addPlayerInitial(gameInfo);
         _deck = new Deck();
         _tableCards = new Card[MAX_CARDS_IN_TABLE];
         _tableCardsCounter = 0;
@@ -70,10 +80,12 @@ public class Game {
         
     }
 
-
-    public void addPlayer(HumanPlayer p) {
-
-        _playerList.addPlayer(p);
+    private void addPlayerInitial(GameInfo gameInfo) {
+        int id = 0;
+        for(ClientStruct cs : gameInfo.players) {
+            _playerList.addPlayer( new HumanPlayer(id, cs.name(), cs.socket(), gameInfo.gameConfig._initialMoney));
+            ++id;
+        }
     }
 
     public void assignRolesToAllPlayers() {

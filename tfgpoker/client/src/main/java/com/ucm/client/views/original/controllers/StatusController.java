@@ -18,11 +18,9 @@ public class StatusController {
 
     private State currentState;
 
-
     public StatusController() {
         currentState = State.START_APP;
     }
-
 
     public void next() {
 

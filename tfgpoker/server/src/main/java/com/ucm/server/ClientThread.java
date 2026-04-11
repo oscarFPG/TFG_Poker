@@ -87,7 +87,19 @@ public class ClientThread implements Runnable {
                         // DO NOT COPY THE CONFIG REFERENCE, IT MUST BE STAY SHARED BETWEEN ALL CLIENT THREADS !!
                         _gameConfig._roomId = (int)(Math.random() * 10000);
                         _gameConfig._roomName = config._roomName;
-
+                        _gameConfig._userName = config._userName;
+                        _gameConfig._initialMoney = config._initialMoney;
+                        _gameConfig._allowBots = config._allowBots;
+                        _gameConfig._blindsValue = config._blindsValue;
+                        _gameConfig._dinamicBlinds = config._dinamicBlinds;
+                        _gameConfig._levelDuration = config._levelDuration;
+                        _gameConfig._hikePercentage = config._hikePercentage;
+                        _gameConfig._numBots1 = config._numBots1;
+                        _gameConfig._numBots2 = config._numBots2;
+                        _gameConfig._numBots3 = config._numBots3;
+                        _gameConfig._numPlayers = config._numPlayers;
+                        _gameConfig._selectedTable = config._selectedTable;
+                        _gameConfig._selectedCard = config._selectedCard;
 
                         _isHost = true;
                         _playerID = _roomList.size();
@@ -101,9 +113,10 @@ public class ClientThread implements Runnable {
                         showPlayersInRoom();
 
                         log.debug("Configuration valid!");
-                        log.debug("Room {}: Name=[{}], AllowBots=[{}]",
+                        log.debug("Room {}: Name=[{}], UserName=[{}], AllowBots=[{}]",
                             _gameConfig._roomId,
                             _gameConfig._roomName,
+                            _gameConfig._userName,
                             _gameConfig._allowBots
                         );
                     }
