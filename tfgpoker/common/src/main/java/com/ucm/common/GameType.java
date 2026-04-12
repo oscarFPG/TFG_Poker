@@ -38,6 +38,7 @@ public class GameType {
     public static final int ERROR_GAME_NOT_CREATED = 503;
     public static final int ERROR_GAME_NOT_JOINED = 504;
     public static final int ERROR_GAME_CANNOT_START = 505;
+    public static final int ERROR_GAME_CANCELS = 506;
 
     /* ---------------- GAME CODES ----------------  */
     // Player roles

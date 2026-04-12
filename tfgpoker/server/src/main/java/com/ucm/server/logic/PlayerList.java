@@ -19,6 +19,8 @@ import com.ucm.server.middleclasses.HandInfo;
 import com.ucm.server.middleclasses.PlayerEvaluation;
 import com.ucm.server.middleclasses.PotDistribution;
 
+import opennlp.tools.stemmer.snowball.englishStemmer;
+
 
 public class PlayerList {
 
@@ -29,12 +31,13 @@ public class PlayerList {
         public IPokerPlayer _player;
         public Node _prev;
         public Node _next;
+        public boolean _isDisconnected;
 
         public Node(Node prev, IPokerPlayer p, Node next) {
-            
             _player = p;
             _prev = prev;
             _next = next;
+            _isDisconnected = false;
         }
     }
 
@@ -42,7 +45,6 @@ public class PlayerList {
     private Node _last;
     private int _playerCounter;
     private int _maxNumberOfPlayers;
-    private int _alivePlayersCounter;
 
     private PotManager _potManager;
 
@@ -52,7 +54,6 @@ public class PlayerList {
         _last = null;
         _playerCounter = 0;
         _maxNumberOfPlayers = n;
-        _alivePlayersCounter = n;
 
         _potManager = new PotManager(n);
     }
@@ -113,41 +114,77 @@ public class PlayerList {
 
         List<PlayerRole> roles = PlayerRole.getRolesDistribution(numPlayers);
         if (numPlayers == 2) {
-            _current._player.receiveRole(PlayerRole.SMALL_BLIND);
-            _current._player.notifyPlayerRole(PlayerRole.SMALL_BLIND);
-            log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.SMALL_BLIND.name());
 
+            try {
+                _current._player.receiveRole(PlayerRole.SMALL_BLIND);
+                _current._player.notifyPlayerRole(PlayerRole.SMALL_BLIND);
+                log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.SMALL_BLIND.name());
+            }
+            catch (IOException e) {
+                throw new CancelGameException();
+            }
+            
             _current = getNextPlayerActive(_current);
-            _current._player.receiveRole(PlayerRole.BIG_BLIND);
-            _current._player.notifyPlayerRole(PlayerRole.BIG_BLIND);
-            log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.BIG_BLIND.name());
+            
+            try {
+                _current._player.receiveRole(PlayerRole.BIG_BLIND);
+                _current._player.notifyPlayerRole(PlayerRole.BIG_BLIND);
+                log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.BIG_BLIND.name());
+            }
+            catch (IOException e) {
+                throw new CancelGameException();
+            }
+            
         }
         else {
 
             PlayerRole currentRole = roles.removeFirst();
-            _current._player.receiveRole(currentRole);
-            _current._player.notifyPlayerRole(currentRole);
-            log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.DEALER.name());
+            try {
+                _current._player.receiveRole(currentRole);
+                _current._player.notifyPlayerRole(currentRole);
+                log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.DEALER.name());
+            }
+            catch (IOException e) {
+                if(checkIfGameCancel())
+                    throw new CancelGameException();
+            }   
 
             _current = getNextPlayerActive(_current);
             currentRole = roles.removeFirst();
-            _current._player.receiveRole(currentRole);
-            _current._player.notifyPlayerRole(currentRole);
-            log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.SMALL_BLIND.name());
+            try {
+                _current._player.receiveRole(currentRole);
+                _current._player.notifyPlayerRole(currentRole);
+                log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.SMALL_BLIND.name());
+            }
+            catch (IOException e) {
+                // TODO : Handle exception
+            }
 
             _current = getNextPlayerActive(_current);
             currentRole = roles.removeFirst();
-            _current._player.receiveRole(currentRole);
-            _current._player.notifyPlayerRole(currentRole);
-            log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.BIG_BLIND.name());
+            try {
+                _current._player.receiveRole(currentRole);
+                _current._player.notifyPlayerRole(currentRole);
+                log.debug("Player {} receives role {}", _current._player.getPlayerName(), PlayerRole.BIG_BLIND.name());
+            }
+            catch (IOException e) {
+               // TODO : Handle exception
+            }  
 
             _current = getNextPlayerActive(_current);
             while (_current != _first ) {
+
                 currentRole = roles.removeFirst();
-                _current._player.receiveRole(currentRole);
-                _current._player.notifyPlayerRole(currentRole);
+                try {
+                    _current._player.receiveRole(currentRole);
+                    _current._player.notifyPlayerRole(currentRole);
+                    log.debug("Player {} receives role {}", _current._player.getPlayerName(), currentRole.name());
+                }
+                catch (IOException e) {
+                    // TODO : Handle exception
+                }
+                
                 _current = getNextPlayerActive(_current);
-                log.debug("Player {} receives role {}", _current._player.getPlayerName(), currentRole.name());
             }
         }
     }
@@ -158,10 +195,18 @@ public class PlayerList {
             return;
 
         if (!_first._player.isEliminated() && _first._player.getCardsCounter() == 0) {
-            _first._player.receiveCard(c1);
-            _first._player.notifyPlayerCard(c1);
-            _first._player.receiveCard(c2);
-            _first._player.notifyPlayerCard(c2);
+
+            try {
+                _first._player.receiveCard(c1);
+                _first._player.receiveCard(c2);
+
+                _first._player.notifyPlayerCard(c1);
+                _first._player.notifyPlayerCard(c2);
+            }
+            catch (IOException e) {
+                // TODO : Handle exception
+            }
+            
 
             log.debug("Player {} receives the cards: {} {}", _first._player.getPlayerName(), c1.toString(), c2.toString());
             return;
@@ -171,10 +216,17 @@ public class PlayerList {
         while (index != _first) {
 
             if (!index._player.isEliminated() && index._player.getCardsCounter() == 0) {
-                index._player.receiveCard(c1);
-                index._player.notifyPlayerCard(c1);
-                index._player.receiveCard(c2);
-                index._player.notifyPlayerCard(c2);
+                
+                try {
+                    index._player.receiveCard(c1);
+                    index._player.receiveCard(c2);
+                    
+                    index._player.notifyPlayerCard(c1);
+                    index._player.notifyPlayerCard(c2);
+                }
+                catch (IOException e) {
+                    // TODO : Handle exception
+                }
 
                 log.debug("Player {} receives the cards: {} {}", index._player.getPlayerName(), c1.toString(), c2.toString());
                 break;
@@ -190,20 +242,34 @@ public class PlayerList {
         // 1. First player if there is only two players -> playsToMake == 1
         // 2. Next player from first if there is more than two players -> playsToMake > 1
         Node pNode = (playersRemaining == 2) ? _first : _first._next;
-        pNode._player.actionSmallBlindBet(sb);
-        pNode._player.notifySmallBlindBet(sb);
-        log.debug(
-            "Player {} puts {}$ as SMALL_BLIND. Now it has {}$", 
-            pNode._player.getPlayerName(), pNode._player.getMoneyOnBet(), pNode._player.getMoneyOffBet()
-        );
+        try {
+
+            pNode._player.actionSmallBlindBet(sb);
+            pNode._player.notifySmallBlindBet(sb);
+            log.debug(
+                "Player {} puts {}$ as SMALL_BLIND. Now it has {}$", 
+                pNode._player.getPlayerName(), pNode._player.getMoneyOnBet(), pNode._player.getMoneyOffBet()
+            );
+        }
+        catch(IOException e) {
+            // TODO : Handle exception
+        }
+        
 
         pNode = pNode._next;
-        pNode._player.actionBigBlindBet(bb);
-        pNode._player.notifyBigBlindBet(bb);
-        log.debug(
-            "Player {} puts {}$ as BIG_BLIND. Now it has {}$", 
-            pNode._player.getPlayerName(), pNode._player.getMoneyOnBet(), pNode._player.getMoneyOffBet()
-        );
+        try {
+
+            pNode._player.actionBigBlindBet(bb);
+            pNode._player.notifyBigBlindBet(bb);
+            log.debug(
+                "Player {} puts {}$ as BIG_BLIND. Now it has {}$", 
+                pNode._player.getPlayerName(), pNode._player.getMoneyOnBet(), pNode._player.getMoneyOffBet()
+            );
+        }
+        catch(IOException e) {
+            // TODO : Handle exception
+        }
+        
 
     }
 
@@ -247,8 +313,15 @@ public class PlayerList {
 
             Command command = askCommandToPlayer(playerOnTurn._player, sb, bb, maxBet);
             if(command == null) {
-                log.warn("Something happened with player {} : Making FOLD instead", playerOnTurn._player.getPlayerName());
-                command = Command.parseCommand(new String[] {GameType.FOLD_ACTION_FULL}, playerOnTurn._player);
+
+                log.debug("Something happened with player {} : Disconnecting player and making FOLD instead", playerOnTurn._player.getPlayerName());
+                playerOnTurn._isDisconnected = true;
+                if(checkIfGameCancel()) {
+                    throw new CancelGameException();
+                }
+                else {
+                    command = Command.parseCommand(new String[] {GameType.FOLD_ACTION_FULL}, playerOnTurn._player);
+                }
             }
 
             CommandResult result = command.execute(sb, bb, maxBet);
@@ -381,13 +454,28 @@ public class PlayerList {
 
     public void sendTableCardToAllPlayers(final Card card) throws CancelGameException {
 
-        if(!_first._player.isEliminated())
-            _first._player.notifyTableCard(card);
+        if(!_first._player.isEliminated()) {
 
+            try {
+                _first._player.notifyTableCard(card);
+            }
+            catch (IOException e) {
+                // TODO : Handle exception
+            }
+        }
+            
         Node i = _first._next;
-        while (i != _first){
-            if(!i._player.isEliminated())
-                i._player.notifyTableCard(card);
+        while (i != _first) {
+
+            if(!i._player.isEliminated()) {
+                try {
+                    i._player.notifyTableCard(card);
+                }
+                catch (IOException e) {
+                    // TODO : Handle exception
+                }
+            }
+                
             i = i._next;
         }
     }
@@ -458,7 +546,7 @@ public class PlayerList {
         else {
 
             Node sb = getPlayerByRole(PlayerRole.SMALL_BLIND);
-            return !sb._player.isFolded() ? sb : getNextPlayerActive(sb);
+            return !sb._player.isFolded() && !sb._isDisconnected ? sb : getNextPlayerActive(sb);
         }
     }
 
@@ -483,7 +571,14 @@ public class PlayerList {
 
         Node iNode = (_first != playerOnTurn) ? _first : _first._next;
         while (iNode != playerOnTurn) {
-            iNode._player.notifyTurnWait();
+
+            try {
+                iNode._player.notifyTurnWait();
+            }
+            catch(IOException e) {
+                // TODO : Handle exception
+            }
+            
             iNode = iNode._next;
         }
     }
@@ -531,10 +626,12 @@ public class PlayerList {
         if (isEmpty())
             return 0;
 
+
         int cont = (
             _first._player.isFolded() 
             || _first._player.isEliminated()
-            || _first._player.isAllIn() 
+            || _first._player.isAllIn()
+            || _first._isDisconnected
         ) ? 0 : 1;
         
         Node current = _first._next;
@@ -543,6 +640,7 @@ public class PlayerList {
                 current._player.isFolded() 
                 || current._player.isEliminated() 
                 || current._player.isAllIn()
+                || current._isDisconnected
             ) ? 0 : 1;
             current = current._next;
         }
@@ -553,16 +651,14 @@ public class PlayerList {
     private Node getNextPlayerActive(Node current) {
 
         Node iNode = current._next;
-        if(!iNode._player.isEliminated() && !iNode._player.isFolded())
+        if(!iNode._player.isEliminated() && !iNode._player.isFolded() && !iNode._isDisconnected)
             return iNode;
 
 
         boolean found = false;
         while (!found && iNode != current) {
             iNode = iNode._next;
-            if(!iNode._player.isEliminated() && !iNode._player.isFolded())
-                found = true;
-
+            found = (!iNode._player.isEliminated() && !iNode._player.isFolded() && !iNode._isDisconnected);
         }
 
         return iNode;
@@ -571,14 +667,14 @@ public class PlayerList {
     private Node getNextPlayerToPlay(Node current) {
 
         Node iNode = current._next;
-        if(!iNode._player.isEliminated() && !iNode._player.isFolded() && !iNode._player.isAllIn())
+        if(!iNode._player.isEliminated() && !iNode._player.isFolded() && !iNode._player.isAllIn() && !iNode._isDisconnected)
             return iNode;
 
 
         boolean found = false;
         while (!found && iNode != current) {
             iNode = iNode._next;
-            if(!iNode._player.isEliminated() && !iNode._player.isFolded() && !iNode._player.isAllIn())
+            if(!iNode._player.isEliminated() && !iNode._player.isFolded() && !iNode._player.isAllIn() && !iNode._isDisconnected)
                 found = true;
         
         }
@@ -589,14 +685,14 @@ public class PlayerList {
     private Node getNextNotEliminatedPlayer(Node current) {
 
         Node iNode = current._next;
-        if(!iNode._player.isEliminated())
+        if(!iNode._player.isEliminated() && !iNode._isDisconnected)
             return iNode;
 
 
         boolean found = false;
         while (!found && iNode != current) {
             iNode = iNode._next;
-            if(!iNode._player.isEliminated())
+            if(!iNode._player.isEliminated() && !iNode._isDisconnected)
                 found = true;
         }
 
@@ -647,13 +743,26 @@ public class PlayerList {
 
         Node iNode = _first;
         if(!iNode._player.isEliminated()) {
-            iNode._player.notifyOtherPlayerAction(p, command, result);
+            
+            try {
+                iNode._player.notifyOtherPlayerAction(p, command, result);
+            }
+            catch(IOException e) {
+                // TODO : Handle exception
+            }
         }
 
         iNode = iNode._next;
         while(iNode != _first) {
+
             if(!iNode._player.isEliminated()) {
-                iNode._player.notifyOtherPlayerAction(p, command, result);
+
+                try {
+                    iNode._player.notifyOtherPlayerAction(p, command, result);
+                }
+                catch(IOException e) {
+                    // TODO : Handle exception
+                }
             }
 
             iNode = iNode._next;
@@ -663,22 +772,33 @@ public class PlayerList {
     private void notifyRankingsToAllPlayers() {
 
         Node i = _first;
-        if(i._player.isWinner())
-            i._player.notifyHandWinner();
-        else
-            i._player.notifyHandLoser();
-
-        i._player.notifyMoneyAmount( i._player.getMoneyOffBet() );
-        i = i._next;
-        
-        while(i != _first) {
-
+        try {
             if(i._player.isWinner())
                 i._player.notifyHandWinner();
             else
                 i._player.notifyHandLoser();
 
             i._player.notifyMoneyAmount( i._player.getMoneyOffBet() );
+        }
+        catch(IOException e) {
+            // TODO : Handle exception
+        }        
+
+        i = i._next;        
+        while(i != _first) {
+
+            try {
+                if(i._player.isWinner())
+                    i._player.notifyHandWinner();
+                else
+                    i._player.notifyHandLoser();
+
+                i._player.notifyMoneyAmount( i._player.getMoneyOffBet() );
+            }
+            catch(IOException e) {
+                // TODO : Handle exception
+            }
+
             i = i._next;
         }
 
@@ -688,20 +808,48 @@ public class PlayerList {
         
         Node iNode = _first;
 
-        iNode._player.notifyHandEndsByFolds();
+        try {
+            iNode._player.notifyHandEndsByFolds();
+        }
+        catch(IOException e) {
+            // TODO : Handle exception
+        }
+        
         iNode = iNode._next;
         while(iNode != _first) {
-            iNode._player.notifyHandEndsByFolds();
+            
+            try {
+                iNode._player.notifyHandEndsByFolds();
+            }
+            catch(IOException e) {
+                // TODO : Handle exception
+            }
+
             iNode = iNode._next;
         }
     }
 
     private void notifyRoundEnded() {
 
-        _first._player.notifyRoundEnded();
-        Node iNode = _first._next;
-        while (iNode != _first) {
+        Node iNode = _first;
+
+        try {
             iNode._player.notifyRoundEnded();
+        }
+        catch(IOException e) {
+            // TODO : Handle exception
+        }
+
+        iNode = iNode._next;
+        while (iNode != _first) {
+            
+            try {
+                iNode._player.notifyRoundEnded();
+            }
+            catch(IOException e) {
+                // TODO : Handle exception
+            }
+
             iNode = iNode._next;
         }
     }
@@ -709,19 +857,49 @@ public class PlayerList {
     public void notifyGameEnds(final boolean gameEnds) throws CancelGameException {
 
         Node iNode = _first;
-        if(gameEnds)
-            iNode._player.notifyGameEnded();
-        else
-            iNode._player.notifyGameKeeps();
-
-        iNode = iNode._next;
-        while(iNode != _first) {
+        try {
             if(gameEnds)
                 iNode._player.notifyGameEnded();
             else
                 iNode._player.notifyGameKeeps();
+        }
+        catch(IOException e) {
+            // TODO : Handle exception
+        }
+
+        iNode = iNode._next;
+        while(iNode != _first) {
+            
+            try {
+                if(gameEnds)
+                    iNode._player.notifyGameEnded();
+                else
+                    iNode._player.notifyGameKeeps();
+            }
+            catch(IOException e) {
+                // TODO : Handle exception
+            }
+
             iNode = iNode._next;
         }
+    }
+
+    private boolean checkIfGameCancel() {
+
+        int connectedPlayers = 0;
+        Node iNode = _first;
+        if(!iNode._isDisconnected)
+            ++connectedPlayers;
+
+        iNode = iNode._next;
+        while(iNode != _first) {
+            if(!iNode._isDisconnected)
+                ++connectedPlayers;
+
+            iNode = iNode._next;
+        }
+        
+        return (connectedPlayers <= 1);
     }
 
 

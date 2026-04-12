@@ -28,7 +28,7 @@ public class SocketUtils {
         while (totalRead < stringSize) {
             int bytesRead = in.read(buffer, totalRead, stringSize - totalRead);
             if (bytesRead == -1) 
-                throw new IOException("DataStream closed");
+                throw new IOException("Client closed connection correctly");
             totalRead += bytesRead;
         }
 
@@ -50,7 +50,7 @@ public class SocketUtils {
         while (totalRead < Integer.BYTES) {
             int bytesRead = in.read(buffer, totalRead, Integer.BYTES - totalRead);
             if (bytesRead == -1) 
-                throw new IOException("DataStream closed");
+                throw new IOException("Client closed connection correctly");
             totalRead += bytesRead;
         }
 

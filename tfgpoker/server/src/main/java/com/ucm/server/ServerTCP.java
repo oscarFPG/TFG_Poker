@@ -103,7 +103,16 @@ public class ServerTCP {
             log.error("{}", e.getMessage());
         }
         catch(CancelGameException e) {
-            log.debug("Game cancelled: {}", e.getMessage());
+
+            log.debug("Game cancelled by server: {}", e.getMessage());
+            for(ClientStruct cs : info.players) {
+                try {
+                    SocketUtils.sendInteger(cs.socket().getOutputStream(), GameType.ERROR_GAME_CANCELS);
+                }
+                catch(IOException ex) {
+                    log.warn("Minor error trying to notify player {} about game cancellation: {}", cs.name(), ex.getMessage());
+                }
+            }
         }
         finally {
             cleanUp(info);

@@ -9,6 +9,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.IntStream;
 
+import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.common.GameConfig;
 import com.ucm.common.GameType;
@@ -20,6 +21,7 @@ import com.ucm.common.SocketUtils;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
@@ -142,7 +144,24 @@ public class InGameWindowController extends GenericController {
         });
 
         _gameThread = new Thread(() -> {
-            pokerGame(_clientInfo.name, _clientInfo.socket);
+            final boolean ok = pokerGame(_clientInfo.name, _clientInfo.socket);
+
+            if(ok) {
+
+            }
+            else {
+                Platform.runLater(() -> {
+
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Game was cancelled");
+                    alert.setHeaderText("All players disconnected");
+                    alert.setContentText("You will return to the main menu");
+                    alert.showAndWait();
+
+                    next();
+                });
+            }
+            
         });
         _gameThread.start();
     }
@@ -231,7 +250,7 @@ public class InGameWindowController extends GenericController {
     }
 
     
-    private void pokerGame(String name, Socket socket) {
+    private boolean pokerGame(String name, Socket socket) {
 
 		int currentMoney;
 		int rankingCode;
@@ -375,11 +394,19 @@ public class InGameWindowController extends GenericController {
             }
         }
         catch(IOException e) {
-            System.out.printf("Error on game: %s\n", e.getMessage());
+            System.out.printf("Error on client socket: %s\n", e.getMessage());
+            return false;
         }
+        catch(CancelGameException e) {
+            System.out.printf("Game cancelled by server: %s\n", e.getMessage());
+            return false;
+        }
+
+        return true;
     }
 
-    private void playRound(Card card1, Card card2, Socket socket) throws OnlyOnePlayerLeftException, IOException, InterruptedException {
+    private void playRound(Card card1, Card card2, Socket socket) 
+    throws OnlyOnePlayerLeftException, CancelGameException, IOException, InterruptedException {
 
         boolean handEndsByFold = false;
 
@@ -460,6 +487,10 @@ public class InGameWindowController extends GenericController {
                     otherPlayerID, otherPlayerCommand, otherPlayerBet, otherPlayerRaises, otherPlayerFolds
                 );
 
+            }
+            else if(serverCode == GameType.ERROR_GAME_CANCELS) {
+                System.out.printf("Game has been cancelled by the server!\n");
+                throw new CancelGameException();
             }
             else {
 				System.out.printf("Unknown turn code %d\n", serverCode);

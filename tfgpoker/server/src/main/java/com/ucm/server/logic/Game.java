@@ -111,11 +111,10 @@ public class Game {
         try {
             _playerList.playHand(_currentSB, _currentBB, _isPreflop);
             _isPreflop = false;
-        } 
+        }
         // Collect remaining bets only if the round ended because all players folded
         catch (OnlyOnePlayerLeftException e) {
             _isPreflop = false;
-
             throw e;
         }
     }
