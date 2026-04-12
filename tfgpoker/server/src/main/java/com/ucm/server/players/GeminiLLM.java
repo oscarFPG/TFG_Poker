@@ -1,150 +1,132 @@
 package com.ucm.server.players;
 
-import com.ucm.common.gameobjects.Card;
-import com.ucm.common.gameobjects.PlayerRole;
-import com.ucm.server.gameobjects.BotLLM;
+import java.io.InputStream;
+import java.util.Map;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ucm.server.gameobjects.BotLLMOnline;
 
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
 
+/**
+ * Concrete implementation of a poker bot powered by Google's Gemini LLM.
+ * 
+ * <p>
+ * This class extends {@link BotLLMOnline} and connects the bot logic
+ * to an external Gemini model using the LangChain4j library.
+ * </p>
+ * 
+ * <p>
+ * The bot generates decisions by:
+ * </p>
+ * <ul>
+ * <li>Building a prompt with the current game state</li>
+ * <li>Sending the prompt to the Gemini model</li>
+ * <li>Receiving and returning the model's response</li>
+ * </ul>
+ * 
+ * <p>
+ * The API key can be provided directly or loaded automatically from a
+ * {@code credentials.json} file located in the classpath.
+ * </p>
+ */
+public class GeminiLLM extends BotLLMOnline {
 
-public class GeminiLLM extends BotLLM {
+    /**
+     * Chat model instance used to interact with Gemini.
+     */
+    private ChatModel gemini;
 
-
+    /**
+     * Constructs a Gemini-based LLM bot.
+     * 
+     * <p>
+     * If the API key is null, it will be loaded from a configuration file.
+     * </p>
+     * 
+     * @param id     player identifier
+     * @param money  initial stack
+     * @param apiKey Gemini API key (optional)
+     */
     public GeminiLLM(int id, int money, String apiKey) {
         super(id, "GeminiLLM", money, apiKey);
+
+        if (apiKey == null) {
+            apiKey = loadApiKey();
+        }
+
+        gemini = GoogleAiGeminiChatModel.builder()
+                .apiKey(apiKey)
+                .modelName("gemini-2.5-flash")
+                .build();
     }
 
+    /**
+     * Constructs a Gemini bot using the API key from configuration.
+     * 
+     * @param id    player identifier
+     * @param money initial stack
+     */
+    public GeminiLLM(int id, int money) {
+        this(id, money, null);
+    }
 
+    /**
+     * Loads the Gemini API key from a {@code credentials.json} file.
+     * 
+     * <p>
+     * The file must be located in the classpath and contain a field
+     * named {@code GEMINI_API_KEY}.
+     * </p>
+     * 
+     * @return API key as {@link String}
+     * @throws RuntimeException if the file or key cannot be loaded
+     */
+    private String loadApiKey() {
+        try {
+            InputStream input = getClass()
+                    .getClassLoader()
+                    .getResourceAsStream("credentials.json");
+
+            if (input == null) {
+                throw new RuntimeException("credentials.json not found");
+            }
+
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, String> json = mapper.readValue(input, Map.class);
+
+            String key = json.get("GEMINI_API_KEY");
+
+            if (key == null) {
+                throw new RuntimeException("GEMINI_API_KEY not found");
+            }
+
+            return key;
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error loading Gemini API key", e);
+        }
+    }
+
+    /**
+     * Sends the prompt to the Gemini model and returns its response.
+     * 
+     * @param prompt input prompt describing the game state
+     * @return model response as {@link String}
+     */
     @Override
-    public String actionMakePlay(int sb, int bb, int maxBet) {
-        
-        ChatModel gemini = GoogleAiGeminiChatModel.builder()
-                                .apiKey( _apiKey )
-                                .modelName("gemini-2.5-flash")
-                                .build();
-
-        String response = gemini.chat("This is an API test for po ker, response only with call, fold or raise <amount>");
-        return response;
+    protected String callModel(String prompt) {
+        return gemini.chat(prompt);
     }
 
-    @Override
-    public void notifyPlayerRole(PlayerRole role) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyPlayerRole'");
-    }
-
-    @Override
-    public void notifyPlayerCard(Card c) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyPlayerCard'");
-    }
-
-    @Override
-    public void notifyTableCard(Card c) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyTableCard'");
-    }
-
-    @Override
-    public void notifyMoneyAmount(int amount) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyMoneyAmount'");
-    }
-
-    @Override
-    public void notifySmallBlindBet(int amount) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifySmallBlindBet'");
-    }
-
-    @Override
-    public void notifyBigBlindBet(int amount) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyBigBlindBet'");
-    }
-
-    @Override
-    public void notifyTurnWait() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyTurnWait'");
-    }
-
-    @Override
-    public void notifyTurnPlay() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyTurnPlay'");
-    }
-
-    @Override
-    public void notifyRoundEnded() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyRoundEnded'");
-    }
-
-    @Override
-    public void notifyHandEnded() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyHandEnded'");
-    }
-
-    @Override
-    public void notifyGameEnded() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyGameEnded'");
-    }
-
-    @Override
-    public void notifyGameKeeps() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyGameKeeps'");
-    }
-
-    @Override
-    public void notifyHandWinner() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyHandWinner'");
-    }
-
-    @Override
-    public void notifyHandLoser() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyHandLoser'");
-    }
-
-    @Override
-    public void notifyGameWinner() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyGameWinner'");
-    }
-
-    @Override
-    public void notifyGameLoser() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyGameLoser'");
-    }
-
-    @Override
-    public void notifyHandEndsByFolds() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyHandEndsByFolds'");
-    }
-
+    /**
+     * Returns a short description of the bot.
+     * 
+     * @return {@link String} describing the bot
+     */
     @Override
     public String getDescription() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getDescription'");
+        return "Gemini Poker LLM";
     }
-
-    @Override
-    public void notifyPlayerAction(PlayerRole role, String action, double amount) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyPlayerAction'");
-    }
-
-    @Override
-    public void notifyEquity(double equity) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-    
 }

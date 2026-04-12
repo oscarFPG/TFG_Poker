@@ -4,7 +4,6 @@ package com.ucm.server.players;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.common.gameobjects.Suit;
-import com.ucm.server.players.LlamaPokerLLM;
 
 
 public class TestLLamaBot {
@@ -45,7 +44,7 @@ public class TestLLamaBot {
         bot.notifyHandEnded();
 
 
-        /* 
+        
         // =========================
         // ESCENARIO 2 (FOLD)
         // =========================
@@ -106,6 +105,6 @@ public class TestLLamaBot {
 
         System.out.println("SCENARIO 4: " + bot.actionMakePlay(1, 1, 100));
         bot.notifyHandEnded();
-        */
+        
     }
 }
