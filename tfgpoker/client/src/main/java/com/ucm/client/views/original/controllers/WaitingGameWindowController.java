@@ -19,6 +19,8 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
@@ -91,6 +93,8 @@ public class WaitingGameWindowController extends GenericController {
     @FXML
     private Label playerName8, playerMoney8;
 
+    @FXML
+    private ImageView imgTableInGame;
 
     private Thread _infoThread;
 
@@ -111,7 +115,7 @@ public class WaitingGameWindowController extends GenericController {
     protected void onViewShown() {
 
         clearAllLabels();
-
+        imgTableInGame.setImage(new Image(getClass().getResource(_clientInfo.gameConfig._selectedTable).toExternalForm()));
         playerName0.setText( _clientInfo.name );
         playerMoney0.setText( String.valueOf( _clientInfo.gameConfig._initialMoney ) );
         pokerPlayer0.setOpacity( 1 );

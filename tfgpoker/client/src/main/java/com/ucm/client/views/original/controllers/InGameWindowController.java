@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.List;
 
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.common.GameType;
@@ -16,7 +17,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 
 public class InGameWindowController extends GenericController {
 
@@ -33,6 +36,37 @@ public class InGameWindowController extends GenericController {
     @FXML
     private Button btnRaise;
 
+    @FXML
+    private ImageView imgTableInGame;
+
+    @FXML
+    private HBox hboxImageCards0;
+
+    @FXML
+    private HBox hboxImageCards1;
+
+    @FXML
+    private HBox hboxImageCards2;
+
+    @FXML
+    private HBox hboxImageCards3;
+
+    @FXML
+    private HBox hboxImageCards4;
+
+    @FXML
+    private HBox hboxImageCards5;
+
+    @FXML
+    private HBox hboxImageCards6;
+
+    @FXML
+    private HBox hboxImageCards7;
+
+    @FXML
+    private HBox hboxImageCards8;
+
+    private List<HBox> _listImageCards;
 
     private Thread _gameThread = null;
 
@@ -57,6 +91,12 @@ public class InGameWindowController extends GenericController {
     protected void onViewShown() {
 
         System.out.printf("Start!\n");
+
+        imgTableInGame.setImage(new Image(getClass().getResource(_clientInfo.gameConfig._selectedTable).toExternalForm()));
+
+        initializeCardsPosition ();
+        //TODO: cambair cuando haya bots. Tener en cuenta cuando un cliente se sale o hace fold
+        paintPlayersCards (_clientInfo.gameConfig._numPlayers);
 
         usernamePlaceHolder.setText( _clientInfo.name );
 
@@ -88,6 +128,28 @@ public class InGameWindowController extends GenericController {
     @Override
     public void onBackEvent() {
         
+    }
+
+    private void initializeCardsPosition () {
+        _listImageCards = List.of (
+            hboxImageCards0,
+            hboxImageCards1,
+            hboxImageCards2,
+            hboxImageCards3,
+            hboxImageCards4,
+            hboxImageCards5,
+            hboxImageCards6,
+            hboxImageCards7,
+            hboxImageCards8
+        );
+        _listImageCards.forEach(hbox -> hbox.setVisible(false));
+    }
+
+    private void paintPlayersCards (int numPlayers){
+        for (int i = 0; i < _listImageCards.size(); i++) {
+            boolean show = i < numPlayers;
+            _listImageCards.get(i).setVisible(show);
+        }
     }
 
 

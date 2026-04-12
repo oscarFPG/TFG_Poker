@@ -19,19 +19,15 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.WaitingGameWindowController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.WaitingGameWindowController">
    <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0">
          <center>
             <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <children>
-                  <ImageView fitHeight="372.0" fitWidth="796.0" layoutX="281.0" layoutY="117.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../images/tableGame.png" />
-                     </image>
-                  </ImageView>
-                  <Label layoutX="461.0" layoutY="255.0" prefHeight="96.0" prefWidth="409.0" styleClass="username-label" text="Waiting for the rest of the players to start..." />
-                  <StackPane fx:id="pokerPlayer1" layoutX="177.0" layoutY="467.0" prefHeight="83.0" prefWidth="272.0">
+                  <ImageView fx:id="imgTableInGame" fitHeight="372.0" fitWidth="796.0" layoutX="281.0" layoutY="117.0" pickOnBounds="true" preserveRatio="true" />
+                  <Label layoutX="467.0" layoutY="245.0" prefHeight="96.0" prefWidth="409.0" styleClass="username-label" text="Waiting for the rest of the players to start..." />
+                  <StackPane fx:id="pokerPlayer1" layoutX="189.0" layoutY="459.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>
@@ -207,7 +203,7 @@
                         </Circle>
                      </children>
                   </StackPane>
-                  <StackPane fx:id="pokerPlayer3" layoutX="63.0" layoutY="158.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer3" layoutX="73.0" layoutY="158.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>
@@ -295,7 +291,7 @@
                         </Circle>
                      </children>
                   </StackPane>
-                  <StackPane fx:id="pokerPlayer2" layoutX="63.0" layoutY="297.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer2" layoutX="73.0" layoutY="298.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>
@@ -471,7 +467,7 @@
                         </Circle>
                      </children>
                   </StackPane>
-                  <StackPane fx:id="pokerPlayer0" layoutX="505.0" layoutY="467.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer0" layoutX="507.0" layoutY="459.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox id="usersOwn" alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0" style="-fx-effect: dropshadow(gaussian, rgba(240,184,255,0.8), 25, 0.5, 0, 0);">
                            <styleClass>
@@ -554,7 +550,7 @@
                         </Circle>
                      </children>
                   </StackPane>
-                  <StackPane fx:id="pokerPlayer8" layoutX="823.0" layoutY="467.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer8" layoutX="825.0" layoutY="459.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>
@@ -642,7 +638,7 @@
                         </Circle>
                      </children>
                   </StackPane>
-                  <StackPane fx:id="pokerPlayer6" layoutX="991.0" layoutY="158.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer6" layoutX="1003.0" layoutY="158.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>
@@ -730,7 +726,7 @@
                         </Circle>
                      </children>
                   </StackPane>
-                  <StackPane fx:id="pokerPlayer7" layoutX="1003.0" layoutY="308.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer7" layoutX="1003.0" layoutY="298.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>
