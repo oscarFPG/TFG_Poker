@@ -87,6 +87,30 @@ public class Card {
         return String.format("[%c%s]", valueToString(), _suit.getSimbolo());
     }
 
+
+    /**
+     * Returns a string representation of the card using suit letters instead of symbols.
+     *
+     * <p>
+     * The card is represented in the format [ValueSuit], where the suit is displayed
+     * using its letter:
+     * </p>
+     *
+     * <pre>
+     * Examples: [Ah], [Kd], [7c], [Ts]
+     * </pre>
+     *
+     * <p>
+     * This format is especially useful for LLM prompts and text-based processing,
+     * as it avoids Unicode symbols and follows standard poker notation.
+     * </p>
+     *
+     * @return {@link String} representation of the card using suit letters
+     */
+    public String toLetterString() {
+        return String.format("[%c%c]", valueToString(), _suit.getLetra());
+    }
+
     /**
      * Returns a string representation of a flipped down card, which is
      * represented as [xx]
