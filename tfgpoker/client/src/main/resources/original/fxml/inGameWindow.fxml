@@ -298,7 +298,7 @@
    <center>
       <AnchorPane prefHeight="551.0" prefWidth="1238.0" BorderPane.alignment="CENTER">
          <children>
-            <HBox fx:id="hboxImageCards8" layoutX="339.0" layoutY="392.0" prefHeight="80.0" prefWidth="146.0" spacing="10.0">
+            <HBox fx:id="hboxImageCardsInGame8" layoutX="339.0" layoutY="392.0" prefHeight="80.0" prefWidth="146.0" spacing="10.0">
                <children>
                   <ImageView fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -312,7 +312,7 @@
                   </ImageView>
                </children>
             </HBox>
-            <HBox fx:id="hboxImageCards7" layoutX="245.0" layoutY="231.0" prefHeight="100.0" prefWidth="135.0" spacing="10.0">
+            <HBox fx:id="hboxImageCardsInGame7" layoutX="245.0" layoutY="231.0" prefHeight="100.0" prefWidth="135.0" spacing="10.0">
                <children>
                   <ImageView fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -326,7 +326,7 @@
                   </ImageView>
                </children>
             </HBox>
-            <HBox fx:id="hboxImageCards6" layoutX="245.0" layoutY="76.0" prefHeight="100.0" prefWidth="147.0" spacing="10.0">
+            <HBox fx:id="hboxImageCardsInGame6" layoutX="245.0" layoutY="76.0" prefHeight="100.0" prefWidth="147.0" spacing="10.0">
                <children>
                   <ImageView fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -340,7 +340,7 @@
                   </ImageView>
                </children>
             </HBox>
-            <HBox fx:id="hboxImageCards5" layoutX="506.0" layoutY="-25.0" prefHeight="88.0" prefWidth="147.0" spacing="10.0">
+            <HBox fx:id="hboxImageCardsInGame5" layoutX="506.0" layoutY="-25.0" prefHeight="88.0" prefWidth="147.0" spacing="10.0">
                <children>
                   <ImageView fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -354,7 +354,7 @@
                   </ImageView>
                </children>
             </HBox>
-            <HBox fx:id="hboxImageCards4" layoutX="821.0" layoutY="-27.0" prefHeight="94.0" prefWidth="137.0" spacing="10.0">
+            <HBox fx:id="hboxImageCardsInGame4" layoutX="821.0" layoutY="-27.0" prefHeight="94.0" prefWidth="137.0" spacing="10.0">
                <children>
                   <ImageView fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -368,7 +368,7 @@
                   </ImageView>
                </children>
             </HBox>
-            <HBox fx:id="hboxImageCards3" layoutX="1070.0" layoutY="77.0" prefHeight="100.0" prefWidth="145.0" spacing="10.0">
+            <HBox fx:id="hboxImageCardsInGame3" layoutX="1070.0" layoutY="77.0" prefHeight="100.0" prefWidth="145.0" spacing="10.0">
                <children>
                   <ImageView fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -382,7 +382,7 @@
                   </ImageView>
                </children>
             </HBox>
-            <HBox fx:id="hboxImageCards2" layoutX="1074.0" layoutY="232.0" prefHeight="97.0" prefWidth="147.0" spacing="10.0">
+            <HBox fx:id="hboxImageCardsInGame2" layoutX="1074.0" layoutY="232.0" prefHeight="97.0" prefWidth="147.0" spacing="10.0">
                <children>
                   <ImageView fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -396,7 +396,7 @@
                   </ImageView>
                </children>
             </HBox>
-            <HBox fx:id="hboxImageCards1" layoutX="944.0" layoutY="389.0" prefHeight="93.0" prefWidth="152.0" spacing="10.0">
+            <HBox fx:id="hboxImageCardsInGame1" layoutX="944.0" layoutY="389.0" prefHeight="93.0" prefWidth="152.0" spacing="10.0">
                <children>
                   <ImageView fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true">
                      <image>

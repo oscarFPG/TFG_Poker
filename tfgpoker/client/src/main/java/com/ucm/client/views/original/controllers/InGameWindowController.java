@@ -39,35 +39,6 @@ public class InGameWindowController extends GenericController {
     @FXML
     private ImageView imgTableInGame;
 
-    @FXML
-    private HBox hboxImageCards0;
-
-    @FXML
-    private HBox hboxImageCards1;
-
-    @FXML
-    private HBox hboxImageCards2;
-
-    @FXML
-    private HBox hboxImageCards3;
-
-    @FXML
-    private HBox hboxImageCards4;
-
-    @FXML
-    private HBox hboxImageCards5;
-
-    @FXML
-    private HBox hboxImageCards6;
-
-    @FXML
-    private HBox hboxImageCards7;
-
-    @FXML
-    private HBox hboxImageCards8;
-
-    private List<HBox> _listImageCards;
-
     private Thread _gameThread = null;
 
 
@@ -94,9 +65,7 @@ public class InGameWindowController extends GenericController {
 
         imgTableInGame.setImage(new Image(getClass().getResource(_clientInfo.gameConfig._selectedTable).toExternalForm()));
 
-        initializeCardsPosition ();
         //TODO: cambair cuando haya bots. Tener en cuenta cuando un cliente se sale o hace fold
-        paintPlayersCards (_clientInfo.gameConfig._numPlayers);
 
         usernamePlaceHolder.setText( _clientInfo.name );
 
@@ -129,29 +98,6 @@ public class InGameWindowController extends GenericController {
     public void onBackEvent() {
         
     }
-
-    private void initializeCardsPosition () {
-        _listImageCards = List.of (
-            hboxImageCards0,
-            hboxImageCards1,
-            hboxImageCards2,
-            hboxImageCards3,
-            hboxImageCards4,
-            hboxImageCards5,
-            hboxImageCards6,
-            hboxImageCards7,
-            hboxImageCards8
-        );
-        _listImageCards.forEach(hbox -> hbox.setVisible(false));
-    }
-
-    private void paintPlayersCards (int numPlayers){
-        for (int i = 0; i < _listImageCards.size(); i++) {
-            boolean show = i < numPlayers;
-            _listImageCards.get(i).setVisible(show);
-        }
-    }
-
 
     private void pokerGame(String name, Socket socket) {
 

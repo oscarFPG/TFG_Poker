@@ -25,9 +25,127 @@
          <center>
             <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <children>
-                  <ImageView fx:id="imgTableInGame" fitHeight="372.0" fitWidth="796.0" layoutX="281.0" layoutY="117.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fx:id="imgTableInGame" fitHeight="388.0" fitWidth="810.0" layoutX="267.0" layoutY="117.0" pickOnBounds="true" preserveRatio="true" />
                   <Label layoutX="467.0" layoutY="245.0" prefHeight="96.0" prefWidth="409.0" styleClass="username-label" text="Waiting for the rest of the players to start..." />
-                  <StackPane fx:id="pokerPlayer1" layoutX="189.0" layoutY="459.0" prefHeight="83.0" prefWidth="272.0">
+                  <HBox fx:id="hboxImageCards0" layoutX="547.0" layoutY="395.0" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <ImageView fx:id="imgLeftCard0" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fx:id="imgRightCard0" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" />
+                     </children>
+                  </HBox>
+                  <HBox fx:id="hboxImageCards8" layoutX="891.0" layoutY="413.0" prefHeight="98.0" prefWidth="148.0" spacing="10.0">
+                     <children>
+                        <ImageView fx:id="imgLeftCard8" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/reversePokerCardGame.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fx:id="imgRightCard8" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/reversePokerCardGame.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </HBox>
+                  <HBox fx:id="hboxImageCards7" layoutX="1071.0" layoutY="254.0" prefHeight="100.0" prefWidth="145.0" spacing="10.0">
+                     <children>
+                        <ImageView fx:id="imgLeftCard7" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/reversePokerCardGame.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fx:id="imgRightCard7" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/reversePokerCardGame.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </HBox>
+                  <HBox fx:id="hboxImageCards6" layoutX="1069.0" layoutY="86.0" prefHeight="91.0" prefWidth="133.0" spacing="10.0">
+                     <children>
+                        <ImageView fx:id="imgLeftCard6" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/reversePokerCardGame.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fx:id="imgRightCard6" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/reversePokerCardGame.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </HBox>
+                  <HBox fx:id="hboxImageCards5" layoutX="778.0" layoutY="-22.0" prefHeight="88.0" prefWidth="151.0" spacing="10.0">
+                     <children>
+                        <ImageView fx:id="imgLeftCard5" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/reversePokerCardGame.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fx:id="imgRightCard5" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/reversePokerCardGame.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </HBox>
+                  <HBox fx:id="hboxImageCards4" layoutX="438.0" layoutY="-23.0" prefHeight="150.0" prefWidth="179.0" spacing="10.0">
+                     <children>
+                        <ImageView fx:id="imgLeftCard4" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/reversePokerCardGame.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fx:id="imgRightCard4" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/reversePokerCardGame.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </HBox>
+                  <HBox fx:id="hboxImageCards3" layoutX="137.0" layoutY="83.0" prefHeight="98.0" prefWidth="136.0" spacing="10.0">
+                     <children>
+                        <ImageView fx:id="imgLeftCard3" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/reversePokerCardGame.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fx:id="imgRightCard3" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/reversePokerCardGame.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </HBox>
+                  <HBox fx:id="hboxImageCards2" layoutX="137.0" layoutY="254.0" prefHeight="100.0" prefWidth="136.0" spacing="10.0">
+                     <children>
+                        <ImageView fx:id="imgLeftCard2" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/reversePokerCardGame.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fx:id="imgRightCard2" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/reversePokerCardGame.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </HBox>
+                  <HBox fx:id="hboxImageCards1" layoutX="248.0" layoutY="415.0" prefHeight="89.0" prefWidth="148.0" spacing="10.0">
+                     <children>
+                        <ImageView fx:id="imgLeftCard1" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/reversePokerCardGame.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fx:id="imgRightCard1" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/reversePokerCardGame.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </HBox>
+                  <StackPane fx:id="pokerPlayer1" layoutX="186.0" layoutY="486.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>
@@ -115,7 +233,7 @@
                         </Circle>
                      </children>
                   </StackPane>
-                  <StackPane fx:id="pokerPlayer4" layoutX="382.0" layoutY="48.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer4" layoutX="375.0" layoutY="48.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>
@@ -291,7 +409,7 @@
                         </Circle>
                      </children>
                   </StackPane>
-                  <StackPane fx:id="pokerPlayer2" layoutX="73.0" layoutY="298.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer2" layoutX="72.0" layoutY="327.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>
@@ -379,7 +497,7 @@
                         </Circle>
                      </children>
                   </StackPane>
-                  <StackPane fx:id="pokerPlayer5" layoutX="719.0" layoutY="58.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer5" layoutX="715.0" layoutY="48.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>
@@ -467,7 +585,7 @@
                         </Circle>
                      </children>
                   </StackPane>
-                  <StackPane fx:id="pokerPlayer0" layoutX="507.0" layoutY="459.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer0" layoutX="511.0" layoutY="486.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox id="usersOwn" alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0" style="-fx-effect: dropshadow(gaussian, rgba(240,184,255,0.8), 25, 0.5, 0, 0);">
                            <styleClass>
@@ -550,7 +668,7 @@
                         </Circle>
                      </children>
                   </StackPane>
-                  <StackPane fx:id="pokerPlayer8" layoutX="825.0" layoutY="459.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer8" layoutX="829.0" layoutY="486.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>
@@ -726,7 +844,7 @@
                         </Circle>
                      </children>
                   </StackPane>
-                  <StackPane fx:id="pokerPlayer7" layoutX="1003.0" layoutY="298.0" prefHeight="83.0" prefWidth="272.0">
+                  <StackPane fx:id="pokerPlayer7" layoutX="1003.0" layoutY="327.0" prefHeight="83.0" prefWidth="272.0">
                      <children>
                         <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                            <styleClass>
