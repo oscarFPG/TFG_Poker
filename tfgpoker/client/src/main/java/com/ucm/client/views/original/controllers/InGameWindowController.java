@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -115,6 +116,8 @@ public class InGameWindowController extends GenericController {
     private Thread _gameThread = null;
     private BlockingQueue<String> _commandQueue = new LinkedBlockingQueue<>();
     private boolean _swapCallToCheck = false;
+    private List<Integer> _playerSeatLabel; // Player id = i -> list[i] = m -> m stackpane label
+
 
     @Override
     protected void onViewShown() {
@@ -122,10 +125,6 @@ public class InGameWindowController extends GenericController {
         clearAllLabels();
         showPlayers(_clientInfo.playerPositions);
         initializeSlider(_clientInfo.gameConfig);
-
-        playerName0.setText( _clientInfo.name );
-        playerMoney0.setText( String.valueOf( _clientInfo.gameConfig._initialMoney ) );
-        pokerPlayer0.setVisible(true);
 
         usernamePlaceHolder.setText( _clientInfo.name );
 
@@ -144,10 +143,10 @@ public class InGameWindowController extends GenericController {
         });
 
         _gameThread = new Thread(() -> {
+
             final boolean ok = pokerGame(_clientInfo.name, _clientInfo.socket);
-
             if(ok) {
-
+                System.out.printf("All OK! Game finished!\n");
             }
             else {
                 Platform.runLater(() -> {
@@ -166,18 +165,6 @@ public class InGameWindowController extends GenericController {
         _gameThread.start();
     }
 
-
-
-    private void initializeSlider(final GameConfig config) {
-
-        sliderMoney.setMin(0);
-        sliderMoney.setMax(1_000_000);
-        sliderMoney.setValue(0);
-
-        sliderMoney.valueProperty().addListener((obs, oldVal, newVal) -> {
-            labelMoney.setText(String.valueOf(newVal.intValue()));
-        });
-    }
 
     @FXML
     private void foldAction() {
@@ -209,8 +196,8 @@ public class InGameWindowController extends GenericController {
             return;
 
 
-        int ejemplo = 5;
-        _commandQueue.offer( String.format("%s %d", GameType.RAISE_ACTION_FULL, ejemplo) );
+        int amount = Integer.parseInt( labelMoney.getText() );
+        _commandQueue.offer( String.format("%s %d", GameType.RAISE_ACTION_FULL, amount) );
     }
 
     @FXML
@@ -249,6 +236,7 @@ public class InGameWindowController extends GenericController {
         sliderMoney.setValue(newValue);
     }
 
+    
     
     private boolean pokerGame(String name, Socket socket) {
 
@@ -415,13 +403,37 @@ public class InGameWindowController extends GenericController {
 
 			if(serverCode == GameType.TURN_FORCED_SB) {
 
-				int amountSB = SocketUtils.receiveInt(socket.getInputStream());
+				final int amountSB = SocketUtils.receiveInt(socket.getInputStream());
+                final int onBetMoney = SocketUtils.receiveInt(socket.getInputStream());
+                final int offBetMoney = SocketUtils.receiveInt(socket.getInputStream());
 				System.out.printf("Forced play as the small blind with %d chips\n", amountSB);
+
+                Platform.runLater(() -> {
+                    playerName0.setText( _clientInfo.name );
+                    playerMoney0.setText(
+                        String.format(
+                            "%d - %d", 
+                            onBetMoney, offBetMoney
+                        )
+                    );
+                });
 			}
 			else if(serverCode == GameType.TURN_FORCED_BB) {
 
-				int amountBB = SocketUtils.receiveInt(socket.getInputStream());
+				final int amountBB = SocketUtils.receiveInt(socket.getInputStream());
+                final int onBetMoney = SocketUtils.receiveInt(socket.getInputStream());
+                final int offBetMoney = SocketUtils.receiveInt(socket.getInputStream());
 				System.out.printf("Forced play as the big blind with %d chips\n", amountBB);
+
+                Platform.runLater(() -> {
+                    playerName0.setText( _clientInfo.name );
+                    playerMoney0.setText(
+                        String.format(
+                            "%d - %d", 
+                            onBetMoney, offBetMoney
+                        )
+                    );
+                });
 			}
 			else if(serverCode == GameType.TURN_WAIT) {
 
@@ -430,8 +442,6 @@ public class InGameWindowController extends GenericController {
                     buttonsHolder.setVisible(false);
                 });
 
-                // TODO : Receive the other players actions
-                // notifyOtherPlayerAction()
 			}
 			else if(serverCode == GameType.TURN_PLAY) {
 
@@ -446,27 +456,27 @@ public class InGameWindowController extends GenericController {
 				final int maxBet = SocketUtils.receiveInt( socket.getInputStream() );
 				final int offBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
 				final int onBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
+                System.out.printf(
+                    "-- Round info --\n SB: %d, BB: %d, MaxBet: %d\n OnBetMoney: %d, OffBetMoney: %d\n", 
+                    sb, bb, maxBet, 
+                    onBetMoney, offBetMoney
+                );
 
                 // Do not allow to bet less than the current max bet
                 Platform.runLater(() -> {
-                    sliderMoney.setMin( (double)(Math.min(maxBet, offBetMoney)) );
-                    sliderMoney.setMax( (double)(offBetMoney) );
+                    sliderMoney.setMin( (double)maxBet );
+                    sliderMoney.setMax( (double)offBetMoney );
 
                     playerMoney0.setText(
                         String.format(
                             "%d - %d", 
-                            offBetMoney, onBetMoney
+                            onBetMoney, offBetMoney
                         )
                     );
                 });
 
-                System.out.printf(
-                    "-- Round info --\n SB: %d, BB: %d, MaxBet: %d\n OffBetMoney: %d, OnBetMoney: %d\n", 
-                    sb, bb, maxBet, 
-                    offBetMoney, onBetMoney
-                );
-
                 selectCommand(socket, sb, bb, maxBet, offBetMoney, onBetMoney);
+
                 Platform.runLater(() -> {
                     buttonsHolder.setVisible(false);
                 });
@@ -477,15 +487,29 @@ public class InGameWindowController extends GenericController {
             else if(serverCode == GameType.TURN_OTHER_PLAYER) {
 
                 final int otherPlayerID = SocketUtils.receiveInt( socket.getInputStream() );
-                final String otherPlayerCommand = SocketUtils.receiveString( socket.getInputStream() );
-                final int otherPlayerBet = SocketUtils.receiveInt( socket.getInputStream() );
-                final boolean otherPlayerRaises = (SocketUtils.receiveInt( socket.getInputStream() ) == GameType.TRUE) ? true : false;
-                final boolean otherPlayerFolds =  (SocketUtils.receiveInt( socket.getInputStream() ) == GameType.TRUE) ? true : false;
+                final String otherPlayerName = SocketUtils.receiveString( socket.getInputStream() );
+                final int otherPlayerOffBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
+                final int otherPlayerOnBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
 
                 System.out.printf(
-                    "Other player action - PlayerID: %d, Command: %s, Bet: %d, Raises: %b, Folds: %b\n",
-                    otherPlayerID, otherPlayerCommand, otherPlayerBet, otherPlayerRaises, otherPlayerFolds
+                    "Other player action - PlayerID: %d, OffBetMoney: %d, OnBetMoney: %d\n",
+                    otherPlayerID,
+                    otherPlayerOffBetMoney, otherPlayerOnBetMoney
                 );
+
+                final int seatID = _playerSeatLabel.get(otherPlayerID).intValue();
+                Label nameLabel = getNameLabelByPosition(seatID);
+                Label moneyLabel = getMoneyLabelByPosition(seatID);
+
+                Platform.runLater(() -> {
+                    nameLabel.setText( otherPlayerName );
+                    moneyLabel.setText(
+                        String.format(
+                            "%d - %d", 
+                            otherPlayerOnBetMoney, otherPlayerOffBetMoney
+                        )
+                    );
+                });
 
             }
             else if(serverCode == GameType.ERROR_GAME_CANCELS) {
@@ -566,6 +590,23 @@ public class InGameWindowController extends GenericController {
     }
     
 
+    private void initializeSlider(final GameConfig config) {
+
+        sliderMoney.setMin(0);
+        sliderMoney.setMax(1_000_000);
+        sliderMoney.setValue(0);
+
+        sliderMoney.valueProperty().addListener((obs, oldVal, newVal) -> {
+            
+            labelMoney.setText(String.valueOf(newVal.intValue()));
+
+            if( newVal.intValue() == sliderMoney.getMin() )
+                btnRaise.setDisable(true);
+            else
+                btnRaise.setDisable(false);
+        });
+    }
+
     private StackPane getPlayerStackPaneByPosition(final int position) {
         switch(position) {
             case 0: return pokerPlayer0;
@@ -624,11 +665,27 @@ public class InGameWindowController extends GenericController {
             return;
         }
 
+
+        _playerSeatLabel = new ArrayList<>();
+        for(int i = 0; i < players.size(); i++)
+            _playerSeatLabel.add(-1);
+
+        _playerSeatLabel.add(myID, 0);  // L[myID] = 0 -> My id is connected with playerlabel0, stackpane0, etc...
+        playerName0.setText( _clientInfo.name );
+        playerMoney0.setText(
+            String.format(
+                "%d - %d",
+                0, _clientInfo.gameConfig._initialMoney
+            )
+        );
+        pokerPlayer0.setVisible(true);
+
         // Show players behind me(in the list) : position 1, 2, 3, ...
         int beforePosition = 1;
         for(int i = myIndex - 1; 0 <= i; i--) {
 
             PlayerInfo p = players.get(i);
+            _playerSeatLabel.add(p.id, beforePosition);
 
             Label nameLabel = getNameLabelByPosition(beforePosition);
             Label moneyLabel = getMoneyLabelByPosition(beforePosition);
@@ -636,7 +693,12 @@ public class InGameWindowController extends GenericController {
 
             Platform.runLater(() -> {
                 nameLabel.setText(p.name);
-                moneyLabel.setText(String.valueOf(_clientInfo.gameConfig._initialMoney));
+                moneyLabel.setText(
+                    String.format(
+                        "%d - %d",
+                        _clientInfo.gameConfig._initialMoney, 0
+                    )
+                );
                 playerStackPane.setVisible(true);
             });
 
@@ -648,6 +710,7 @@ public class InGameWindowController extends GenericController {
         for(int i = myIndex + 1; i < players.size(); i++) {
 
             PlayerInfo p = players.get(i);
+            _playerSeatLabel.add(p.id, nextPosition);
 
             Label nameLabel = getNameLabelByPosition(nextPosition);
             Label moneyLabel = getMoneyLabelByPosition(nextPosition);
@@ -655,7 +718,12 @@ public class InGameWindowController extends GenericController {
 
             Platform.runLater(() -> {
                 nameLabel.setText(p.name);
-                moneyLabel.setText(String.valueOf(_clientInfo.gameConfig._initialMoney));
+                moneyLabel.setText(
+                    String.format(
+                        "%d - %d",
+                        _clientInfo.gameConfig._initialMoney, 0
+                    )
+                );
                 playerStackPane.setVisible(true);
             });
 

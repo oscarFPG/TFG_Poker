@@ -105,7 +105,7 @@ public class LlamaPokerLLM extends BotLLM {
     @Override public void notifyGameWinner() {}
     @Override public void notifyGameLoser() {}
     @Override public void notifyHandEndsByFolds() {}
-    @Override public void notifyOtherPlayerAction(IPokerPlayer p, Command command, CommandResult result) {}
+    @Override public void notifyOtherPlayerAction(IPokerPlayer p) {}
     
 
     // ---------------------------------------------METODOS PERSOLANIZADOS PARA ESTE BOT------------------------------------------------

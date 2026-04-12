@@ -9,7 +9,7 @@ public class GameConfig {
     private static final String DEFAULT_LEVEL_DURATION = "15";
     private static final String DEFAULT_HIKE_PERCENTAGE = "25";
     private static final int DEFAULT_NUM_BOTS = 0;
-    private static final int DEFAULT_NUM_PLAYERS = 0;
+    private static final int DEFAULT_NUM_PLAYERS = 8;
     /**
      * Variables para crear partida: Home
     */

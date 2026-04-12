@@ -85,26 +85,27 @@ public class HumanPlayer extends Player {
     public void notifySmallBlindBet(final int amount) throws IOException {
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_FORCED_SB);
         SocketUtils.sendInteger(_socket.getOutputStream(), amount);
+        SocketUtils.sendInteger(_socket.getOutputStream(), _onBetMoney);
+        SocketUtils.sendInteger(_socket.getOutputStream(), _offBetMoney);
     }
 
     @Override
     public void notifyBigBlindBet(final int amount) throws IOException {
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_FORCED_BB);
         SocketUtils.sendInteger(_socket.getOutputStream(), amount);
+        SocketUtils.sendInteger(_socket.getOutputStream(), _onBetMoney);
+        SocketUtils.sendInteger(_socket.getOutputStream(), _offBetMoney);
     }
 
     @Override
-    public void notifyOtherPlayerAction(IPokerPlayer p, Command command, CommandResult result) throws IOException {
-        
-        int raisesValue = result.raises() ? GameType.TRUE : GameType.FALSE;
-        int foldsValue = result.folds() ? GameType.TRUE : GameType.FALSE;
+    public void notifyOtherPlayerAction(IPokerPlayer p) throws IOException {
 
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_OTHER_PLAYER);
         SocketUtils.sendInteger(_socket.getOutputStream(), p.getPlayerId());
-        SocketUtils.sendString(_socket.getOutputStream(), command.getCommandFormat());
-        SocketUtils.sendInteger(_socket.getOutputStream(), result.bet());
-        SocketUtils.sendInteger(_socket.getOutputStream(), raisesValue);
-        SocketUtils.sendInteger(_socket.getOutputStream(), foldsValue);
+        SocketUtils.sendString(_socket.getOutputStream(), p.getPlayerName());
+        SocketUtils.sendInteger(_socket.getOutputStream(), p.getMoneyOffBet());
+        SocketUtils.sendInteger(_socket.getOutputStream(), p.getMoneyOnBet());
+        
     }
 
     @Override

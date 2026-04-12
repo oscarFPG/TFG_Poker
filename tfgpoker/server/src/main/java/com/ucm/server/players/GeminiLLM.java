@@ -147,10 +147,6 @@ public class GeminiLLM extends BotLLM {
     }
 
 
-    @Override
-    public void notifyOtherPlayerAction(IPokerPlayer p, Command command, CommandResult result) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyOtherPlayerAction'");
-    }
+    @Override public void notifyOtherPlayerAction(IPokerPlayer p) {}
     
 }

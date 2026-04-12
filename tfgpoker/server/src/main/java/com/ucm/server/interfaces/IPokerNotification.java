@@ -15,7 +15,7 @@ public interface IPokerNotification {
     public void notifyTableCard(final Card c) throws IOException;
     public void notifySmallBlindBet(final int amount) throws IOException;
     public void notifyBigBlindBet(final int amount) throws IOException;
-    public void notifyOtherPlayerAction(IPokerPlayer p, Command command, CommandResult result) throws IOException;
+    public void notifyOtherPlayerAction(IPokerPlayer p) throws IOException;
     public void notifyTurnWait() throws IOException;
     public void notifyTurnPlay() throws IOException;
 

@@ -246,6 +246,7 @@ public class PlayerList {
 
             pNode._player.actionSmallBlindBet(sb);
             pNode._player.notifySmallBlindBet(sb);
+            notifyOtherPlayerActionToAllPlayers(pNode._player);
             log.debug(
                 "Player {} puts {}$ as SMALL_BLIND. Now it has {}$", 
                 pNode._player.getPlayerName(), pNode._player.getMoneyOnBet(), pNode._player.getMoneyOffBet()
@@ -261,6 +262,7 @@ public class PlayerList {
 
             pNode._player.actionBigBlindBet(bb);
             pNode._player.notifyBigBlindBet(bb);
+            notifyOtherPlayerActionToAllPlayers(pNode._player);
             log.debug(
                 "Player {} puts {}$ as BIG_BLIND. Now it has {}$", 
                 pNode._player.getPlayerName(), pNode._player.getMoneyOnBet(), pNode._player.getMoneyOffBet()
@@ -325,7 +327,7 @@ public class PlayerList {
             }
 
             CommandResult result = command.execute(sb, bb, maxBet);
-            notifyOtherPlayerActionToAllPlayers(playerOnTurn._player, result, command);
+            notifyOtherPlayerActionToAllPlayers(playerOnTurn._player);
 
             if(result.folds()) {
                 --playersRemaining; 
@@ -739,13 +741,13 @@ public class PlayerList {
         winner._player.setIsWinner(true);
     }
 
-    private void notifyOtherPlayerActionToAllPlayers(IPokerPlayer p, CommandResult result, Command command) {
+    private void notifyOtherPlayerActionToAllPlayers(IPokerPlayer p) {
 
         Node iNode = _first;
-        if(!iNode._player.isEliminated()) {
+        if(!iNode._player.isEliminated() && iNode._player != p) {
             
             try {
-                iNode._player.notifyOtherPlayerAction(p, command, result);
+                iNode._player.notifyOtherPlayerAction(p);
             }
             catch(IOException e) {
                 // TODO : Handle exception
@@ -755,10 +757,10 @@ public class PlayerList {
         iNode = iNode._next;
         while(iNode != _first) {
 
-            if(!iNode._player.isEliminated()) {
+            if(!iNode._player.isEliminated() && iNode._player != p) {
 
                 try {
-                    iNode._player.notifyOtherPlayerAction(p, command, result);
+                    iNode._player.notifyOtherPlayerAction(p);
                 }
                 catch(IOException e) {
                     // TODO : Handle exception

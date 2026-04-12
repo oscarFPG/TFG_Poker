@@ -62,7 +62,7 @@ public class StatusController {
             break;
 
         case GAME:
-            currentState = State.START_APP;
+            currentState = State.CHOOSE_GAME;
             break;
         }
         

@@ -84,6 +84,6 @@ public class FakePlayer extends Player {
     public void notifyMoneyAmount(int amount) {}
 
     @Override
-    public void notifyOtherPlayerAction(IPokerPlayer p, Command command, CommandResult result) {}
+    public void notifyOtherPlayerAction(IPokerPlayer p) {}
     
 }
