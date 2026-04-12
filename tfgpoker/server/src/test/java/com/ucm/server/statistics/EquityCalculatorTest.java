@@ -49,7 +49,7 @@ public class EquityCalculatorTest {
 
             players.add(new HandInfo(i, new Card[]{c1, c2}));
 
-            System.out.println("Player " + i + ": [" + c1 + " " + c2 + "]");
+            System.out.println("Player " + i + ": [" + c1.toLetterString() + " " + c2.toLetterString() + "]");
         }
 
         Card[] table = new Card[5];
@@ -123,7 +123,7 @@ public class EquityCalculatorTest {
 
         for (Card c : table) {
             if (c == null) System.out.print("[--] ");
-            else System.out.print(c + " ");
+            else System.out.print(c.toLetterString() + " ");
         }
 
         System.out.println();
