@@ -13,6 +13,7 @@ import com.ucm.server.exceptions.EvaluatorException;
 import com.ucm.common.ClientStruct;
 import com.ucm.common.GameConfig;
 import com.ucm.common.GameInfo;
+import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.server.gameobjects.Deck;
 import com.ucm.server.middleclasses.HandInfo;
@@ -24,75 +25,57 @@ public class Game {
 
     private static final Logger log = LogManager.getLogger(Game.class);
 
-    public static final boolean DEBUG = false;
-
-    public static final int INITIAL_SB = 1;
-    public static final int INITIAL_BB = 2;
-    public static final int NUM_MIN_PLAYERS = 2;
-    public static final int NUM_MAX_PLAYERS = 9;
+    public static final boolean DEBUG = true;
     public static final int MAX_CARDS_IN_TABLE = 5;
 
+    private GameConfig _gameConfig;
     private int _initialSmallBlind;
     private int _initialBigBlind;
-    private int _handCounter;
+    private int _currentSB;
+    private int _currentBB;
 
     private PlayerList _playerList;
     private Deck _deck;
     private Card[] _tableCards;
     private int _tableCardsCounter;
-
     private boolean _isPreflop;
 
-    private int _currentSB;
-    private int _currentBB;
+    private int _handCounter = 0;
     
-    private GameConfig _gameConfig;
-    
+
     public Game(GameInfo gameInfo) throws EvaluatorException {
 
         _gameConfig = gameInfo.gameConfig;
 
         String[] parts = _gameConfig._blindsValue.split("/");
-
-
-        _initialSmallBlind = Integer.parseInt(parts[0]);
-        _initialBigBlind = Integer.parseInt(parts[1]);
-        _handCounter = 0;
+        _initialSmallBlind = Integer.parseInt(parts[0]);    // TODO : Controlar errores de formato
+        _initialBigBlind = Integer.parseInt(parts[1]);      // TODO : Controlar errores de formato
+        _currentSB = _initialSmallBlind;
+        _currentBB = _initialBigBlind;
 
         _playerList = new PlayerList(_gameConfig._numPlayers + 1);
         addPlayerInitial(gameInfo);
         _deck = new Deck();
         _tableCards = new Card[MAX_CARDS_IN_TABLE];
         _tableCardsCounter = 0;
-
         _isPreflop = true;
-
-        _currentSB = _initialSmallBlind;
-        _currentBB = _initialBigBlind;
 
         try {
             Evaluator.getInstance();
         }
         catch(IOException e) {
             log.error("Trying to create the evaluator: {}", e.getMessage());
-            throw new EvaluatorException("Error creating the evaluator for the game");
+            throw new EvaluatorException( String.format("Error creating the evaluator for the game : %s", e.getMessage()) );
         }
         
     }
 
-    private void addPlayerInitial(GameInfo gameInfo) {
-        int id = 0;
-        for(ClientStruct cs : gameInfo.players) {
-            _playerList.addPlayer( new HumanPlayer(id, cs.name(), cs.socket(), gameInfo.gameConfig._initialMoney));
-            ++id;
-        }
+    
+    public void assignRolesToAllPlayers() throws CancelGameException {
+       _playerList.assignRolesToAllPlayers();
     }
 
-    public void assignRolesToAllPlayers() {
-        _playerList.assignRolesToAllPlayers();
-    }
-
-    public void shareOutCardsToAllPlayers() {
+    public void shareOutCardsToAllPlayers() throws CancelGameException {
         
         for (int i = 0; i < _playerList.size(); i++) {
             Card randomCard1 = _deck.takeRandomCard();
@@ -101,7 +84,7 @@ public class Game {
         }
     }
 
-    public void addCardToTable() {
+    public void addCardToTable() throws CancelGameException {
 
         if (_tableCardsCounter >= 5)
             return;
@@ -122,33 +105,21 @@ public class Game {
         log.debug("Table cards: {}", sb.toString());
     }
 
-    public void retrieveCardsFromTable() {
-
-        for (int i = 0; i < _tableCardsCounter; i++){
-            _deck.retrieveCard( _tableCards[i] );
-            _tableCards[i] = null;
-        }
-
-        _tableCardsCounter = 0;
-    }
-
-    public void playHand() throws OnlyOnePlayerLeftException {
+    public void playHand() throws OnlyOnePlayerLeftException, CancelGameException {
 
         ++_handCounter;
         try {
             _playerList.playHand(_currentSB, _currentBB, _isPreflop);
             _isPreflop = false;
-        } 
+        }
         // Collect remaining bets only if the round ended because all players folded
         catch (OnlyOnePlayerLeftException e) {
-            _playerList.notifyHandEndsByFold();
             _isPreflop = false;
-
             throw e;
         }
     }
 
-    public void giveRewardToWinner() {
+    public void giveRewardToWinner() throws CancelGameException {
 
         List<HandInfo> playersHands = _playerList.getPlayerHandsInfo();
         if(playersHands.size() == 1) {
@@ -160,10 +131,9 @@ public class Game {
         }
         
         _playerList.manageEliminatedPlayers();
-        _playerList.notifyRankingsToAllPlayers();
     }
 
-    public boolean passTurn() {
+    public boolean passTurn() throws CancelGameException {
 
         boolean endOfGame = _playerList.checkEndOfGame();
         _playerList.notifyGameEnds(endOfGame);
@@ -178,5 +148,24 @@ public class Game {
         return endOfGame;
     }
 
+    
+    private void addPlayerInitial(GameInfo gameInfo) {
+
+        int id = 0;
+        for(ClientStruct cs : gameInfo.players) {
+            _playerList.addPlayer( new HumanPlayer(id, cs.name(), cs.socket(), gameInfo.gameConfig._initialMoney));
+            ++id;
+        }
+    }
+
+    private void retrieveCardsFromTable() {
+
+        for (int i = 0; i < _tableCardsCounter; i++){
+            _deck.retrieveCard( _tableCards[i] );
+            _tableCards[i] = null;
+        }
+
+        _tableCardsCounter = 0;
+    }
 
 }

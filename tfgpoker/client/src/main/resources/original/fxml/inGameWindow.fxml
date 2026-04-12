@@ -41,16 +41,6 @@
                                     <Insets left="5.0" right="5.0" />
                                  </padding>
                               </Label>
-                              <HBox alignment="CENTER_LEFT" mouseTransparent="true" prefHeight="33.0" prefWidth="98.0">
-                                 <children>
-                                    <ImageView fitHeight="33.0" fitWidth="56.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../../images/monedasPerfil.png" />
-                                       </image>
-                                    </ImageView>
-                                    <Label alignment="CENTER" styleClass="general-text-font" text="Label" />
-                                 </children>
-                              </HBox>
                            </children>
                         </VBox>
                      </children>
@@ -87,7 +77,7 @@
       </HBox>
    </top>
    <right>
-      <VBox alignment="CENTER" prefHeight="551.0" prefWidth="379.0" spacing="20.0" styleClass="folded-menu" BorderPane.alignment="CENTER">
+      <VBox alignment="CENTER" prefHeight="551.0" prefWidth="379.0" spacing="20.0" styleClass="folded-menu" visible="false" BorderPane.alignment="CENTER">
          <children>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
                <children>
@@ -138,7 +128,7 @@
                <children>
                   <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="184.0" prefWidth="232.0" scaleX="0.6" scaleY="0.6" StackPane.alignment="CENTER_RIGHT">
                      <children>
-                        <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="171.0" prefWidth="660.0">
+                        <VBox fx:id="buttonsHolder" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="171.0" prefWidth="660.0">
                            <children>
                               <HBox prefHeight="52.0" prefWidth="655.0">
                                  <children>
@@ -146,7 +136,7 @@
                                        <children>
                                           <HBox prefHeight="107.0" prefWidth="583.0">
                                              <children>
-                                                <Button prefHeight="50.0" prefWidth="288.0" text="PREFLOP" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                                                <Button fx:id="btnRound" prefHeight="50.0" prefWidth="288.0" text="PREFLOP" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                                                    <styleClass>
                                                       <String fx:value="parallelogram-pane" />
                                                       <String fx:value="slider-gradiant-colors" />
@@ -165,7 +155,7 @@
                                           </HBox>
                                           <HBox alignment="CENTER_RIGHT" prefHeight="62.0" prefWidth="585.0" spacing="5.0">
                                              <children>
-                                                <Button prefHeight="62.0" prefWidth="67.0" text="MIN" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                                                <Button fx:id="btnMinBet" onAction="#minBetAction" prefHeight="62.0" prefWidth="67.0" text="MIN" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                                                    <styleClass>
                                                       <String fx:value="semi-oval-pane" />
                                                       <String fx:value="slider-gradiant-colors" />
@@ -174,7 +164,7 @@
                                                       <Font name="System Bold" size="13.0" />
                                                    </font>
                                                 </Button>
-                                                <Button prefHeight="62.0" prefWidth="81.0" text="1/2 POT" textAlignment="CENTER" textFill="WHITE">
+                                                <Button fx:id="btnHalfBet" onAction="#halfBetAction" prefHeight="62.0" prefWidth="81.0" text="1/2 POT" textAlignment="CENTER" textFill="WHITE">
                                                    <styleClass>
                                                       <String fx:value="semi-oval-pane" />
                                                       <String fx:value="slider-gradiant-colors" />
@@ -183,7 +173,7 @@
                                                       <Font name="System Bold" size="13.0" />
                                                    </font>
                                                 </Button>
-                                                <Button prefHeight="62.0" prefWidth="67.0" text="MAX" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                                                <Button fx:id="btnMaxBet" onAction="#maxBetAction" prefHeight="62.0" prefWidth="67.0" text="MAX" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                                                    <styleClass>
                                                       <String fx:value="semi-oval-pane" />
                                                       <String fx:value="slider-gradiant-colors" />
@@ -239,12 +229,12 @@
                                           <String fx:value="semi-oval-pane" />
                                        </styleClass>
                                        <children>
-                                          <Label fx:id="lblValor" graphicTextGap="2.0" prefHeight="35.0" prefWidth="57.0" style="-fx-font-size: 20px; -fx-text-fill: white;" text="1200">
+                                          <Label fx:id="labelMoney" graphicTextGap="2.0" prefHeight="35.0" prefWidth="57.0" style="-fx-font-size: 20px; -fx-text-fill: white;" text="0">
                                              <font>
                                                 <Font size="24.0" />
                                              </font>
                                           </Label>
-                                          <Button prefHeight="59.0" prefWidth="67.0" text="-" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                                          <Button fx:id="btnDecreaseMoney" onAction="#decreaseMoneyAction" prefHeight="59.0" prefWidth="67.0" text="-" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                                              <styleClass>
                                                 <String fx:value="semi-oval-pane" />
                                                 <String fx:value="slider-gradiant-colors" />
@@ -253,8 +243,8 @@
                                                 <Font name="System Bold" size="24.0" />
                                              </font>
                                           </Button>
-                                          <Slider fx:id="sliderApuesta" blockIncrement="100" max="5000" min="0" prefHeight="26.0" prefWidth="139.0" value="1200" />
-                                          <Button prefHeight="59.0" prefWidth="68.0" text="+" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                                          <Slider fx:id="sliderMoney" blockIncrement="100" max="5000" min="0" prefHeight="26.0" prefWidth="139.0" value="1200" />
+                                          <Button fx:id="btnIncreaseMoney" onAction="#increaseMoneyAction" prefHeight="59.0" prefWidth="68.0" text="+" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                                              <styleClass>
                                                 <String fx:value="semi-oval-pane" />
                                                 <String fx:value="slider-gradiant-colors" />
@@ -420,9 +410,9 @@
                      <children>
                         <VBox alignment="CENTER" prefHeight="56.0" prefWidth="138.0" spacing="10.0">
                            <children>
-                              <Label styleClass="bold-general-text-font" text="Label" />
+                              <Label fx:id="playerName5" styleClass="bold-general-text-font" text="Label" />
                               <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
-                              <Label styleClass="bold-general-text-font" text="Label" />
+                              <Label fx:id="playerMoney5" styleClass="bold-general-text-font" text="Label" />
                            </children>
                         </VBox>
                      </children>
@@ -498,7 +488,7 @@
                   </Circle>
                </children>
             </StackPane>
-            <StackPane layoutX="443.0" layoutY="43.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
+            <StackPane fx:id="pokerPlayer4" layoutX="443.0" layoutY="43.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
                <children>
                   <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                      <styleClass>
@@ -508,9 +498,9 @@
                      <children>
                         <VBox alignment="CENTER" prefHeight="56.0" prefWidth="138.0" spacing="10.0">
                            <children>
-                              <Label styleClass="bold-general-text-font" text="Label" />
+                              <Label fx:id="playerName4" styleClass="bold-general-text-font" text="Label" />
                               <Region prefHeight="2.0" prefWidth="80.0" styleClass="spacer" />
-                              <Label styleClass="bold-general-text-font" text="Label" />
+                              <Label fx:id="playerMoney4" styleClass="bold-general-text-font" text="Label" />
                            </children>
                         </VBox>
                      </children>
@@ -586,7 +576,7 @@
                   </Circle>
                </children>
             </StackPane>
-            <StackPane layoutX="179.0" layoutY="145.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
+            <StackPane fx:id="pokerPlayer3" layoutX="179.0" layoutY="157.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
                <children>
                   <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                      <styleClass>
@@ -596,9 +586,9 @@
                      <children>
                         <VBox alignment="CENTER" prefHeight="56.0" prefWidth="138.0" spacing="10.0">
                            <children>
-                              <Label styleClass="bold-general-text-font" text="Label" />
+                              <Label fx:id="playerName3" styleClass="bold-general-text-font" text="Label" />
                               <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
-                              <Label styleClass="bold-general-text-font" text="Label" />
+                              <Label fx:id="playerMoney3" styleClass="bold-general-text-font" text="Label" />
                            </children>
                         </VBox>
                      </children>
@@ -674,7 +664,7 @@
                   </Circle>
                </children>
             </StackPane>
-            <StackPane layoutX="179.0" layoutY="299.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
+            <StackPane fx:id="pokerPlayer2" layoutX="179.0" layoutY="314.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
                <children>
                   <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                      <styleClass>
@@ -684,9 +674,9 @@
                      <children>
                         <VBox alignment="CENTER" prefHeight="56.0" prefWidth="138.0" spacing="10.0">
                            <children>
-                              <Label styleClass="bold-general-text-font" text="Label" />
+                              <Label fx:id="playerName2" styleClass="bold-general-text-font" text="Label" />
                               <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
-                              <Label styleClass="bold-general-text-font" text="Label" />
+                              <Label fx:id="playerMoney2" styleClass="bold-general-text-font" text="Label" />
                            </children>
                         </VBox>
                      </children>
@@ -762,7 +752,7 @@
                   </Circle>
                </children>
             </StackPane>
-            <StackPane layoutX="280.0" layoutY="459.0" prefHeight="83.0" prefWidth="273.0" scaleX="0.9" scaleY="0.9">
+            <StackPane fx:id="pokerPlayer1" layoutX="280.0" layoutY="459.0" prefHeight="83.0" prefWidth="273.0" scaleX="0.9" scaleY="0.9">
                <children>
                   <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                      <styleClass>
@@ -772,9 +762,9 @@
                      <children>
                         <VBox alignment="CENTER" prefHeight="56.0" prefWidth="138.0" spacing="10.0">
                            <children>
-                              <Label styleClass="bold-general-text-font" text="Label" />
+                              <Label fx:id="playerName1" styleClass="bold-general-text-font" text="Label" />
                               <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
-                              <Label styleClass="bold-general-text-font" text="Label" />
+                              <Label fx:id="playerMoney1" styleClass="bold-general-text-font" text="Label" />
                            </children>
                         </VBox>
                      </children>
@@ -850,9 +840,9 @@
                   </Circle>
                </children>
             </StackPane>
-            <StackPane layoutX="588.0" layoutY="459.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
+            <StackPane fx:id="pokerPlayer0" layoutX="588.0" layoutY="459.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
                <children>
-                  <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
+                  <HBox id="usersOwn" alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                      <styleClass>
                         <String fx:value="oval-pane" />
                         <String fx:value="container-gradiant-colors" />
@@ -860,9 +850,9 @@
                      <children>
                         <VBox alignment="CENTER" prefHeight="56.0" prefWidth="138.0" spacing="10.0">
                            <children>
-                              <Label styleClass="bold-general-text-font" text="Label" />
+                              <Label fx:id="playerName0" styleClass="bold-general-text-font" text="Label" />
                               <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
-                              <Label styleClass="bold-general-text-font" text="Label" />
+                              <Label fx:id="playerMoney0" styleClass="bold-general-text-font" text="Label" />
                            </children>
                         </VBox>
                      </children>
@@ -938,7 +928,7 @@
                   </Circle>
                </children>
             </StackPane>
-            <StackPane layoutX="881.0" layoutY="459.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
+            <StackPane fx:id="pokerPlayer8" layoutX="881.0" layoutY="459.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
                <children>
                   <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                      <styleClass>
@@ -948,9 +938,9 @@
                      <children>
                         <VBox alignment="CENTER" prefHeight="56.0" prefWidth="138.0" spacing="10.0">
                            <children>
-                              <Label styleClass="bold-general-text-font" text="Label" />
+                              <Label fx:id="playerName8" styleClass="bold-general-text-font" text="Label" />
                               <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
-                              <Label styleClass="bold-general-text-font" text="Label" />
+                              <Label fx:id="playerMoney8" styleClass="bold-general-text-font" text="Label" />
                            </children>
                         </VBox>
                      </children>
@@ -1026,7 +1016,7 @@
                   </Circle>
                </children>
             </StackPane>
-            <StackPane layoutX="1012.0" layoutY="299.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
+            <StackPane fx:id="pokerPlayer7" layoutX="1012.0" layoutY="314.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
                <children>
                   <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                      <styleClass>
@@ -1036,9 +1026,9 @@
                      <children>
                         <VBox alignment="CENTER" prefHeight="56.0" prefWidth="138.0" spacing="10.0">
                            <children>
-                              <Label styleClass="bold-general-text-font" text="Label" />
+                              <Label fx:id="playerName7" styleClass="bold-general-text-font" text="Label" />
                               <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
-                              <Label styleClass="bold-general-text-font" text="Label" />
+                              <Label fx:id="playerMoney7" styleClass="bold-general-text-font" text="Label" />
                            </children>
                         </VBox>
                      </children>
@@ -1114,7 +1104,7 @@
                   </Circle>
                </children>
             </StackPane>
-            <StackPane layoutX="1012.0" layoutY="145.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
+            <StackPane fx:id="pokerPlayer6" layoutX="1003.0" layoutY="157.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
                <children>
                   <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                      <styleClass>
@@ -1124,9 +1114,9 @@
                      <children>
                         <VBox alignment="CENTER" prefHeight="56.0" prefWidth="138.0" spacing="10.0">
                            <children>
-                              <Label styleClass="bold-general-text-font" text="Label" />
+                              <Label fx:id="playerName6" styleClass="bold-general-text-font" text="Label" />
                               <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
-                              <Label styleClass="bold-general-text-font" text="Label" />
+                              <Label fx:id="playerMoney6" styleClass="bold-general-text-font" text="Label" />
                            </children>
                         </VBox>
                      </children>

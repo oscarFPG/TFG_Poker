@@ -1,5 +1,6 @@
 package com.ucm.common.gameobjects;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.ucm.common.GameType;
@@ -61,47 +62,47 @@ public enum PlayerRole {
     public static List<PlayerRole> getRolesDistribution(final int numPlayers) {
         switch (numPlayers) {
         case 2:
-            return List.of(
+            return new ArrayList<PlayerRole>(List.of(
                 SMALL_BLIND, 
                 BIG_BLIND
-            );
+            ));
 
         case 3:
-            return List.of(
+            return new ArrayList<PlayerRole>(List.of(
                 DEALER, 
                 SMALL_BLIND, 
                 BIG_BLIND
-            );
+            ));
 
         case 4:
-            return List.of(
+            return new ArrayList<PlayerRole>(List.of(
                 DEALER, 
                 SMALL_BLIND, 
                 BIG_BLIND,
                 UNDER_THE_GUN
-            );
+            ));
 
         case 5:
-            return List.of(
+            return new ArrayList<PlayerRole>(List.of(
                 DEALER, 
                 SMALL_BLIND, 
                 BIG_BLIND,
                 UNDER_THE_GUN,
                 CUT_OFF
-            );
+            ));
 
         case 6:
-            return List.of(
+            return new ArrayList<PlayerRole>(List.of(
                 DEALER, 
                 SMALL_BLIND, 
                 BIG_BLIND,
                 UNDER_THE_GUN,
                 HIJACK,
                 CUT_OFF
-            );
+            ));
 
         case 7:
-            return List.of(
+            return new ArrayList<PlayerRole>(List.of(
                 UNDER_THE_GUN, 
                 LOJACK, 
                 HIJACK,
@@ -109,10 +110,10 @@ public enum PlayerRole {
                 DEALER,
                 SMALL_BLIND,
                 BIG_BLIND
-            );
+            ));
 
         case 8:
-            return List.of(
+            return new ArrayList<PlayerRole>(List.of(
                 UNDER_THE_GUN, 
                 UNDER_THE_GUN_1,
                 LOJACK, 
@@ -121,10 +122,10 @@ public enum PlayerRole {
                 DEALER,
                 SMALL_BLIND,
                 BIG_BLIND
-            );
+            ));
 
         case 9:
-            return List.of(
+            return new ArrayList<PlayerRole>(List.of(
                 UNDER_THE_GUN, 
                 UNDER_THE_GUN_1,
                 UNDER_THE_GUN_2,
@@ -134,7 +135,7 @@ public enum PlayerRole {
                 DEALER,
                 SMALL_BLIND,
                 BIG_BLIND
-            );
+            ));
 
         default:
             return null;

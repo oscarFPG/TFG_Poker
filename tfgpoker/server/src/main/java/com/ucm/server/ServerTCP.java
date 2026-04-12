@@ -4,11 +4,12 @@ package com.ucm.server;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.ucm.common.ClientStruct;
 import com.ucm.common.GameConfig;
 import com.ucm.common.GameInfo;
 import com.ucm.common.GameType;
 import com.ucm.common.SocketUtils;
-
+import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.server.exceptions.EvaluatorException;
 import com.ucm.server.logic.Game;
 import com.ucm.server.control.Controller;
@@ -101,8 +102,52 @@ public class ServerTCP {
         catch(EvaluatorException e) {
             log.error("{}", e.getMessage());
         }
-        
+        catch(CancelGameException e) {
 
+            log.debug("Game cancelled by server: {}", e.getMessage());
+            for(ClientStruct cs : info.players) {
+                try {
+                    SocketUtils.sendInteger(cs.socket().getOutputStream(), GameType.ERROR_GAME_CANCELS);
+                }
+                catch(IOException ex) {
+                    log.warn("Minor error trying to notify player {} about game cancellation: {}", cs.name(), ex.getMessage());
+                }
+            }
+        }
+        finally {
+            cleanUp(info);
+        }
+
+    }
+
+    private void cleanUp(final GameInfo info) {
+
+        log.debug("Cleaning up server resources...");
+
+        for(ClientStruct cs : info.players) {
+            try {
+                if (cs.socket().isConnected() || !cs.socket().isClosed()) {
+                    cs.socket().close();
+                    log.debug("Socket of player {} closed!", cs.name());
+                }
+            }
+            catch (IOException e) {
+                log.warn("Minor error trying to close connection with player {} : {}", cs.name(), e.getMessage());
+            }
+        }
+
+        try {
+            if (!_serverSocket.isClosed()) {
+                _serverSocket.close();
+                log.debug("Server socket closed!");
+            }
+        }
+        catch (IOException e) {
+            log.warn("Minor error trying to close server socket: {}", e.getMessage());
+        }
+
+        _executor.shutdownNow();
+        log.debug("Executor service shutdown!");
     }
 
 }

@@ -23,7 +23,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.shape.Circle;
 
 
 
@@ -225,13 +224,6 @@ public class WaitingGameWindowController extends GenericController {
         _listPaintCards.subList(1, _listPaintCards.size()).forEach(iv -> iv.setImage(cardImage));
     }
 
-    @Override
-    public void onNextEvent() {}
-
-    @Override
-    public void onBackEvent() {}
-
-
     private void clearAllLabels() {
 
         for(int i = 0; i < 9; i++) {
@@ -245,7 +237,6 @@ public class WaitingGameWindowController extends GenericController {
             moneyLabel.setText("");
         }
     }
-
 
     private void waitNewPlayersInfo() {
 
@@ -274,9 +265,8 @@ public class WaitingGameWindowController extends GenericController {
                 int event = SocketUtils.receiveInt(input);
                 if(event == GameType.EVENT_PLAYER_JOINED) {
 
-                    List<PlayerInfo> playerPositions = PokerPreGame.receivePlayerListWaiting(input, output);
-                    showPlayers(playerPositions);
-                    
+                    _clientInfo.playerPositions = PokerPreGame.receivePlayerListWaiting(input, output);
+                    showPlayers(_clientInfo.playerPositions);
                 }
                 else if(event == GameType.CONFIRMATION_GAME_STARTS) {
                     System.out.printf("Event GAME_STARTS!\n");
@@ -293,7 +283,9 @@ public class WaitingGameWindowController extends GenericController {
 
             SocketUtils.sendInteger(output, GameType.CONFIRMATION_PLAYER_STARTS);
 
-            next();
+            Platform.runLater(() -> {
+                next();
+            });
         }
         catch(IOException e) {
             System.out.printf("Error: %s\n", e.getMessage());
@@ -403,8 +395,6 @@ public class WaitingGameWindowController extends GenericController {
 
             --nextPosition;
         }
-
-        
     }
 
 }

@@ -37,8 +37,9 @@ public class PokerPreGame {
     public static void sendGameConfig(GameConfig config, OutputStream out) throws IOException {
     
         SocketUtils.sendInteger(out, GameType.PETITION_CREATE_GAME);
-        int allowBotsCode = (config._allowBots) ? 1 : 0;
-        int dinamicBlinds = (config._dinamicBlinds) ? 1 : 0;
+        int allowBotsCode = (config._allowBots) ? GameType.TRUE : GameType.FALSE;
+
+        int dinamicBlinds = (config._dinamicBlinds) ? GameType.TRUE : GameType.FALSE;
         SocketUtils.sendString(out, config._roomName);
         SocketUtils.sendString(out, config._userName);
         SocketUtils.sendInteger(out, config._initialMoney);
@@ -60,9 +61,9 @@ public class PokerPreGame {
         String roomName = SocketUtils.receiveString(input);
         String userName = SocketUtils.receiveString(input);
         int initialMoney = SocketUtils.receiveInt(input);
-        boolean allowBots = (SocketUtils.receiveInt(input) == 1) ? true : false;
+        boolean allowBots = (SocketUtils.receiveInt(input) == GameType.TRUE) ? true : false;
         String blindsValue = SocketUtils.receiveString(input);
-        boolean dinamicBlinds = (SocketUtils.receiveInt(input) == 1) ? true : false;
+        boolean dinamicBlinds = (SocketUtils.receiveInt(input) == GameType.TRUE) ? true : false;
         String levelDuration = SocketUtils.receiveString(input);
         String hikePercentage = SocketUtils.receiveString(input);
         int numBots1 = SocketUtils.receiveInt(input);
@@ -95,8 +96,8 @@ public class PokerPreGame {
     public static void sendGameConfigToJoinedPlayer(GameConfig config, OutputStream out) throws IOException {
 
         SocketUtils.sendInteger(out, config._roomId);
-        int allowBotsCode = (config._allowBots) ? 1 : 0;
-        int dinamicBlinds = (config._dinamicBlinds) ? 1 : 0;
+        int allowBotsCode = (config._allowBots) ? GameType.TRUE : GameType.FALSE;
+        int dinamicBlinds = (config._dinamicBlinds) ? GameType.TRUE : GameType.FALSE;
         SocketUtils.sendString(out, config._roomName);
         SocketUtils.sendString(out, config._userName);
         SocketUtils.sendInteger(out, config._initialMoney);
@@ -119,9 +120,9 @@ public class PokerPreGame {
         String roomName = SocketUtils.receiveString(input);
         String userName = SocketUtils.receiveString(input);
         int initialMoney = SocketUtils.receiveInt(input);
-        boolean allowBots = (SocketUtils.receiveInt(input) == 1) ? true : false;
+        boolean allowBots = (SocketUtils.receiveInt(input) == GameType.TRUE) ? true : false;
         String blindsValue = SocketUtils.receiveString(input);
-        boolean dinamicBlinds = (SocketUtils.receiveInt(input) == 1) ? true : false;
+        boolean dinamicBlinds = (SocketUtils.receiveInt(input) == GameType.TRUE) ? true : false;
         String levelDuration = SocketUtils.receiveString(input);
         String hikePercentage = SocketUtils.receiveString(input);
         int numBots1 = SocketUtils.receiveInt(input);

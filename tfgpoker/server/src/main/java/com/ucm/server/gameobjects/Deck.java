@@ -52,10 +52,12 @@ public class Deck {
      * Class constructor, initializes the deck and the random object.
      */
     public Deck() {
+
         if(Game.DEBUG)
             _random = new Random(DEBUG_SEED);
         else
             _random = new Random();
+        
         initializeDeck();
     }
 

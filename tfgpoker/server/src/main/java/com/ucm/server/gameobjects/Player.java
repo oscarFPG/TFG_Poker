@@ -1,6 +1,8 @@
 package com.ucm.server.gameobjects;
 
 
+import java.io.IOException;
+
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.interfaces.IPokerPlayer;
@@ -94,21 +96,21 @@ public abstract class Player implements IPokerPlayer {
     }
 
 
-    public abstract String actionMakePlay(int sb, int bb, int maxBet);
+    public abstract String actionMakePlay(int sb, int bb, int maxBet) throws IOException;
 
-    public abstract void notifySmallBlindBet(final int amount);
-    public abstract void notifyBigBlindBet(final int amount);
-    public abstract void notifyTurnWait();
-    public abstract void notifyTurnPlay();
-    public abstract void notifyRoundEnded();
-    public abstract void notifyHandEnded();
-    public abstract void notifyGameEnded();
-    public abstract void notifyGameKeeps();
-    public abstract void notifyHandWinner();
-    public abstract void notifyHandLoser();
-    public abstract void notifyGameWinner();
-    public abstract void notifyGameLoser();
-    public abstract void notifyHandEndsByFolds();
+    public abstract void notifySmallBlindBet(final int amount) throws IOException;
+    public abstract void notifyBigBlindBet(final int amount) throws IOException;
+    public abstract void notifyTurnWait() throws IOException;
+    public abstract void notifyTurnPlay() throws IOException;
+    public abstract void notifyRoundEnded() throws IOException;
+    public abstract void notifyHandEnded() throws IOException;
+    public abstract void notifyGameEnded() throws IOException;
+    public abstract void notifyGameKeeps() throws IOException;
+    public abstract void notifyHandWinner() throws IOException;
+    public abstract void notifyHandLoser() throws IOException;
+    public abstract void notifyGameWinner() throws IOException;
+    public abstract void notifyGameLoser() throws IOException;
+    public abstract void notifyHandEndsByFolds() throws IOException;
 
 
     /**

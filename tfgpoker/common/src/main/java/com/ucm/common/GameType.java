@@ -9,6 +9,10 @@ public class GameType {
     public static final int PORT = 5005;
     public static final int MAX_PLAYERS = 9;
 
+    /* ---------------- BOOLEAN TYPES ----------------*/
+    public static final int TRUE = 1;
+    public static final int FALSE = 0;
+
     /* ---------------- PREGAME CODES ----------------  */
     public static final int PETITION_PLAYER_NAME = 1;
     public static final int PETITION_CREATE_GAME = 2;
@@ -34,6 +38,7 @@ public class GameType {
     public static final int ERROR_GAME_NOT_CREATED = 503;
     public static final int ERROR_GAME_NOT_JOINED = 504;
     public static final int ERROR_GAME_CANNOT_START = 505;
+    public static final int ERROR_GAME_CANCELS = 506;
 
     /* ---------------- GAME CODES ----------------  */
     // Player roles
@@ -74,6 +79,7 @@ public class GameType {
     public static final int TURN_FORCED_BB = 202;
     public static final int TURN_WAIT = 203;
     public static final int TURN_FOLD = 204;
+    public static final int TURN_OTHER_PLAYER = 205;
 
     // Round, hand and game status
     public static final int GAME_STARTS = 300;

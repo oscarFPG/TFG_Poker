@@ -1,8 +1,12 @@
 package com.ucm.client;
 
 import java.net.Socket;
+import java.util.List;
 
 import com.ucm.common.GameConfig;
+import com.ucm.common.PlayerInfo;
+
+
 
 public class ClientInfo {
     
@@ -13,6 +17,8 @@ public class ClientInfo {
     public String name;
     public Socket socket;
     public boolean isHost;
+
+    public List<PlayerInfo> playerPositions;
 
     private static ClientInfo instance;
 

@@ -2,7 +2,11 @@ package com.ucm.server.players;
 
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
+import com.ucm.server.commands.Command;
 import com.ucm.server.gameobjects.BotLLM;
+import com.ucm.server.gameobjects.Player;
+import com.ucm.server.interfaces.IPokerPlayer;
+import com.ucm.server.middleclasses.CommandResult;
 
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
@@ -141,5 +145,8 @@ public class GeminiLLM extends BotLLM {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'notifyPlayerAction'");
     }
+
+
+    @Override public void notifyOtherPlayerAction(IPokerPlayer p) {}
     
 }
