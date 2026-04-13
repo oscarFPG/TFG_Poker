@@ -50,14 +50,20 @@ public class AddBotsCreateGameWindowController extends GenericController {
 
     @FXML
     private StackPane cardInfoBot1;
-
     @FXML
     private VBox cardFrontBot1;
-
     @FXML
     private StackPane cardBackBot1;
+    private boolean isFlippedBot1 = false;
 
-    private boolean isFlipped = false;
+    @FXML
+    private StackPane cardInfoBot2;
+    @FXML
+    private VBox cardFrontBot2;
+    @FXML
+    private StackPane cardBackBot2;
+    private boolean isFlippedBot2 = false;
+
 
     @Override
     protected void onViewShown() {
@@ -67,7 +73,6 @@ public class AddBotsCreateGameWindowController extends GenericController {
         boolean allowBots = _clientInfo.gameConfig._allowBots;
         spinnerBot1.setDisable(!allowBots);
         spinnerBot2.setDisable(!allowBots);
-        cardBackBot1.setRotate(180);
         if(!allowBots) {
             valueFactoryBot1.setValue(0);
             valueFactoryBot2.setValue(0);
@@ -100,7 +105,7 @@ public class AddBotsCreateGameWindowController extends GenericController {
     @FXML
     private void flipCardBot1() {
 
-        if (!isFlipped) {
+        if (!isFlippedBot1) {
 
             RotateTransition first = new RotateTransition(Duration.millis(200), cardFrontBot1);
             first.setFromAngle(0);
@@ -114,7 +119,9 @@ public class AddBotsCreateGameWindowController extends GenericController {
 
             first.setOnFinished(e -> {
                 cardFrontBot1.setVisible(false);
+                cardFrontBot1.setOpacity(0);
                 cardBackBot1.setVisible(true);
+                cardBackBot1.setOpacity(1);
                 second.play();
             });
 
@@ -122,27 +129,79 @@ public class AddBotsCreateGameWindowController extends GenericController {
 
         } else {
 
-            RotateTransition first = new RotateTransition(Duration.millis(200), cardBackBot1);
+            RotateTransition first = new RotateTransition(Duration.millis(350), cardBackBot1);
             first.setFromAngle(0);
             first.setToAngle(90);
             first.setAxis(Rotate.Y_AXIS);
+            first.setInterpolator(javafx.animation.Interpolator.EASE_IN);
 
             RotateTransition second = new RotateTransition(Duration.millis(200), cardFrontBot1);
             second.setFromAngle(-90);
             second.setToAngle(0);
             second.setAxis(Rotate.Y_AXIS);
+            first.setInterpolator(javafx.animation.Interpolator.EASE_OUT);
 
             first.setOnFinished(e -> {
                 cardBackBot1.setVisible(false);
+                cardBackBot1.setOpacity(0);
                 cardFrontBot1.setVisible(true);
+                cardFrontBot1.setOpacity(1);
                 second.play();
             });
 
             first.play();
         }
 
-        isFlipped = !isFlipped;
+        isFlippedBot1 = !isFlippedBot1;
     }
+
+    @FXML
+    private void flipCardBot2() {
+
+        if (!isFlippedBot2) {
+
+            RotateTransition first = new RotateTransition(Duration.millis(200), cardFrontBot2);
+            first.setFromAngle(0);
+            first.setToAngle(90);
+            first.setAxis(Rotate.Y_AXIS);
+
+            RotateTransition second = new RotateTransition(Duration.millis(200), cardBackBot2);
+            second.setFromAngle(-90);
+            second.setToAngle(0);
+            second.setAxis(Rotate.Y_AXIS);
+
+            first.setOnFinished(e -> {
+                cardFrontBot2.setVisible(false);
+                cardBackBot2.setVisible(true);
+                second.play();
+            });
+
+            first.play();
+
+        } else {
+
+            RotateTransition first = new RotateTransition(Duration.millis(200), cardBackBot2);
+            first.setFromAngle(0);
+            first.setToAngle(90);
+            first.setAxis(Rotate.Y_AXIS);
+
+            RotateTransition second = new RotateTransition(Duration.millis(200), cardFrontBot2);
+            second.setFromAngle(-90);
+            second.setToAngle(0);
+            second.setAxis(Rotate.Y_AXIS);
+
+            first.setOnFinished(e -> {
+                cardBackBot2.setVisible(false);
+                cardFrontBot2.setVisible(true);
+                second.play();
+            });
+
+            first.play();
+        }
+
+        isFlippedBot2 = !isFlippedBot2;
+    }
+
 
     @FXML
     public void returnChooseGame() {

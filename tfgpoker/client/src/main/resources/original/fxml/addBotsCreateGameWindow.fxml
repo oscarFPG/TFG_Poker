@@ -70,11 +70,11 @@
                   </HBox>
                         <HBox alignment="CENTER" prefHeight="150.0" prefWidth="200.0" spacing="30.0">
                            <children>
-                        <StackPane fx:id="cardInfoBot1" minHeight="-Infinity" prefHeight="283.0" prefWidth="200.0">
+                        <StackPane fx:id="cardInfoBot1" prefHeight="283.0" prefWidth="200.0">
                            <children>
-                              <StackPane fx:id="cardBackBot1" prefHeight="150.0" prefWidth="200.0">
+                              <StackPane fx:id="cardBackBot1">
                                  <children>
-                                    <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="general-text-font" text="This bot is implemented by a LLM " />
+                                    <Text fill="#e5e5e5" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="general-text-font" text="This bot is powered by Google's Gemini large language model (LLM). It reasons about the game state, evaluates possible actions, and selects moves dynamically instead of following fixed rules." textAlignment="CENTER" wrappingWidth="172.0" />
                                  </children>
                                  <styleClass>
                                     <String fx:value="semi-oval-pane" />
@@ -125,9 +125,19 @@
                               </Button>
                            </children>
                         </StackPane>
-                        <StackPane prefHeight="150.0" prefWidth="200.0">
+                        <StackPane fx:id="cardInfoBot2" prefHeight="283.0" prefWidth="200.0">
                            <children>
-                                    <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="4.0" styleClass="rounded-description-label">
+                              <StackPane fx:id="cardBackBot2">
+                                 <children>
+                                    <Text fill="#e5e5e5" strokeType="INSIDE" strokeWidth="0.0" styleClass="general-text-font" text="This bot uses a locally executed AI language model (LLaMA) to analyze the current game state and make decisions. It runs entirely on the local machine, providing self‑contained gameplay without requiring an internet connection." textAlignment="CENTER" wrappingWidth="172.0" />
+                                 </children>
+                                 <styleClass>
+                                    <String fx:value="semi-oval-pane" />
+                                    <String fx:value="container-colors" />
+                                    <String fx:value="border-neon-effect" />
+                                 </styleClass>
+                              </StackPane>
+                                    <VBox fx:id="cardFrontBot2" alignment="CENTER" prefHeight="268.0" prefWidth="200.0" spacing="2.0" styleClass="rounded-description-label">
                                        <children>
                                           <Label alignment="CENTER" styleClass="super-bold-general-text-font" text="BOT 2">
                                        <VBox.margin>
@@ -149,7 +159,7 @@
                                     </HBox>
                                        </children>
                                     </VBox>
-                              <Button alignment="CENTER" mnemonicParsing="false" prefWidth="48.0" styleClass="mode-info-button" textAlignment="CENTER" StackPane.alignment="TOP_RIGHT">
+                              <Button fx:id="cardInfoIconBot2" alignment="CENTER" mnemonicParsing="false" onAction="#flipCardBot2" prefWidth="48.0" textAlignment="CENTER" StackPane.alignment="TOP_RIGHT">
                                  <opaqueInsets>
                                     <Insets />
                                  </opaqueInsets>
@@ -163,6 +173,10 @@
                                  <StackPane.margin>
                                     <Insets right="-5.0" top="-5.0" />
                                  </StackPane.margin>
+                                 <styleClass>
+                                    <String fx:value="icon-colors" />
+                                    <String fx:value="round-icon" />
+                                 </styleClass>
                               </Button>
                            </children>
                         </StackPane>
