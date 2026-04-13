@@ -2,6 +2,7 @@ package com.ucm.server.players;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -100,6 +101,9 @@ public class HumanPlayer extends Player {
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_OTHER_PLAYER);
         SocketUtils.sendInteger(_socket.getOutputStream(), p.getPlayerId());
         SocketUtils.sendString(_socket.getOutputStream(), p.getPlayerName());
+        SocketUtils.sendInteger(_socket.getOutputStream(), p.getRole().getNetworkCode());
+        SocketUtils.sendInteger(_socket.getOutputStream(), p.isFolded() ? GameType.TRUE : GameType.FALSE);
+        SocketUtils.sendInteger(_socket.getOutputStream(), p.isWinner() ? GameType.TRUE : GameType.FALSE);
         SocketUtils.sendInteger(_socket.getOutputStream(), p.getMoneyOffBet());
         SocketUtils.sendInteger(_socket.getOutputStream(), p.getMoneyOnBet());
     }
@@ -115,12 +119,14 @@ public class HumanPlayer extends Player {
     }
 
     @Override
-    public void notifyPlayerState(final int id, final PlayerRole role, final int offBetMoney, final int onBetMoney, final boolean last) throws IOException {
+    public void notifyPlayerState(final IPokerPlayer player, final boolean last) throws IOException {
 
-        SocketUtils.sendInteger(_socket.getOutputStream(), id);
-        SocketUtils.sendInteger(_socket.getOutputStream(), role.getNetworkCode());
-        SocketUtils.sendInteger(_socket.getOutputStream(), offBetMoney);
-        SocketUtils.sendInteger(_socket.getOutputStream(), onBetMoney);
+        SocketUtils.sendInteger(_socket.getOutputStream(), player.getPlayerId());
+        SocketUtils.sendInteger(_socket.getOutputStream(), player.getRole().getNetworkCode());
+        SocketUtils.sendInteger(_socket.getOutputStream(), player.isFolded() ? GameType.TRUE : GameType.FALSE);
+        SocketUtils.sendInteger(_socket.getOutputStream(), player.isWinner() ? GameType.TRUE : GameType.FALSE);
+        SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOffBet());
+        SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOnBet());
 
         if(last)
             SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TRUE);
@@ -146,16 +152,6 @@ public class HumanPlayer extends Player {
     @Override
     public void notifyGameKeeps() throws IOException {
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.GAME_KEEPS);
-    }
-
-    @Override
-    public void notifyHandWinner() throws IOException {
-        SocketUtils.sendInteger(_socket.getOutputStream(), GameType.PLAYER_WINS_HAND);
-    }
-
-    @Override
-    public void notifyHandLoser() throws IOException {
-        SocketUtils.sendInteger(_socket.getOutputStream(), GameType.PLAYER_LOSES_HAND);
     }
     
     @Override

@@ -277,7 +277,9 @@ public class PlayerList {
     public void playHand(final int sb, final int bb, final boolean isPreflop) throws OnlyOnePlayerLeftException, CancelGameException {
 
         if(checkAllPlayersAllIn()) { // Avoid asking if all active players have used all their money
-            notifyRoundEnded();
+            log.debug("All players are ALL_IN, skipping betting round");
+            notifyGameStateToAllPlayers();
+            notifyRoundEnded(); // Añadir un flag para indicar a los clientes que hay que pasar por todas las rondas sin jugar para llegar al showdown
             return;
         }
 
@@ -417,11 +419,12 @@ public class PlayerList {
     public void calculatePrizeDistribution(final List<PlayerEvaluation> players) throws CancelGameException {
 
         List<PotDistribution> distribution = _potManager.calculatePrizeDistribution(players);
+        List<IPokerPlayer> winners = new ArrayList<>();
         for(PotDistribution dist : distribution){
             givePriceToPlayerWithID(dist.playerID(), dist.potPrize());
         }
 
-        notifyRankingsToAllPlayers();
+        notifyGameStateToAllPlayers();
     }
 
     public void calculatePrizeForPlayerLeft() throws CancelGameException {
@@ -437,7 +440,7 @@ public class PlayerList {
         givePriceToPlayerWithID(distribution.playerID(), distribution.potPrize());
         winner._player.setIsWinner(true);
 
-        notifyRankingsToAllPlayers();
+        notifyGameStateToAllPlayers();
     }
 
     public boolean checkEndOfGame() {
@@ -772,41 +775,6 @@ public class PlayerList {
         }
     }
 
-    private void notifyRankingsToAllPlayers() {
-
-        Node i = _first;
-        try {
-            if(i._player.isWinner())
-                i._player.notifyHandWinner();
-            else
-                i._player.notifyHandLoser();
-
-            i._player.notifyMoneyAmount( i._player.getMoneyOffBet() );
-        }
-        catch(IOException e) {
-            // TODO : Handle exception
-        }        
-
-        i = i._next;        
-        while(i != _first) {
-
-            try {
-                if(i._player.isWinner())
-                    i._player.notifyHandWinner();
-                else
-                    i._player.notifyHandLoser();
-
-                i._player.notifyMoneyAmount( i._player.getMoneyOffBet() );
-            }
-            catch(IOException e) {
-                // TODO : Handle exception
-            }
-
-            i = i._next;
-        }
-
-    }
-
     private void notifyHandEndsByFold() {
         
         Node iNode = _first;
@@ -870,13 +838,8 @@ public class PlayerList {
                 IPokerPlayer p = infoPlayer._player;
                 try {
 
-                    final int ID = p.getPlayerId();
-                    final PlayerRole role = p.getRole();
-                    final int offBetMoney = p.getMoneyOffBet();
-                    final int onBetMoney = p.getMoneyOnBet();
-                    final boolean isLast = (infoPlayer._next == _first);
-
-                    target._player.notifyPlayerState(ID, role, offBetMoney, onBetMoney, isLast);
+                    boolean isLast = (infoPlayer._next == _first);
+                    target._player.notifyPlayerState(p, isLast);
                 }
                 catch(IOException e) {
                     log.error("Error notifying player state {} to {}", p.getPlayerName(), target._player.getPlayerName());

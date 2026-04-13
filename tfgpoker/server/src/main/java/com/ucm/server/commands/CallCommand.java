@@ -43,7 +43,7 @@ public class CallCommand extends Command {
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
 
-        if(_currentHandBet == _playersOffBetMoney + _playersOnBetMoney){
+        if(maxBet == _playersOffBetMoney + _playersOnBetMoney){
             AllInCommand allIn = new AllInCommand(_player);
             return allIn.execute(sb, bb, maxBet);
         }

@@ -58,12 +58,6 @@ public class FakePlayer extends Player {
     public void notifyGameKeeps() {}
 
     @Override
-    public void notifyHandWinner() {}
-
-    @Override
-    public void notifyHandLoser() {}
-
-    @Override
     public void notifyGameWinner() {}
 
     @Override
@@ -89,8 +83,7 @@ public class FakePlayer extends Player {
 
 
     @Override
-    public void notifyPlayerState(int id, PlayerRole role, int offBetMoney, int onBetMoney, boolean last)
-            throws IOException {
+    public void notifyPlayerState(IPokerPlayer player, boolean last) throws IOException {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'notifyPlayerState'");
     }

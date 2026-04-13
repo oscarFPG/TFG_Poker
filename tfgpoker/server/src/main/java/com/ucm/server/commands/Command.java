@@ -26,7 +26,6 @@ public abstract class Command {
     protected IPokerActions _player;
     protected int _playersOffBetMoney;
     protected int _playersOnBetMoney;
-    protected int _currentHandBet;
 
     private static final List<Command> AVAILABLE_COMMANDS = Arrays.asList(
             new CallCommand(),
@@ -56,7 +55,6 @@ public abstract class Command {
         _player = p;
         _playersOffBetMoney = p.getMoneyOffBet();
         _playersOnBetMoney = p.getMoneyOnBet();
-        _currentHandBet = 0;
     }
 
     /**

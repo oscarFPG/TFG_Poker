@@ -1,6 +1,7 @@
 package com.ucm.server.players;
 
 import java.io.IOException;
+import java.util.List;
 
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
@@ -154,7 +155,7 @@ public class GeminiLLM extends BotLLM {
 
 
     @Override
-    public void notifyPlayerState(int id, PlayerRole role, int offBetMoney, int onBetMoney, boolean last)
+    public void notifyPlayerState(final IPokerPlayer player, boolean last)
             throws IOException {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'notifyPlayerState'");

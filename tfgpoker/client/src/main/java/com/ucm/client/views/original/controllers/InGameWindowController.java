@@ -21,6 +21,7 @@ import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.common.gameobjects.Suit;
 import com.ucm.common.SocketUtils;
 
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -31,6 +32,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 
 public class InGameWindowController extends GenericController {
@@ -154,6 +156,15 @@ public class InGameWindowController extends GenericController {
             final boolean ok = pokerGame(_clientInfo.name, _clientInfo.socket);
             if(ok) {
                 System.out.printf("All OK! Game finished!\n");
+                Platform.runLater(() -> {
+
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Game finished");
+                    alert.setHeaderText("The game has finished successfully!");
+                    alert.setContentText("You will return to the main menu");
+                    alert.showAndWait();
+
+                });
             }
             else {
                 Platform.runLater(() -> {
@@ -162,7 +173,7 @@ public class InGameWindowController extends GenericController {
                     alert.setTitle("Game was cancelled");
                     alert.setHeaderText("All players disconnected");
                     alert.setContentText("You will return to the main menu");
-                    //alert.showAndWait();
+                    alert.showAndWait();
 
                 });
             }
@@ -209,21 +220,18 @@ public class InGameWindowController extends GenericController {
     @FXML
     private void minBetAction() {
         int MIN_VALUE = 10;
-        System.out.println("Min bet action");
         sliderMoney.setValue(MIN_VALUE);
     }
 
     @FXML
     private void halfBetAction() {
         int HALF_VALUE = 50;
-        System.out.println("Half bet action");
         sliderMoney.setValue(HALF_VALUE);
     }
 
     @FXML
     private void maxBetAction() {
         double MAX_VALUE = sliderMoney.getMax();
-        System.out.println("Half bet action");
         sliderMoney.setValue(MAX_VALUE);
     }
 
@@ -246,8 +254,6 @@ public class InGameWindowController extends GenericController {
     
     private boolean pokerGame(String name, Socket socket) {
 
-		int currentMoney;
-		int rankingCode;
 		int gameStatusCode;
         PlayerRole role;
 		Card[] playerCards = new Card[2];
@@ -255,8 +261,6 @@ public class InGameWindowController extends GenericController {
         try {
 
             InputStream input = socket.getInputStream();
-            OutputStream output = socket.getOutputStream();
-
             boolean endOfGame = false;
             while(!endOfGame) {
 
@@ -325,14 +329,11 @@ public class InGameWindowController extends GenericController {
                     Platform.runLater(() -> {
                         btnRound.setText("SHOWDOWN");
                     });
-                    rankingCode = SocketUtils.receiveInt(input);
-                    currentMoney = SocketUtils.receiveInt(input);
-                    if(rankingCode == GameType.PLAYER_WINS_HAND) {
-                        System.out.printf("You have won!\nCurrent money is %d\n", currentMoney);
-                    }
-                    else if(rankingCode == GameType.PLAYER_LOSES_HAND) {
-                        System.out.printf("You have lost!\nCurrent money is %d\n", currentMoney);
-                    }
+                    receivePlayersUpdatedInfo(socket);
+                    
+                    final int seconds = 3;
+                    System.out.printf("%d seconds pause to see the winner...\n", seconds);
+                    Thread.sleep(seconds * 1000);
 
                     // Game ends or keeps
                     gameStatusCode = SocketUtils.receiveInt(input);
@@ -349,14 +350,11 @@ public class InGameWindowController extends GenericController {
                     try {
 
                         // Get winner/loser state
-                        rankingCode = SocketUtils.receiveInt(input);
-                        currentMoney = SocketUtils.receiveInt(input);
-                        if(rankingCode == GameType.PLAYER_WINS_HAND) {
-                            System.out.printf("You have won!\nCurrent money is %d\n", currentMoney);
-                        }
-                        else if(rankingCode == GameType.PLAYER_LOSES_HAND) {
-                            System.out.printf("You have lost!\nCurrent money is %d\n", currentMoney);
-                        }
+                        receivePlayersUpdatedInfo(socket);
+
+                        final int seconds = 3;
+                        System.out.printf("%d seconds pause to see the winner...\n", seconds);
+                        Thread.sleep(seconds * 1000);
 
                         // Game ends or keeps
                         gameStatusCode = SocketUtils.receiveInt(input);
@@ -367,7 +365,7 @@ public class InGameWindowController extends GenericController {
                             System.out.printf("Match keeps!\n\n");
 
                     }
-                    catch(IOException ex) {
+                    catch(IOException | InterruptedException ex) {
                         System.out.printf("Error receiving the rank after a fold exception: %s", ex.getMessage());
                     }
                 }
@@ -405,7 +403,7 @@ public class InGameWindowController extends GenericController {
 				System.out.printf("Forced play as the small blind with %d chips\n", amountSB);
 
                 Platform.runLater(() -> {
-                    updatePlayerInfo(0, role, onBetMoney, offBetMoney);
+                    updatePlayerInfo(0, role, onBetMoney, offBetMoney, false, false);
                 });
 			}
 			else if(serverCode == GameType.TURN_FORCED_BB) {
@@ -416,7 +414,7 @@ public class InGameWindowController extends GenericController {
 				System.out.printf("Forced play as the big blind with %d chips\n", amountBB);
 
                 Platform.runLater(() -> {
-                    updatePlayerInfo(0, role, onBetMoney, offBetMoney);
+                    updatePlayerInfo(0, role, onBetMoney, offBetMoney, false, false);
                 });
 			}
 			else if(serverCode == GameType.TURN_WAIT) {
@@ -449,9 +447,9 @@ public class InGameWindowController extends GenericController {
                 // Do not allow to bet less than the current max bet
                 Platform.runLater(() -> {
                     sliderMoney.setMin( (double)maxBet );
-                    sliderMoney.setMax( (double)offBetMoney );
+                    sliderMoney.setMax( (double)(offBetMoney + onBetMoney)  );
 
-                    updatePlayerInfo(0, role, onBetMoney, offBetMoney);
+                    updatePlayerInfo(0, role, onBetMoney, offBetMoney, false, false);
                 });
 
                 selectCommand(socket, sb, bb, maxBet, offBetMoney, onBetMoney);
@@ -467,6 +465,9 @@ public class InGameWindowController extends GenericController {
 
                 final int otherPlayerID = SocketUtils.receiveInt( socket.getInputStream() );
                 final String otherPlayerName = SocketUtils.receiveString( socket.getInputStream() );
+                final PlayerRole otherPlayerRole = PokerGame.receivePlayerRole( socket.getInputStream() );
+                final boolean otherPlayerIsFolded = SocketUtils.receiveInt( socket.getInputStream() ) == GameType.TRUE;
+                final boolean otherPlayerIsWinner = SocketUtils.receiveInt( socket.getInputStream() ) == GameType.TRUE;
                 final int otherPlayerOffBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
                 final int otherPlayerOnBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
 
@@ -482,7 +483,11 @@ public class InGameWindowController extends GenericController {
 
                 Platform.runLater(() -> {
                     nameLabel.setText( otherPlayerName );
-                    updatePlayerInfo(seatID, null, otherPlayerOnBetMoney, otherPlayerOffBetMoney);
+                    updatePlayerInfo(
+                        seatID, otherPlayerRole, 
+                        otherPlayerOnBetMoney, otherPlayerOffBetMoney, 
+                        otherPlayerIsFolded, otherPlayerIsWinner
+                    );
                 });
 
             }
@@ -572,7 +577,7 @@ public class InGameWindowController extends GenericController {
 
         sliderMoney.valueProperty().addListener((obs, oldVal, newVal) -> {
             
-            labelMoney.setText(String.valueOf(newVal.intValue()));
+            labelMoney.setText( String.valueOf(newVal.intValue()) );
 
             if( newVal.intValue() == sliderMoney.getMin() )
                 btnRaise.setDisable(true);
@@ -634,20 +639,20 @@ public class InGameWindowController extends GenericController {
         do {
             int playerID = SocketUtils.receiveInt(input);
             PlayerRole r = PokerGame.receivePlayerRole(input);
+            boolean isFolded = SocketUtils.receiveInt(input) == GameType.TRUE;
+            boolean isWinner = SocketUtils.receiveInt(input) == GameType.TRUE;
             int offBetMoney = SocketUtils.receiveInt(input);
             int onBetMoney = SocketUtils.receiveInt(input);
 
             System.out.printf(
-                "UPDATE - Player ID: %d, Role: %s, Off-Bet Money: %d, On-Bet Money: %d\n", 
-                playerID, r.name(), offBetMoney, onBetMoney
+                "UPDATE - Player ID: %d, Role: %s, Off-Bet Money: %d, On-Bet Money: %d, Folded: %b, Winner: %b\n", 
+                playerID, r.name(), offBetMoney, onBetMoney, isFolded, isWinner
             );
 
             Platform.runLater(() -> {
 
-                final int seatID = _playerSeatLabel.get(playerID).intValue();
-                Label nameLabel = getNameLabelByPosition(seatID);
-                Label moneyLabel = getMoneyLabelByPosition(seatID);
-                updatePlayerInfo(seatID, r, onBetMoney, offBetMoney);
+                int seatID = _playerSeatLabel.get(playerID).intValue();
+                updatePlayerInfo(seatID, r, onBetMoney, offBetMoney, isFolded, isWinner);
             });
 
             isLast = SocketUtils.receiveInt(input);
@@ -655,11 +660,24 @@ public class InGameWindowController extends GenericController {
         while(isLast != GameType.TRUE);
     }
 
-    private void updatePlayerInfo(int seatID, PlayerRole role, int onBetMoney, int offBetMoney) {
+    private void updatePlayerInfo(int seatID, PlayerRole role, int onBetMoney, int offBetMoney, boolean isFolded, boolean isWinner) {
 
+        Label nameLabel = getNameLabelByPosition(seatID);
         Label moneyLabel = getMoneyLabelByPosition(seatID);
 
         Platform.runLater(() -> {
+
+            PauseTransition transition = new PauseTransition(Duration.seconds(3));
+            if(isWinner) {
+                nameLabel.setText( nameLabel.getText() + " (Winner!)" );
+                transition.setOnFinished(event -> {
+                    nameLabel.setText( nameLabel.getText().replace(" (Winner!)", "") );
+                });
+                transition.play();
+
+                System.out.printf("Player %s is the winner of the hand!\n", nameLabel.getText());
+            }
+
             moneyLabel.setText(
                 String.format(
                     "%d - %d", 
@@ -750,6 +768,8 @@ public class InGameWindowController extends GenericController {
 
     private void showTableCard(ImageView imageView, Card card) {
 
+        System.out.printf("Received card: %s\n", card.toString());
+
         String path = "images/cards/";
         String cardValue = (card.getNumber() == 1) ? "ace"
                         : (card.getNumber() == 2) ? "2"
@@ -771,7 +791,6 @@ public class InGameWindowController extends GenericController {
                         : (card.getSuit() == Suit.CLUBS) ? "clubs"
                         : (card.getSuit() == Suit.SPADES) ? "spades"
                         : "unknown";
-
 
 
         InputStream in = getClass().getClassLoader().getResourceAsStream(  

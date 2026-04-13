@@ -389,7 +389,7 @@ public class LlamaPokerLLM extends BotLLM {
     }
 
     @Override
-    public void notifyPlayerState(int id, PlayerRole role, int offBetMoney, int onBetMoney, final boolean last) throws IOException {
+    public void notifyPlayerState(final IPokerPlayer player, final boolean last) throws IOException {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'notifyPlayerState'");
     }

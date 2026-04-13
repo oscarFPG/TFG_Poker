@@ -1,6 +1,7 @@
 package com.ucm.server.interfaces;
 
 import java.io.IOException;
+import java.util.List;
 
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
@@ -18,16 +19,13 @@ public interface IPokerNotification {
     public void notifyOtherPlayerAction(IPokerPlayer p) throws IOException;
     public void notifyTurnWait() throws IOException;
     public void notifyTurnPlay() throws IOException;
-    public void notifyPlayerState(final int id, final PlayerRole role, final int offBetMoney, final int onBetMoney, final boolean last) throws IOException;
+    public void notifyPlayerState(final IPokerPlayer player, final boolean last) throws IOException;
 
     public void notifyRoundEnded() throws IOException;
     public void notifyHandEnded() throws IOException;
     public void notifyHandEndsByFolds() throws IOException;
     public void notifyGameEnded() throws IOException;
     public void notifyGameKeeps() throws IOException;
-
-    public void notifyHandWinner() throws IOException;
-    public void notifyHandLoser() throws IOException;
     public void notifyMoneyAmount(final int amount) throws IOException;
 
     public void notifyGameWinner() throws IOException;
