@@ -1,10 +1,14 @@
 package com.ucm.client;
 
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.ucm.common.GameConfig;
 import com.ucm.common.PlayerInfo;
+
+import javafx.scene.image.Image;
 
 
 
@@ -22,6 +26,8 @@ public class ClientInfo {
 
     private static ClientInfo instance;
 
+    private Map<Integer, Image> avatarCache = new HashMap<>();
+
     private ClientInfo() {}
 
     public static ClientInfo getInstance() {
@@ -32,4 +38,20 @@ public class ClientInfo {
         
         return instance;
     }
+
+    
+    public Image getAvatar(int size) {
+        if (name == null) return null;
+
+        return avatarCache.computeIfAbsent(
+            size,
+            s -> AvatarGenerator.generate(name, s)
+        );
+    }
+
+    public void onNameChanged(String newName) {
+        this.name = newName;
+        avatarCache.clear();
+    }
+
 }

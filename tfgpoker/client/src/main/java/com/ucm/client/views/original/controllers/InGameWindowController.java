@@ -28,6 +28,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -116,6 +117,56 @@ public class InGameWindowController extends GenericController {
     @FXML
     private Label playerName8, playerMoney8;
 
+    /*All reverse image cards for players*/
+    @FXML
+    private HBox hboxImageCards0;
+    @FXML
+    private ImageView imgLeftCard0, imgRightCard0;
+
+    @FXML
+    private HBox hboxImageCards1;
+    @FXML
+    private ImageView imgLeftCard1, imgRightCard1;
+
+    @FXML
+    private HBox hboxImageCards2;
+    @FXML
+    private ImageView imgLeftCard2, imgRightCard2;
+
+    @FXML
+    private HBox hboxImageCards3;
+    @FXML
+    private ImageView imgLeftCard3, imgRightCard3;
+
+    @FXML
+    private HBox hboxImageCards4;
+    @FXML
+    private ImageView imgLeftCard4, imgRightCard4;
+
+    @FXML
+    private HBox hboxImageCards5;
+    @FXML
+    private ImageView imgLeftCard5, imgRightCard5;
+
+    @FXML
+    private HBox hboxImageCards6;
+    @FXML
+    private ImageView imgLeftCard6, imgRightCard6;
+
+    @FXML
+    private HBox hboxImageCards7;
+    @FXML
+    private ImageView imgLeftCard7, imgRightCard7;
+
+    @FXML
+    private HBox hboxImageCards8;
+    @FXML
+    private ImageView imgLeftCard8, imgRightCard8;
+
+    private List<HBox> _listImageCards;
+
+    private List<ImageView> _listPaintCards;
+
 
     private Thread _gameThread = null;
     private BlockingQueue<String> _commandQueue = new LinkedBlockingQueue<>();
@@ -127,12 +178,12 @@ public class InGameWindowController extends GenericController {
     protected void onViewShown() {
 
         clearAllLabels();
+        imgTableInGame.setImage(new Image(getClass().getResource(_clientInfo.gameConfig._selectedTable).toExternalForm()));
+        //TODO: cambair cuando haya bots. Tener en cuenta cuando un cliente se sale o hace fold
+        initializeImageCards ();
+        initializeCardsPosition ();
         showPlayers(_clientInfo.playerPositions);
         initializeSlider(_clientInfo.gameConfig);
-
-        imgTableInGame.setImage(new Image(getClass().getResource(_clientInfo.gameConfig._selectedTable).toExternalForm()));
-
-        //TODO: cambair cuando haya bots. Tener en cuenta cuando un cliente se sale o hace fold
 
         usernamePlaceHolder.setText( _clientInfo.name );
 
@@ -163,6 +214,8 @@ public class InGameWindowController extends GenericController {
                     alert.setTitle("Game was cancelled");
                     alert.setHeaderText("All players disconnected");
                     alert.setContentText("You will return to the main menu");
+                    alert.getDialogPane().getStylesheets().add(getClass().getResource("/original/css/style.css").toExternalForm());
+                    alert.getDialogPane().getStyleClass().add("custom-alert");
                     alert.showAndWait();
 
                     next();
@@ -171,6 +224,38 @@ public class InGameWindowController extends GenericController {
             
         });
         _gameThread.start();
+    }
+
+    private void initializeCardsPosition () {
+        _listImageCards = List.of (
+            hboxImageCards0,
+            hboxImageCards1,
+            hboxImageCards2,
+            hboxImageCards3,
+            hboxImageCards4,
+            hboxImageCards5,
+            hboxImageCards6,
+            hboxImageCards7,
+            hboxImageCards8
+        );
+        _listImageCards.forEach(hbox -> hbox.setVisible(false));
+    }
+
+    private void initializeImageCards () {
+        _listPaintCards = List.of(
+            imgLeftCard0, imgRightCard0,
+            imgLeftCard1, imgRightCard1,
+            imgLeftCard2, imgRightCard2,
+            imgLeftCard3, imgRightCard3,
+            imgLeftCard4, imgRightCard4,
+            imgLeftCard5, imgRightCard5,
+            imgLeftCard6, imgRightCard6,
+            imgLeftCard7, imgRightCard7,
+            imgLeftCard8, imgRightCard8
+        );
+
+        Image cardImage = new Image(getClass().getResource(_clientInfo.gameConfig._selectedCard).toExternalForm());
+        _listPaintCards.subList(1, _listPaintCards.size()).forEach(iv -> iv.setImage(cardImage));
     }
 
 
@@ -698,6 +783,7 @@ public class InGameWindowController extends GenericController {
             Label nameLabel = getNameLabelByPosition(beforePosition);
             Label moneyLabel = getMoneyLabelByPosition(beforePosition);
             StackPane playerStackPane = getPlayerStackPaneByPosition(beforePosition);
+            HBox cardsHBox = _listImageCards.get(beforePosition);
 
             Platform.runLater(() -> {
                 nameLabel.setText(p.name);
@@ -708,6 +794,7 @@ public class InGameWindowController extends GenericController {
                     )
                 );
                 playerStackPane.setVisible(true);
+                cardsHBox.setVisible(true);
             });
 
             ++beforePosition;
@@ -723,6 +810,7 @@ public class InGameWindowController extends GenericController {
             Label nameLabel = getNameLabelByPosition(nextPosition);
             Label moneyLabel = getMoneyLabelByPosition(nextPosition);
             StackPane playerStackPane = getPlayerStackPaneByPosition(nextPosition);
+            HBox cardsHBox = _listImageCards.get(nextPosition);
 
             Platform.runLater(() -> {
                 nameLabel.setText(p.name);
@@ -733,6 +821,7 @@ public class InGameWindowController extends GenericController {
                     )
                 );
                 playerStackPane.setVisible(true);
+                cardsHBox.setVisible(true);
             });
 
             --nextPosition;

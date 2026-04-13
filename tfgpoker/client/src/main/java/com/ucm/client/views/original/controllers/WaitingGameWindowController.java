@@ -95,57 +95,7 @@ public class WaitingGameWindowController extends GenericController {
     @FXML
     private ImageView imgTableInGame;
 
-    @FXML
-    private HBox hboxImageCards0;
-    @FXML
-    private ImageView imgLeftCard0, imgRightCard0;
-
-    @FXML
-    private HBox hboxImageCards1;
-    @FXML
-    private ImageView imgLeftCard1, imgRightCard1;
-
-    @FXML
-    private HBox hboxImageCards2;
-    @FXML
-    private ImageView imgLeftCard2, imgRightCard2;
-
-    @FXML
-    private HBox hboxImageCards3;
-    @FXML
-    private ImageView imgLeftCard3, imgRightCard3;
-
-    @FXML
-    private HBox hboxImageCards4;
-    @FXML
-    private ImageView imgLeftCard4, imgRightCard4;
-
-    @FXML
-    private HBox hboxImageCards5;
-    @FXML
-    private ImageView imgLeftCard5, imgRightCard5;
-
-    @FXML
-    private HBox hboxImageCards6;
-    @FXML
-    private ImageView imgLeftCard6, imgRightCard6;
-
-    @FXML
-    private HBox hboxImageCards7;
-    @FXML
-    private ImageView imgLeftCard7, imgRightCard7;
-
-    @FXML
-    private HBox hboxImageCards8;
-    @FXML
-    private ImageView imgLeftCard8, imgRightCard8;
-
-    private List<HBox> _listImageCards;
-
-    private List<ImageView> _listPaintCards;
-
     private Thread _infoThread;
-
 
     @FXML
     private void startGame() {
@@ -158,14 +108,11 @@ public class WaitingGameWindowController extends GenericController {
         }
     }
 
-
     @Override
     protected void onViewShown() {
 
         clearAllLabels();
         imgTableInGame.setImage(new Image(getClass().getResource(_clientInfo.gameConfig._selectedTable).toExternalForm()));
-        initializeImageCards ();
-        initializeCardsPosition ();
         playerName0.setText( _clientInfo.name );
         playerMoney0.setText( String.valueOf( _clientInfo.gameConfig._initialMoney ) );
         pokerPlayer0.setOpacity( 1 );
@@ -190,38 +137,6 @@ public class WaitingGameWindowController extends GenericController {
             System.out.printf("Cerrado ¿?\n");
         });
 
-    }
-
-    private void initializeCardsPosition () {
-        _listImageCards = List.of (
-            hboxImageCards0,
-            hboxImageCards1,
-            hboxImageCards2,
-            hboxImageCards3,
-            hboxImageCards4,
-            hboxImageCards5,
-            hboxImageCards6,
-            hboxImageCards7,
-            hboxImageCards8
-        );
-        _listImageCards.forEach(hbox -> hbox.setVisible(false));
-    }
-
-    private void initializeImageCards () {
-        _listPaintCards = List.of(
-            imgLeftCard0, imgRightCard0,
-            imgLeftCard1, imgRightCard1,
-            imgLeftCard2, imgRightCard2,
-            imgLeftCard3, imgRightCard3,
-            imgLeftCard4, imgRightCard4,
-            imgLeftCard5, imgRightCard5,
-            imgLeftCard6, imgRightCard6,
-            imgLeftCard7, imgRightCard7,
-            imgLeftCard8, imgRightCard8
-        );
-
-        Image cardImage = new Image(getClass().getResource(_clientInfo.gameConfig._selectedCard).toExternalForm());
-        _listPaintCards.subList(1, _listPaintCards.size()).forEach(iv -> iv.setImage(cardImage));
     }
 
     private void clearAllLabels() {
@@ -361,13 +276,12 @@ public class WaitingGameWindowController extends GenericController {
             Label nameLabel = getNameLabelByPosition(beforePosition);
             Label moneyLabel = getMoneyLabelByPosition(beforePosition);
             StackPane playerStackPane = getPlayerStackPaneByPosition(beforePosition);
-            HBox cardsHBox = _listImageCards.get(beforePosition);
+            
 
             Platform.runLater(() -> {
                 nameLabel.setText(p.name);
                 moneyLabel.setText(String.valueOf(_clientInfo.gameConfig._initialMoney));
                 playerStackPane.setOpacity( 1 );
-                cardsHBox.setVisible(true);
             });
 
             ++beforePosition;
@@ -384,13 +298,11 @@ public class WaitingGameWindowController extends GenericController {
             Label nameLabel = getNameLabelByPosition(nextPosition);
             Label moneyLabel = getMoneyLabelByPosition(nextPosition);
             StackPane playerStackPane = getPlayerStackPaneByPosition(nextPosition);
-            HBox cardsHBox = _listImageCards.get(nextPosition);
 
             Platform.runLater(() -> {
                 nameLabel.setText(p.name);
                 moneyLabel.setText(String.valueOf(_clientInfo.gameConfig._initialMoney));
                 playerStackPane.setOpacity( 1 );
-                cardsHBox.setVisible(true);
             });
 
             --nextPosition;

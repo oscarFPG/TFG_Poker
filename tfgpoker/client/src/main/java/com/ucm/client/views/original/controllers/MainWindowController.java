@@ -1,5 +1,6 @@
 package com.ucm.client.views.original.controllers;
 
+import com.ucm.client.AvatarGenerator;
 import com.ucm.client.ClientInfo;
 
 import javafx.animation.KeyFrame;
@@ -14,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -33,6 +35,9 @@ public class MainWindowController extends GenericController {
 
     @FXML
     private ToggleButton exitIcon;
+
+    @FXML
+    private ImageView imgAvatarProfile;
 
     @FXML
     private Text informationLabel;
@@ -78,9 +83,10 @@ public class MainWindowController extends GenericController {
     private boolean isFlipped = false;
 
 
-    @FXML
-    public void initialize() {
+    @Override
+    protected void onViewShown() {
         cardBack.setRotate(180);
+        imgAvatarProfile.setImage(_clientInfo.getAvatar(64));
         setupInitialState();
         setupListeners();
     }
