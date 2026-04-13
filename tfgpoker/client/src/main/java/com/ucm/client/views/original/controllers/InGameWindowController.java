@@ -42,6 +42,9 @@ public class InGameWindowController extends GenericController {
     private Label usernamePlaceHolder;
 
     @FXML
+    private ImageView imgAvatarProfile;
+
+    @FXML
     private VBox buttonsHolder;
 
     /* Call, Raise, Fold and Check buttons */
@@ -183,6 +186,7 @@ public class InGameWindowController extends GenericController {
 
         clearAllLabels();
         imgTableInGame.setImage(new Image(getClass().getResource(_clientInfo.gameConfig._selectedTable).toExternalForm()));
+        imgAvatarProfile.setImage(_clientInfo.getAvatar(64));
         //TODO: cambair cuando haya bots. Tener en cuenta cuando un cliente se sale o hace fold
         initializeImageCards ();
         initializeCardsPosition ();
@@ -767,9 +771,18 @@ public class InGameWindowController extends GenericController {
     
     private void getAvatarPosition (final int position, String name) {
         ImageView avatarImage = _listaAvatarProfiles.get(position);
-        Image avatar = AvatarGenerator.generate(name, 86);
+        Image avatar = AvatarGenerator.generate(name, 80);
+
         avatarImage.setImage(avatar);
-        Circle clip = new Circle(43,43,43);
+        avatarImage.setFitWidth(80);
+        avatarImage.setFitHeight(80);
+        avatarImage.setPreserveRatio(true);
+
+        Circle clip = new Circle();
+        clip.centerXProperty().bind(avatarImage.fitWidthProperty().divide(2));
+        clip.centerYProperty().bind(avatarImage.fitWidthProperty().divide(2));
+        clip.radiusProperty().bind(avatarImage.fitWidthProperty().divide(2));
+
         avatarImage.setClip(clip);
         avatarImage.setVisible(true);
     }

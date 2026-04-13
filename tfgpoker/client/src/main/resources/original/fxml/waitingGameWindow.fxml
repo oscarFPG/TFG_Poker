@@ -115,7 +115,10 @@
                                     </LinearGradient>
                                  </stroke>
                               </Circle>
-                              <ImageView fx:id="imgAvatarProfile1" fitHeight="75.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT" />
+                              <ImageView fx:id="imgAvatarProfile1" fitHeight="75.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT">
+                                 <StackPane.margin>
+                                    <Insets left="3.0" />
+                                 </StackPane.margin></ImageView>
                            </children>
                         </StackPane>
                      </children>
@@ -208,7 +211,10 @@
                                     </LinearGradient>
                                  </stroke>
                               </Circle>
-                              <ImageView fx:id="imgAvatarProfile2" fitHeight="78.0" fitWidth="123.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT" />
+                              <ImageView fx:id="imgAvatarProfile2" fitHeight="78.0" fitWidth="123.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT">
+                                 <StackPane.margin>
+                                    <Insets left="3.0" />
+                                 </StackPane.margin></ImageView>
                            </children>
                         </StackPane>
                      </children>
@@ -301,7 +307,10 @@
                                     </LinearGradient>
                                  </stroke>
                               </Circle>
-                              <ImageView fx:id="imgAvatarProfile3" fitHeight="75.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT" />
+                              <ImageView fx:id="imgAvatarProfile3" fitHeight="75.0" fitWidth="114.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT">
+                                 <StackPane.margin>
+                                    <Insets left="3.0" />
+                                 </StackPane.margin></ImageView>
                            </children>
                         </StackPane>
                      </children>
@@ -394,7 +403,10 @@
                                     </LinearGradient>
                                  </stroke>
                               </Circle>
-                              <ImageView fx:id="imgAvatarProfile4" fitHeight="71.0" fitWidth="102.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT" />
+                              <ImageView fx:id="imgAvatarProfile4" fitHeight="71.0" fitWidth="102.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT">
+                                 <StackPane.margin>
+                                    <Insets left="3.0" />
+                                 </StackPane.margin></ImageView>
                            </children>
                         </StackPane>
                      </children>
@@ -487,7 +499,10 @@
                                     </LinearGradient>
                                  </stroke>
                               </Circle>
-                              <ImageView fx:id="imgAvatarProfile5" fitHeight="76.0" fitWidth="96.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT" />
+                              <ImageView fx:id="imgAvatarProfile5" fitHeight="76.0" fitWidth="96.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT">
+                                 <StackPane.margin>
+                                    <Insets left="3.0" />
+                                 </StackPane.margin></ImageView>
                            </children>
                         </StackPane>
                      </children>
@@ -580,7 +595,10 @@
                                     </LinearGradient>
                                  </stroke>
                               </Circle>
-                              <ImageView fx:id="imgAvatarProfile6" fitHeight="77.0" fitWidth="111.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT" />
+                              <ImageView fx:id="imgAvatarProfile6" fitHeight="77.0" fitWidth="111.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT">
+                                 <StackPane.margin>
+                                    <Insets left="3.0" />
+                                 </StackPane.margin></ImageView>
                            </children>
                         </StackPane>
                      </children>
@@ -673,7 +691,10 @@
                                     </LinearGradient>
                                  </stroke>
                               </Circle>
-                              <ImageView fx:id="imgAvatarProfile7" fitHeight="78.0" fitWidth="75.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT" />
+                              <ImageView fx:id="imgAvatarProfile7" fitHeight="78.0" fitWidth="75.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT">
+                                 <StackPane.margin>
+                                    <Insets left="3.0" />
+                                 </StackPane.margin></ImageView>
                            </children>
                         </StackPane>
                      </children>
@@ -766,7 +787,10 @@
                                     </LinearGradient>
                                  </stroke>
                               </Circle>
-                              <ImageView fx:id="imgAvatarProfile8" fitHeight="67.0" fitWidth="83.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT" />
+                              <ImageView fx:id="imgAvatarProfile8" fitHeight="67.0" fitWidth="83.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT">
+                                 <StackPane.margin>
+                                    <Insets left="3.0" />
+                                 </StackPane.margin></ImageView>
                            </children>
                         </StackPane>
                      </children>
@@ -854,7 +878,10 @@
                                     </RadialGradient>
                                  </fill>
                               </Circle>
-                              <ImageView fx:id="imgAvatarProfile0" fitHeight="83.0" fitWidth="95.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT" />
+                              <ImageView fx:id="imgAvatarProfile0" fitHeight="83.0" fitWidth="86.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT">
+                                 <StackPane.margin>
+                                    <Insets left="3.0" />
+                                 </StackPane.margin></ImageView>
                            </children>
                         </StackPane>
                      </children>

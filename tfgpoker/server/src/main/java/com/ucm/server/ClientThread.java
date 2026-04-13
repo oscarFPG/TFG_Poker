@@ -98,6 +98,7 @@ public class ClientThread implements Runnable {
                         _gameConfig._numBots2 = config._numBots2;
                         _gameConfig._numBots3 = config._numBots3;
                         _gameConfig._numPlayers = config._numPlayers;
+                        _gameConfig._totalNumPlayers = config._totalNumPlayers;
                         _gameConfig._selectedTable = config._selectedTable;
                         _gameConfig._selectedCard = config._selectedCard;
 

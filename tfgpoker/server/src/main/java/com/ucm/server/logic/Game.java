@@ -55,7 +55,7 @@ public class Game {
         _currentSB = _initialSmallBlind;
         _currentBB = _initialBigBlind;
 
-        _playerList = new PlayerList(_gameConfig._numPlayers + 1);
+        _playerList = new PlayerList(_gameConfig._totalNumPlayers + 1);
         addPlayerInitial(gameInfo);
         _deck = new Deck();
         _tableCards = new Card[MAX_CARDS_IN_TABLE];

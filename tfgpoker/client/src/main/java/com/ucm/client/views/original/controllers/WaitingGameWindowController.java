@@ -293,11 +293,11 @@ public class WaitingGameWindowController extends GenericController {
 
     private void getAvatarPosition (final int position, String name) {
         ImageView avatarImage = _listaAvatarProfiles.get(position);
-        Image avatar = AvatarGenerator.generate(name, 86);
+        Image avatar = AvatarGenerator.generate(name, 80);
 
         avatarImage.setImage(avatar);
-        avatarImage.setFitWidth(86);
-        avatarImage.setFitHeight(86);
+        avatarImage.setFitWidth(80);
+        avatarImage.setFitHeight(80);
         avatarImage.setPreserveRatio(true);
 
         Circle clip = new Circle();

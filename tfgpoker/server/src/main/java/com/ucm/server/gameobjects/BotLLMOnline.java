@@ -153,7 +153,7 @@ public abstract class BotLLMOnline extends BotLLM {
             This is a 9-handed table.
             Only the players mentioned in the action history are still in the hand.
 
-            The table positions are: UTG (early), HJ (middle), CO (late), BTN (dealer), SB, BB.
+            The table positions are: UTG (early), HJ (hijack), CO (late), BTN (dealer), SB, BB.
 
             Your position relative to the button is %s.
 
@@ -245,7 +245,8 @@ public abstract class BotLLMOnline extends BotLLM {
             case SMALL_BLIND -> "SB";
             case BIG_BLIND -> "BB";
             case UNDER_THE_GUN -> "UTG";
-            case MIDDLE_POSITION -> "HJ";
+            case HIJACK -> "HJ";
+            case LOJACK -> "LJ";
             case CUT_OFF -> "CO";
             default -> "UNKNOWN";
         };

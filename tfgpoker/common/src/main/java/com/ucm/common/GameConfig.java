@@ -41,6 +41,8 @@ public class GameConfig {
     */
     public String _selectedCard = null;
 
+    public int _totalNumPlayers = _numPlayers + _numBots1 + _numBots2;
+
     public GameConfig() {}
 
     // Deep-copy constructor
@@ -57,6 +59,7 @@ public class GameConfig {
         _numBots2 = other._numBots2;
         _numBots3 = other._numBots3;
         _numPlayers = other._numPlayers;
+        _totalNumPlayers = other._totalNumPlayers;
         _selectedTable = (other._selectedTable != null) ? String.copyValueOf(other._selectedTable.toCharArray()) : null;
         _selectedCard = (other._selectedCard != null) ? String.copyValueOf(other._selectedCard.toCharArray()) : null;
     }

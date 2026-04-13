@@ -52,6 +52,7 @@ public class PokerPreGame {
         SocketUtils.sendInteger(out, config._numBots2);
         SocketUtils.sendInteger(out, config._numBots3);
         SocketUtils.sendInteger(out, config._numPlayers);
+        SocketUtils.sendInteger(out, config._totalNumPlayers);
         SocketUtils.sendString(out, config._selectedTable);
         SocketUtils.sendString(out, config._selectedCard);
     }
@@ -70,6 +71,7 @@ public class PokerPreGame {
         int numBots2 = SocketUtils.receiveInt(input);
         int numBots3 = SocketUtils.receiveInt(input);
         int numPlayers = SocketUtils.receiveInt(input);
+        int totalNumPlayers = SocketUtils.receiveInt(input);
         String selectedTable = SocketUtils.receiveString(input);
         String selectedCard = SocketUtils.receiveString(input);
 
@@ -87,6 +89,7 @@ public class PokerPreGame {
         config._numBots2 = numBots2;
         config._numBots3 = numBots3;
         config._numPlayers = numPlayers;
+        config._totalNumPlayers = totalNumPlayers;
         config._selectedTable = selectedTable;
         config._selectedCard = selectedCard;
 
@@ -110,6 +113,7 @@ public class PokerPreGame {
         SocketUtils.sendInteger(out, config._numBots2);
         SocketUtils.sendInteger(out, config._numBots3);
         SocketUtils.sendInteger(out, config._numPlayers);
+        SocketUtils.sendInteger(out, config._totalNumPlayers);
         SocketUtils.sendString(out, config._selectedTable);
         SocketUtils.sendString(out, config._selectedCard);
     }
@@ -129,6 +133,7 @@ public class PokerPreGame {
         int numBots2 = SocketUtils.receiveInt(input);
         int numBots3 = SocketUtils.receiveInt(input);
         int numPlayers = SocketUtils.receiveInt(input);
+        int totalNumPlayers = SocketUtils.receiveInt(input);
         String selectedTable = SocketUtils.receiveString(input);
         String selectedCard = SocketUtils.receiveString(input);
 
@@ -147,6 +152,7 @@ public class PokerPreGame {
         config._numBots2 = numBots2;
         config._numBots3 = numBots3;
         config._numPlayers = numPlayers;
+        config._totalNumPlayers = totalNumPlayers;
         config._selectedTable = selectedTable;
         config._selectedCard = selectedCard;
 

@@ -29,11 +29,7 @@
                <children>
                   <HBox prefHeight="100.0" prefWidth="1488.0" spacing="10.0" StackPane.alignment="CENTER">
                      <children>
-                        <ImageView fitHeight="100.0" fitWidth="95.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../images/imagenPerfil.png" />
-                           </image>
-                        </ImageView>
+                        <ImageView fx:id="imgAvatarProfile" fitHeight="100.0" fitWidth="95.0" pickOnBounds="true" preserveRatio="true" />
                         <VBox prefHeight="154.0" prefWidth="144.0" spacing="10.0">
                            <children>
                               <Label fx:id="usernamePlaceHolder" alignment="CENTER" prefHeight="40.0" styleClass="username-label" text="username">
@@ -297,114 +293,54 @@
             </HBox>
             <HBox fx:id="hboxImageCards1" layoutX="339.0" layoutY="392.0" prefHeight="80.0" prefWidth="146.0">
                <children>
-                  <ImageView fx:id="imgLeftCard1" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
-                     <image>
-                        <Image url="@../../images/reversePokerCardGame.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fx:id="imgRightCard1" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0">
-                     <image>
-                        <Image url="@../../images/reversePokerCardGame.png" />
-                     </image>
-                  </ImageView>
+                  <ImageView fx:id="imgLeftCard1" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0" />
+                  <ImageView fx:id="imgRightCard1" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0" />
                </children>
             </HBox>
             <HBox fx:id="hboxImageCards2" layoutX="245.0" layoutY="231.0" prefHeight="100.0" prefWidth="135.0">
                <children>
-                  <ImageView fx:id="imgLeftCard2" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
-                     <image>
-                        <Image url="@../../images/reversePokerCardGame.png" />
-                     </image>
-                  </ImageView>
+                  <ImageView fx:id="imgLeftCard2" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0" />
                   <ImageView fx:id="imgRightCard2" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0">
                      <image>
-                        <Image url="@../../images/reversePokerCardGame.png" />
+                        <Image url="@../../images" />
                      </image>
                   </ImageView>
                </children>
             </HBox>
             <HBox fx:id="hboxImageCards3" layoutX="245.0" layoutY="76.0" prefHeight="100.0" prefWidth="147.0">
                <children>
-                  <ImageView fx:id="imgLeftCard3" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
-                     <image>
-                        <Image url="@../../images/reversePokerCardGame.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fx:id="imgRightCard3" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0">
-                     <image>
-                        <Image url="@../../images/reversePokerCardGame.png" />
-                     </image>
-                  </ImageView>
+                  <ImageView fx:id="imgLeftCard3" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0" />
+                  <ImageView fx:id="imgRightCard3" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0" />
                </children>
             </HBox>
             <HBox fx:id="hboxImageCards4" layoutX="506.0" layoutY="-25.0" prefHeight="88.0" prefWidth="147.0">
                <children>
-                  <ImageView fx:id="imgLeftCard4" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
-                     <image>
-                        <Image url="@../../images/reversePokerCardGame.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fx:id="imgRightCard4" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0">
-                     <image>
-                        <Image url="@../../images/reversePokerCardGame.png" />
-                     </image>
-                  </ImageView>
+                  <ImageView fx:id="imgLeftCard4" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0" />
+                  <ImageView fx:id="imgRightCard4" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0" />
                </children>
             </HBox>
             <HBox fx:id="hboxImageCards5" layoutX="821.0" layoutY="-27.0" prefHeight="94.0" prefWidth="137.0">
                <children>
-                  <ImageView fx:id="imgLeftCard5" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
-                     <image>
-                        <Image url="@../../images/reversePokerCardGame.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fx:id="imgRightCard5" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0">
-                     <image>
-                        <Image url="@../../images/reversePokerCardGame.png" />
-                     </image>
-                  </ImageView>
+                  <ImageView fx:id="imgLeftCard5" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0" />
+                  <ImageView fx:id="imgRightCard5" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0" />
                </children>
             </HBox>
             <HBox fx:id="hboxImageCards6" layoutX="1070.0" layoutY="77.0" prefHeight="100.0" prefWidth="145.0">
                <children>
-                  <ImageView fx:id="imgLeftCard6" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
-                     <image>
-                        <Image url="@../../images/reversePokerCardGame.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fx:id="imgRightCard6" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0">
-                     <image>
-                        <Image url="@../../images/reversePokerCardGame.png" />
-                     </image>
-                  </ImageView>
+                  <ImageView fx:id="imgLeftCard6" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0" />
+                  <ImageView fx:id="imgRightCard6" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0" />
                </children>
             </HBox>
             <HBox fx:id="hboxImageCards7" layoutX="1074.0" layoutY="232.0" prefHeight="97.0" prefWidth="147.0">
                <children>
-                  <ImageView fx:id="imgLeftCard7" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
-                     <image>
-                        <Image url="@../../images/reversePokerCardGame.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fx:id="imgRightCard7" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0">
-                     <image>
-                        <Image url="@../../images/reversePokerCardGame.png" />
-                     </image>
-                  </ImageView>
+                  <ImageView fx:id="imgLeftCard7" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0" />
+                  <ImageView fx:id="imgRightCard7" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0" />
                </children>
             </HBox>
             <HBox fx:id="hboxImageCards8" layoutX="944.0" layoutY="389.0" prefHeight="93.0" prefWidth="152.0">
                <children>
-                  <ImageView fx:id="imgLeftCard8" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
-                     <image>
-                        <Image url="@../../images/reversePokerCardGame.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fx:id="imgRightCard8" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0">
-                     <image>
-                        <Image url="@../../images/reversePokerCardGame.png" />
-                     </image>
-                  </ImageView>
+                  <ImageView fx:id="imgLeftCard8" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0" />
+                  <ImageView fx:id="imgRightCard8" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0" />
                </children>
             </HBox>
             <StackPane fx:id="pokerPlayer5" layoutX="758.0" layoutY="43.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
@@ -424,75 +360,83 @@
                         </VBox>
                      </children>
                   </HBox>
-                  <Circle radius="43.0" strokeType="INSIDE" strokeWidth="2.0" StackPane.alignment="CENTER_LEFT">
-                     <fill>
-                        <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
-                           <stops>
-                              <Stop>
-                                 <color>
-                                    <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.006711409395973154">
-                                 <color>
-                                    <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.19102962841708937">
-                                 <color>
-                                    <Color red="0.4117647111415863" green="0.06666667014360428" blue="0.4745098054409027" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.7382550335570469">
-                                 <color>
-                                    <Color red="0.22745098173618317" green="0.0313725508749485" blue="0.47058823704719543" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.9542682926829268">
-                                 <color>
-                                    <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="1.0">
-                                 <color>
-                                    <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
-                                 </color>
-                              </Stop>
-                           </stops>
-                        </RadialGradient>
-                     </fill>
-                     <stroke>
-                        <LinearGradient endX="1.0" endY="1.0">
-                           <stops>
-                              <Stop>
-                                 <color>
-                                    <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.714765100671141">
-                                 <color>
-                                    <Color red="1.0" green="0.9725490212440491" blue="1.0" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.768456375838926">
-                                 <color>
-                                    <Color red="1.0" green="0.9725490212440491" blue="1.0" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.9359756097560974">
-                                 <color>
-                                    <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="1.0">
-                                 <color>
-                                    <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
-                                 </color>
-                              </Stop>
-                           </stops>
-                        </LinearGradient>
-                     </stroke>
-                  </Circle>
+                  <StackPane prefHeight="150.0" prefWidth="200.0">
+                     <children>
+                        <Circle radius="43.0" strokeType="INSIDE" strokeWidth="2.0" StackPane.alignment="CENTER_LEFT">
+                           <fill>
+                              <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                                 <stops>
+                                    <Stop>
+                                       <color>
+                                          <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.006711409395973154">
+                                       <color>
+                                          <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.19102962841708937">
+                                       <color>
+                                          <Color red="0.4117647111415863" green="0.06666667014360428" blue="0.4745098054409027" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.7382550335570469">
+                                       <color>
+                                          <Color red="0.22745098173618317" green="0.0313725508749485" blue="0.47058823704719543" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.9542682926829268">
+                                       <color>
+                                          <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="1.0">
+                                       <color>
+                                          <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
+                                       </color>
+                                    </Stop>
+                                 </stops>
+                              </RadialGradient>
+                           </fill>
+                           <stroke>
+                              <LinearGradient endX="1.0" endY="1.0">
+                                 <stops>
+                                    <Stop>
+                                       <color>
+                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.714765100671141">
+                                       <color>
+                                          <Color red="1.0" green="0.9725490212440491" blue="1.0" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.768456375838926">
+                                       <color>
+                                          <Color red="1.0" green="0.9725490212440491" blue="1.0" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.9359756097560974">
+                                       <color>
+                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="1.0">
+                                       <color>
+                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                       </color>
+                                    </Stop>
+                                 </stops>
+                              </LinearGradient>
+                           </stroke>
+                        </Circle>
+                        <ImageView fx:id="imgAvatarProfile5" fitHeight="73.0" fitWidth="138.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT">
+                           <StackPane.margin>
+                              <Insets left="3.0" />
+                           </StackPane.margin></ImageView>
+                     </children>
+                  </StackPane>
                </children>
             </StackPane>
             <StackPane fx:id="pokerPlayer4" layoutX="443.0" layoutY="43.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
@@ -512,75 +456,83 @@
                         </VBox>
                      </children>
                   </HBox>
-                  <Circle radius="43.0" strokeType="INSIDE" strokeWidth="2.0" StackPane.alignment="CENTER_LEFT">
-                     <fill>
-                        <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
-                           <stops>
-                              <Stop>
-                                 <color>
-                                    <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.006711409395973154">
-                                 <color>
-                                    <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.19102962841708937">
-                                 <color>
-                                    <Color red="0.4117647111415863" green="0.06666667014360428" blue="0.4745098054409027" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.7382550335570469">
-                                 <color>
-                                    <Color red="0.22745098173618317" green="0.0313725508749485" blue="0.47058823704719543" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.9542682926829268">
-                                 <color>
-                                    <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="1.0">
-                                 <color>
-                                    <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
-                                 </color>
-                              </Stop>
-                           </stops>
-                        </RadialGradient>
-                     </fill>
-                     <stroke>
-                        <LinearGradient endX="1.0" endY="1.0">
-                           <stops>
-                              <Stop>
-                                 <color>
-                                    <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.714765100671141">
-                                 <color>
-                                    <Color red="1.0" green="0.9725490212440491" blue="1.0" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.768456375838926">
-                                 <color>
-                                    <Color red="1.0" green="0.9725490212440491" blue="1.0" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.9359756097560974">
-                                 <color>
-                                    <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="1.0">
-                                 <color>
-                                    <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
-                                 </color>
-                              </Stop>
-                           </stops>
-                        </LinearGradient>
-                     </stroke>
-                  </Circle>
+                  <StackPane prefHeight="150.0" prefWidth="200.0">
+                     <children>
+                        <Circle radius="43.0" strokeType="INSIDE" strokeWidth="2.0" StackPane.alignment="CENTER_LEFT">
+                           <fill>
+                              <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                                 <stops>
+                                    <Stop>
+                                       <color>
+                                          <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.006711409395973154">
+                                       <color>
+                                          <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.19102962841708937">
+                                       <color>
+                                          <Color red="0.4117647111415863" green="0.06666667014360428" blue="0.4745098054409027" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.7382550335570469">
+                                       <color>
+                                          <Color red="0.22745098173618317" green="0.0313725508749485" blue="0.47058823704719543" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.9542682926829268">
+                                       <color>
+                                          <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="1.0">
+                                       <color>
+                                          <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
+                                       </color>
+                                    </Stop>
+                                 </stops>
+                              </RadialGradient>
+                           </fill>
+                           <stroke>
+                              <LinearGradient endX="1.0" endY="1.0">
+                                 <stops>
+                                    <Stop>
+                                       <color>
+                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.714765100671141">
+                                       <color>
+                                          <Color red="1.0" green="0.9725490212440491" blue="1.0" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.768456375838926">
+                                       <color>
+                                          <Color red="1.0" green="0.9725490212440491" blue="1.0" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.9359756097560974">
+                                       <color>
+                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="1.0">
+                                       <color>
+                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                       </color>
+                                    </Stop>
+                                 </stops>
+                              </LinearGradient>
+                           </stroke>
+                        </Circle>
+                        <ImageView fx:id="imgAvatarProfile4" fitHeight="73.0" fitWidth="129.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT">
+                           <StackPane.margin>
+                              <Insets left="3.0" />
+                           </StackPane.margin></ImageView>
+                     </children>
+                  </StackPane>
                </children>
             </StackPane>
             <StackPane fx:id="pokerPlayer3" layoutX="183.0" layoutY="137.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
@@ -600,75 +552,83 @@
                         </VBox>
                      </children>
                   </HBox>
-                  <Circle radius="43.0" strokeType="INSIDE" strokeWidth="2.0" StackPane.alignment="CENTER_LEFT">
-                     <fill>
-                        <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
-                           <stops>
-                              <Stop>
-                                 <color>
-                                    <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.006711409395973154">
-                                 <color>
-                                    <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.19102962841708937">
-                                 <color>
-                                    <Color red="0.4117647111415863" green="0.06666667014360428" blue="0.4745098054409027" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.7382550335570469">
-                                 <color>
-                                    <Color red="0.22745098173618317" green="0.0313725508749485" blue="0.47058823704719543" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.9542682926829268">
-                                 <color>
-                                    <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="1.0">
-                                 <color>
-                                    <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
-                                 </color>
-                              </Stop>
-                           </stops>
-                        </RadialGradient>
-                     </fill>
-                     <stroke>
-                        <LinearGradient endX="1.0" endY="1.0">
-                           <stops>
-                              <Stop>
-                                 <color>
-                                    <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.714765100671141">
-                                 <color>
-                                    <Color red="1.0" green="0.9725490212440491" blue="1.0" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.768456375838926">
-                                 <color>
-                                    <Color red="1.0" green="0.9725490212440491" blue="1.0" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.9359756097560974">
-                                 <color>
-                                    <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="1.0">
-                                 <color>
-                                    <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
-                                 </color>
-                              </Stop>
-                           </stops>
-                        </LinearGradient>
-                     </stroke>
-                  </Circle>
+                  <StackPane prefHeight="150.0" prefWidth="200.0">
+                     <children>
+                        <Circle radius="43.0" strokeType="INSIDE" strokeWidth="2.0" StackPane.alignment="CENTER_LEFT">
+                           <fill>
+                              <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                                 <stops>
+                                    <Stop>
+                                       <color>
+                                          <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.006711409395973154">
+                                       <color>
+                                          <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.19102962841708937">
+                                       <color>
+                                          <Color red="0.4117647111415863" green="0.06666667014360428" blue="0.4745098054409027" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.7382550335570469">
+                                       <color>
+                                          <Color red="0.22745098173618317" green="0.0313725508749485" blue="0.47058823704719543" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.9542682926829268">
+                                       <color>
+                                          <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="1.0">
+                                       <color>
+                                          <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
+                                       </color>
+                                    </Stop>
+                                 </stops>
+                              </RadialGradient>
+                           </fill>
+                           <stroke>
+                              <LinearGradient endX="1.0" endY="1.0">
+                                 <stops>
+                                    <Stop>
+                                       <color>
+                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.714765100671141">
+                                       <color>
+                                          <Color red="1.0" green="0.9725490212440491" blue="1.0" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.768456375838926">
+                                       <color>
+                                          <Color red="1.0" green="0.9725490212440491" blue="1.0" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.9359756097560974">
+                                       <color>
+                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="1.0">
+                                       <color>
+                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                       </color>
+                                    </Stop>
+                                 </stops>
+                              </LinearGradient>
+                           </stroke>
+                        </Circle>
+                        <ImageView fx:id="imgAvatarProfile3" fitHeight="76.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT">
+                           <StackPane.margin>
+                              <Insets left="3.0" />
+                           </StackPane.margin></ImageView>
+                     </children>
+                  </StackPane>
                </children>
             </StackPane>
             <StackPane fx:id="pokerPlayer2" layoutX="180.0" layoutY="301.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
@@ -688,75 +648,83 @@
                         </VBox>
                      </children>
                   </HBox>
-                  <Circle radius="43.0" strokeType="INSIDE" strokeWidth="2.0" StackPane.alignment="CENTER_LEFT">
-                     <fill>
-                        <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
-                           <stops>
-                              <Stop>
-                                 <color>
-                                    <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.006711409395973154">
-                                 <color>
-                                    <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.19102962841708937">
-                                 <color>
-                                    <Color red="0.4117647111415863" green="0.06666667014360428" blue="0.4745098054409027" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.7382550335570469">
-                                 <color>
-                                    <Color red="0.22745098173618317" green="0.0313725508749485" blue="0.47058823704719543" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.9542682926829268">
-                                 <color>
-                                    <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="1.0">
-                                 <color>
-                                    <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
-                                 </color>
-                              </Stop>
-                           </stops>
-                        </RadialGradient>
-                     </fill>
-                     <stroke>
-                        <LinearGradient endX="1.0" endY="1.0">
-                           <stops>
-                              <Stop>
-                                 <color>
-                                    <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.714765100671141">
-                                 <color>
-                                    <Color red="1.0" green="0.9725490212440491" blue="1.0" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.768456375838926">
-                                 <color>
-                                    <Color red="1.0" green="0.9725490212440491" blue="1.0" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.9359756097560974">
-                                 <color>
-                                    <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="1.0">
-                                 <color>
-                                    <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
-                                 </color>
-                              </Stop>
-                           </stops>
-                        </LinearGradient>
-                     </stroke>
-                  </Circle>
+                  <StackPane prefHeight="150.0" prefWidth="200.0">
+                     <children>
+                        <Circle radius="43.0" strokeType="INSIDE" strokeWidth="2.0" StackPane.alignment="CENTER_LEFT">
+                           <fill>
+                              <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                                 <stops>
+                                    <Stop>
+                                       <color>
+                                          <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.006711409395973154">
+                                       <color>
+                                          <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.19102962841708937">
+                                       <color>
+                                          <Color red="0.4117647111415863" green="0.06666667014360428" blue="0.4745098054409027" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.7382550335570469">
+                                       <color>
+                                          <Color red="0.22745098173618317" green="0.0313725508749485" blue="0.47058823704719543" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.9542682926829268">
+                                       <color>
+                                          <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="1.0">
+                                       <color>
+                                          <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
+                                       </color>
+                                    </Stop>
+                                 </stops>
+                              </RadialGradient>
+                           </fill>
+                           <stroke>
+                              <LinearGradient endX="1.0" endY="1.0">
+                                 <stops>
+                                    <Stop>
+                                       <color>
+                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.714765100671141">
+                                       <color>
+                                          <Color red="1.0" green="0.9725490212440491" blue="1.0" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.768456375838926">
+                                       <color>
+                                          <Color red="1.0" green="0.9725490212440491" blue="1.0" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.9359756097560974">
+                                       <color>
+                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="1.0">
+                                       <color>
+                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                       </color>
+                                    </Stop>
+                                 </stops>
+                              </LinearGradient>
+                           </stroke>
+                        </Circle>
+                        <ImageView fx:id="imgAvatarProfile2" fitHeight="77.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT">
+                           <StackPane.margin>
+                              <Insets left="3.0" />
+                           </StackPane.margin></ImageView>
+                     </children>
+                  </StackPane>
                </children>
             </StackPane>
             <StackPane fx:id="pokerPlayer1" layoutX="280.0" layoutY="459.0" prefHeight="83.0" prefWidth="273.0" scaleX="0.9" scaleY="0.9">
@@ -776,75 +744,83 @@
                         </VBox>
                      </children>
                   </HBox>
-                  <Circle radius="43.0" strokeType="INSIDE" strokeWidth="2.0" StackPane.alignment="CENTER_LEFT">
-                     <fill>
-                        <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
-                           <stops>
-                              <Stop>
-                                 <color>
-                                    <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.006711409395973154">
-                                 <color>
-                                    <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.19102962841708937">
-                                 <color>
-                                    <Color red="0.4117647111415863" green="0.06666667014360428" blue="0.4745098054409027" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.7382550335570469">
-                                 <color>
-                                    <Color red="0.22745098173618317" green="0.0313725508749485" blue="0.47058823704719543" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.9542682926829268">
-                                 <color>
-                                    <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="1.0">
-                                 <color>
-                                    <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
-                                 </color>
-                              </Stop>
-                           </stops>
-                        </RadialGradient>
-                     </fill>
-                     <stroke>
-                        <LinearGradient endX="1.0" endY="1.0">
-                           <stops>
-                              <Stop>
-                                 <color>
-                                    <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.714765100671141">
-                                 <color>
-                                    <Color red="1.0" green="0.9725490212440491" blue="1.0" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.768456375838926">
-                                 <color>
-                                    <Color red="1.0" green="0.9725490212440491" blue="1.0" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.9359756097560974">
-                                 <color>
-                                    <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="1.0">
-                                 <color>
-                                    <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
-                                 </color>
-                              </Stop>
-                           </stops>
-                        </LinearGradient>
-                     </stroke>
-                  </Circle>
+                  <StackPane prefHeight="150.0" prefWidth="200.0">
+                     <children>
+                        <Circle radius="43.0" strokeType="INSIDE" strokeWidth="2.0" StackPane.alignment="CENTER_LEFT">
+                           <fill>
+                              <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                                 <stops>
+                                    <Stop>
+                                       <color>
+                                          <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.006711409395973154">
+                                       <color>
+                                          <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.19102962841708937">
+                                       <color>
+                                          <Color red="0.4117647111415863" green="0.06666667014360428" blue="0.4745098054409027" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.7382550335570469">
+                                       <color>
+                                          <Color red="0.22745098173618317" green="0.0313725508749485" blue="0.47058823704719543" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.9542682926829268">
+                                       <color>
+                                          <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="1.0">
+                                       <color>
+                                          <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
+                                       </color>
+                                    </Stop>
+                                 </stops>
+                              </RadialGradient>
+                           </fill>
+                           <stroke>
+                              <LinearGradient endX="1.0" endY="1.0">
+                                 <stops>
+                                    <Stop>
+                                       <color>
+                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.714765100671141">
+                                       <color>
+                                          <Color red="1.0" green="0.9725490212440491" blue="1.0" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.768456375838926">
+                                       <color>
+                                          <Color red="1.0" green="0.9725490212440491" blue="1.0" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.9359756097560974">
+                                       <color>
+                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="1.0">
+                                       <color>
+                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                       </color>
+                                    </Stop>
+                                 </stops>
+                              </LinearGradient>
+                           </stroke>
+                        </Circle>
+                        <ImageView fx:id="imgAvatarProfile1" fitHeight="74.0" fitWidth="104.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT">
+                           <StackPane.margin>
+                              <Insets left="3.0" />
+                           </StackPane.margin></ImageView>
+                     </children>
+                  </StackPane>
                </children>
             </StackPane>
             <StackPane fx:id="pokerPlayer0" layoutX="588.0" layoutY="459.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
@@ -864,75 +840,83 @@
                         </VBox>
                      </children>
                   </HBox>
-                  <Circle radius="43.0" strokeType="INSIDE" strokeWidth="2.0" StackPane.alignment="CENTER_LEFT">
-                     <fill>
-                        <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
-                           <stops>
-                              <Stop>
-                                 <color>
-                                    <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.006711409395973154">
-                                 <color>
-                                    <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.19102962841708937">
-                                 <color>
-                                    <Color red="0.4117647111415863" green="0.06666667014360428" blue="0.4745098054409027" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.7382550335570469">
-                                 <color>
-                                    <Color red="0.22745098173618317" green="0.0313725508749485" blue="0.47058823704719543" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.9542682926829268">
-                                 <color>
-                                    <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="1.0">
-                                 <color>
-                                    <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
-                                 </color>
-                              </Stop>
-                           </stops>
-                        </RadialGradient>
-                     </fill>
-                     <stroke>
-                        <LinearGradient endX="1.0" endY="1.0">
-                           <stops>
-                              <Stop>
-                                 <color>
-                                    <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.714765100671141">
-                                 <color>
-                                    <Color red="1.0" green="0.9725490212440491" blue="1.0" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.768456375838926">
-                                 <color>
-                                    <Color red="1.0" green="0.9725490212440491" blue="1.0" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.9359756097560974">
-                                 <color>
-                                    <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="1.0">
-                                 <color>
-                                    <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
-                                 </color>
-                              </Stop>
-                           </stops>
-                        </LinearGradient>
-                     </stroke>
-                  </Circle>
+                  <StackPane prefHeight="150.0" prefWidth="200.0">
+                     <children>
+                        <Circle radius="43.0" strokeType="INSIDE" strokeWidth="2.0" StackPane.alignment="CENTER_LEFT">
+                           <fill>
+                              <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                                 <stops>
+                                    <Stop>
+                                       <color>
+                                          <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.006711409395973154">
+                                       <color>
+                                          <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.19102962841708937">
+                                       <color>
+                                          <Color red="0.4117647111415863" green="0.06666667014360428" blue="0.4745098054409027" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.7382550335570469">
+                                       <color>
+                                          <Color red="0.22745098173618317" green="0.0313725508749485" blue="0.47058823704719543" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.9542682926829268">
+                                       <color>
+                                          <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="1.0">
+                                       <color>
+                                          <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
+                                       </color>
+                                    </Stop>
+                                 </stops>
+                              </RadialGradient>
+                           </fill>
+                           <stroke>
+                              <LinearGradient endX="1.0" endY="1.0">
+                                 <stops>
+                                    <Stop>
+                                       <color>
+                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.714765100671141">
+                                       <color>
+                                          <Color red="1.0" green="0.9725490212440491" blue="1.0" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.768456375838926">
+                                       <color>
+                                          <Color red="1.0" green="0.9725490212440491" blue="1.0" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.9359756097560974">
+                                       <color>
+                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="1.0">
+                                       <color>
+                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                       </color>
+                                    </Stop>
+                                 </stops>
+                              </LinearGradient>
+                           </stroke>
+                        </Circle>
+                        <ImageView fx:id="imgAvatarProfile0" fitHeight="74.0" fitWidth="111.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT">
+                           <StackPane.margin>
+                              <Insets left="3.0" />
+                           </StackPane.margin></ImageView>
+                     </children>
+                  </StackPane>
                </children>
             </StackPane>
             <StackPane fx:id="pokerPlayer8" layoutX="881.0" layoutY="459.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
@@ -952,75 +936,83 @@
                         </VBox>
                      </children>
                   </HBox>
-                  <Circle radius="43.0" strokeType="INSIDE" strokeWidth="2.0" StackPane.alignment="CENTER_LEFT">
-                     <fill>
-                        <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
-                           <stops>
-                              <Stop>
-                                 <color>
-                                    <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.006711409395973154">
-                                 <color>
-                                    <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.19102962841708937">
-                                 <color>
-                                    <Color red="0.4117647111415863" green="0.06666667014360428" blue="0.4745098054409027" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.7382550335570469">
-                                 <color>
-                                    <Color red="0.22745098173618317" green="0.0313725508749485" blue="0.47058823704719543" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.9542682926829268">
-                                 <color>
-                                    <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="1.0">
-                                 <color>
-                                    <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
-                                 </color>
-                              </Stop>
-                           </stops>
-                        </RadialGradient>
-                     </fill>
-                     <stroke>
-                        <LinearGradient endX="1.0" endY="1.0">
-                           <stops>
-                              <Stop>
-                                 <color>
-                                    <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.714765100671141">
-                                 <color>
-                                    <Color red="1.0" green="0.9725490212440491" blue="1.0" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.768456375838926">
-                                 <color>
-                                    <Color red="1.0" green="0.9725490212440491" blue="1.0" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.9359756097560974">
-                                 <color>
-                                    <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="1.0">
-                                 <color>
-                                    <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
-                                 </color>
-                              </Stop>
-                           </stops>
-                        </LinearGradient>
-                     </stroke>
-                  </Circle>
+                  <StackPane prefHeight="150.0" prefWidth="200.0">
+                     <children>
+                        <Circle radius="43.0" strokeType="INSIDE" strokeWidth="2.0" StackPane.alignment="CENTER_LEFT">
+                           <fill>
+                              <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                                 <stops>
+                                    <Stop>
+                                       <color>
+                                          <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.006711409395973154">
+                                       <color>
+                                          <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.19102962841708937">
+                                       <color>
+                                          <Color red="0.4117647111415863" green="0.06666667014360428" blue="0.4745098054409027" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.7382550335570469">
+                                       <color>
+                                          <Color red="0.22745098173618317" green="0.0313725508749485" blue="0.47058823704719543" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.9542682926829268">
+                                       <color>
+                                          <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="1.0">
+                                       <color>
+                                          <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
+                                       </color>
+                                    </Stop>
+                                 </stops>
+                              </RadialGradient>
+                           </fill>
+                           <stroke>
+                              <LinearGradient endX="1.0" endY="1.0">
+                                 <stops>
+                                    <Stop>
+                                       <color>
+                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.714765100671141">
+                                       <color>
+                                          <Color red="1.0" green="0.9725490212440491" blue="1.0" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.768456375838926">
+                                       <color>
+                                          <Color red="1.0" green="0.9725490212440491" blue="1.0" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.9359756097560974">
+                                       <color>
+                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="1.0">
+                                       <color>
+                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                       </color>
+                                    </Stop>
+                                 </stops>
+                              </LinearGradient>
+                           </stroke>
+                        </Circle>
+                        <ImageView fx:id="imgAvatarProfile8" fitHeight="76.0" fitWidth="93.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT">
+                           <StackPane.margin>
+                              <Insets left="3.0" />
+                           </StackPane.margin></ImageView>
+                     </children>
+                  </StackPane>
                </children>
             </StackPane>
             <StackPane fx:id="pokerPlayer7" layoutX="1012.0" layoutY="301.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
@@ -1040,75 +1032,83 @@
                         </VBox>
                      </children>
                   </HBox>
-                  <Circle radius="43.0" strokeType="INSIDE" strokeWidth="2.0" StackPane.alignment="CENTER_LEFT">
-                     <fill>
-                        <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
-                           <stops>
-                              <Stop>
-                                 <color>
-                                    <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.006711409395973154">
-                                 <color>
-                                    <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.19102962841708937">
-                                 <color>
-                                    <Color red="0.4117647111415863" green="0.06666667014360428" blue="0.4745098054409027" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.7382550335570469">
-                                 <color>
-                                    <Color red="0.22745098173618317" green="0.0313725508749485" blue="0.47058823704719543" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.9542682926829268">
-                                 <color>
-                                    <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="1.0">
-                                 <color>
-                                    <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
-                                 </color>
-                              </Stop>
-                           </stops>
-                        </RadialGradient>
-                     </fill>
-                     <stroke>
-                        <LinearGradient endX="1.0" endY="1.0">
-                           <stops>
-                              <Stop>
-                                 <color>
-                                    <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.714765100671141">
-                                 <color>
-                                    <Color red="1.0" green="0.9725490212440491" blue="1.0" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.768456375838926">
-                                 <color>
-                                    <Color red="1.0" green="0.9725490212440491" blue="1.0" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.9359756097560974">
-                                 <color>
-                                    <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="1.0">
-                                 <color>
-                                    <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
-                                 </color>
-                              </Stop>
-                           </stops>
-                        </LinearGradient>
-                     </stroke>
-                  </Circle>
+                  <StackPane prefHeight="150.0" prefWidth="200.0">
+                     <children>
+                        <Circle radius="43.0" strokeType="INSIDE" strokeWidth="2.0" StackPane.alignment="CENTER_LEFT">
+                           <fill>
+                              <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                                 <stops>
+                                    <Stop>
+                                       <color>
+                                          <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.006711409395973154">
+                                       <color>
+                                          <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.19102962841708937">
+                                       <color>
+                                          <Color red="0.4117647111415863" green="0.06666667014360428" blue="0.4745098054409027" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.7382550335570469">
+                                       <color>
+                                          <Color red="0.22745098173618317" green="0.0313725508749485" blue="0.47058823704719543" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.9542682926829268">
+                                       <color>
+                                          <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="1.0">
+                                       <color>
+                                          <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
+                                       </color>
+                                    </Stop>
+                                 </stops>
+                              </RadialGradient>
+                           </fill>
+                           <stroke>
+                              <LinearGradient endX="1.0" endY="1.0">
+                                 <stops>
+                                    <Stop>
+                                       <color>
+                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.714765100671141">
+                                       <color>
+                                          <Color red="1.0" green="0.9725490212440491" blue="1.0" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.768456375838926">
+                                       <color>
+                                          <Color red="1.0" green="0.9725490212440491" blue="1.0" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.9359756097560974">
+                                       <color>
+                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="1.0">
+                                       <color>
+                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                       </color>
+                                    </Stop>
+                                 </stops>
+                              </LinearGradient>
+                           </stroke>
+                        </Circle>
+                        <ImageView fx:id="imgAvatarProfile7" fitHeight="71.0" fitWidth="107.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT">
+                           <StackPane.margin>
+                              <Insets left="3.0" />
+                           </StackPane.margin></ImageView>
+                     </children>
+                  </StackPane>
                </children>
             </StackPane>
             <StackPane fx:id="pokerPlayer6" layoutX="1007.0" layoutY="137.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
@@ -1128,75 +1128,83 @@
                         </VBox>
                      </children>
                   </HBox>
-                  <Circle radius="43.0" strokeType="INSIDE" strokeWidth="2.0" StackPane.alignment="CENTER_LEFT">
-                     <fill>
-                        <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
-                           <stops>
-                              <Stop>
-                                 <color>
-                                    <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.006711409395973154">
-                                 <color>
-                                    <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.19102962841708937">
-                                 <color>
-                                    <Color red="0.4117647111415863" green="0.06666667014360428" blue="0.4745098054409027" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.7382550335570469">
-                                 <color>
-                                    <Color red="0.22745098173618317" green="0.0313725508749485" blue="0.47058823704719543" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.9542682926829268">
-                                 <color>
-                                    <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="1.0">
-                                 <color>
-                                    <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
-                                 </color>
-                              </Stop>
-                           </stops>
-                        </RadialGradient>
-                     </fill>
-                     <stroke>
-                        <LinearGradient endX="1.0" endY="1.0">
-                           <stops>
-                              <Stop>
-                                 <color>
-                                    <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.714765100671141">
-                                 <color>
-                                    <Color red="1.0" green="0.9725490212440491" blue="1.0" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.768456375838926">
-                                 <color>
-                                    <Color red="1.0" green="0.9725490212440491" blue="1.0" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="0.9359756097560974">
-                                 <color>
-                                    <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
-                                 </color>
-                              </Stop>
-                              <Stop offset="1.0">
-                                 <color>
-                                    <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
-                                 </color>
-                              </Stop>
-                           </stops>
-                        </LinearGradient>
-                     </stroke>
-                  </Circle>
+                  <StackPane prefHeight="150.0" prefWidth="200.0">
+                     <children>
+                        <Circle radius="43.0" strokeType="INSIDE" strokeWidth="2.0" StackPane.alignment="CENTER_LEFT">
+                           <fill>
+                              <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                                 <stops>
+                                    <Stop>
+                                       <color>
+                                          <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.006711409395973154">
+                                       <color>
+                                          <Color red="0.4000000059604645" green="0.062745101749897" blue="0.4627451002597809" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.19102962841708937">
+                                       <color>
+                                          <Color red="0.4117647111415863" green="0.06666667014360428" blue="0.4745098054409027" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.7382550335570469">
+                                       <color>
+                                          <Color red="0.22745098173618317" green="0.0313725508749485" blue="0.47058823704719543" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.9542682926829268">
+                                       <color>
+                                          <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="1.0">
+                                       <color>
+                                          <Color red="0.125490203499794" green="0.0117647061124444" blue="0.30980393290519714" />
+                                       </color>
+                                    </Stop>
+                                 </stops>
+                              </RadialGradient>
+                           </fill>
+                           <stroke>
+                              <LinearGradient endX="1.0" endY="1.0">
+                                 <stops>
+                                    <Stop>
+                                       <color>
+                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.714765100671141">
+                                       <color>
+                                          <Color red="1.0" green="0.9725490212440491" blue="1.0" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.768456375838926">
+                                       <color>
+                                          <Color red="1.0" green="0.9725490212440491" blue="1.0" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="0.9359756097560974">
+                                       <color>
+                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="1.0">
+                                       <color>
+                                          <Color red="0.8627451062202454" green="0.5490196347236633" blue="0.9960784316062927" />
+                                       </color>
+                                    </Stop>
+                                 </stops>
+                              </LinearGradient>
+                           </stroke>
+                        </Circle>
+                        <ImageView fx:id="imgAvatarProfile6" fitHeight="74.0" fitWidth="128.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT">
+                           <StackPane.margin>
+                              <Insets left="3.0" />
+                           </StackPane.margin></ImageView>
+                     </children>
+                  </StackPane>
                </children>
             </StackPane>
             <HBox layoutX="628.0" layoutY="180.0" prefHeight="41.0" prefWidth="200.0" AnchorPane.bottomAnchor="330.0" AnchorPane.leftAnchor="628.0" AnchorPane.rightAnchor="464.0" AnchorPane.topAnchor="180.0">
