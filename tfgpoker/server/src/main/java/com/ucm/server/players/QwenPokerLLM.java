@@ -220,5 +220,10 @@ public class QwenPokerLLM extends BotLLM {
     @Override public void notifyHandEndsByFolds() {}
     @Override public void notifyOtherPlayerAction(IPokerPlayer p) {}
 
+    @Override
+    public void notifyEquity(double equity) {
+       
+    }
+
     
 }

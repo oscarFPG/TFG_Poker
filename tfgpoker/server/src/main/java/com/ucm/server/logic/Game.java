@@ -3,10 +3,12 @@ package com.ucm.server.logic;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.server.evaluator.Evaluator;
 import com.ucm.server.exceptions.EvaluatorException;
@@ -19,7 +21,7 @@ import com.ucm.server.gameobjects.Deck;
 import com.ucm.server.middleclasses.HandInfo;
 import com.ucm.server.middleclasses.PlayerEvaluation;
 import com.ucm.server.players.HumanPlayer;
-
+import com.ucm.server.statistics.EquityCalculator;
 
 public class Game {
 
@@ -82,6 +84,8 @@ public class Game {
             Card randomCard2 = _deck.takeRandomCard();
             _playerList.shareOutAllCardsFromPlayer(randomCard1, randomCard2);
         }
+
+        updateEquity();
     }
 
     public void addCardToTable() throws CancelGameException {
@@ -103,6 +107,8 @@ public class Game {
                 sb.append(_tableCards[i].toString()).append(" ");
         }
         log.debug("Table cards: {}", sb.toString());
+
+        updateEquity();
     }
 
     public void playHand() throws OnlyOnePlayerLeftException, CancelGameException {
@@ -166,6 +172,18 @@ public class Game {
         }
 
         _tableCardsCounter = 0;
+    }
+
+    private void updateEquity() {
+
+        List<HandInfo> players = _playerList.getPlayerHandsInfo();
+
+        if (players.size() <= 1) return; 
+
+        Map<Integer, Double> equity =
+            EquityCalculator.calculateEquity(players, _tableCards, _deck);
+
+        _playerList.notifyEquityToPlayers(equity);
     }
 
 }

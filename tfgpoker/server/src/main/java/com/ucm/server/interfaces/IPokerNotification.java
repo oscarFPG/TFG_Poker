@@ -31,6 +31,7 @@ public interface IPokerNotification {
 
     public void notifyGameWinner() throws IOException;
     public void notifyGameLoser() throws IOException;
+    public void notifyEquity(double equity);
 
     
 }

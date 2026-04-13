@@ -376,8 +376,9 @@ public class LlamaPokerLLM extends BotLLM {
 
        
         if (m.find()) {
-            return m.group(1) + " " + m.group(2);
+            return "raise " + m.group(1);
         }
+
 
       
         if (action.startsWith("raise")) {
@@ -387,4 +388,8 @@ public class LlamaPokerLLM extends BotLLM {
         return "fold";
     }
 
+    @Override
+    public void notifyEquity(double equity) {
+        
+    }
 }

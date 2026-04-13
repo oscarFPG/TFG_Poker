@@ -85,5 +85,8 @@ public class FakePlayer extends Player {
 
     @Override
     public void notifyOtherPlayerAction(IPokerPlayer p) {}
+    public void notifyEquity(double equity) {
+      
+    }
     
 }

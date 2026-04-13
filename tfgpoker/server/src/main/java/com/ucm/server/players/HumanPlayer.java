@@ -163,5 +163,17 @@ public class HumanPlayer extends Player {
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.HAND_ENDS_BY_FOLD);
     }
 
+    @Override
+    public void notifyEquity(double equity) {
+        try {
+            String equityStr = String.format("%.2f%%", equity * 100);
+            SocketUtils.sendString(_socket.getOutputStream(), equityStr);
+        }
+        catch (IOException e) {
+            log.error("Trying to send the equity value to player {}: {}", _name, e.getMessage());
+        }
+
+    }
+
     
 }
