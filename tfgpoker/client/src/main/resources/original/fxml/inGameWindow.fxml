@@ -51,23 +51,6 @@
                         <Insets left="10.0" top="10.0" />
                      </padding>
                   </HBox>
-                  <HBox alignment="TOP_RIGHT" prefHeight="100.0" prefWidth="1420.0" spacing="5.0" StackPane.alignment="TOP_RIGHT">
-                     <children>
-                        <Label alignment="CENTER" styleClass="bold-general-text-font" text="Id room:">
-                           <font>
-                              <Font size="27.0" />
-                           </font>
-                        </Label>
-                        <Label alignment="CENTER" styleClass="general-text-font">
-                           <font>
-                              <Font size="27.0" />
-                           </font>
-                           <HBox.margin>
-                              <Insets top="4.0" />
-                           </HBox.margin>
-                        </Label>
-                     </children>
-                  </HBox>
                </children>
             </StackPane>
          </children>
@@ -1172,6 +1155,7 @@
                         <Label alignment="CENTER" styleClass="bold-general-text-font" text="TOTAL POT:" />
                      </graphic>
                   </Label>
+                  <Label fx:id="labelTotalPot" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="85.0" styleClass="bold-general-text-font" text="Total pot" />
                </children>
             </HBox>
             <ImageView fx:id="tableCard0" fitHeight="105.0" fitWidth="72.0" layoutX="539.0" layoutY="225.0" pickOnBounds="true" preserveRatio="true" />

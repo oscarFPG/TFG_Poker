@@ -23,6 +23,8 @@ import com.ucm.common.SocketUtils;
 
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -38,94 +40,63 @@ import javafx.util.Duration;
 public class InGameWindowController extends GenericController {
 
 
-    @FXML
-    private Label usernamePlaceHolder;
+    @FXML private Label usernamePlaceHolder;
 
-    @FXML
-    private VBox buttonsHolder;
+    @FXML private VBox buttonsHolder;
 
     /* Call, Raise, Fold and Check buttons */
-    @FXML
-    private Button btnFold;
-    @FXML
-    private Button btnCall;
-    @FXML
-    private Button btnRaise;
+    @FXML private Button btnFold;
+    @FXML private Button btnCall;
+    @FXML private Button btnRaise;
 
     /* Min, 1/2 pot and Max buttons */
-    @FXML
-    private Button btnMinBet, btnHalfBet, btnMaxBet;
+    @FXML private Button btnRound;
+    @FXML private Button btnMinBet, btnHalfBet, btnMaxBet;
 
     /* Money buttons, labels and slider */
-    private int INCREASE_VALUE = 10;
-    @FXML
-    private Label labelMoney;
-    @FXML
-    private Slider sliderMoney;
-    @FXML
-    private Button btnDecreaseMoney;
-    @FXML
-    private Button btnIncreaseMoney;
-
-    @FXML
-    private Button btnRound;
+    @FXML private Label labelMoney;
+    @FXML private Slider sliderMoney;
+    @FXML private Button btnDecreaseMoney;
+    @FXML private Button btnIncreaseMoney;
+    
 
     /* All poker players seats */
-    // Always playing-client seat
-    @FXML
-    private StackPane pokerPlayer0;
-    @FXML
-    private Label playerName0, playerMoney0;
+    @FXML private StackPane pokerPlayer0;           // Always playing-client seat
+    @FXML private Label playerName0, playerMoney0;  // Always playing-client seat
 
-    @FXML
-    private StackPane pokerPlayer1;
-    @FXML
-    private Label playerName1, playerMoney1;
+    @FXML private StackPane pokerPlayer1;
+    @FXML private Label playerName1, playerMoney1;
 
-    @FXML
-    private StackPane pokerPlayer2;
-    @FXML
-    private Label playerName2, playerMoney2;
+    @FXML private StackPane pokerPlayer2;
+    @FXML private Label playerName2, playerMoney2;
 
-    @FXML
-    private StackPane pokerPlayer3;
-    @FXML
-    private Label playerName3, playerMoney3;
+    @FXML private StackPane pokerPlayer3;
+    @FXML private Label playerName3, playerMoney3;
 
-    @FXML
-    private StackPane pokerPlayer4;
-    @FXML
-    private Label playerName4, playerMoney4;
+    @FXML private StackPane pokerPlayer4;
+    @FXML private Label playerName4, playerMoney4;
 
-    @FXML
-    private StackPane pokerPlayer5;
-    @FXML
-    private Label playerName5, playerMoney5;
+    @FXML private StackPane pokerPlayer5;
+    @FXML private Label playerName5, playerMoney5;
 
-    @FXML
-    private StackPane pokerPlayer6;
-    @FXML
-    private Label playerName6, playerMoney6;
+    @FXML private StackPane pokerPlayer6;
+    @FXML private Label playerName6, playerMoney6;
 
-    @FXML
-    private StackPane pokerPlayer7;
-    @FXML
-    private Label playerName7, playerMoney7;
+    @FXML private StackPane pokerPlayer7;
+    @FXML private Label playerName7, playerMoney7;
 
-    @FXML
-    private StackPane pokerPlayer8;
-    @FXML
-    private Label playerName8, playerMoney8;
+    @FXML private StackPane pokerPlayer8;
+    @FXML private Label playerName8, playerMoney8;
 
-    /* Card images */
-    @FXML
-    private ImageView tableCard0, tableCard1, tableCard2, tableCard3, tableCard4;
-
+    /* Table info */
+    @FXML private ImageView tableCard0, tableCard1, tableCard2, tableCard3, tableCard4;
+    @FXML private Label labelTotalPot;
+    private IntegerProperty totalPotProperty = new SimpleIntegerProperty(0);
 
     private Thread _gameThread = null;
     private BlockingQueue<String> _commandQueue = new LinkedBlockingQueue<>();
     private boolean _swapCallToCheck = false;
-    private List<Integer> _playerSeatLabel; // Player id = i -> list[i] = m -> m stackpane label
+    private List<Integer> _playerSeatLabel = null; // Player id = i -> list[i] = m -> m stackpane label
 
 
     @Override
@@ -136,6 +107,7 @@ public class InGameWindowController extends GenericController {
         initializeSlider(_clientInfo.gameConfig);
 
         usernamePlaceHolder.setText( _clientInfo.name );
+        labelTotalPot.textProperty().bind( totalPotProperty.asString() );
 
         _stage.setOnCloseRequest(event -> {
 
@@ -237,7 +209,7 @@ public class InGameWindowController extends GenericController {
 
     @FXML
     private void decreaseMoneyAction() {
-        double newValue = sliderMoney.getValue() - INCREASE_VALUE;
+        double newValue = sliderMoney.getValue() - 10;
         newValue = Math.clamp(newValue, sliderMoney.getMin(), sliderMoney.getMax());
         sliderMoney.setValue(newValue);
     }
@@ -245,13 +217,12 @@ public class InGameWindowController extends GenericController {
     @FXML
     private void increaseMoneyAction() {
         
-        double newValue = sliderMoney.getValue() + INCREASE_VALUE;
+        double newValue = sliderMoney.getValue() + 10;
         newValue = Math.clamp(newValue, sliderMoney.getMin(), sliderMoney.getMax());
         sliderMoney.setValue(newValue);
     }
 
-    
-    
+     
     private boolean pokerGame(String name, Socket socket) {
 
 		int gameStatusCode;
@@ -402,6 +373,7 @@ public class InGameWindowController extends GenericController {
                 final int offBetMoney = SocketUtils.receiveInt(socket.getInputStream());
 				System.out.printf("Forced play as the small blind with %d chips\n", amountSB);
 
+                totalPotProperty.add(amountSB);
                 Platform.runLater(() -> {
                     updatePlayerInfo(0, role, onBetMoney, offBetMoney, false, false);
                 });
@@ -413,6 +385,7 @@ public class InGameWindowController extends GenericController {
                 final int offBetMoney = SocketUtils.receiveInt(socket.getInputStream());
 				System.out.printf("Forced play as the big blind with %d chips\n", amountBB);
 
+                totalPotProperty.add(amountBB);
                 Platform.runLater(() -> {
                     updatePlayerInfo(0, role, onBetMoney, offBetMoney, false, false);
                 });
@@ -660,6 +633,13 @@ public class InGameWindowController extends GenericController {
         while(isLast != GameType.TRUE);
     }
 
+    private String getPlayerMoneyInfo(int onBetMoney, int offBetMoney) {
+        return String.format(
+            "%d - %d", 
+            onBetMoney, offBetMoney
+        );
+    }
+
     private void updatePlayerInfo(int seatID, PlayerRole role, int onBetMoney, int offBetMoney, boolean isFolded, boolean isWinner) {
 
         Label nameLabel = getNameLabelByPosition(seatID);
@@ -678,12 +658,7 @@ public class InGameWindowController extends GenericController {
                 System.out.printf("Player %s is the winner of the hand!\n", nameLabel.getText());
             }
 
-            moneyLabel.setText(
-                String.format(
-                    "%d - %d", 
-                    onBetMoney, offBetMoney
-                )
-            );
+            moneyLabel.setText( getPlayerMoneyInfo(onBetMoney, offBetMoney) );
         });
     }
 
@@ -707,12 +682,7 @@ public class InGameWindowController extends GenericController {
 
         _playerSeatLabel.set(myIndex, 0);
         playerName0.setText( _clientInfo.name );
-        playerMoney0.setText(
-            String.format(
-                "%d - %d",
-                0, _clientInfo.gameConfig._initialMoney
-            )
-        );
+        playerMoney0.setText( getPlayerMoneyInfo(0, _clientInfo.gameConfig._initialMoney) );
         pokerPlayer0.setVisible(true);
 
         // Show players behind me(in the list) : position 1, 2, 3, ...
@@ -728,12 +698,7 @@ public class InGameWindowController extends GenericController {
 
             Platform.runLater(() -> {
                 nameLabel.setText(p.name);
-                moneyLabel.setText(
-                    String.format(
-                        "%d - %d",
-                        0, _clientInfo.gameConfig._initialMoney
-                    )
-                );
+                moneyLabel.setText( getPlayerMoneyInfo(0, _clientInfo.gameConfig._initialMoney) );
                 playerStackPane.setVisible(true);
             });
 
@@ -753,12 +718,7 @@ public class InGameWindowController extends GenericController {
 
             Platform.runLater(() -> {
                 nameLabel.setText(p.name);
-                moneyLabel.setText(
-                    String.format(
-                        "%d - %d",
-                        0,  _clientInfo.gameConfig._initialMoney
-                    )
-                );
+                moneyLabel.setText( getPlayerMoneyInfo(0, _clientInfo.gameConfig._initialMoney) );
                 playerStackPane.setVisible(true);
             });
 

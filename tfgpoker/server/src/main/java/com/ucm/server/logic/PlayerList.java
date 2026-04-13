@@ -289,6 +289,7 @@ public class PlayerList {
         Node pivotPlayer = calculatePivotPlayer(playersRemaining, isPreflop);
         int maxBet = (isPreflop) ? bb : 0;
         int currentBet = maxBet;
+        int totalHand = 0;
 
 
         if(playersRemaining == 1) { // In case only one player can play -> Cannot play alone
