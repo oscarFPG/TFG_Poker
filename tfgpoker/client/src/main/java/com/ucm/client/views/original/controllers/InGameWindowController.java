@@ -18,6 +18,7 @@ import com.ucm.common.PlayerInfo;
 import com.ucm.common.PokerGame;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
+import com.ucm.common.gameobjects.Suit;
 import com.ucm.common.SocketUtils;
 
 import javafx.application.Platform;
@@ -26,6 +27,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -111,6 +114,10 @@ public class InGameWindowController extends GenericController {
     private StackPane pokerPlayer8;
     @FXML
     private Label playerName8, playerMoney8;
+
+    /* Card images */
+    @FXML
+    private ImageView tableCard0, tableCard1, tableCard2, tableCard3, tableCard4;
 
 
     private Thread _gameThread = null;
@@ -278,6 +285,9 @@ public class InGameWindowController extends GenericController {
                     tableCardValues[0] = PokerGame.receiveCard(input);
                     tableCardValues[1] = PokerGame.receiveCard(input);
                     tableCardValues[2] = PokerGame.receiveCard(input);
+                    showTableCard(tableCard0, tableCardValues[0]);
+                    showTableCard(tableCard1, tableCardValues[1]);
+                    showTableCard(tableCard2, tableCardValues[2]);
                     System.out.printf(
                         "table cards: %s %s %s %s %s\n",
                         tableCardValues[0].toString(), 
@@ -757,6 +767,42 @@ public class InGameWindowController extends GenericController {
 
             --nextPosition;
         }
+    }
+
+    private void showTableCard(ImageView imageView, Card card) {
+
+        String path = "images/cards/";
+        String cardValue = (card.getNumber() == 1) ? "ace"
+                        : (card.getNumber() == 2) ? "2"
+                        : (card.getNumber() == 3) ? "3"
+                        : (card.getNumber() == 4) ? "4"
+                        : (card.getNumber() == 5) ? "5"
+                        : (card.getNumber() == 6) ? "6"
+                        : (card.getNumber() == 7) ? "7"
+                        : (card.getNumber() == 8) ? "8"
+                        : (card.getNumber() == 9) ? "9"
+                        : (card.getNumber() == 10) ? "10"
+                        : (card.getNumber() == 11) ? "jack"
+                        : (card.getNumber() == 12) ? "queen"
+                        : (card.getNumber() == 13) ? "king"
+                        : "unknown";
+
+        String cardSuit = (card.getSuit() == Suit.HEARTS) ? "hearts"
+                        : (card.getSuit() == Suit.DIAMONDS) ? "diamonds"
+                        : (card.getSuit() == Suit.CLUBS) ? "clubs"
+                        : (card.getSuit() == Suit.SPADES) ? "spades"
+                        : "unknown";
+
+
+
+        InputStream in = getClass().getClassLoader().getResourceAsStream(  
+            String.format("%s%s_of_%s.png", path, cardValue, cardSuit)
+        );
+        Image cardImage = new Image(in);
+
+        Platform.runLater(() -> {
+            imageView.setImage( cardImage );
+        });
     }
 
     private void clearAllLabels() {
