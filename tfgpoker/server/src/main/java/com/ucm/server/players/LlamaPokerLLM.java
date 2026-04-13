@@ -1,6 +1,7 @@
 package com.ucm.server.players;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -385,6 +386,12 @@ public class LlamaPokerLLM extends BotLLM {
         }
 
         return "fold";
+    }
+
+    @Override
+    public void notifyPlayerState(int id, PlayerRole role, int offBetMoney, int onBetMoney, final boolean last) throws IOException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'notifyPlayerState'");
     }
 
 }

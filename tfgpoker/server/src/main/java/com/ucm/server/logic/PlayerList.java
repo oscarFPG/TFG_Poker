@@ -11,6 +11,7 @@ import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.commands.Command;
 import com.ucm.common.GameType;
+import com.ucm.common.SocketUtils;
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.server.interfaces.IPokerPlayer;
@@ -18,8 +19,6 @@ import com.ucm.server.middleclasses.CommandResult;
 import com.ucm.server.middleclasses.HandInfo;
 import com.ucm.server.middleclasses.PlayerEvaluation;
 import com.ucm.server.middleclasses.PotDistribution;
-
-import opennlp.tools.stemmer.snowball.englishStemmer;
 
 
 public class PlayerList {
@@ -295,6 +294,8 @@ public class PlayerList {
             return;
         }
 
+
+        notifyGameStateToAllPlayers();
         if(isPreflop)
             smallBlindAndBigBlindPlays(sb, bb, playersRemaining);
         notifyWaitExceptTo(playerOnTurn);
@@ -854,6 +855,41 @@ public class PlayerList {
 
             iNode = iNode._next;
         }
+    }
+
+    private void notifyGameStateToAllPlayers() {
+
+        Node target = !_first._player.isEliminated() && !_first._isDisconnected ? _first : getNextPlayerActive(_first);
+        
+        // Send every player state to all players
+        do {
+
+            Node infoPlayer = _first;
+            do {
+
+                IPokerPlayer p = infoPlayer._player;
+                try {
+
+                    final int ID = p.getPlayerId();
+                    final PlayerRole role = p.getRole();
+                    final int offBetMoney = p.getMoneyOffBet();
+                    final int onBetMoney = p.getMoneyOnBet();
+                    final boolean isLast = (infoPlayer._next == _first);
+
+                    target._player.notifyPlayerState(ID, role, offBetMoney, onBetMoney, isLast);
+                }
+                catch(IOException e) {
+                    log.error("Error notifying player state {} to {}", p.getPlayerName(), target._player.getPlayerName());
+                }
+                
+                infoPlayer = infoPlayer._next;
+            }
+            while(infoPlayer != _first);
+
+            target = getNextPlayerActive(target);
+        }
+        while(target != _first);
+
     }
 
     public void notifyGameEnds(final boolean gameEnds) throws CancelGameException {

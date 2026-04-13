@@ -10,11 +10,8 @@ import com.ucm.common.GameType;
 import com.ucm.common.SocketUtils;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
-import com.ucm.server.commands.Command;
 import com.ucm.server.gameobjects.Player;
 import com.ucm.server.interfaces.IPokerPlayer;
-import com.ucm.server.middleclasses.CommandResult;
-
 
 
 public class HumanPlayer extends Player {
@@ -105,7 +102,6 @@ public class HumanPlayer extends Player {
         SocketUtils.sendString(_socket.getOutputStream(), p.getPlayerName());
         SocketUtils.sendInteger(_socket.getOutputStream(), p.getMoneyOffBet());
         SocketUtils.sendInteger(_socket.getOutputStream(), p.getMoneyOnBet());
-        
     }
 
     @Override
@@ -116,6 +112,20 @@ public class HumanPlayer extends Player {
     @Override
     public void notifyTurnPlay() throws IOException {
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_PLAY);
+    }
+
+    @Override
+    public void notifyPlayerState(final int id, final PlayerRole role, final int offBetMoney, final int onBetMoney, final boolean last) throws IOException {
+
+        SocketUtils.sendInteger(_socket.getOutputStream(), id);
+        SocketUtils.sendInteger(_socket.getOutputStream(), role.getNetworkCode());
+        SocketUtils.sendInteger(_socket.getOutputStream(), offBetMoney);
+        SocketUtils.sendInteger(_socket.getOutputStream(), onBetMoney);
+
+        if(last)
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TRUE);
+        else
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.FALSE);
     }
 
     @Override

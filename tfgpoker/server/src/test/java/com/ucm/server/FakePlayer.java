@@ -1,5 +1,6 @@
 package com.ucm.server;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,5 +86,13 @@ public class FakePlayer extends Player {
 
     @Override
     public void notifyOtherPlayerAction(IPokerPlayer p) {}
+
+
+    @Override
+    public void notifyPlayerState(int id, PlayerRole role, int offBetMoney, int onBetMoney, boolean last)
+            throws IOException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'notifyPlayerState'");
+    }
     
 }

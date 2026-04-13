@@ -18,6 +18,7 @@ public interface IPokerNotification {
     public void notifyOtherPlayerAction(IPokerPlayer p) throws IOException;
     public void notifyTurnWait() throws IOException;
     public void notifyTurnPlay() throws IOException;
+    public void notifyPlayerState(final int id, final PlayerRole role, final int offBetMoney, final int onBetMoney, final boolean last) throws IOException;
 
     public void notifyRoundEnded() throws IOException;
     public void notifyHandEnded() throws IOException;

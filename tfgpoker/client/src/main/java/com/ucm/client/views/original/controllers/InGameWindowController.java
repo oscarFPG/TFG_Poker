@@ -155,9 +155,8 @@ public class InGameWindowController extends GenericController {
                     alert.setTitle("Game was cancelled");
                     alert.setHeaderText("All players disconnected");
                     alert.setContentText("You will return to the main menu");
-                    alert.showAndWait();
+                    //alert.showAndWait();
 
-                    next();
                 });
             }
             
@@ -272,7 +271,10 @@ public class InGameWindowController extends GenericController {
                     Platform.runLater(() -> {
                         btnRound.setText("PREFLOP");
                     });
-                    playRound(playerCards[0], playerCards[1], socket);
+                    receivePlayersUpdatedInfo(socket);
+                    playRound(playerCards[0], playerCards[1], role, socket);
+                    
+
                     tableCardValues[0] = PokerGame.receiveCard(input);
                     tableCardValues[1] = PokerGame.receiveCard(input);
                     tableCardValues[2] = PokerGame.receiveCard(input);
@@ -290,7 +292,9 @@ public class InGameWindowController extends GenericController {
                     Platform.runLater(() -> {
                         btnRound.setText("FLOP");
                     });
-                    playRound(playerCards[0], playerCards[1], socket);
+                    receivePlayersUpdatedInfo(socket);
+                    playRound(playerCards[0], playerCards[1], role, socket);
+
                     tableCardValues[3] = PokerGame.receiveCard(input);
                     System.out.printf(
                         "table cards: %s %s %s %s %s\n",
@@ -306,7 +310,9 @@ public class InGameWindowController extends GenericController {
                     Platform.runLater(() -> {
                         btnRound.setText("TURN");
                     });
-                    playRound(playerCards[0], playerCards[1], socket);
+                    receivePlayersUpdatedInfo(socket);
+                    playRound(playerCards[0], playerCards[1], role, socket);
+
                     tableCardValues[4] = PokerGame.receiveCard(input);
                     System.out.printf(
                         "table cards: %s %s %s %s %s\n",
@@ -322,7 +328,8 @@ public class InGameWindowController extends GenericController {
                     Platform.runLater(() -> {
                         btnRound.setText("RIVER");
                     });
-                    playRound(playerCards[0], playerCards[1], socket);
+                    receivePlayersUpdatedInfo(socket);
+                    playRound(playerCards[0], playerCards[1], role, socket);
 
                     // Showdown
                     System.out.printf("-- Showdown --\n");
@@ -393,7 +400,7 @@ public class InGameWindowController extends GenericController {
         return true;
     }
 
-    private void playRound(Card card1, Card card2, Socket socket) 
+    private void playRound(Card card1, Card card2, PlayerRole role, Socket socket) 
     throws OnlyOnePlayerLeftException, CancelGameException, IOException, InterruptedException {
 
         boolean handEndsByFold = false;
@@ -409,13 +416,7 @@ public class InGameWindowController extends GenericController {
 				System.out.printf("Forced play as the small blind with %d chips\n", amountSB);
 
                 Platform.runLater(() -> {
-                    playerName0.setText( _clientInfo.name );
-                    playerMoney0.setText(
-                        String.format(
-                            "%d - %d", 
-                            onBetMoney, offBetMoney
-                        )
-                    );
+                    updatePlayerInfo(0, role, onBetMoney, offBetMoney);
                 });
 			}
 			else if(serverCode == GameType.TURN_FORCED_BB) {
@@ -426,13 +427,7 @@ public class InGameWindowController extends GenericController {
 				System.out.printf("Forced play as the big blind with %d chips\n", amountBB);
 
                 Platform.runLater(() -> {
-                    playerName0.setText( _clientInfo.name );
-                    playerMoney0.setText(
-                        String.format(
-                            "%d - %d", 
-                            onBetMoney, offBetMoney
-                        )
-                    );
+                    updatePlayerInfo(0, role, onBetMoney, offBetMoney);
                 });
 			}
 			else if(serverCode == GameType.TURN_WAIT) {
@@ -467,12 +462,7 @@ public class InGameWindowController extends GenericController {
                     sliderMoney.setMin( (double)maxBet );
                     sliderMoney.setMax( (double)offBetMoney );
 
-                    playerMoney0.setText(
-                        String.format(
-                            "%d - %d", 
-                            onBetMoney, offBetMoney
-                        )
-                    );
+                    updatePlayerInfo(0, role, onBetMoney, offBetMoney);
                 });
 
                 selectCommand(socket, sb, bb, maxBet, offBetMoney, onBetMoney);
@@ -503,12 +493,7 @@ public class InGameWindowController extends GenericController {
 
                 Platform.runLater(() -> {
                     nameLabel.setText( otherPlayerName );
-                    moneyLabel.setText(
-                        String.format(
-                            "%d - %d", 
-                            otherPlayerOnBetMoney, otherPlayerOffBetMoney
-                        )
-                    );
+                    updatePlayerInfo(seatID, null, otherPlayerOnBetMoney, otherPlayerOffBetMoney);
                 });
 
             }
@@ -618,7 +603,7 @@ public class InGameWindowController extends GenericController {
             case 6: return pokerPlayer6;
             case 7: return pokerPlayer7;
             case 8: return pokerPlayer8;
-            default: throw new IllegalArgumentException("Invalid player position");
+            default: throw new IllegalArgumentException( String.format("Invalid player position %d", position) );
         }
     }
 
@@ -633,7 +618,7 @@ public class InGameWindowController extends GenericController {
             case 6: return playerName6;
             case 7: return playerName7;
             case 8: return playerName8;
-            default: throw new IllegalArgumentException("Invalid player position");
+            default: throw new IllegalArgumentException( String.format("Invalid player position %d", position) );
         }
     }
 
@@ -648,8 +633,51 @@ public class InGameWindowController extends GenericController {
             case 6: return playerMoney6;
             case 7: return playerMoney7;
             case 8: return playerMoney8;
-            default: throw new IllegalArgumentException("Invalid player position");
+            default: throw new IllegalArgumentException( String.format("Invalid player position %d", position) );
         }
+    }
+
+    private void receivePlayersUpdatedInfo(Socket socket) throws IOException {
+
+        InputStream input = socket.getInputStream();
+
+        int isLast = 0;
+        do {
+            int playerID = SocketUtils.receiveInt(input);
+            PlayerRole r = PokerGame.receivePlayerRole(input);
+            int offBetMoney = SocketUtils.receiveInt(input);
+            int onBetMoney = SocketUtils.receiveInt(input);
+
+            System.out.printf(
+                "UPDATE - Player ID: %d, Role: %s, Off-Bet Money: %d, On-Bet Money: %d\n", 
+                playerID, r.name(), offBetMoney, onBetMoney
+            );
+
+            Platform.runLater(() -> {
+
+                final int seatID = _playerSeatLabel.get(playerID).intValue();
+                Label nameLabel = getNameLabelByPosition(seatID);
+                Label moneyLabel = getMoneyLabelByPosition(seatID);
+                updatePlayerInfo(seatID, r, onBetMoney, offBetMoney);
+            });
+
+            isLast = SocketUtils.receiveInt(input);
+        }
+        while(isLast != GameType.TRUE);
+    }
+
+    private void updatePlayerInfo(int seatID, PlayerRole role, int onBetMoney, int offBetMoney) {
+
+        Label moneyLabel = getMoneyLabelByPosition(seatID);
+
+        Platform.runLater(() -> {
+            moneyLabel.setText(
+                String.format(
+                    "%d - %d", 
+                    onBetMoney, offBetMoney
+                )
+            );
+        });
     }
 
     private void showPlayers(final List<PlayerInfo> players) {
@@ -670,7 +698,7 @@ public class InGameWindowController extends GenericController {
         for(int i = 0; i < players.size(); i++)
             _playerSeatLabel.add(-1);
 
-        _playerSeatLabel.add(myID, 0);  // L[myID] = 0 -> My id is connected with playerlabel0, stackpane0, etc...
+        _playerSeatLabel.set(myIndex, 0);
         playerName0.setText( _clientInfo.name );
         playerMoney0.setText(
             String.format(
@@ -685,7 +713,7 @@ public class InGameWindowController extends GenericController {
         for(int i = myIndex - 1; 0 <= i; i--) {
 
             PlayerInfo p = players.get(i);
-            _playerSeatLabel.add(p.id, beforePosition);
+            _playerSeatLabel.set(p.id, beforePosition);
 
             Label nameLabel = getNameLabelByPosition(beforePosition);
             Label moneyLabel = getMoneyLabelByPosition(beforePosition);
@@ -696,7 +724,7 @@ public class InGameWindowController extends GenericController {
                 moneyLabel.setText(
                     String.format(
                         "%d - %d",
-                        _clientInfo.gameConfig._initialMoney, 0
+                        0, _clientInfo.gameConfig._initialMoney
                     )
                 );
                 playerStackPane.setVisible(true);
@@ -710,7 +738,7 @@ public class InGameWindowController extends GenericController {
         for(int i = myIndex + 1; i < players.size(); i++) {
 
             PlayerInfo p = players.get(i);
-            _playerSeatLabel.add(p.id, nextPosition);
+            _playerSeatLabel.set(p.id, nextPosition);
 
             Label nameLabel = getNameLabelByPosition(nextPosition);
             Label moneyLabel = getMoneyLabelByPosition(nextPosition);
@@ -721,7 +749,7 @@ public class InGameWindowController extends GenericController {
                 moneyLabel.setText(
                     String.format(
                         "%d - %d",
-                        _clientInfo.gameConfig._initialMoney, 0
+                        0,  _clientInfo.gameConfig._initialMoney
                     )
                 );
                 playerStackPane.setVisible(true);
