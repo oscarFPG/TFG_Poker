@@ -12,6 +12,7 @@ import java.util.stream.IntStream;
 
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
+import com.ucm.client.AvatarGenerator;
 import com.ucm.common.GameConfig;
 import com.ucm.common.GameType;
 import com.ucm.common.PlayerInfo;
@@ -31,6 +32,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
 
 
 public class InGameWindowController extends GenericController {
@@ -121,51 +123,53 @@ public class InGameWindowController extends GenericController {
     @FXML
     private HBox hboxImageCards0;
     @FXML
-    private ImageView imgLeftCard0, imgRightCard0;
+    private ImageView imgLeftCard0, imgRightCard0, imgAvatarProfile0;
 
     @FXML
     private HBox hboxImageCards1;
     @FXML
-    private ImageView imgLeftCard1, imgRightCard1;
+    private ImageView imgLeftCard1, imgRightCard1, imgAvatarProfile1;
 
     @FXML
     private HBox hboxImageCards2;
     @FXML
-    private ImageView imgLeftCard2, imgRightCard2;
+    private ImageView imgLeftCard2, imgRightCard2, imgAvatarProfile2;
 
     @FXML
     private HBox hboxImageCards3;
     @FXML
-    private ImageView imgLeftCard3, imgRightCard3;
+    private ImageView imgLeftCard3, imgRightCard3, imgAvatarProfile3;
 
     @FXML
     private HBox hboxImageCards4;
     @FXML
-    private ImageView imgLeftCard4, imgRightCard4;
+    private ImageView imgLeftCard4, imgRightCard4, imgAvatarProfile4;
 
     @FXML
     private HBox hboxImageCards5;
     @FXML
-    private ImageView imgLeftCard5, imgRightCard5;
+    private ImageView imgLeftCard5, imgRightCard5, imgAvatarProfile5;
 
     @FXML
     private HBox hboxImageCards6;
     @FXML
-    private ImageView imgLeftCard6, imgRightCard6;
+    private ImageView imgLeftCard6, imgRightCard6, imgAvatarProfile6;
 
     @FXML
     private HBox hboxImageCards7;
     @FXML
-    private ImageView imgLeftCard7, imgRightCard7;
+    private ImageView imgLeftCard7, imgRightCard7, imgAvatarProfile7;
 
     @FXML
     private HBox hboxImageCards8;
     @FXML
-    private ImageView imgLeftCard8, imgRightCard8;
+    private ImageView imgLeftCard8, imgRightCard8, imgAvatarProfile8;
 
     private List<HBox> _listImageCards;
 
     private List<ImageView> _listPaintCards;
+
+    private List<ImageView> _listaAvatarProfiles;
 
 
     private Thread _gameThread = null;
@@ -182,6 +186,7 @@ public class InGameWindowController extends GenericController {
         //TODO: cambair cuando haya bots. Tener en cuenta cuando un cliente se sale o hace fold
         initializeImageCards ();
         initializeCardsPosition ();
+        initializeAvatarProfiles ();
         showPlayers(_clientInfo.playerPositions);
         initializeSlider(_clientInfo.gameConfig);
 
@@ -256,6 +261,20 @@ public class InGameWindowController extends GenericController {
 
         Image cardImage = new Image(getClass().getResource(_clientInfo.gameConfig._selectedCard).toExternalForm());
         _listPaintCards.subList(1, _listPaintCards.size()).forEach(iv -> iv.setImage(cardImage));
+    }
+
+    private void initializeAvatarProfiles () {
+        _listaAvatarProfiles = List.of(
+            imgAvatarProfile0,
+            imgAvatarProfile1,
+            imgAvatarProfile2,
+            imgAvatarProfile3,
+            imgAvatarProfile4,
+            imgAvatarProfile5,
+            imgAvatarProfile6,
+            imgAvatarProfile7,
+            imgAvatarProfile8
+        );
     }
 
 
@@ -745,6 +764,16 @@ public class InGameWindowController extends GenericController {
         }
     }
 
+    
+    private void getAvatarPosition (final int position, String name) {
+        ImageView avatarImage = _listaAvatarProfiles.get(position);
+        Image avatar = AvatarGenerator.generate(name, 86);
+        avatarImage.setImage(avatar);
+        Circle clip = new Circle(43,43,43);
+        avatarImage.setClip(clip);
+        avatarImage.setVisible(true);
+    }
+
     private void showPlayers(final List<PlayerInfo> players) {
 
         int myID = _clientInfo.id;
@@ -772,6 +801,7 @@ public class InGameWindowController extends GenericController {
             )
         );
         pokerPlayer0.setVisible(true);
+        getAvatarPosition(0, _clientInfo.name);
 
         // Show players behind me(in the list) : position 1, 2, 3, ...
         int beforePosition = 1;
@@ -784,7 +814,8 @@ public class InGameWindowController extends GenericController {
             Label moneyLabel = getMoneyLabelByPosition(beforePosition);
             StackPane playerStackPane = getPlayerStackPaneByPosition(beforePosition);
             HBox cardsHBox = _listImageCards.get(beforePosition);
-
+            
+            final int pos = beforePosition;
             Platform.runLater(() -> {
                 nameLabel.setText(p.name);
                 moneyLabel.setText(
@@ -795,6 +826,7 @@ public class InGameWindowController extends GenericController {
                 );
                 playerStackPane.setVisible(true);
                 cardsHBox.setVisible(true);
+                getAvatarPosition(pos, p.name);
             });
 
             ++beforePosition;
@@ -811,7 +843,8 @@ public class InGameWindowController extends GenericController {
             Label moneyLabel = getMoneyLabelByPosition(nextPosition);
             StackPane playerStackPane = getPlayerStackPaneByPosition(nextPosition);
             HBox cardsHBox = _listImageCards.get(nextPosition);
-
+            
+            final int pos = nextPosition;
             Platform.runLater(() -> {
                 nameLabel.setText(p.name);
                 moneyLabel.setText(
@@ -822,6 +855,7 @@ public class InGameWindowController extends GenericController {
                 );
                 playerStackPane.setVisible(true);
                 cardsHBox.setVisible(true);
+                getAvatarPosition(pos, p.name);
             });
 
             --nextPosition;

@@ -9,6 +9,7 @@ import java.util.stream.IntStream;
 
 import javax.script.Bindings;
 
+import com.ucm.client.AvatarGenerator;
 import com.ucm.client.ClientInfo;
 import com.ucm.common.GameType;
 import com.ucm.common.PlayerInfo;
@@ -23,6 +24,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Circle;
 
 
 
@@ -67,30 +69,50 @@ public class WaitingGameWindowController extends GenericController {
     // Always the client position
     @FXML
     private Label playerName0, playerMoney0;
+    @FXML
+    private ImageView imgAvatarProfile0;
 
     @FXML
     private Label playerName1, playerMoney1;
+    @FXML
+    private ImageView imgAvatarProfile1;
 
     @FXML
     private Label playerName2, playerMoney2;
+    @FXML
+    private ImageView imgAvatarProfile2;
 
     @FXML
     private Label playerName3, playerMoney3;
+    @FXML
+    private ImageView imgAvatarProfile3;
 
     @FXML
     private Label playerName4, playerMoney4;
+    @FXML
+    private ImageView imgAvatarProfile4;
 
     @FXML
     private Label playerName5, playerMoney5;
+    @FXML
+    private ImageView imgAvatarProfile5;
 
     @FXML
     private Label playerName6, playerMoney6;
+    @FXML
+    private ImageView imgAvatarProfile6;
 
     @FXML
     private Label playerName7, playerMoney7;
+    @FXML
+    private ImageView imgAvatarProfile7;
 
     @FXML
     private Label playerName8, playerMoney8;
+    @FXML
+    private ImageView imgAvatarProfile8;
+
+    private List<ImageView> _listaAvatarProfiles;
 
     @FXML
     private ImageView imgTableInGame;
@@ -116,7 +138,8 @@ public class WaitingGameWindowController extends GenericController {
         playerName0.setText( _clientInfo.name );
         playerMoney0.setText( String.valueOf( _clientInfo.gameConfig._initialMoney ) );
         pokerPlayer0.setOpacity( 1 );
-
+        initializeAvatarProfiles ();
+        getAvatarPosition(0,  _clientInfo.name );
         roomNamePlaceholder.setText( _clientInfo.gameConfig._roomName );
         roomIdPlaceholder.setText( String.valueOf( _clientInfo.gameConfig._roomId ) );
 
@@ -137,6 +160,20 @@ public class WaitingGameWindowController extends GenericController {
             System.out.printf("Cerrado ¿?\n");
         });
 
+    }
+
+    private void initializeAvatarProfiles () {
+        _listaAvatarProfiles = List.of(
+            imgAvatarProfile0,
+            imgAvatarProfile1,
+            imgAvatarProfile2,
+            imgAvatarProfile3,
+            imgAvatarProfile4,
+            imgAvatarProfile5,
+            imgAvatarProfile6,
+            imgAvatarProfile7,
+            imgAvatarProfile8
+        );
     }
 
     private void clearAllLabels() {
@@ -254,6 +291,24 @@ public class WaitingGameWindowController extends GenericController {
         }
     }
 
+    private void getAvatarPosition (final int position, String name) {
+        ImageView avatarImage = _listaAvatarProfiles.get(position);
+        Image avatar = AvatarGenerator.generate(name, 86);
+
+        avatarImage.setImage(avatar);
+        avatarImage.setFitWidth(86);
+        avatarImage.setFitHeight(86);
+        avatarImage.setPreserveRatio(true);
+
+        Circle clip = new Circle();
+        clip.centerXProperty().bind(avatarImage.fitWidthProperty().divide(2));
+        clip.centerYProperty().bind(avatarImage.fitWidthProperty().divide(2));
+        clip.radiusProperty().bind(avatarImage.fitWidthProperty().divide(2));
+
+        avatarImage.setClip(clip);
+        avatarImage.setVisible(true);
+    }
+
     private void showPlayers(final List<PlayerInfo> players) {
 
         int myID = _clientInfo.id;
@@ -277,11 +332,12 @@ public class WaitingGameWindowController extends GenericController {
             Label moneyLabel = getMoneyLabelByPosition(beforePosition);
             StackPane playerStackPane = getPlayerStackPaneByPosition(beforePosition);
             
-
+            final int pos = beforePosition;
             Platform.runLater(() -> {
                 nameLabel.setText(p.name);
                 moneyLabel.setText(String.valueOf(_clientInfo.gameConfig._initialMoney));
                 playerStackPane.setOpacity( 1 );
+                getAvatarPosition(pos, p.name);
             });
 
             ++beforePosition;
@@ -299,10 +355,12 @@ public class WaitingGameWindowController extends GenericController {
             Label moneyLabel = getMoneyLabelByPosition(nextPosition);
             StackPane playerStackPane = getPlayerStackPaneByPosition(nextPosition);
 
+            final int pos = nextPosition;
             Platform.runLater(() -> {
                 nameLabel.setText(p.name);
                 moneyLabel.setText(String.valueOf(_clientInfo.gameConfig._initialMoney));
                 playerStackPane.setOpacity( 1 );
+                getAvatarPosition(pos, p.name);
             });
 
             --nextPosition;
