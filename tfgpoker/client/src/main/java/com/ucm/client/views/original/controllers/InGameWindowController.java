@@ -262,6 +262,8 @@ public class InGameWindowController extends GenericController {
 
                 try {
 
+                    clearTableCards();
+
                     // Player role and cards
                     role = PokerGame.receivePlayerRole(input);
                     playerCards[0] = PokerGame.receiveCard(input);
@@ -281,21 +283,12 @@ public class InGameWindowController extends GenericController {
                     receivePlayersUpdatedInfo(socket);
                     playRound(playerCards[0], playerCards[1], role, socket);
                     
-
                     tableCardValues[0] = PokerGame.receiveCard(input);
                     tableCardValues[1] = PokerGame.receiveCard(input);
                     tableCardValues[2] = PokerGame.receiveCard(input);
                     showTableCard(tableCard0, tableCardValues[0]);
                     showTableCard(tableCard1, tableCardValues[1]);
                     showTableCard(tableCard2, tableCardValues[2]);
-                    System.out.printf(
-                        "table cards: %s %s %s %s %s\n",
-                        tableCardValues[0].toString(), 
-                        tableCardValues[1].toString(),
-                        tableCardValues[2].toString(),
-                        Card.MissingCardToString(),
-                        Card.MissingCardToString()
-                    );
 
                     // Flop
                     System.out.printf("-- Flop --\n");
@@ -306,14 +299,7 @@ public class InGameWindowController extends GenericController {
                     playRound(playerCards[0], playerCards[1], role, socket);
 
                     tableCardValues[3] = PokerGame.receiveCard(input);
-                    System.out.printf(
-                        "table cards: %s %s %s %s %s\n",
-                        tableCardValues[0].toString(), 
-                        tableCardValues[1].toString(),
-                        tableCardValues[2].toString(),
-                        tableCardValues[3].toString(),
-                        Card.MissingCardToString()
-                    );
+                    showTableCard(tableCard3, tableCardValues[3]);
 
                     // Turn
                     System.out.printf("-- Turn --\n");
@@ -324,14 +310,7 @@ public class InGameWindowController extends GenericController {
                     playRound(playerCards[0], playerCards[1], role, socket);
 
                     tableCardValues[4] = PokerGame.receiveCard(input);
-                    System.out.printf(
-                        "table cards: %s %s %s %s %s\n",
-                        tableCardValues[0].toString(), 
-                        tableCardValues[1].toString(),
-                        tableCardValues[2].toString(),
-                        tableCardValues[3].toString(),
-                        tableCardValues[4].toString()
-                    );
+                    showTableCard(tableCard4, tableCardValues[4]);
 
                     // River
                     System.out.printf("-- River --\n");
@@ -817,6 +796,17 @@ public class InGameWindowController extends GenericController {
             nameLabel.setText("");
             moneyLabel.setText("");
         }
+    }
+
+    private void clearTableCards() {
+
+        Platform.runLater(() -> {
+            tableCard0.setImage(null);
+            tableCard1.setImage(null);
+            tableCard2.setImage(null);
+            tableCard3.setImage(null);
+            tableCard4.setImage(null);
+        });
     }
 
 }
