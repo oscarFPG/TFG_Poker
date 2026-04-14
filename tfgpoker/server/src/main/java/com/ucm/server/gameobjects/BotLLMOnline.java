@@ -71,14 +71,12 @@ public abstract class BotLLMOnline extends BotLLM {
     protected int bigBlind;
 
     /**
-     * Player's current role/position.
-     */
-    protected PlayerRole role;
-
-    /**
      * Estimated probability of winning the hand.
      */
     protected double equity;
+
+
+    public BotLLMOnline() {}
 
     /**
      * Constructs an online LLM bot.
@@ -181,7 +179,7 @@ public abstract class BotLLMOnline extends BotLLM {
             <action>check</action>
             <action>raise AMOUNT</action>
             """,
-                mapRole(role),
+                mapRole(_role),
                 formatCards(hand),
                 table.isEmpty() ? "[]" : formatCards(table),
                 money,
@@ -318,7 +316,7 @@ public abstract class BotLLMOnline extends BotLLM {
     @Override public void notifyBigBlindBet(int amount) { bigBlind = amount; }
 
     /** @param role player's role */
-    @Override public void notifyPlayerRole(PlayerRole role) { this.role = role; }
+    @Override public void notifyPlayerRole(PlayerRole role) { this._role = role; }
 
     /**
      * Registers an action performed by another player.

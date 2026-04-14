@@ -10,8 +10,45 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
 public class AvatarGenerator {
+
+    public static Image generateHuman (String see, int size) {
+        return generate(see, size);
+    }
+
+    public static Image generateBot(AvatarType type, int size) {
+        switch (type) {
+            case GEMINI_BOT:
+                return generateBotAvatar("GEMINI_BOT", size, Color.web("#7B61FF"));
+            case LLAMA_BOT:
+                return generateBotAvatar("LLAMA_BOT", size, Color.web("#1417dd"));
+            default:
+                throw new IllegalArgumentException("Unsupported avatar type");
+        }
+    }
+
+    private static Image generateBotAvatar(String seed, int size, Color mainColor) {
+
+        Canvas canvas = new Canvas(size, size);
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+
+        gc.setFill(mainColor);
+        gc.fillRect(0, 0, size, size);
+
+        // Visera tipo robot
+        gc.setFill(Color.rgb(0, 0, 0, 0.25));
+        gc.fillRect(size * 0.1, size * 0.3, size * 0.8, size * 0.25);
+
+        // Ojos LED
+        gc.setFill(Color.CYAN);
+        gc.fillOval(size * 0.3, size * 0.37, size * 0.1, size * 0.1);
+        gc.fillOval(size * 0.6, size * 0.37, size * 0.1, size * 0.1);
+
+        WritableImage image = new WritableImage(size, size);
+        canvas.snapshot(null, image);
+        return image;
+    }
     
-    public static Image generate(String seed, int size) {
+    private static Image generate(String seed, int size) {
 
         Canvas canvas = new Canvas(size, size);
         GraphicsContext gc = canvas.getGraphicsContext2D();

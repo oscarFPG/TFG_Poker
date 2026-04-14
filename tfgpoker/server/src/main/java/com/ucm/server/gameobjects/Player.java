@@ -127,23 +127,6 @@ public abstract class Player implements IPokerPlayer {
         _isEliminated = false;
     }
 
-
-    public abstract String actionMakePlay(int sb, int bb, int maxBet) throws IOException;
-
-    public abstract void notifySmallBlindBet(final int amount) throws IOException;
-    public abstract void notifyBigBlindBet(final int amount) throws IOException;
-    public abstract void notifyTurnWait() throws IOException;
-    public abstract void notifyTurnPlay() throws IOException;
-    public abstract void notifyRoundEnded() throws IOException;
-    public abstract void notifyHandEnded() throws IOException;
-    public abstract void notifyGameEnded() throws IOException;
-    public abstract void notifyGameKeeps() throws IOException;
-    public abstract void notifyHandWinner() throws IOException;
-    public abstract void notifyHandLoser() throws IOException;
-    public abstract void notifyGameWinner() throws IOException;
-    public abstract void notifyGameLoser() throws IOException;
-    public abstract void notifyHandEndsByFolds() throws IOException;
-
     /**
      * Notifies the player about their current equity.
      * 

@@ -27,7 +27,6 @@ public class GameConfig {
     */
     public int _numBots1 = DEFAULT_NUM_BOTS;
     public int _numBots2 = DEFAULT_NUM_BOTS;
-    public int _numBots3 = DEFAULT_NUM_BOTS;
     /**
      * Variables para crear partida: Add players
     */
@@ -40,8 +39,6 @@ public class GameConfig {
      * Variables para crear partida: Add tables
     */
     public String _selectedCard = null;
-
-    public int _totalNumPlayers = _numPlayers + _numBots1 + _numBots2;
 
     public GameConfig() {}
 
@@ -57,9 +54,7 @@ public class GameConfig {
         _hikePercentage = (other._hikePercentage != null) ? String.copyValueOf(other._hikePercentage.toCharArray()) : null;
         _numBots1 = other._numBots1;
         _numBots2 = other._numBots2;
-        _numBots3 = other._numBots3;
         _numPlayers = other._numPlayers;
-        _totalNumPlayers = other._totalNumPlayers;
         _selectedTable = (other._selectedTable != null) ? String.copyValueOf(other._selectedTable.toCharArray()) : null;
         _selectedCard = (other._selectedCard != null) ? String.copyValueOf(other._selectedCard.toCharArray()) : null;
     }
@@ -78,10 +73,13 @@ public class GameConfig {
         _hikePercentage = DEFAULT_HIKE_PERCENTAGE;
         _numBots1 = DEFAULT_NUM_BOTS;
         _numBots2 = DEFAULT_NUM_BOTS;
-        _numBots3 = DEFAULT_NUM_BOTS;
         _numPlayers = DEFAULT_NUM_PLAYERS;
         _selectedTable = null;
         _selectedCard = null;
+    }
+
+    public int getTotalPlayers() {
+        return _numPlayers + _numBots1 + _numBots2;
     }
 
 }

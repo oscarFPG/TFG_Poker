@@ -8,6 +8,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.ServerMain;
 
 
@@ -28,6 +29,7 @@ public class GeminiTest {
             String key = json.get("GEMINI_API_KEY");
             
             GeminiLLM geminiLLM = new GeminiLLM(0, 1000, key);
+            geminiLLM.receiveRole(PlayerRole.DEALER);
             String response = geminiLLM.actionMakePlay(0, 0, 0);
 
             System.out.printf("Gemini response: %s\n", response);

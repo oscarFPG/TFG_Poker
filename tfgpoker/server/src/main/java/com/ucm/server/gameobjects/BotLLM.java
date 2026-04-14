@@ -54,54 +54,7 @@ public abstract class BotLLM extends Bot {
         _apiKey = apiKey;
     }
 
-    /**
-     * Determines the action to take during the player's turn.
-     * 
-     * @param sb     small blind amount
-     * @param bb     big blind amount
-     * @param maxBet current maximum bet
-     * @return {@link String} representing the chosen action
-     */
-    public abstract String actionMakePlay(int sb, int bb, int maxBet);
-
-    /** @param amount small blind amount */
-    public abstract void notifySmallBlindBet(final int amount);
-
-    /** @param amount big blind amount */
-    public abstract void notifyBigBlindBet(final int amount);
-
-    /** Notifies that the player must wait for their turn */
-    public abstract void notifyTurnWait();
-
-    /** Notifies that it is the player's turn to act */
-    public abstract void notifyTurnPlay();
-
-    /** Notifies that a betting round has ended */
-    public abstract void notifyRoundEnded();
-
-    /** Notifies that a hand has ended */
-    public abstract void notifyHandEnded();
-
-    /** Notifies that the game has ended */
-    public abstract void notifyGameEnded();
-
-    /** Notifies that the game continues */
-    public abstract void notifyGameKeeps();
-
-    /** Notifies that the player has won the hand */
-    public abstract void notifyHandWinner();
-
-    /** Notifies that the player has lost the hand */
-    public abstract void notifyHandLoser();
-
-    /** Notifies that the player has won the game */
-    public abstract void notifyGameWinner();
-
-    /** Notifies that the player has lost the game */
-    public abstract void notifyGameLoser();
-
-    /** Notifies that the hand ended due to folds */
-    public abstract void notifyHandEndsByFolds();
+    
 
     /**
      * Notifies the bot about an action performed by another player.
@@ -111,4 +64,5 @@ public abstract class BotLLM extends Bot {
      * @param amount amount associated with the action (if applicable)
      */
     public abstract void notifyPlayerAction(PlayerRole role, String action, double amount);
+
 }

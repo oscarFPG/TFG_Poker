@@ -1,8 +1,10 @@
 package com.ucm.server.players;
 
+import com.ucm.common.GameType;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.commands.Command;
+import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.gameobjects.BotLLM;
 import com.ucm.server.gameobjects.Player;
 import com.ucm.server.interfaces.IPokerPlayer;
@@ -45,6 +47,11 @@ public class GeminiLLM extends BotLLMOnline {
      */
     private ChatModel gemini;
 
+
+    public GeminiLLM() {
+        this._idBot = GameType.BOT_GEMINI;
+    }
+
     /**
      * Constructs a Gemini-based LLM bot.
      * 
@@ -58,6 +65,7 @@ public class GeminiLLM extends BotLLMOnline {
      */
     public GeminiLLM(int id, int money, String apiKey) {
         super(id, "GeminiLLM", money, apiKey);
+        this._idBot = GameType.BOT_GEMINI;
 
         if (apiKey == null) {
             apiKey = loadApiKey();
@@ -67,16 +75,6 @@ public class GeminiLLM extends BotLLMOnline {
                 .apiKey(apiKey)
                 .modelName("gemini-2.5-flash")
                 .build();
-    }
-
-    /**
-     * Constructs a Gemini bot using the API key from configuration.
-     * 
-     * @param id    player identifier
-     * @param money initial stack
-     */
-    public GeminiLLM(int id, int money) {
-        this(id, money, null);
     }
 
     /**
@@ -139,11 +137,16 @@ public class GeminiLLM extends BotLLMOnline {
 
     @Override
     public void notifyPlayerAction(PlayerRole role, String action, double amount) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyPlayerAction'");
     }
 
+    @Override
+    public void notifyOtherPlayerAction(IPokerPlayer p) {}
 
-    @Override public void notifyOtherPlayerAction(IPokerPlayer p) {}
+	@Override
+	public Bot create(int ID, int initialMoney) {
+
+        String key = loadApiKey();
+		return new GeminiLLM(ID, initialMoney, key);
+	}
     
 }

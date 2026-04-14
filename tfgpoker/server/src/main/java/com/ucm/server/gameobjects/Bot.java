@@ -26,6 +26,8 @@ package com.ucm.server.gameobjects;
  */
 public abstract class Bot extends Player {
 
+    protected int _idBot;
+
     /**
      * Default constructor.
      */
@@ -60,6 +62,10 @@ public abstract class Bot extends Player {
      */
     public abstract String getDescription();
     
+    public int getIdBot() {
+        return this._idBot;
+    }
+
     /**
      * Determines the action to take during the player's turn.
      * 
@@ -108,4 +114,9 @@ public abstract class Bot extends Player {
 
     /** Notifies that the hand ended due to folds */
     public abstract void notifyHandEndsByFolds();
+
+    /** 
+     * Creates a specific instance of any kind of bot implementation with and ID and initial money
+    */
+    public abstract Bot create(final int ID, final int initialMoney);
 }

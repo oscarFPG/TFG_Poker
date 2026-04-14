@@ -59,7 +59,7 @@ public class AddPlayersCreateGameWindowController extends GenericController  {
     }
 
     private int getMaxRemainingPlayers() {
-        int totalBots = _clientInfo.gameConfig._numBots1 + _clientInfo.gameConfig._numBots2 + _clientInfo.gameConfig._numBots3;
+        int totalBots = _clientInfo.gameConfig._numBots1 + _clientInfo.gameConfig._numBots2;
         return MAX_NUM_PLAYERS - totalBots;
     }
 

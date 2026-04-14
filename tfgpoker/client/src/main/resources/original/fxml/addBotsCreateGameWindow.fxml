@@ -159,7 +159,7 @@
                                     </HBox>
                                        </children>
                                     </VBox>
-                              <Button fx:id="cardInfoIconBot2" alignment="CENTER" mnemonicParsing="false" onAction="#flipCardBot2" prefWidth="48.0" textAlignment="CENTER" StackPane.alignment="TOP_RIGHT">
+                              <Button id="cardInfoIcon" fx:id="cardInfoIconBot2" alignment="CENTER" mnemonicParsing="false" onAction="#flipCardBot2" prefWidth="48.0" textAlignment="CENTER" StackPane.alignment="TOP_RIGHT">
                                  <opaqueInsets>
                                     <Insets />
                                  </opaqueInsets>

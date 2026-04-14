@@ -8,20 +8,24 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
-import com.ucm.common.gameobjects.Card;
-import com.ucm.server.evaluator.Evaluator;
-import com.ucm.server.exceptions.EvaluatorException;
+import com.ucm.common.BotStruct;
 import com.ucm.common.ClientStruct;
 import com.ucm.common.GameConfig;
 import com.ucm.common.GameInfo;
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
+import com.ucm.common.gameobjects.Card;
+import com.ucm.server.evaluator.Evaluator;
+import com.ucm.server.exceptions.EvaluatorException;
 import com.ucm.server.gameobjects.Deck;
 import com.ucm.server.middleclasses.HandInfo;
 import com.ucm.server.middleclasses.PlayerEvaluation;
+import com.ucm.server.gameobjects.Bot;
+import com.ucm.server.players.GeminiLLM;
 import com.ucm.server.players.HumanPlayer;
 import com.ucm.server.statistics.EquityCalculator;
+import com.ucm.server.managers.BotManager;
+
 
 public class Game {
 
@@ -55,8 +59,9 @@ public class Game {
         _currentSB = _initialSmallBlind;
         _currentBB = _initialBigBlind;
 
-        _playerList = new PlayerList(_gameConfig._totalNumPlayers + 1);
-        addPlayerInitial(gameInfo);
+        _playerList = new PlayerList(_gameConfig.getTotalPlayers());
+        addPlayersInitial(gameInfo);
+
         _deck = new Deck();
         _tableCards = new Card[MAX_CARDS_IN_TABLE];
         _tableCardsCounter = 0;
@@ -155,13 +160,20 @@ public class Game {
     }
 
     
-    private void addPlayerInitial(GameInfo gameInfo) {
+    private void addPlayersInitial(GameInfo gameInfo) {
 
         int id = 0;
         for(ClientStruct cs : gameInfo.players) {
-            _playerList.addPlayer( new HumanPlayer(id, cs.name(), cs.socket(), gameInfo.gameConfig._initialMoney));
+            _playerList.addPlayer( new HumanPlayer(id, cs.name(), cs.socket(), gameInfo.gameConfig._initialMoney) );
             ++id;
         }
+
+        for(BotStruct bs : gameInfo.bots) {
+            Bot bot = BotManager.createBot( bs.idBot() );
+            Bot specificBot = bot.create(id, gameInfo.gameConfig._initialMoney);
+            _playerList.addPlayer(specificBot);
+        }
+        
     }
 
     private void retrieveCardsFromTable() {

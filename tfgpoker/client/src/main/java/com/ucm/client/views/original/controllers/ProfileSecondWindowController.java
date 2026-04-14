@@ -46,7 +46,7 @@ public class ProfileSecondWindowController extends GenericController {
             else {
                 btnSave.setDisable(false);
                 _clientInfo.onNameChanged(newValue.trim());
-                imgAvatarProfile.setImage(_clientInfo.getAvatar(140));
+                imgAvatarProfile.setImage(_clientInfo.getAvatar(_clientInfo.name,140));
             }
         });
     }

@@ -186,7 +186,7 @@ public class InGameWindowController extends GenericController {
 
         clearAllLabels();
         imgTableInGame.setImage(new Image(getClass().getResource(_clientInfo.gameConfig._selectedTable).toExternalForm()));
-        imgAvatarProfile.setImage(_clientInfo.getAvatar(64));
+        imgAvatarProfile.setImage(_clientInfo.getAvatar(_clientInfo.name,64));
         //TODO: cambair cuando haya bots. Tener en cuenta cuando un cliente se sale o hace fold
         initializeImageCards ();
         initializeCardsPosition ();
@@ -351,8 +351,6 @@ public class InGameWindowController extends GenericController {
         newValue = Math.clamp(newValue, sliderMoney.getMin(), sliderMoney.getMax());
         sliderMoney.setValue(newValue);
     }
-
-    
     
     private boolean pokerGame(String name, Socket socket) {
 
@@ -771,7 +769,7 @@ public class InGameWindowController extends GenericController {
     
     private void getAvatarPosition (final int position, String name) {
         ImageView avatarImage = _listaAvatarProfiles.get(position);
-        Image avatar = AvatarGenerator.generate(name, 80);
+        Image avatar = _clientInfo.getAvatar(name, 80);
 
         avatarImage.setImage(avatar);
         avatarImage.setFitWidth(80);

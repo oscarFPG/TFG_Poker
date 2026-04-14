@@ -143,7 +143,7 @@ public class AddCardsCreateGameWindowController extends GenericController {
     }
 
     private int totalPlayers() {
-        return _clientInfo.gameConfig._numPlayers +  _clientInfo.gameConfig._numBots1 + _clientInfo.gameConfig._numBots2 + _clientInfo.gameConfig._numBots3;
+        return _clientInfo.gameConfig._numPlayers +  _clientInfo.gameConfig._numBots1 + _clientInfo.gameConfig._numBots2;
     }
 
     private void showNotEnoughPlayers() {

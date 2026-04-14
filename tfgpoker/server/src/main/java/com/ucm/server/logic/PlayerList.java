@@ -20,8 +20,8 @@ import com.ucm.server.middleclasses.CommandResult;
 import com.ucm.server.middleclasses.HandInfo;
 import com.ucm.server.middleclasses.PlayerEvaluation;
 import com.ucm.server.middleclasses.PotDistribution;
-
-import opennlp.tools.stemmer.snowball.englishStemmer;
+import com.ucm.server.managers.BotManager;
+import com.ucm.server.managers.PotManager;
 
 
 public class PlayerList {

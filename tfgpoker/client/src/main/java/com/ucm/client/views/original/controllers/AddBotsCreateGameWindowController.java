@@ -73,6 +73,8 @@ public class AddBotsCreateGameWindowController extends GenericController {
         boolean allowBots = _clientInfo.gameConfig._allowBots;
         spinnerBot1.setDisable(!allowBots);
         spinnerBot2.setDisable(!allowBots);
+        cardBackBot1.setVisible(false);
+        cardBackBot2.setVisible(false);
         if(!allowBots) {
             valueFactoryBot1.setValue(0);
             valueFactoryBot2.setValue(0);
@@ -107,21 +109,21 @@ public class AddBotsCreateGameWindowController extends GenericController {
 
         if (!isFlippedBot1) {
 
-            RotateTransition first = new RotateTransition(Duration.millis(200), cardFrontBot1);
+            RotateTransition first = new RotateTransition(Duration.millis(350), cardFrontBot1);
             first.setFromAngle(0);
             first.setToAngle(90);
             first.setAxis(Rotate.Y_AXIS);
+            first.setInterpolator(javafx.animation.Interpolator.EASE_IN);
 
             RotateTransition second = new RotateTransition(Duration.millis(200), cardBackBot1);
             second.setFromAngle(-90);
             second.setToAngle(0);
             second.setAxis(Rotate.Y_AXIS);
+            first.setInterpolator(javafx.animation.Interpolator.EASE_OUT);
 
             first.setOnFinished(e -> {
                 cardFrontBot1.setVisible(false);
-                cardFrontBot1.setOpacity(0);
                 cardBackBot1.setVisible(true);
-                cardBackBot1.setOpacity(1);
                 second.play();
             });
 
@@ -143,9 +145,7 @@ public class AddBotsCreateGameWindowController extends GenericController {
 
             first.setOnFinished(e -> {
                 cardBackBot1.setVisible(false);
-                cardBackBot1.setOpacity(0);
                 cardFrontBot1.setVisible(true);
-                cardFrontBot1.setOpacity(1);
                 second.play();
             });
 
@@ -160,15 +160,17 @@ public class AddBotsCreateGameWindowController extends GenericController {
 
         if (!isFlippedBot2) {
 
-            RotateTransition first = new RotateTransition(Duration.millis(200), cardFrontBot2);
+            RotateTransition first = new RotateTransition(Duration.millis(350), cardFrontBot2);
             first.setFromAngle(0);
             first.setToAngle(90);
             first.setAxis(Rotate.Y_AXIS);
+            first.setInterpolator(javafx.animation.Interpolator.EASE_IN);
 
             RotateTransition second = new RotateTransition(Duration.millis(200), cardBackBot2);
             second.setFromAngle(-90);
             second.setToAngle(0);
             second.setAxis(Rotate.Y_AXIS);
+            first.setInterpolator(javafx.animation.Interpolator.EASE_OUT);
 
             first.setOnFinished(e -> {
                 cardFrontBot2.setVisible(false);
@@ -180,15 +182,17 @@ public class AddBotsCreateGameWindowController extends GenericController {
 
         } else {
 
-            RotateTransition first = new RotateTransition(Duration.millis(200), cardBackBot2);
+            RotateTransition first = new RotateTransition(Duration.millis(350), cardBackBot2);
             first.setFromAngle(0);
             first.setToAngle(90);
             first.setAxis(Rotate.Y_AXIS);
+            first.setInterpolator(javafx.animation.Interpolator.EASE_IN);
 
             RotateTransition second = new RotateTransition(Duration.millis(200), cardFrontBot2);
             second.setFromAngle(-90);
             second.setToAngle(0);
             second.setAxis(Rotate.Y_AXIS);
+            first.setInterpolator(javafx.animation.Interpolator.EASE_OUT);
 
             first.setOnFinished(e -> {
                 cardBackBot2.setVisible(false);

@@ -218,7 +218,10 @@ public class WaitingGameWindowController extends GenericController {
                 if(event == GameType.EVENT_PLAYER_JOINED) {
 
                     _clientInfo.playerPositions = PokerPreGame.receivePlayerListWaiting(input, output);
-                    showPlayers(_clientInfo.playerPositions);
+                    Platform.runLater(() ->
+                        showPlayers(_clientInfo.playerPositions)
+                    );
+                    
                 }
                 else if(event == GameType.CONFIRMATION_GAME_STARTS) {
                     System.out.printf("Event GAME_STARTS!\n");
@@ -293,7 +296,7 @@ public class WaitingGameWindowController extends GenericController {
 
     private void getAvatarPosition (final int position, String name) {
         ImageView avatarImage = _listaAvatarProfiles.get(position);
-        Image avatar = AvatarGenerator.generate(name, 80);
+        Image avatar = _clientInfo.getAvatar(name, 80);
 
         avatarImage.setImage(avatar);
         avatarImage.setFitWidth(80);
@@ -341,7 +344,6 @@ public class WaitingGameWindowController extends GenericController {
             });
 
             ++beforePosition;
-
 
         }
 
