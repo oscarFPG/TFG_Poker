@@ -14,9 +14,7 @@ import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.commands.Command;
 import com.ucm.common.GameType;
-import com.ucm.common.SocketUtils;
 import com.ucm.common.exceptions.CancelGameException;
-import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.server.interfaces.IPokerPlayer;
 import com.ucm.server.middleclasses.CommandResult;
 import com.ucm.server.middleclasses.HandInfo;
@@ -255,26 +253,14 @@ public class PlayerList implements Iterable<Node> {
             }
 
 
-            Command command = askCommandToPlayer(playerOnTurn._player, sb, bb, maxBet);
-            if(command == null) {
-
-                log.debug("Something happened with player {} : Disconnecting player and making FOLD instead", playerOnTurn._player.getPlayerName());
-                playerOnTurn._isDisconnected = true;
-                if( checkIfGameCancel() ) {
-                    throw new CancelGameException();
-                }
-                else {
-                    command = Command.parseCommand(new String[] {GameType.FOLD_ACTION_FULL}, playerOnTurn._player);
-                }
-            }
-
+            Command command = askCommandToPlayer(playerOnTurn, sb, bb, maxBet);
             CommandResult result = command.execute(sb, bb, maxBet);
             notifyOtherPlayerActionToAllPlayers(playerOnTurn._player);
 
             totalPot = calculateTotalPot();
             notifyTotalPotToAllPlayers(totalPot);
 
-            if(result.folds()) {
+            if( result.folds() ) {
                 --playersRemaining; 
                 if (playersRemaining == 1) {
                     updateHandState();
@@ -299,13 +285,13 @@ public class PlayerList implements Iterable<Node> {
         notifyRoundEnded();
     }
 
-    private Command askCommandToPlayer(IPokerPlayer player, final int sb, final int bb, final int maxBet) throws CancelGameException {
+    private Command askCommandToPlayer(Node node, final int sb, final int bb, final int maxBet) throws CancelGameException {
 
-        log.debug("It's is {} turn to play", player.getPlayerName());
-
+        IPokerPlayer player = node._player;
         Command command = null;
         try {
 
+            log.debug("It's is {} turn to play", player.getPlayerName());
             while (command == null) {
 
                 player.notifyTurnPlay();
@@ -321,6 +307,12 @@ public class PlayerList implements Iterable<Node> {
         }
         catch (IOException e) {
             log.error("Error happened waiting for player {} : {}", player.getPlayerName(), e.getMessage());
+
+            node._isDisconnected = true;
+            if( checkIfGameCancel() )
+                throw new CancelGameException();
+            else
+                command = Command.parseCommand(new String[] {GameType.FOLD_ACTION_FULL}, player);
         }
 
         return command;
@@ -751,8 +743,10 @@ public class PlayerList implements Iterable<Node> {
                     targetPlayer._player.notifyPlayerState(infoPlayer._player, isLast);
                 }
                 catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    
+                    targetPlayer._isDisconnected = true;
+                    if( checkIfGameCancel() )
+                        throw new CancelGameException();
                 }
             }
         }

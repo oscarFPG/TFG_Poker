@@ -22,6 +22,7 @@ import com.ucm.common.BotStruct;
 import com.ucm.common.ClientStruct;
 import com.ucm.common.GameConfig;
 import com.ucm.common.GameType;
+import com.ucm.common.SocketUtils;
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.server.control.Controller;
 import com.ucm.server.exceptions.EvaluatorException;
@@ -96,9 +97,8 @@ public class ServerTCP {
         }
         catch(CancelGameException e) {
 
-            /*
             log.debug("Game cancelled by server: {}", e.getMessage());
-            for(ClientStruct cs : info.players) {
+            for(ClientStruct cs : players) {
                 try {
                     SocketUtils.sendInteger(cs.socket().getOutputStream(), GameType.ERROR_GAME_CANCELS);
                 }
@@ -106,10 +106,10 @@ public class ServerTCP {
                     log.warn("Minor error trying to notify player {} about game cancellation: {}", cs.name(), ex.getMessage());
                 }
             }
-            */
+        
         }
         finally {
-            //cleanUp(info);
+            cleanUp(players);
         }
 
     }
@@ -149,12 +149,12 @@ public class ServerTCP {
         return serverIP;
     }
 
-    /*
-    private void cleanUp(final GameInfo info) {
+    
+    private void cleanUp(final List<ClientStruct> players) {
 
         log.debug("Cleaning up server resources...");
 
-        for(ClientStruct cs : info.players) {
+        for(ClientStruct cs : players) {
             try {
                 if (cs.socket().isConnected() || !cs.socket().isClosed()) {
                     cs.socket().close();
@@ -179,6 +179,5 @@ public class ServerTCP {
         _executor.shutdownNow();
         log.debug("Executor service shutdown!");
     }
-    */
 
 }

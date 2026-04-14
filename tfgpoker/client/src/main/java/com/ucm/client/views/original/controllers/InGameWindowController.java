@@ -154,6 +154,8 @@ public class InGameWindowController extends GenericController {
     private List<ImageView> _listaAvatarProfiles;
 
 
+    private boolean _userCloses = false;
+
     private Thread _gameThread = null;
     private BlockingQueue<String> _commandQueue = new LinkedBlockingQueue<>();
     private boolean _swapCallToCheck = false;
@@ -179,6 +181,8 @@ public class InGameWindowController extends GenericController {
         _stage.setOnCloseRequest(event -> {
 
             try {
+
+                _userCloses = true;
                 if(_clientInfo.socket != null && !_clientInfo.socket.isClosed())
                     _clientInfo.socket.close();
 
@@ -192,7 +196,7 @@ public class InGameWindowController extends GenericController {
 
         _gameThread = new Thread(() -> {
 
-            final boolean ok = pokerGame(_clientInfo.name, _clientInfo.socket);
+            boolean ok = pokerGame(_clientInfo.name, _clientInfo.socket);
             if(ok) {
                 System.out.printf("All OK! Game finished!\n");
                 Platform.runLater(() -> {
@@ -201,8 +205,11 @@ public class InGameWindowController extends GenericController {
                     alert.setTitle("Game finished");
                     alert.setHeaderText("The game has finished successfully!");
                     alert.setContentText("You will return to the main menu");
-                    //alert.showAndWait();
+                    alert.getDialogPane().getStylesheets().add(getClass().getResource("/original/css/style.css").toExternalForm());
+                    alert.getDialogPane().getStyleClass().add("custom-alert");
+                    alert.showAndWait();
 
+                    next();
                 });
             }
             else {
@@ -212,8 +219,11 @@ public class InGameWindowController extends GenericController {
                     alert.setTitle("Game was cancelled");
                     alert.setHeaderText("All players disconnected");
                     alert.setContentText("You will return to the main menu");
-                    //alert.showAndWait();
+                    alert.getDialogPane().getStylesheets().add(getClass().getResource("/original/css/style.css").toExternalForm());
+                    alert.getDialogPane().getStyleClass().add("custom-alert");
+                    alert.showAndWait();
 
+                    next();
                 });
             }
             
@@ -460,8 +470,14 @@ public class InGameWindowController extends GenericController {
             }
         }
         catch(IOException e) {
-            System.out.printf("Error on client socket: %s\n", e.getMessage());
-            return false;
+
+            if(_userCloses) {
+                return true;
+            }
+            else {
+                System.out.printf("Error on client socket: %s\n", e.getMessage());
+                return false;
+            }
         }
         catch(CancelGameException e) {
             System.out.printf("Game cancelled by server: %s\n", e.getMessage());
