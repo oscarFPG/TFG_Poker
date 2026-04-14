@@ -1192,12 +1192,11 @@
             </StackPane>
             <HBox layoutX="628.0" layoutY="180.0" prefHeight="41.0" prefWidth="200.0" AnchorPane.bottomAnchor="330.0" AnchorPane.leftAnchor="628.0" AnchorPane.rightAnchor="464.0" AnchorPane.topAnchor="180.0">
                <children>
-                  <Label alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="38.0" styleClass="username-label">
+                  <Label fx:id="labelTotalPot" alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="38.0" styleClass="username-label">
                      <graphic>
                         <Label alignment="CENTER" styleClass="bold-general-text-font" text="TOTAL POT:" />
                      </graphic>
                   </Label>
-                  <Label fx:id="labelTotalPot" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="85.0" styleClass="bold-general-text-font" text="Total pot" />
                </children>
             </HBox>
             <ImageView fx:id="tableCard0" fitHeight="105.0" fitWidth="72.0" layoutX="539.0" layoutY="225.0" pickOnBounds="true" preserveRatio="true" />
