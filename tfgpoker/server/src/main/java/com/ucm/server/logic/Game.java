@@ -1,7 +1,6 @@
 package com.ucm.server.logic;
 
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -16,14 +15,13 @@ import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.server.evaluator.Evaluator;
 import com.ucm.server.exceptions.EvaluatorException;
+import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.gameobjects.Deck;
+import com.ucm.server.managers.BotManager;
 import com.ucm.server.middleclasses.HandInfo;
 import com.ucm.server.middleclasses.PlayerEvaluation;
-import com.ucm.server.gameobjects.Bot;
-import com.ucm.server.players.GeminiLLM;
 import com.ucm.server.players.HumanPlayer;
 import com.ucm.server.statistics.EquityCalculator;
-import com.ucm.server.managers.BotManager;
 
 
 public class Game {
@@ -165,7 +163,6 @@ public class Game {
             Bot specificBot = bot.create(id, config._initialMoney);
             _playerList.addPlayer(specificBot);
         }
-        
     }
 
     private void retrieveCardsFromTable() {

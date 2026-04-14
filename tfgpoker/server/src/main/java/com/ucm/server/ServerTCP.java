@@ -1,6 +1,20 @@
 package com.ucm.server;
 
 
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -8,20 +22,10 @@ import com.ucm.common.BotStruct;
 import com.ucm.common.ClientStruct;
 import com.ucm.common.GameConfig;
 import com.ucm.common.GameType;
-import com.ucm.common.SocketUtils;
 import com.ucm.common.exceptions.CancelGameException;
+import com.ucm.server.control.Controller;
 import com.ucm.server.exceptions.EvaluatorException;
 import com.ucm.server.logic.Game;
-import com.ucm.server.control.Controller;
-
-import java.net.http.*;
-import java.net.*;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class ServerTCP {
@@ -54,21 +58,6 @@ public class ServerTCP {
         log.debug("Server started on port {}", port);
     }
 
-
-    private String showServerIP() throws IOException, InterruptedException {
-
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest
-                                .newBuilder()
-                                .uri(URI.create("https://api.ipify.org"))
-                                .GET()
-                                .build();
-
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        String serverIP = response.body();
-        
-        return serverIP;
-    }
 
     public void startPregame() {
 
@@ -142,6 +131,22 @@ public class ServerTCP {
 
     public GameConfig getGameConfigDeepCopy() {
         return new GameConfig(_gameConfig);
+    }
+
+    
+    private String showServerIP() throws IOException, InterruptedException {
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest
+                                .newBuilder()
+                                .uri(URI.create("https://api.ipify.org"))
+                                .GET()
+                                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        String serverIP = response.body();
+        
+        return serverIP;
     }
 
     /*

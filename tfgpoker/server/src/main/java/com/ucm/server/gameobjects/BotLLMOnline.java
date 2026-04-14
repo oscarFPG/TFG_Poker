@@ -79,6 +79,9 @@ public abstract class BotLLMOnline extends BotLLM {
      */
     protected double equity;
 
+    /**
+     * 
+     */
     protected String _credentialKey;
 
     /**

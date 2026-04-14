@@ -139,7 +139,9 @@ public class ClientThread implements Runnable {
 
                 case GameType.PETITION_JOIN_GAME:
                     
-                    if(0 < _roomPlayerList.size()) {
+                    int playersCounter = _roomPlayerList.size() + _roomBotsList.size();
+
+                    if(0 < playersCounter) {
 
                         SocketUtils.sendInteger(output, GameType.CONFIRMATION_WAITING_GAME);
                         PokerPreGame.sendGameConfigToJoinedPlayer(_gameConfig, output);
@@ -236,7 +238,7 @@ public class ClientThread implements Runnable {
                             PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(ct._playerID, ct._playerName), targetSocket);
                         }
                         for(BotStruct bs : _roomBotsList) {
-                            PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(bs.mathId(), bs.botName()), targetSocket );
+                            PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(bs.matchId(), bs.botName()), targetSocket);
                         }
                         
                     }

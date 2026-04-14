@@ -3,15 +3,9 @@ package com.ucm.server.players;
 import java.io.IOException;
 
 import com.ucm.common.GameType;
-import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.gameobjects.Bot;
-import com.ucm.server.interfaces.IPokerPlayer;
-import java.io.InputStream;
-import java.util.Map;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ucm.server.gameobjects.BotLLMOnline;
+import com.ucm.server.interfaces.IPokerPlayer;
 
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
