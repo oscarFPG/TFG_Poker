@@ -285,6 +285,43 @@
     -fx-shape: "M10 5 L30 15 L10 25 Z";
 }
 
+.dialog-pane.custom-alert {
+    -fx-background-color: #1B0359;
+    -fx-padding: 0;
+}
+
+/* Header */
+.dialog-pane.custom-alert .header-panel {
+    -fx-background-color: #1B0359;
+    -fx-text-fill: #e5e5e5;
+    -fx-font-family: "Constantia";
+}
+
+/* Content */
+.dialog-pane.custom-alert .content {
+    -fx-background-color: #1B0359;
+    -fx-text-fill: #e5e5e5;
+    -fx-font-family: "Constantia";
+}
+
+/* Texto */
+.dialog-pane.custom-alert .label {
+    -fx-text-fill: #e5e5e5;
+}
+
+/* Botones */
+.dialog-pane.custom-alert .button-bar {
+    -fx-background-color: #1B0359;
+}
+
+.dialog-pane.custom-alert .button {
+    -fx-background-color:
+        linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100% ),
+        radial-gradient(center 50% 40%, radius 120%,#691179 0%,#661076 25%,#3A0878 60%,#20034F 100% );
+    -fx-text-fill: #e5e5e5;
+    -fx-font-family: "Constantia";
+}
+
 /* CONTENEDORES / LAYOUTS ------------------------------------------------------------------------------------------------------ */
 
 .container-colors {

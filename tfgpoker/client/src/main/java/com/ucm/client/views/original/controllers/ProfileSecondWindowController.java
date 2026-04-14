@@ -3,6 +3,7 @@ package com.ucm.client.views.original.controllers;
 import java.io.IOException;
 import java.net.Socket;
 
+import com.ucm.client.AvatarGenerator;
 import com.ucm.client.ClientInfo;
 import com.ucm.common.GameType;
 import com.ucm.common.PokerPreGame;
@@ -12,6 +13,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 
 
 
@@ -29,9 +31,12 @@ public class ProfileSecondWindowController extends GenericController {
     @FXML
     private Button btnCancel;
 
-
     @FXML
-    public void initialize() {
+    private ImageView imgAvatarProfile;
+
+
+    @Override
+    protected void onViewShown() {
 
         btnSave.setDisable(true);
         nameLabel.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -40,6 +45,8 @@ public class ProfileSecondWindowController extends GenericController {
             } 
             else {
                 btnSave.setDisable(false);
+                _clientInfo.onNameChanged(newValue.trim());
+                imgAvatarProfile.setImage(_clientInfo.getAvatar(_clientInfo.name,140));
             }
         });
     }

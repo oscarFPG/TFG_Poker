@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.commands.Command;
+import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.gameobjects.BotLLM;
 import com.ucm.server.gameobjects.Player;
 import com.ucm.server.interfaces.IPokerPlayer;
@@ -377,8 +378,9 @@ public class LlamaPokerLLM extends BotLLM {
 
        
         if (m.find()) {
-            return m.group(1) + " " + m.group(2);
+            return "raise " + m.group(1);
         }
+
 
       
         if (action.startsWith("raise")) {
@@ -400,4 +402,13 @@ public class LlamaPokerLLM extends BotLLM {
         throw new UnsupportedOperationException("Unimplemented method 'notifyTotalPot'");
     }
 
+    public void notifyEquity(double equity) {
+        
+    }
+
+	@Override
+	public Bot create(int ID, int initialMoney) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'create'");
+	}
 }

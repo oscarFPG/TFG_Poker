@@ -50,7 +50,6 @@ public class PokerPreGame {
         SocketUtils.sendString(out, config._hikePercentage);
         SocketUtils.sendInteger(out, config._numBots1);
         SocketUtils.sendInteger(out, config._numBots2);
-        SocketUtils.sendInteger(out, config._numBots3);
         SocketUtils.sendInteger(out, config._numPlayers);
         SocketUtils.sendString(out, config._selectedTable);
         SocketUtils.sendString(out, config._selectedCard);
@@ -68,7 +67,6 @@ public class PokerPreGame {
         String hikePercentage = SocketUtils.receiveString(input);
         int numBots1 = SocketUtils.receiveInt(input);
         int numBots2 = SocketUtils.receiveInt(input);
-        int numBots3 = SocketUtils.receiveInt(input);
         int numPlayers = SocketUtils.receiveInt(input);
         String selectedTable = SocketUtils.receiveString(input);
         String selectedCard = SocketUtils.receiveString(input);
@@ -85,7 +83,6 @@ public class PokerPreGame {
         config._hikePercentage = hikePercentage;
         config._numBots1 = numBots1;
         config._numBots2 = numBots2;
-        config._numBots3 = numBots3;
         config._numPlayers = numPlayers;
         config._selectedTable = selectedTable;
         config._selectedCard = selectedCard;
@@ -108,7 +105,6 @@ public class PokerPreGame {
         SocketUtils.sendString(out, config._hikePercentage);
         SocketUtils.sendInteger(out, config._numBots1);
         SocketUtils.sendInteger(out, config._numBots2);
-        SocketUtils.sendInteger(out, config._numBots3);
         SocketUtils.sendInteger(out, config._numPlayers);
         SocketUtils.sendString(out, config._selectedTable);
         SocketUtils.sendString(out, config._selectedCard);
@@ -127,7 +123,6 @@ public class PokerPreGame {
         String hikePercentage = SocketUtils.receiveString(input);
         int numBots1 = SocketUtils.receiveInt(input);
         int numBots2 = SocketUtils.receiveInt(input);
-        int numBots3 = SocketUtils.receiveInt(input);
         int numPlayers = SocketUtils.receiveInt(input);
         String selectedTable = SocketUtils.receiveString(input);
         String selectedCard = SocketUtils.receiveString(input);
@@ -145,7 +140,6 @@ public class PokerPreGame {
         config._hikePercentage = hikePercentage;
         config._numBots1 = numBots1;
         config._numBots2 = numBots2;
-        config._numBots3 = numBots3;
         config._numPlayers = numPlayers;
         config._selectedTable = selectedTable;
         config._selectedCard = selectedCard;

@@ -3,10 +3,12 @@ package com.ucm.server.logic;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.commands.Command;
@@ -19,6 +21,8 @@ import com.ucm.server.middleclasses.CommandResult;
 import com.ucm.server.middleclasses.HandInfo;
 import com.ucm.server.middleclasses.PlayerEvaluation;
 import com.ucm.server.middleclasses.PotDistribution;
+import com.ucm.server.managers.BotManager;
+import com.ucm.server.managers.PotManager;
 
 
 public class PlayerList {
@@ -957,6 +961,33 @@ public class PlayerList {
         return (connectedPlayers <= 1);
     }
 
+
+    public void notifyEquityToPlayers(Map<Integer, Double> equityMap) {
+
+    if (isEmpty()) return;
+
+    Node current = _first;
+
+    do {
+        IPokerPlayer player = current._player;
+
+        if (!player.isEliminated()) {
+
+            double equity;
+
+            if (player.isFolded()) {
+                equity = 0.0;
+            } else {
+                equity = equityMap.getOrDefault(player.getPlayerId(), 0.0);
+            }
+
+            player.notifyEquity(equity);
+        }
+
+        current = current._next;
+
+    } while (current != _first);
+}
 
     public boolean isEmpty() { return size() == 0; }
     public boolean isFull() { return size() == max(); }

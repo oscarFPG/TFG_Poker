@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.ucm.common.BotStruct;
 import com.ucm.common.GameConfig;
 import com.ucm.common.GameType;
 import com.ucm.common.PlayerInfo;
@@ -28,17 +29,19 @@ public class ClientThread implements Runnable {
     public boolean _isHost;
 
     public List<ClientThread> _roomList;
+    public List<BotStruct> _roomBotsList;
     public ServerSocket _serverSocket;
     public GameConfig _gameConfig;
 
 
-    public ClientThread(Socket socket, List<ClientThread> players, ServerSocket gameSocket, GameConfig config) {
+    public ClientThread(Socket socket, List<ClientThread> players, ServerSocket gameSocket, GameConfig config, List<BotStruct> bots) {
         _playerID = -1;
         _socket = socket;
         _playerName = null;
         _isHost = false;
 
         _roomList = players;
+        _roomBotsList = bots;
         _serverSocket = gameSocket;
         _gameConfig = config;
     }
@@ -96,14 +99,17 @@ public class ClientThread implements Runnable {
                         _gameConfig._hikePercentage = config._hikePercentage;
                         _gameConfig._numBots1 = config._numBots1;
                         _gameConfig._numBots2 = config._numBots2;
-                        _gameConfig._numBots3 = config._numBots3;
-                        _gameConfig._numPlayers = config._numPlayers;
+                        _gameConfig._numPlayers = config._numPlayers + 1; // + 1 porque cuenta el host
                         _gameConfig._selectedTable = config._selectedTable;
                         _gameConfig._selectedCard = config._selectedCard;
 
                         _isHost = true;
                         _playerID = _roomList.size();
                         _roomList.add(this);
+
+                        for (int i = 0; i < _gameConfig._numBots1; i++) {
+                            _roomBotsList.add(new BotStruct(GameType.BOT_GEMINI));
+                        }
 
                         SocketUtils.sendInteger(output, GameType.CONFIRMATION_WAITING_GAME);
                         SocketUtils.sendInteger(output, _gameConfig._roomId);

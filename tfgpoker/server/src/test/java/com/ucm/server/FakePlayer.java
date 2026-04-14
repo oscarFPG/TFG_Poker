@@ -93,4 +93,8 @@ public class FakePlayer extends Player {
         throw new UnsupportedOperationException("Unimplemented method 'notifyTotalPot'");
     }
     
+    public void notifyEquity(double equity) {
+      
+    }
+    
 }

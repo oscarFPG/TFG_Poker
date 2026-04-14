@@ -12,6 +12,7 @@ import java.util.stream.IntStream;
 
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
+import com.ucm.client.AvatarGenerator;
 import com.ucm.common.GameConfig;
 import com.ucm.common.GameType;
 import com.ucm.common.PlayerInfo;
@@ -35,6 +36,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import javafx.scene.layout.HBox;
+import javafx.scene.shape.Circle;
 
 
 public class InGameWindowController extends GenericController {
@@ -42,13 +45,19 @@ public class InGameWindowController extends GenericController {
 
     @FXML private Label usernamePlaceHolder;
 
-    @FXML private VBox buttonsHolder;
+    @FXML
+    private ImageView imgAvatarProfile;
+
+    @FXML
+    private VBox buttonsHolder;
 
     /* Call, Raise, Fold and Check buttons */
     @FXML private Button btnFold;
     @FXML private Button btnCall;
     @FXML private Button btnRaise;
 
+    @FXML
+    private ImageView imgTableInGame;
     /* Min, 1/2 pot and Max buttons */
     @FXML private Button btnRound;
     @FXML private Button btnMinBet, btnHalfBet, btnMaxBet;
@@ -91,6 +100,59 @@ public class InGameWindowController extends GenericController {
     /* Table info */
     @FXML private ImageView tableCard0, tableCard1, tableCard2, tableCard3, tableCard4;
     @FXML private Label labelTotalPot;
+    
+    /*All reverse image cards for players*/
+    @FXML
+    private HBox hboxImageCards0;
+    @FXML
+    private ImageView imgLeftCard0, imgRightCard0, imgAvatarProfile0;
+
+    @FXML
+    private HBox hboxImageCards1;
+    @FXML
+    private ImageView imgLeftCard1, imgRightCard1, imgAvatarProfile1;
+
+    @FXML
+    private HBox hboxImageCards2;
+    @FXML
+    private ImageView imgLeftCard2, imgRightCard2, imgAvatarProfile2;
+
+    @FXML
+    private HBox hboxImageCards3;
+    @FXML
+    private ImageView imgLeftCard3, imgRightCard3, imgAvatarProfile3;
+
+    @FXML
+    private HBox hboxImageCards4;
+    @FXML
+    private ImageView imgLeftCard4, imgRightCard4, imgAvatarProfile4;
+
+    @FXML
+    private HBox hboxImageCards5;
+    @FXML
+    private ImageView imgLeftCard5, imgRightCard5, imgAvatarProfile5;
+
+    @FXML
+    private HBox hboxImageCards6;
+    @FXML
+    private ImageView imgLeftCard6, imgRightCard6, imgAvatarProfile6;
+
+    @FXML
+    private HBox hboxImageCards7;
+    @FXML
+    private ImageView imgLeftCard7, imgRightCard7, imgAvatarProfile7;
+
+    @FXML
+    private HBox hboxImageCards8;
+    @FXML
+    private ImageView imgLeftCard8, imgRightCard8, imgAvatarProfile8;
+
+    private List<HBox> _listImageCards;
+
+    private List<ImageView> _listPaintCards;
+
+    private List<ImageView> _listaAvatarProfiles;
+
 
     private Thread _gameThread = null;
     private BlockingQueue<String> _commandQueue = new LinkedBlockingQueue<>();
@@ -102,6 +164,12 @@ public class InGameWindowController extends GenericController {
     protected void onViewShown() {
 
         clearAllLabels();
+        imgTableInGame.setImage(new Image(getClass().getResource(_clientInfo.gameConfig._selectedTable).toExternalForm()));
+        imgAvatarProfile.setImage(_clientInfo.getAvatar(_clientInfo.name,64));
+        //TODO: cambair cuando haya bots. Tener en cuenta cuando un cliente se sale o hace fold
+        initializeImageCards ();
+        initializeCardsPosition ();
+        initializeAvatarProfiles ();
         showPlayers(_clientInfo.playerPositions);
         initializeSlider(_clientInfo.gameConfig);
 
@@ -151,6 +219,52 @@ public class InGameWindowController extends GenericController {
             
         });
         _gameThread.start();
+    }
+
+    private void initializeCardsPosition () {
+        _listImageCards = List.of (
+            hboxImageCards0,
+            hboxImageCards1,
+            hboxImageCards2,
+            hboxImageCards3,
+            hboxImageCards4,
+            hboxImageCards5,
+            hboxImageCards6,
+            hboxImageCards7,
+            hboxImageCards8
+        );
+        _listImageCards.forEach(hbox -> hbox.setVisible(false));
+    }
+
+    private void initializeImageCards () {
+        _listPaintCards = List.of(
+            imgLeftCard0, imgRightCard0,
+            imgLeftCard1, imgRightCard1,
+            imgLeftCard2, imgRightCard2,
+            imgLeftCard3, imgRightCard3,
+            imgLeftCard4, imgRightCard4,
+            imgLeftCard5, imgRightCard5,
+            imgLeftCard6, imgRightCard6,
+            imgLeftCard7, imgRightCard7,
+            imgLeftCard8, imgRightCard8
+        );
+
+        Image cardImage = new Image(getClass().getResource(_clientInfo.gameConfig._selectedCard).toExternalForm());
+        _listPaintCards.subList(1, _listPaintCards.size()).forEach(iv -> iv.setImage(cardImage));
+    }
+
+    private void initializeAvatarProfiles () {
+        _listaAvatarProfiles = List.of(
+            imgAvatarProfile0,
+            imgAvatarProfile1,
+            imgAvatarProfile2,
+            imgAvatarProfile3,
+            imgAvatarProfile4,
+            imgAvatarProfile5,
+            imgAvatarProfile6,
+            imgAvatarProfile7,
+            imgAvatarProfile8
+        );
     }
 
 
@@ -221,7 +335,7 @@ public class InGameWindowController extends GenericController {
         sliderMoney.setValue(newValue);
     }
 
-     
+
     private boolean pokerGame(String name, Socket socket) {
 
 		int gameStatusCode;
@@ -665,6 +779,24 @@ public class InGameWindowController extends GenericController {
             moneyLabel.setText( getPlayerMoneyInfo(onBetMoney, offBetMoney) );
         });
     }
+    
+    private void getAvatarPosition (final int position, String name) {
+        ImageView avatarImage = _listaAvatarProfiles.get(position);
+        Image avatar = _clientInfo.getAvatar(name, 80);
+
+        avatarImage.setImage(avatar);
+        avatarImage.setFitWidth(80);
+        avatarImage.setFitHeight(80);
+        avatarImage.setPreserveRatio(true);
+
+        Circle clip = new Circle();
+        clip.centerXProperty().bind(avatarImage.fitWidthProperty().divide(2));
+        clip.centerYProperty().bind(avatarImage.fitWidthProperty().divide(2));
+        clip.radiusProperty().bind(avatarImage.fitWidthProperty().divide(2));
+
+        avatarImage.setClip(clip);
+        avatarImage.setVisible(true);
+    }
 
     private void showPlayers(final List<PlayerInfo> players) {
 
@@ -688,6 +820,7 @@ public class InGameWindowController extends GenericController {
         playerName0.setText( _clientInfo.name );
         playerMoney0.setText( getPlayerMoneyInfo(0, _clientInfo.gameConfig._initialMoney) );
         pokerPlayer0.setVisible(true);
+        getAvatarPosition(0, _clientInfo.name);
 
         // Show players behind me(in the list) : position 1, 2, 3, ...
         int beforePosition = 1;
@@ -699,11 +832,15 @@ public class InGameWindowController extends GenericController {
             Label nameLabel = getNameLabelByPosition(beforePosition);
             Label moneyLabel = getMoneyLabelByPosition(beforePosition);
             StackPane playerStackPane = getPlayerStackPaneByPosition(beforePosition);
-
+            HBox cardsHBox = _listImageCards.get(beforePosition);
+            
+            final int pos = beforePosition;
             Platform.runLater(() -> {
                 nameLabel.setText(p.name);
                 moneyLabel.setText( getPlayerMoneyInfo(0, _clientInfo.gameConfig._initialMoney) );
                 playerStackPane.setVisible(true);
+                cardsHBox.setVisible(true);
+                getAvatarPosition(pos, p.name);
             });
 
             ++beforePosition;
@@ -719,11 +856,15 @@ public class InGameWindowController extends GenericController {
             Label nameLabel = getNameLabelByPosition(nextPosition);
             Label moneyLabel = getMoneyLabelByPosition(nextPosition);
             StackPane playerStackPane = getPlayerStackPaneByPosition(nextPosition);
-
+            HBox cardsHBox = _listImageCards.get(nextPosition);
+            
+            final int pos = nextPosition;
             Platform.runLater(() -> {
                 nameLabel.setText(p.name);
                 moneyLabel.setText( getPlayerMoneyInfo(0, _clientInfo.gameConfig._initialMoney) );
                 playerStackPane.setVisible(true);
+                cardsHBox.setVisible(true);
+                getAvatarPosition(pos, p.name);
             });
 
             --nextPosition;

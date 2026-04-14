@@ -4,6 +4,7 @@ package com.ucm.server;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.ucm.common.BotStruct;
 import com.ucm.common.ClientStruct;
 import com.ucm.common.GameConfig;
 import com.ucm.common.GameInfo;
@@ -35,6 +36,7 @@ public class ServerTCP {
     private ExecutorService _executor;
 
     private List<ClientThread> _roomPlayers;
+    private List<BotStruct> _roomBots;
     private GameConfig _gameConfig;
 
 
@@ -43,6 +45,7 @@ public class ServerTCP {
         _serverSocket = new ServerSocket(port);
         _executor = Executors.newFixedThreadPool(GameType.MAX_PLAYERS);
         _roomPlayers = Collections.synchronizedList( new ArrayList<>() );
+        _roomBots = Collections.synchronizedList( new ArrayList<>() );
         _gameConfig = new GameConfig();
 
         log.debug("Server started on port {}", port);
@@ -73,8 +76,8 @@ public class ServerTCP {
             try {
 
                 Socket socket = _serverSocket.accept();
-               _executor.execute( new ClientThread(socket, _roomPlayers, _serverSocket, _gameConfig) );
-            
+               _executor.execute( new ClientThread(socket, _roomPlayers, _serverSocket, _gameConfig, _roomBots) );
+
                 log.debug("New client connected!");
             }
             catch(IOException e) {
@@ -86,6 +89,12 @@ public class ServerTCP {
         return _roomPlayers;
     }
 
+    public List<BotStruct> getRoomBots () {
+        List<BotStruct> copy = new ArrayList<>(_roomBots);
+        return copy;
+    }
+
+
     public GameConfig getGameConfigDeepCopy() {
         return new GameConfig(_gameConfig);
     }
@@ -96,7 +105,7 @@ public class ServerTCP {
 
         try {
             Game game = new Game(info);
-            Controller controller = new Controller(game, info.players);
+            Controller controller = new Controller(game);
             controller.run();
         }
         catch(EvaluatorException e) {

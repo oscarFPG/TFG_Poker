@@ -20,7 +20,7 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" styleClass="root" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.MainWindowController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" styleClass="root" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.MainWindowController">
          <children>
       <HBox prefHeight="100.0" prefWidth="200.0">
          <children>
@@ -35,11 +35,7 @@
                                                                       
                               <Pane prefHeight="100.0" prefWidth="279.0">
                                  <children>
-                                    <ImageView fitHeight="108.0" fitWidth="108.0" layoutX="32.0" layoutY="12.0" pickOnBounds="true" preserveRatio="true" styleClass="icono-perfil">
-                                       <image>
-                                          <Image url="@../../images/imagenPerfil.png" />
-                                       </image>
-                                    </ImageView>
+                                    <ImageView fx:id="imgAvatarProfile" fitHeight="108.0" fitWidth="108.0" layoutX="32.0" layoutY="12.0" pickOnBounds="true" preserveRatio="true" styleClass="icono-perfil" />
                                     <Label alignment="CENTER" layoutX="153.0" layoutY="34.0" prefHeight="32.0" prefWidth="121.0" styleClass="username-label">
                                        <graphic>
                                           <Text fx:id="playerNamePlaceholder" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="username-label" text="Players Name" textAlignment="CENTER" wrappingWidth="160.0">
@@ -49,15 +45,6 @@
                                           </Text>
                                        </graphic>
                                     </Label>
-                                    <Button layoutX="68.0" layoutY="99.0" maxHeight="57.0" maxWidth="47.0" minHeight="24.0" minWidth="15.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="36.0" styleClass="profile-edit-button">
-                                       <graphic>
-                                          <ImageView fitHeight="22.0" fitWidth="23.0" pickOnBounds="true" preserveRatio="true" rotate="-97.4" styleClass="icono-edicionPerfil">
-                                             <image>
-                                                <Image url="@../../images/pencilEditProfile.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
                                  </children>
                               </Pane>
                            </children>

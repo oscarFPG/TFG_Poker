@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.ucm.common.BotStruct;
 import com.ucm.common.GameConfig;
 import com.ucm.common.GameInfo;
 import com.ucm.common.GameType;
@@ -37,6 +38,7 @@ public class ServerMain {
                 ServerTCP server = new ServerTCP(GameType.PORT);
                 
                 List<ClientThread> clients = server.startPregame();
+                List<BotStruct> bots = server.getRoomBots();
                 GameConfig config = server.getGameConfigDeepCopy();
                 log.debug("Pregame ended!");
 
@@ -45,9 +47,11 @@ public class ServerMain {
                 for(ClientThread ct : clients) {
                     gameInfo.addPlayer(ct._playerName, ct._socket);
                 }
-
-                // Add logic to add bots if needed
-                // TODO
+                
+                //add Bots
+                for(BotStruct bt : bots) {
+                    gameInfo.addBots(bt.idBot());
+                }
 
                 log.debug("Poker game starting!");
                 server.startGame(gameInfo);
