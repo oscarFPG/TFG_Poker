@@ -4,6 +4,7 @@ package com.ucm.server.control;
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.server.logic.Game;
+import com.ucm.server.logic.Timer;
 import com.ucm.common.BotStruct;
 import com.ucm.common.ClientStruct;
 
@@ -21,9 +22,12 @@ public class Controller {
      */
     private Game _game;
 
-    
+    private Timer _timer;
+
+
     public Controller(Game game) {
         _game = game;
+        _timer = game.getGameTimerConfiguration();
     }
 
     /**
@@ -49,8 +53,8 @@ public class Controller {
         int handCounter = 0;
         boolean endOfGame = false;
 
-        ThreadContext.put("match", "0");
-        ThreadContext.put("hand", String.valueOf(handCounter));
+        //ThreadContext.put("match", "0");
+        //ThreadContext.put("hand", String.valueOf(handCounter));
 
         _game.assignRolesToAllPlayers();
         while (!endOfGame) {
@@ -58,6 +62,11 @@ public class Controller {
             log.debug("Starting hand {}", handCounter);
             try {
                 
+                if(_timer != null && !_timer.isRunning()) {
+                    _game.increaseBlinds();
+                    _timer.restart();
+                }
+
                 // Pre-flop (2)
                 log.debug("Pre-flop round");
                 _game.shareOutCardsToAllPlayers();
@@ -95,7 +104,7 @@ public class Controller {
             // Logger configuration for the next hand -> Write on file match{0}_hand{handCounter}.log
             log.debug("Finishing hand {}", handCounter);
             ++handCounter;
-            ThreadContext.put("hand", String.valueOf(handCounter));
+            //ThreadContext.put("hand", String.valueOf(handCounter));
         }
 
     }

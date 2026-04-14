@@ -397,7 +397,7 @@ public class PlayerList implements Iterable<Node> {
         while( it.hasNext() ) {
 
             Node player = it.next();
-            if(player._player.isEliminated()) {
+            if(!player._player.isEliminated()) {
 
                 try {
                     player._player.notifyTableCard(card);

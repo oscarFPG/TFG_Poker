@@ -36,6 +36,7 @@ public class Game {
     private int _initialBigBlind;
     private int _currentSB;
     private int _currentBB;
+    private float _hikePercentage;
 
     private PlayerList _playerList;
     private Deck _deck;
@@ -43,6 +44,7 @@ public class Game {
     private int _tableCardsCounter;
     private boolean _isPreflop;
 
+    private int _level;
     private int _handCounter = 0;
     
 
@@ -50,13 +52,14 @@ public class Game {
 
         _gameConfig = config;
 
-        String[] parts = _gameConfig._blindsValue.split("/");
+        String[] parts = config._blindsValue.split("/");
         _initialSmallBlind = Integer.parseInt(parts[0]);    // TODO : Controlar errores de formato
         _initialBigBlind = Integer.parseInt(parts[1]);      // TODO : Controlar errores de formato
+        _hikePercentage = Integer.parseInt( config._hikePercentage ) / 100;
         _currentSB = _initialSmallBlind;
         _currentBB = _initialBigBlind;
 
-        _playerList = new PlayerList(_gameConfig.getTotalPlayers());
+        _playerList = new PlayerList(config.getTotalPlayers());
         addAllPlayersInitial(players, bots, config);
 
         _deck = new Deck();
@@ -64,10 +67,21 @@ public class Game {
         _tableCardsCounter = 0;
         _isPreflop = true;
 
+        _level = 1;
+
         Evaluator.getInstance();
     }
 
     
+    public void increaseBlinds() {
+
+        double newSB = _currentSB * Math.pow( (1 + _hikePercentage) , _level);
+        ++_level;
+
+        _currentSB = (int)Math.round(newSB);
+        _currentBB = _currentSB * 2;
+    }
+
     public void assignRolesToAllPlayers() throws CancelGameException {
        _playerList.assignRolesToAllPlayers();
     }
@@ -149,7 +163,16 @@ public class Game {
         return endOfGame;
     }
 
-    
+    public Timer getGameTimerConfiguration() {
+
+        if(!_gameConfig._dinamicBlinds) 
+            return null;
+
+
+        int minutes = Integer.parseInt( _gameConfig._levelDuration );
+        return new Timer(minutes * 60);
+    }
+
     private void addAllPlayersInitial(final List<ClientStruct> players, final List<BotStruct> bots, final GameConfig config) {
 
         int id = 0;

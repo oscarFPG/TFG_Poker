@@ -33,7 +33,6 @@ public class LlamaPokerLLM extends BotLLM {
     private int money;
     private int smallBlind;
     private int bigBlind;
-    private PlayerRole role;
 
     private static final String OLLAMA_URL = "http://localhost:11434/api/generate";
     private static final String MODEL_NAME = "llamaPokerBot";
@@ -67,7 +66,7 @@ public class LlamaPokerLLM extends BotLLM {
     @Override public void notifyMoneyAmount(int amount) { money = amount; }
     @Override public void notifySmallBlindBet(int amount) { smallBlind = amount; }
     @Override public void notifyBigBlindBet(int amount) { bigBlind = amount; }
-    @Override public void notifyPlayerRole(PlayerRole role) { this.role = role; }
+    @Override public void notifyPlayerRole(PlayerRole role) { _role = role; }
 
     @Override
     public void notifyPlayerAction(PlayerRole role, String action, double amount) {
@@ -130,7 +129,7 @@ public class LlamaPokerLLM extends BotLLM {
         sb.append("The player positions involved in this game are UTG, HJ, CO, BTN, SB, BB.\n");
 
         sb.append("In this hand, your position is ")
-          .append(mapRole(role))
+          .append(mapRole(_role))
           .append(", and your holding is ")
           .append(formatCardsVerbose(hand))
           .append(".\n");
@@ -189,7 +188,7 @@ public class LlamaPokerLLM extends BotLLM {
 
         sb.append("Here is a game summary:\n\n");
 
-        sb.append("Position: ").append(mapRole(role)).append("\n");
+        sb.append("Position: ").append(mapRole(_role)).append("\n");
         sb.append("Hand: ").append(formatCardsVerbose(hand)).append("\n");
 
         if (!table.isEmpty()) {
