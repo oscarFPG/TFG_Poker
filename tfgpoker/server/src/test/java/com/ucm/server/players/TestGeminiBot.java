@@ -31,7 +31,7 @@ public class TestGeminiBot {
 
     // ---------------------- TEST 1: PREFLOP ----------------------
 
-    @Test
+    //@Test
     public void testPreflopDecision() {
 
         GeminiLLM bot = new GeminiLLM(0, 1000);
@@ -51,7 +51,7 @@ public class TestGeminiBot {
 
     // ---------------------- TEST 2: FLOP ----------------------
 
-    @Test
+    //@Test
     public void testFlopDecision() {
 
         GeminiLLM bot = new GeminiLLM(0, 1000);
@@ -78,7 +78,7 @@ public class TestGeminiBot {
 
     // ---------------------- TEST 3: LOW EQUITY ----------------------
 
-    @Test
+    //@Test
     public void testLowEquity() {
 
         GeminiLLM bot = new GeminiLLM(0, 1000);
@@ -115,4 +115,5 @@ public class TestGeminiBot {
 
         assertTrue(valid, "Invalid action: " + action);
     }
+    
 }

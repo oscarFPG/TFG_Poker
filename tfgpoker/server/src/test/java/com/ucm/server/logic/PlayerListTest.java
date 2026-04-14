@@ -58,7 +58,7 @@ public class PlayerListTest {
         PlayerList playerList = new PlayerList(numPlayers);
         FakePlayer[] players = new FakePlayer[numPlayers];
         for (int i = 0; i < numPlayers; i++) {
-            players[i] = new FakePlayer(0, INITIAL_MONEY, 0);
+            players[i] = new FakePlayer(i, INITIAL_MONEY, 0);
             playerList.addPlayer( players[i] );
         }
 
@@ -228,8 +228,8 @@ public class PlayerListTest {
             p2.commands = new ArrayList<>( List.of("call") );
             playerList.playHand(SB, BB, true);      // 2 + 2 + 2 = 6$ total - 2$ = 4$ beneficio
 
-            p2.commands = new ArrayList<>( List.of("check", "call", "allin") );
-            p3.commands = new ArrayList<>( List.of("check", "allin") );
+            p2.commands = new ArrayList<>( List.of("check", "call", "all-in") );
+            p3.commands = new ArrayList<>( List.of("check", "all-in") );
             p1.commands = new ArrayList<>( List.of("raise 500", "raise 1200") );
             playerList.playHand(SB, BB, false);
             
@@ -269,10 +269,10 @@ public class PlayerListTest {
 
             playerList.assignRolesToAllPlayers();
 
-            p2.commands = new ArrayList<>( List.of("allin") );  // 1000
-            p3.commands = new ArrayList<>( List.of("allin") );  // 1000
-            p4.commands = new ArrayList<>( List.of("allin") );  // 2000
-            p1.commands = new ArrayList<>( List.of("allin") );  // 2000
+            p2.commands = new ArrayList<>( List.of("all-in") );  // 1000
+            p3.commands = new ArrayList<>( List.of("all-in") );  // 1000
+            p4.commands = new ArrayList<>( List.of("all-in") );  // 2000
+            p1.commands = new ArrayList<>( List.of("all-in") );  // 2000
             playerList.playHand(SB, BB, false);
 
             playerList.playHand(SB, BB, false); // No player should play here because all went all-in
