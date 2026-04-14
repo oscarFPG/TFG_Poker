@@ -166,7 +166,7 @@ public class InGameWindowController extends GenericController {
         clearAllLabels();
         imgTableInGame.setImage(new Image(getClass().getResource(_clientInfo.gameConfig._selectedTable).toExternalForm()));
         imgAvatarProfile.setImage(_clientInfo.getAvatar(_clientInfo.name,64));
-        //TODO: cambair cuando haya bots. Tener en cuenta cuando un cliente se sale o hace fold
+        //TODO: cambiar cuando haya bots. Tener en cuenta cuando un cliente se sale o hace fold
         initializeImageCards ();
         initializeCardsPosition ();
         initializeAvatarProfiles ();

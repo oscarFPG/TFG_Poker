@@ -34,7 +34,7 @@ public class TestGeminiBot {
     @Test
     public void testPreflopDecision() {
 
-        GeminiLLM bot = new GeminiLLM(0, 1000, apiKey);
+        GeminiLLM bot = new GeminiLLM(0, 1000);
 
         bot.notifyPlayerRole(PlayerRole.DEALER);
         bot.notifyPlayerCard(new Card(1, Suit.HEARTS)); // Ah
@@ -54,7 +54,7 @@ public class TestGeminiBot {
     @Test
     public void testFlopDecision() {
 
-        GeminiLLM bot = new GeminiLLM(0, 1000, apiKey);
+        GeminiLLM bot = new GeminiLLM(0, 1000);
 
         bot.notifyPlayerRole(PlayerRole.CUT_OFF);
         bot.notifyPlayerCard(new Card(10, Suit.HEARTS)); // Th
@@ -81,7 +81,7 @@ public class TestGeminiBot {
     @Test
     public void testLowEquity() {
 
-        GeminiLLM bot = new GeminiLLM(0, 1000, apiKey);
+        GeminiLLM bot = new GeminiLLM(0, 1000);
 
         bot.notifyPlayerRole(PlayerRole.BIG_BLIND);
         bot.notifyPlayerCard(new Card(2, Suit.HEARTS));

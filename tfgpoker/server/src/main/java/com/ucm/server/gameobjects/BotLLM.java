@@ -30,11 +30,6 @@ import com.ucm.common.gameobjects.PlayerRole;
 public abstract class BotLLM extends Bot {
 
     /**
-     * API key used to access the LLM provider.
-     */
-    protected String _apiKey;
-
-    /**
      * Default constructor.
      */
     public BotLLM() {
@@ -49,12 +44,9 @@ public abstract class BotLLM extends Bot {
      * @param money  initial stack
      * @param apiKey API key for the LLM provider
      */
-    public BotLLM(int id, String name, int money, String apiKey) {
+    public BotLLM(int id, String name, int money) {
         super(id, name, money);
-        _apiKey = apiKey;
     }
-
-    
 
     /**
      * Notifies the bot about an action performed by another player.

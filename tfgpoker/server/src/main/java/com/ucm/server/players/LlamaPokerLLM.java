@@ -39,7 +39,7 @@ public class LlamaPokerLLM extends BotLLM {
     private static final String MODEL_NAME = "llamaPokerBot";
 
     public LlamaPokerLLM(int id, int money) {
-        super(id, "LlamaPoker", money, null);
+        super(id, "LlamaPoker", money);
         this.money = money;
     }
 

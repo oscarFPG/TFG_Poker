@@ -367,6 +367,10 @@ public class WaitingGameWindowController extends GenericController {
 
             --nextPosition;
         }
+
+        for(PlayerInfo cl : players) {
+            System.out.printf("Player [%d]%s in waiting room\n", cl.id, cl.name);
+        }
     }
 
 }

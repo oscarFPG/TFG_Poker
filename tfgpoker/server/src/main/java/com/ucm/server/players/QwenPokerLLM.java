@@ -37,7 +37,7 @@ public class QwenPokerLLM extends BotLLM {
     private static final String MODEL_NAME = "qwenPokerBot"; 
 
     public QwenPokerLLM(int id, int money) {
-        super(id, "QwenPoker", money, null);
+        super(id, "QwenPoker", money);
         this.money = money;
     }
 

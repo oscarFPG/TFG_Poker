@@ -9,6 +9,7 @@ import com.ucm.server.interfaces.IPokerPlayer;
 import java.io.InputStream;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ucm.server.gameobjects.BotLLMOnline;
 
@@ -47,7 +48,7 @@ public class GeminiLLM extends BotLLMOnline {
 
 
     public GeminiLLM() {
-        this._idBot = GameType.BOT_GEMINI;
+        _idBot = GameType.BOT_GEMINI;
     }
 
     /**
@@ -61,55 +62,14 @@ public class GeminiLLM extends BotLLMOnline {
      * @param money  initial stack
      * @param apiKey Gemini API key (optional)
      */
-    public GeminiLLM(int id, int money, String apiKey) {
-        super(id, "GeminiLLM", money, apiKey);
-        this._idBot = GameType.BOT_GEMINI;
-
-        if (apiKey == null) {
-            apiKey = loadApiKey();
-        }
+    public GeminiLLM(int id, int money) {
+        super(id, "GeminiLLM", money);
+        _idBot = GameType.BOT_GEMINI;
 
         gemini = GoogleAiGeminiChatModel.builder()
-                .apiKey(apiKey)
+                .apiKey(_apiKey)
                 .modelName("gemini-2.5-flash")
                 .build();
-    }
-
-    /**
-     * Loads the Gemini API key from a {@code credentials.json} file.
-     * 
-     * <p>
-     * The file must be located in the classpath and contain a field
-     * named {@code GEMINI_API_KEY}.
-     * </p>
-     * 
-     * @return API key as {@link String}
-     * @throws RuntimeException if the file or key cannot be loaded
-     */
-    private String loadApiKey() {
-        try {
-            InputStream input = getClass()
-                    .getClassLoader()
-                    .getResourceAsStream("credentials.json");
-
-            if (input == null) {
-                throw new RuntimeException("credentials.json not found");
-            }
-
-            ObjectMapper mapper = new ObjectMapper();
-            Map<String, String> json = mapper.readValue(input, Map.class);
-
-            String key = json.get("GEMINI_API_KEY");
-
-            if (key == null) {
-                throw new RuntimeException("GEMINI_API_KEY not found");
-            }
-
-            return key;
-
-        } catch (Exception e) {
-            throw new RuntimeException("Error loading Gemini API key", e);
-        }
     }
 
     /**
@@ -134,24 +94,28 @@ public class GeminiLLM extends BotLLMOnline {
     }
 
     @Override
-    public void notifyPlayerAction(PlayerRole role, String action, double amount) {
-    }
-
-    @Override
     public void notifyOtherPlayerAction(IPokerPlayer p) {}
 
     @Override
-    public void notifyPlayerState(final IPokerPlayer player, boolean last) throws IOException {
-    }
+    public void notifyPlayerState(final IPokerPlayer player, boolean last) throws IOException {}
 
     @Override
-    public void notifyTotalPot(int total) throws IOException {
+    public void notifyTotalPot(int total) throws IOException {}
+
+    @Override
+    protected String getCredentialKey() {
+        return "GEMINI_API_KEY";
     }
+
 	@Override
 	public Bot create(int ID, int initialMoney) {
 
         String key = loadApiKey();
-		return new GeminiLLM(ID, initialMoney, key);
+		return new GeminiLLM(ID, initialMoney);
 	}
     
+    public static String getGenericName() {
+        return "Gemini LLM";
+    }
+
 }

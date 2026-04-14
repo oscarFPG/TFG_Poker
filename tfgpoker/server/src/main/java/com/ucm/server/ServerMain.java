@@ -7,8 +7,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ucm.common.BotStruct;
+import com.ucm.common.ClientStruct;
 import com.ucm.common.GameConfig;
-import com.ucm.common.GameInfo;
 import com.ucm.common.GameType;
 
 
@@ -35,26 +35,17 @@ public class ServerMain {
         while(true) {
 
             try {
+
                 ServerTCP server = new ServerTCP(GameType.PORT);
-                
-                List<ClientThread> clients = server.startPregame();
+                server.startPregame();
+
+                List<ClientStruct> players = server.getRoomPlayers();
                 List<BotStruct> bots = server.getRoomBots();
                 GameConfig config = server.getGameConfigDeepCopy();
                 log.debug("Pregame ended!");
 
-                // Convert data -> This is for human players
-                GameInfo gameInfo = new GameInfo( new GameConfig(config) );
-                for(ClientThread ct : clients) {
-                    gameInfo.addPlayer(ct._playerName, ct._socket);
-                }
-                
-                // Add Bots
-                for(BotStruct bt : bots) {
-                    gameInfo.addBots(bt.idBot());
-                }
-
                 log.debug("Poker game starting!");
-                server.startGame(gameInfo);
+                server.startGame(players, bots, config);
                 log.debug("Poker game finished!");
             }
             catch(IOException | InterruptedException e) {

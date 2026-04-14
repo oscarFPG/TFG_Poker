@@ -28,7 +28,7 @@ public class GeminiTest {
             Map<String, String> json = mapper.readValue(input, Map.class);
             String key = json.get("GEMINI_API_KEY");
             
-            GeminiLLM geminiLLM = new GeminiLLM(0, 1000, key);
+            GeminiLLM geminiLLM = new GeminiLLM(0, 1000);
             geminiLLM.receiveRole(PlayerRole.DEALER);
             String response = geminiLLM.actionMakePlay(0, 0, 0);
 

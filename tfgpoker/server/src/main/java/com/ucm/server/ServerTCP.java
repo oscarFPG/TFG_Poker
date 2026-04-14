@@ -7,7 +7,6 @@ import org.apache.logging.log4j.Logger;
 import com.ucm.common.BotStruct;
 import com.ucm.common.ClientStruct;
 import com.ucm.common.GameConfig;
-import com.ucm.common.GameInfo;
 import com.ucm.common.GameType;
 import com.ucm.common.SocketUtils;
 import com.ucm.common.exceptions.CancelGameException;
@@ -22,11 +21,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class ServerTCP {
-
-    
 
     private static final Logger log = LogManager.getLogger(ServerTCP.class);
 
@@ -34,6 +32,7 @@ public class ServerTCP {
     private int _serverPort;
     private ServerSocket _serverSocket;
     private ExecutorService _executor;
+    private AtomicInteger _idGenerator;
 
     private List<ClientThread> _roomPlayers;
     private List<BotStruct> _roomBots;
@@ -41,15 +40,18 @@ public class ServerTCP {
 
 
     public ServerTCP(final int port) throws IOException, InterruptedException {
+        _serverIP = showServerIP();
         _serverPort = port;
         _serverSocket = new ServerSocket(port);
         _executor = Executors.newFixedThreadPool(GameType.MAX_PLAYERS);
+        _idGenerator = new AtomicInteger(0);
+
         _roomPlayers = Collections.synchronizedList( new ArrayList<>() );
         _roomBots = Collections.synchronizedList( new ArrayList<>() );
         _gameConfig = new GameConfig();
 
+        log.debug("Server public IP: {}", _serverIP);
         log.debug("Server started on port {}", port);
-        _serverIP = showServerIP();
     }
 
 
@@ -64,19 +66,23 @@ public class ServerTCP {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         String serverIP = response.body();
-        log.debug("Server public IP: {}", serverIP);
-
+        
         return serverIP;
     }
 
-    public List<ClientThread> startPregame() {
+    public void startPregame() {
 
         while(!_serverSocket.isClosed()) {
 
             try {
 
                 Socket socket = _serverSocket.accept();
-               _executor.execute( new ClientThread(socket, _roomPlayers, _serverSocket, _gameConfig, _roomBots) );
+                ClientThread connectedClient = new ClientThread(
+                    socket, _serverSocket, _idGenerator,    // Server properties
+                    _roomPlayers, _roomBots,    // Players and bot list
+                    _gameConfig     // Game configuration
+                );
+               _executor.execute( connectedClient );
 
                 log.debug("New client connected!");
             }
@@ -85,26 +91,14 @@ public class ServerTCP {
             }
         }
         log.debug("Terminating pregame phase...");
-
-        return _roomPlayers;
     }
 
-    public List<BotStruct> getRoomBots () {
-        List<BotStruct> copy = new ArrayList<>(_roomBots);
-        return copy;
-    }
-
-
-    public GameConfig getGameConfigDeepCopy() {
-        return new GameConfig(_gameConfig);
-    }
-
-    public void startGame(final GameInfo info) {
+    public void startGame(final List<ClientStruct> players, final List<BotStruct> bots, final GameConfig config) {
 
         log.debug("--- Poker game ---");
 
         try {
-            Game game = new Game(info);
+            Game game = new Game(players, bots, config);
             Controller controller = new Controller(game);
             controller.run();
         }
@@ -113,6 +107,7 @@ public class ServerTCP {
         }
         catch(CancelGameException e) {
 
+            /*
             log.debug("Game cancelled by server: {}", e.getMessage());
             for(ClientStruct cs : info.players) {
                 try {
@@ -122,13 +117,34 @@ public class ServerTCP {
                     log.warn("Minor error trying to notify player {} about game cancellation: {}", cs.name(), ex.getMessage());
                 }
             }
+            */
         }
         finally {
-            cleanUp(info);
+            //cleanUp(info);
         }
 
     }
 
+
+    public List<ClientStruct> getRoomPlayers() {
+
+        List<ClientStruct> players = new ArrayList<>();
+        for(ClientThread ct : _roomPlayers) {
+            players.add( new ClientStruct(ct.getPlayerName(), ct.getPlayerSocket()) );
+        }
+
+        return players;
+    }
+
+    public List<BotStruct> getRoomBots () {
+        return new ArrayList<>(_roomBots);
+    }
+
+    public GameConfig getGameConfigDeepCopy() {
+        return new GameConfig(_gameConfig);
+    }
+
+    /*
     private void cleanUp(final GameInfo info) {
 
         log.debug("Cleaning up server resources...");
@@ -158,5 +174,6 @@ public class ServerTCP {
         _executor.shutdownNow();
         log.debug("Executor service shutdown!");
     }
+    */
 
 }

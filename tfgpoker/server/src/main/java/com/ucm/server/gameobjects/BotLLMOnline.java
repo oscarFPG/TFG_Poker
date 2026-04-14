@@ -1,10 +1,14 @@
 package com.ucm.server.gameobjects;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 
@@ -75,7 +79,16 @@ public abstract class BotLLMOnline extends BotLLM {
      */
     protected double equity;
 
+    protected String _credentialKey;
 
+    /**
+     * API key used to access the LLM provider
+     */
+    protected String _apiKey;
+
+    /**
+     * Default empty constructor
+     */
     public BotLLMOnline() {}
 
     /**
@@ -86,9 +99,58 @@ public abstract class BotLLMOnline extends BotLLM {
      * @param money  initial stack
      * @param apiKey API key used to access the LLM provider
      */
-    public BotLLMOnline(int id, String name, int money, String apiKey) {
-        super(id, name, money, apiKey);
+    public BotLLMOnline(int id, String name, int money) {
+        super(id, name, money);
         this.money = money;
+        _credentialKey = getCredentialKey();
+        _apiKey = loadApiKey();
+    }
+
+    /**
+     * Method used to retrieve the key name inside the credentials.json file
+     * @return credential key
+     */
+    protected abstract String getCredentialKey();
+
+    /**
+     * Loads the API key from a {@code credentials.json} file.
+     * 
+     * <p>
+     * The file must be located in the classpath and contain a field
+     * named as the .
+     * </p>
+     * 
+     * @return API key as {@link String}
+     * @throws RuntimeException if the file or key cannot be loaded
+     */
+    protected String loadApiKey() throws RuntimeException {
+
+        String key = null;
+        try {
+            InputStream input = getClass()
+                    .getClassLoader()
+                    .getResourceAsStream("credentials.json");
+
+            if (input == null)
+                throw new RuntimeException("credentials.json not found");
+
+
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, String> json = mapper.readValue(
+                input,
+                new TypeReference<Map<String, String>>() {}
+            );
+
+            key = json.get(_credentialKey);
+            if (key == null)
+                throw new RuntimeException( String.format("Credential key %s not found", _credentialKey) );
+
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Error loading Gemini API key", e);
+        }
+
+        return key;
     }
 
     /**
