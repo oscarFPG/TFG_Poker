@@ -271,7 +271,8 @@ public class PlayerList {
             // TODO : Handle exception
         }
         
-
+        int totalPot = calculateTotalPot();
+        notifyTotalPotToAllPlayers(totalPot);
     }
 
     public void playHand(final int sb, final int bb, final boolean isPreflop) throws OnlyOnePlayerLeftException, CancelGameException {
@@ -289,7 +290,7 @@ public class PlayerList {
         Node pivotPlayer = calculatePivotPlayer(playersRemaining, isPreflop);
         int maxBet = (isPreflop) ? bb : 0;
         int currentBet = maxBet;
-        int totalHand = 0;
+        int totalPot = 0;
 
 
         if(playersRemaining == 1) { // In case only one player can play -> Cannot play alone
@@ -333,6 +334,9 @@ public class PlayerList {
             CommandResult result = command.execute(sb, bb, maxBet);
             notifyOtherPlayerActionToAllPlayers(playerOnTurn._player);
 
+            totalPot = calculateTotalPot();
+            notifyTotalPotToAllPlayers(totalPot);
+
             if(result.folds()) {
                 --playersRemaining; 
                 if (playersRemaining == 1) {
@@ -344,10 +348,11 @@ public class PlayerList {
 
             currentBet = result.folds() ? 0 : result.bet();
             maxBet = Integer.max(maxBet, currentBet);
-
+            
             pivotPlayer = result.raises() ? playerOnTurn : pivotPlayer;
             playerOnTurn = getNextPlayerActive(playerOnTurn);
 
+            log.debug("Total pot is {}", totalPot);
             log.debug("Current bet is {}", currentBet);
             log.debug("Maximum bet is {}", maxBet);
         }
@@ -518,6 +523,29 @@ public class PlayerList {
         }
 
         return info;
+    }
+
+
+    private int calculateTotalPot() {
+
+        int total = 0;
+
+        Node iNode = _first;
+        if(!iNode._player.isEliminated()) {
+            total += iNode._player.getMoneyOnBet();
+        }
+
+        iNode = iNode._next;
+        while(iNode != _first) {
+            
+            if(!iNode._player.isEliminated()) {
+                total += iNode._player.getMoneyOnBet();
+            }
+
+            iNode = iNode._next;
+        }
+
+        return total;
     }
 
     private boolean checkAllPlayersAllIn() {
@@ -749,7 +777,7 @@ public class PlayerList {
     private void notifyOtherPlayerActionToAllPlayers(IPokerPlayer p) {
 
         Node iNode = _first;
-        if(!iNode._player.isEliminated() && iNode._player != p) {
+        if(!iNode._player.isEliminated()) {
             
             try {
                 iNode._player.notifyOtherPlayerAction(p);
@@ -762,7 +790,7 @@ public class PlayerList {
         iNode = iNode._next;
         while(iNode != _first) {
 
-            if(!iNode._player.isEliminated() && iNode._player != p) {
+            if(!iNode._player.isEliminated()) {
 
                 try {
                     iNode._player.notifyOtherPlayerAction(p);
@@ -770,6 +798,31 @@ public class PlayerList {
                 catch(IOException e) {
                     // TODO : Handle exception
                 }
+            }
+
+            iNode = iNode._next;
+        }
+    }
+
+    private void notifyTotalPotToAllPlayers(final int totalPot) {
+
+        Node iNode = _first;
+
+        try {
+            iNode._player.notifyTotalPot(totalPot);
+        }
+        catch(IOException e) {
+            // TODO : Handle exception
+        }
+        
+        iNode = iNode._next;
+        while(iNode != _first) {
+            
+            try {
+                iNode._player.notifyTotalPot(totalPot);
+            }
+            catch(IOException e) {
+                // TODO : Handle exception
             }
 
             iNode = iNode._next;

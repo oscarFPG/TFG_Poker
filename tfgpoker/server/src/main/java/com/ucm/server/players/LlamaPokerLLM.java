@@ -394,4 +394,10 @@ public class LlamaPokerLLM extends BotLLM {
         throw new UnsupportedOperationException("Unimplemented method 'notifyPlayerState'");
     }
 
+    @Override
+    public void notifyTotalPot(int total) throws IOException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'notifyTotalPot'");
+    }
+
 }

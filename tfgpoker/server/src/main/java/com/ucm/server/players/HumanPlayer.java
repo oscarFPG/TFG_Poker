@@ -96,9 +96,19 @@ public class HumanPlayer extends Player {
     }
 
     @Override
+    public void notifyTotalPot(int total) throws IOException {
+        SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TOTAL_POT);
+        SocketUtils.sendInteger(_socket.getOutputStream(), total);
+    }
+
+    @Override
     public void notifyOtherPlayerAction(IPokerPlayer p) throws IOException {
 
-        SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_OTHER_PLAYER);
+        if(this == p)
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.MY_TURN_ACTION);
+        else
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_OTHER_PLAYER);
+        
         SocketUtils.sendInteger(_socket.getOutputStream(), p.getPlayerId());
         SocketUtils.sendString(_socket.getOutputStream(), p.getPlayerName());
         SocketUtils.sendInteger(_socket.getOutputStream(), p.getRole().getNetworkCode());

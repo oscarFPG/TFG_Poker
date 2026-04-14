@@ -80,6 +80,7 @@ public class GameType {
     public static final int TURN_WAIT = 203;
     public static final int TURN_FOLD = 204;
     public static final int TURN_OTHER_PLAYER = 205;
+    public static final int MY_TURN_ACTION = 206;
 
     // Round, hand and game status
     public static final int GAME_STARTS = 300;
@@ -94,6 +95,7 @@ public class GameType {
     public static final int PLAYER_LOSES_HAND = 321;
     public static final int PLAYER_WINS_GAME = 330;
     public static final int PLAYER_LOSES_GAME = 331;
+    public static final int TOTAL_POT = 331;
 
     // Player actions
     public static final String FOLD_ACTION_FULL = "fold";

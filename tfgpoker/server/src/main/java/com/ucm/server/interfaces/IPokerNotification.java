@@ -1,12 +1,10 @@
 package com.ucm.server.interfaces;
 
 import java.io.IOException;
-import java.util.List;
 
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
-import com.ucm.server.commands.Command;
-import com.ucm.server.middleclasses.CommandResult;
+
 
 
 public interface IPokerNotification {
@@ -16,6 +14,7 @@ public interface IPokerNotification {
     public void notifyTableCard(final Card c) throws IOException;
     public void notifySmallBlindBet(final int amount) throws IOException;
     public void notifyBigBlindBet(final int amount) throws IOException;
+    public void notifyTotalPot(final int total) throws IOException;
     public void notifyOtherPlayerAction(IPokerPlayer p) throws IOException;
     public void notifyTurnWait() throws IOException;
     public void notifyTurnPlay() throws IOException;

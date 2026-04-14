@@ -91,7 +91,6 @@ public class InGameWindowController extends GenericController {
     /* Table info */
     @FXML private ImageView tableCard0, tableCard1, tableCard2, tableCard3, tableCard4;
     @FXML private Label labelTotalPot;
-    private IntegerProperty totalPotProperty = new SimpleIntegerProperty(0);
 
     private Thread _gameThread = null;
     private BlockingQueue<String> _commandQueue = new LinkedBlockingQueue<>();
@@ -107,7 +106,7 @@ public class InGameWindowController extends GenericController {
         initializeSlider(_clientInfo.gameConfig);
 
         usernamePlaceHolder.setText( _clientInfo.name );
-        labelTotalPot.textProperty().bind( totalPotProperty.asString() );
+        labelTotalPot.setText("0");
 
         _stage.setOnCloseRequest(event -> {
 
@@ -134,7 +133,7 @@ public class InGameWindowController extends GenericController {
                     alert.setTitle("Game finished");
                     alert.setHeaderText("The game has finished successfully!");
                     alert.setContentText("You will return to the main menu");
-                    alert.showAndWait();
+                    //alert.showAndWait();
 
                 });
             }
@@ -145,7 +144,7 @@ public class InGameWindowController extends GenericController {
                     alert.setTitle("Game was cancelled");
                     alert.setHeaderText("All players disconnected");
                     alert.setContentText("You will return to the main menu");
-                    alert.showAndWait();
+                    //alert.showAndWait();
 
                 });
             }
@@ -373,7 +372,6 @@ public class InGameWindowController extends GenericController {
                 final int offBetMoney = SocketUtils.receiveInt(socket.getInputStream());
 				System.out.printf("Forced play as the small blind with %d chips\n", amountSB);
 
-                totalPotProperty.add(amountSB);
                 Platform.runLater(() -> {
                     updatePlayerInfo(0, role, onBetMoney, offBetMoney, false, false);
                 });
@@ -385,7 +383,6 @@ public class InGameWindowController extends GenericController {
                 final int offBetMoney = SocketUtils.receiveInt(socket.getInputStream());
 				System.out.printf("Forced play as the big blind with %d chips\n", amountBB);
 
-                totalPotProperty.add(amountBB);
                 Platform.runLater(() -> {
                     updatePlayerInfo(0, role, onBetMoney, offBetMoney, false, false);
                 });
@@ -434,7 +431,7 @@ public class InGameWindowController extends GenericController {
 			else if(serverCode == GameType.HAND_ENDS_BY_FOLD) {
 				handEndsByFold = true;
 			}
-            else if(serverCode == GameType.TURN_OTHER_PLAYER) {
+            else if(serverCode == GameType.TURN_OTHER_PLAYER || serverCode == GameType.MY_TURN_ACTION ) {
 
                 final int otherPlayerID = SocketUtils.receiveInt( socket.getInputStream() );
                 final String otherPlayerName = SocketUtils.receiveString( socket.getInputStream() );
@@ -463,6 +460,13 @@ public class InGameWindowController extends GenericController {
                     );
                 });
 
+            }
+            else if(serverCode == GameType.TOTAL_POT) {
+
+                final int totalPot = SocketUtils.receiveInt( socket.getInputStream() );
+                Platform.runLater(() -> {
+                    labelTotalPot.setText( String.valueOf(totalPot) );
+                });
             }
             else if(serverCode == GameType.ERROR_GAME_CANCELS) {
                 System.out.printf("Game has been cancelled by the server!\n");
