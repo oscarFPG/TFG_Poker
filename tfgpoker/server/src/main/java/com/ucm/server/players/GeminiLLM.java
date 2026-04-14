@@ -103,8 +103,6 @@ public class GeminiLLM extends BotLLMOnline {
 
 	@Override
 	public Bot create(int ID, int initialMoney) {
-
-        String key = loadApiKey();
 		return new GeminiLLM(ID, initialMoney);
 	}
     
