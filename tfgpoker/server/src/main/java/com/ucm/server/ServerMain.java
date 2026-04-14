@@ -48,7 +48,7 @@ public class ServerMain {
                     gameInfo.addPlayer(ct._playerName, ct._socket);
                 }
                 
-                //add Bots
+                // Add Bots
                 for(BotStruct bt : bots) {
                     gameInfo.addBots(bt.idBot());
                 }

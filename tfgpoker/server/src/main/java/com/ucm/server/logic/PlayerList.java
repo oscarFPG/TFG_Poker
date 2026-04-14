@@ -961,7 +961,6 @@ public class PlayerList {
         return (connectedPlayers <= 1);
     }
 
-
     public void notifyEquityToPlayers(Map<Integer, Double> equityMap) {
 
     if (isEmpty()) return;
@@ -988,6 +987,7 @@ public class PlayerList {
 
     } while (current != _first);
 }
+
 
     public boolean isEmpty() { return size() == 0; }
     public boolean isFull() { return size() == max(); }

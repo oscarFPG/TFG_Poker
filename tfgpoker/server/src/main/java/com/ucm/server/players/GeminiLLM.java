@@ -1,17 +1,11 @@
 package com.ucm.server.players;
 
 import java.io.IOException;
-import java.util.List;
 
 import com.ucm.common.GameType;
-import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
-import com.ucm.server.commands.Command;
 import com.ucm.server.gameobjects.Bot;
-import com.ucm.server.gameobjects.BotLLM;
-import com.ucm.server.gameobjects.Player;
 import com.ucm.server.interfaces.IPokerPlayer;
-import com.ucm.server.middleclasses.CommandResult;
 import java.io.InputStream;
 import java.util.Map;
 
@@ -20,6 +14,7 @@ import com.ucm.server.gameobjects.BotLLMOnline;
 
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
+
 
 /**
  * Concrete implementation of a poker bot powered by Google's Gemini LLM.
@@ -145,21 +140,12 @@ public class GeminiLLM extends BotLLMOnline {
     @Override
     public void notifyOtherPlayerAction(IPokerPlayer p) {}
 
-    @Override public void notifyOtherPlayerAction(IPokerPlayer p) {}
-
-
-
     @Override
     public void notifyPlayerState(final IPokerPlayer player, boolean last) throws IOException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyPlayerState'");
     }
-
 
     @Override
     public void notifyTotalPot(int total) throws IOException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyTotalPot'");
     }
 	@Override
 	public Bot create(int ID, int initialMoney) {

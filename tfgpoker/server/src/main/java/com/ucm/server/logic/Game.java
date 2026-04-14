@@ -90,7 +90,7 @@ public class Game {
             _playerList.shareOutAllCardsFromPlayer(randomCard1, randomCard2);
         }
 
-        updateEquity();
+        //updateEquity();
     }
 
     public void addCardToTable() throws CancelGameException {
@@ -113,7 +113,7 @@ public class Game {
         }
         log.debug("Table cards: {}", sb.toString());
 
-        updateEquity();
+        //updateEquity();
     }
 
     public void playHand() throws OnlyOnePlayerLeftException, CancelGameException {
