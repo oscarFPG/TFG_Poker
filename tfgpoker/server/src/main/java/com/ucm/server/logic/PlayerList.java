@@ -21,7 +21,6 @@ import com.ucm.server.middleclasses.CommandResult;
 import com.ucm.server.middleclasses.HandInfo;
 import com.ucm.server.middleclasses.PlayerEvaluation;
 import com.ucm.server.middleclasses.PotDistribution;
-import com.ucm.server.managers.BotManager;
 import com.ucm.server.managers.PotManager;
 
 
@@ -192,7 +191,7 @@ public class PlayerList {
         }
     }
 
-    public void shareOutAllCardsFromPlayer(Card c1, Card c2) throws CancelGameException{
+    public void shareOutAllCardsFromPlayer(Card c1, Card c2) throws CancelGameException {
 
         if (isEmpty())
             return;
@@ -207,7 +206,10 @@ public class PlayerList {
                 _first._player.notifyPlayerCard(c2);
             }
             catch (IOException e) {
-                // TODO : Handle exception
+                
+                _first._isDisconnected = true;
+                if( checkIfGameCancel() )
+                    throw new CancelGameException();
             }
             
 
@@ -228,7 +230,10 @@ public class PlayerList {
                     index._player.notifyPlayerCard(c2);
                 }
                 catch (IOException e) {
-                    // TODO : Handle exception
+                    
+                    index._isDisconnected = true;
+                    if( checkIfGameCancel() )
+                        throw new CancelGameException();
                 }
 
                 log.debug("Player {} receives the cards: {} {}", index._player.getPlayerName(), c1.toString(), c2.toString());
@@ -239,7 +244,7 @@ public class PlayerList {
         }
     }
 
-    private void smallBlindAndBigBlindPlays(final int sb, final int bb, final int playersRemaining) {
+    private void smallBlindAndBigBlindPlays(final int sb, final int bb, final int playersRemaining) throws CancelGameException {
 
         // Select as small blind:
         // 1. First player if there is only two players -> playsToMake == 1
@@ -256,7 +261,10 @@ public class PlayerList {
             );
         }
         catch(IOException e) {
-            // TODO : Handle exception
+            
+            pNode._isDisconnected = true;
+            if( checkIfGameCancel() )
+                throw new CancelGameException();
         }
         
 
@@ -272,7 +280,10 @@ public class PlayerList {
             );
         }
         catch(IOException e) {
-            // TODO : Handle exception
+            
+            pNode._isDisconnected = true;
+            if( checkIfGameCancel() )
+                throw new CancelGameException();
         }
         
         int totalPot = calculateTotalPot();
@@ -327,7 +338,7 @@ public class PlayerList {
 
                 log.debug("Something happened with player {} : Disconnecting player and making FOLD instead", playerOnTurn._player.getPlayerName());
                 playerOnTurn._isDisconnected = true;
-                if(checkIfGameCancel()) {
+                if( checkIfGameCancel() ) {
                     throw new CancelGameException();
                 }
                 else {
@@ -366,7 +377,7 @@ public class PlayerList {
         notifyRoundEnded();
     }
 
-    private Command askCommandToPlayer(IPokerPlayer player, final int sb, final int bb, final int maxBet) {
+    private Command askCommandToPlayer(IPokerPlayer player, final int sb, final int bb, final int maxBet) throws CancelGameException {
 
         log.debug("It's is {} turn to play", player.getPlayerName());
 
@@ -476,7 +487,10 @@ public class PlayerList {
                 _first._player.notifyTableCard(card);
             }
             catch (IOException e) {
-                // TODO : Handle exception
+                
+                _first._isDisconnected = true;
+                if( checkIfGameCancel() )
+                    throw new CancelGameException();
             }
         }
             
@@ -488,7 +502,9 @@ public class PlayerList {
                     i._player.notifyTableCard(card);
                 }
                 catch (IOException e) {
-                    // TODO : Handle exception
+                    i._isDisconnected = true;
+                    if( checkIfGameCancel() )
+                        throw new CancelGameException();
                 }
             }
                 
@@ -606,7 +622,7 @@ public class PlayerList {
 
     }
 
-    private void notifyWaitExceptTo(final Node playerOnTurn) {
+    private void notifyWaitExceptTo(final Node playerOnTurn) throws CancelGameException {
 
         Node iNode = (_first != playerOnTurn) ? _first : _first._next;
         while (iNode != playerOnTurn) {
@@ -615,7 +631,10 @@ public class PlayerList {
                 iNode._player.notifyTurnWait();
             }
             catch(IOException e) {
-                // TODO : Handle exception
+                
+                iNode._isDisconnected = true;
+                if( checkIfGameCancel() )
+                    throw new CancelGameException();
             }
             
             iNode = iNode._next;
@@ -762,7 +781,7 @@ public class PlayerList {
         return iNode;
     }
 
-    private void givePriceToPlayerWithID(final int id, final int amount){
+    private void givePriceToPlayerWithID(final int id, final int amount) {
 
         Node winner = (_first._player.getPlayerId() == id && !_first._player.isEliminated()) ? _first : null;
         if(winner == null){
@@ -778,7 +797,7 @@ public class PlayerList {
         winner._player.setIsWinner(true);
     }
 
-    private void notifyOtherPlayerActionToAllPlayers(IPokerPlayer p) {
+    private void notifyOtherPlayerActionToAllPlayers(IPokerPlayer p) throws CancelGameException {
 
         Node iNode = _first;
         if(!iNode._player.isEliminated()) {
@@ -787,7 +806,10 @@ public class PlayerList {
                 iNode._player.notifyOtherPlayerAction(p);
             }
             catch(IOException e) {
-                // TODO : Handle exception
+                
+                iNode._isDisconnected = true;
+                if( checkIfGameCancel() )
+                    throw new CancelGameException();
             }
         }
 
@@ -800,7 +822,10 @@ public class PlayerList {
                     iNode._player.notifyOtherPlayerAction(p);
                 }
                 catch(IOException e) {
-                    // TODO : Handle exception
+                    
+                    iNode._isDisconnected = true;
+                    if( checkIfGameCancel() )
+                        throw new CancelGameException();
                 }
             }
 
@@ -808,7 +833,7 @@ public class PlayerList {
         }
     }
 
-    private void notifyTotalPotToAllPlayers(final int totalPot) {
+    private void notifyTotalPotToAllPlayers(final int totalPot) throws CancelGameException {
 
         Node iNode = _first;
 
@@ -816,7 +841,10 @@ public class PlayerList {
             iNode._player.notifyTotalPot(totalPot);
         }
         catch(IOException e) {
-            // TODO : Handle exception
+            
+            iNode._isDisconnected = true;
+            if( checkIfGameCancel() )
+                throw new CancelGameException();
         }
         
         iNode = iNode._next;
@@ -826,14 +854,17 @@ public class PlayerList {
                 iNode._player.notifyTotalPot(totalPot);
             }
             catch(IOException e) {
-                // TODO : Handle exception
+                
+                iNode._isDisconnected = true;
+                if( checkIfGameCancel() )
+                    throw new CancelGameException();
             }
 
             iNode = iNode._next;
         }
     }
 
-    private void notifyHandEndsByFold() {
+    private void notifyHandEndsByFold() throws CancelGameException {
         
         Node iNode = _first;
 
@@ -841,7 +872,10 @@ public class PlayerList {
             iNode._player.notifyHandEndsByFolds();
         }
         catch(IOException e) {
-            // TODO : Handle exception
+            
+            iNode._isDisconnected = true;
+            if( checkIfGameCancel() )
+                throw new CancelGameException();
         }
         
         iNode = iNode._next;
@@ -851,14 +885,17 @@ public class PlayerList {
                 iNode._player.notifyHandEndsByFolds();
             }
             catch(IOException e) {
-                // TODO : Handle exception
+                
+                iNode._isDisconnected = true;
+                if( checkIfGameCancel() )
+                    throw new CancelGameException();
             }
 
             iNode = iNode._next;
         }
     }
 
-    private void notifyRoundEnded() {
+    private void notifyRoundEnded() throws CancelGameException {
 
         Node iNode = _first;
 
@@ -866,7 +903,10 @@ public class PlayerList {
             iNode._player.notifyRoundEnded();
         }
         catch(IOException e) {
-            // TODO : Handle exception
+            
+            iNode._isDisconnected = true;
+            if( checkIfGameCancel() )
+                throw new CancelGameException();
         }
 
         iNode = iNode._next;
@@ -876,14 +916,17 @@ public class PlayerList {
                 iNode._player.notifyRoundEnded();
             }
             catch(IOException e) {
-                // TODO : Handle exception
+                
+                iNode._isDisconnected = true;
+                if( checkIfGameCancel() )
+                    throw new CancelGameException();
             }
 
             iNode = iNode._next;
         }
     }
 
-    private void notifyGameStateToAllPlayers() {
+    private void notifyGameStateToAllPlayers() throws CancelGameException {
 
         Node target = !_first._player.isEliminated() && !_first._isDisconnected ? _first : getNextPlayerActive(_first);
         
@@ -901,6 +944,10 @@ public class PlayerList {
                 }
                 catch(IOException e) {
                     log.error("Error notifying player state {} to {}", p.getPlayerName(), target._player.getPlayerName());
+
+                    target._isDisconnected = true;
+                    if( checkIfGameCancel() )
+                        throw new CancelGameException();
                 }
                 
                 infoPlayer = infoPlayer._next;
@@ -923,7 +970,10 @@ public class PlayerList {
                 iNode._player.notifyGameKeeps();
         }
         catch(IOException e) {
-            // TODO : Handle exception
+
+            iNode._isDisconnected = true;
+            if( checkIfGameCancel() )
+                throw new CancelGameException();
         }
 
         iNode = iNode._next;
@@ -936,7 +986,10 @@ public class PlayerList {
                     iNode._player.notifyGameKeeps();
             }
             catch(IOException e) {
-                // TODO : Handle exception
+
+                iNode._isDisconnected = true;
+                if( checkIfGameCancel() )
+                    throw new CancelGameException();
             }
 
             iNode = iNode._next;
@@ -963,30 +1016,33 @@ public class PlayerList {
 
     public void notifyEquityToPlayers(Map<Integer, Double> equityMap) {
 
-    if (isEmpty()) return;
+        if (isEmpty())
+            return;
 
-    Node current = _first;
+        
+        Node current = _first;
+        do {
 
-    do {
-        IPokerPlayer player = current._player;
+            IPokerPlayer player = current._player;
+            if (!player.isEliminated()) {
 
-        if (!player.isEliminated()) {
+                double equity;
 
-            double equity;
+                if (player.isFolded()) {
+                    equity = 0.0;
+                }
+                else {
+                    equity = equityMap.getOrDefault(player.getPlayerId(), 0.0);
+                }
 
-            if (player.isFolded()) {
-                equity = 0.0;
-            } else {
-                equity = equityMap.getOrDefault(player.getPlayerId(), 0.0);
+                player.notifyEquity(equity);
             }
 
-            player.notifyEquity(equity);
+            current = current._next;
+
         }
-
-        current = current._next;
-
-    } while (current != _first);
-}
+        while (current != _first);
+    }
 
 
     public boolean isEmpty() { return size() == 0; }
