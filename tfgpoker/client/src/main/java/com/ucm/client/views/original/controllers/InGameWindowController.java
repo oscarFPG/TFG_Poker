@@ -285,7 +285,7 @@ public class InGameWindowController extends GenericController {
             return;
 
 
-        _commandQueue.offer(GameType.CALL_ACTION_FULL);
+        _commandQueue.offer(GameType.FOLD_ACTION_FULL);
     }
 
     @FXML

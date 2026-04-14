@@ -49,6 +49,7 @@ public class GameConfig {
         _roomId = other._roomId;
         _initialMoney = other._initialMoney;
         _allowBots = other._allowBots;
+        _dinamicBlinds = other._dinamicBlinds;
         _blindsValue = (other._blindsValue != null) ? String.copyValueOf(other._blindsValue.toCharArray()) : null;
         _levelDuration = (other._levelDuration != null) ? String.copyValueOf(other._levelDuration.toCharArray()) : null;
         _hikePercentage = (other._hikePercentage != null) ? String.copyValueOf(other._hikePercentage.toCharArray()) : null;
