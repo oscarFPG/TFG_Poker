@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.ucm.common.GameType;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.interfaces.IPokerPlayer;
@@ -321,10 +322,14 @@ public abstract class BotLLM extends Bot {
      */
     @Override
     public void notifyOtherPlayerAction(IPokerPlayer p) throws IOException {
-        
-        // TODO : Añadir un flag para indicar si el jugador ha hecho Call, Raise, Check u All-in para mostrarlo en el prompt
-        //String amountOnBet = ((action.equals("raise") || action.equals("all-in")) ? " " + amount : "")
-        //actionHistory.add( mapRole(role) + " " + action + "" );
+
+        String action = p.getLastCommand();
+        if(action.equals(GameType.RAISE_ACTION_FULL) || action.equals(GameType.ALL_IN_ACTION_FULL)) {
+            actionHistory.add( mapRole(p.getRole()) + " " + action + " " + p.getMoneyOnBet() );
+        }
+        else {
+            actionHistory.add( mapRole(p.getRole()) + " " + action );
+        }
     }
 
     @Override

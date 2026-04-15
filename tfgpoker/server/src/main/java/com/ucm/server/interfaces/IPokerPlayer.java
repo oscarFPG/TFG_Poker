@@ -18,6 +18,7 @@ public interface IPokerPlayer extends IPokerActions, IPokerNotification {
     public boolean isAllIn();
     public boolean isEliminated();
     public PlayerRole getRole();
+    public String getLastCommand();
 
     // Setters to modify player state
     public int placeOnBetMoney();

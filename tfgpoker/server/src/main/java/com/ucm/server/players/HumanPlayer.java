@@ -109,6 +109,7 @@ public class HumanPlayer extends Player {
         SocketUtils.sendInteger(_socket.getOutputStream(), p.getRole().getNetworkCode());
         SocketUtils.sendInteger(_socket.getOutputStream(), p.isFolded() ? GameType.TRUE : GameType.FALSE);
         SocketUtils.sendInteger(_socket.getOutputStream(), p.isWinner() ? GameType.TRUE : GameType.FALSE);
+        SocketUtils.sendString(_socket.getOutputStream(), p.getLastCommand());
         SocketUtils.sendInteger(_socket.getOutputStream(), p.getMoneyOffBet());
         SocketUtils.sendInteger(_socket.getOutputStream(), p.getMoneyOnBet());
     }
@@ -130,6 +131,7 @@ public class HumanPlayer extends Player {
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getRole().getNetworkCode());
         SocketUtils.sendInteger(_socket.getOutputStream(), player.isFolded() ? GameType.TRUE : GameType.FALSE);
         SocketUtils.sendInteger(_socket.getOutputStream(), player.isWinner() ? GameType.TRUE : GameType.FALSE);
+        SocketUtils.sendString(_socket.getOutputStream(), player.getLastCommand());
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOffBet());
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOnBet());
 

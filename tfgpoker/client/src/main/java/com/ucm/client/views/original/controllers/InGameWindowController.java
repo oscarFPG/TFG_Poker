@@ -568,12 +568,14 @@ public class InGameWindowController extends GenericController {
                 final PlayerRole otherPlayerRole = PokerGame.receivePlayerRole( socket.getInputStream() );
                 final boolean otherPlayerIsFolded = SocketUtils.receiveInt( socket.getInputStream() ) == GameType.TRUE;
                 final boolean otherPlayerIsWinner = SocketUtils.receiveInt( socket.getInputStream() ) == GameType.TRUE;
+                final String otherPlayerLastCommand = SocketUtils.receiveString( socket.getInputStream() );
                 final int otherPlayerOffBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
                 final int otherPlayerOnBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
 
                 System.out.printf(
-                    "Other player action - PlayerID: %d, OffBetMoney: %d, OnBetMoney: %d\n",
+                    "Other player - PlayerID: %d, Action: %s, OffBetMoney: %d, OnBetMoney: %d\n",
                     otherPlayerID,
+                    otherPlayerLastCommand,
                     otherPlayerOffBetMoney, otherPlayerOnBetMoney
                 );
 
@@ -748,12 +750,13 @@ public class InGameWindowController extends GenericController {
             PlayerRole r = PokerGame.receivePlayerRole(input);
             boolean isFolded = SocketUtils.receiveInt(input) == GameType.TRUE;
             boolean isWinner = SocketUtils.receiveInt(input) == GameType.TRUE;
+            String lastCommand = SocketUtils.receiveString(input);
             int offBetMoney = SocketUtils.receiveInt(input);
             int onBetMoney = SocketUtils.receiveInt(input);
 
             System.out.printf(
-                "UPDATE - Player ID: %d, Role: %s, Off-Bet Money: %d, On-Bet Money: %d, Folded: %b, Winner: %b\n", 
-                playerID, r.name(), offBetMoney, onBetMoney, isFolded, isWinner
+                "UPDATE - Player ID: %d, Role: %s, Off-Bet Money: %d, On-Bet Money: %d, Folded: %b, Winner: %b, Last Command: %s\n", 
+                playerID, r.name(), offBetMoney, onBetMoney, isFolded, isWinner, lastCommand
             );
 
             Platform.runLater(() -> {

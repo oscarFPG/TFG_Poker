@@ -1,8 +1,10 @@
 package com.ucm.server.gameobjects;
 
 
+import com.ucm.common.GameType;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
+import com.ucm.server.commands.Command;
 import com.ucm.server.interfaces.IPokerPlayer;
 
 /**
@@ -97,6 +99,9 @@ public abstract class Player implements IPokerPlayer {
      */
     protected boolean _isEliminated;
 
+    protected String _lastCommand;
+
+
     /**
      * Default constructor.
      */
@@ -123,14 +128,9 @@ public abstract class Player implements IPokerPlayer {
         _isWinner = false;
         _isAllIn = false;
         _isEliminated = false;
+        _lastCommand = "none";
     }
 
-    /**
-     * Notifies the player about their current equity.
-     * 
-     * @param equity probability of winning the hand
-     */
-    public abstract void notifyEquity(double equity);
 
     /**
      * Decrements the {@link #_offBetMoney} variable by a certain amount.
@@ -160,6 +160,7 @@ public abstract class Player implements IPokerPlayer {
     public final void actionSmallBlindBet(final int sb) {   
         decreaseOffBetMoney(sb);
         increaseOnBetMoney(sb);
+        _lastCommand = "small-blind";
     }
 
     /**
@@ -171,6 +172,7 @@ public abstract class Player implements IPokerPlayer {
     public final void actionBigBlindBet(final int bb) {
         decreaseOffBetMoney(bb);
         increaseOnBetMoney(bb);
+        _lastCommand = "big-blind";
     }
     
     /**
@@ -239,9 +241,11 @@ public abstract class Player implements IPokerPlayer {
      */
     @Override
     public final void call(int amount) {
+
         int resto = amount - _onBetMoney;
         increaseOnBetMoney(resto);
         decreaseOffBetMoney(resto);
+        _lastCommand = GameType.CALL_ACTION_FULL;
     }
 
     /**
@@ -249,7 +253,7 @@ public abstract class Player implements IPokerPlayer {
      */
     @Override
     public final void check() {
-        
+        _lastCommand = GameType.CHECK_ACTION_FULL;
     }
     
     /**
@@ -258,6 +262,7 @@ public abstract class Player implements IPokerPlayer {
     @Override
     public final void fold() {
         _isFold = true;
+        _lastCommand = GameType.FOLD_ACTION_FULL;
     }
     
     /**
@@ -269,6 +274,7 @@ public abstract class Player implements IPokerPlayer {
     @Override
     public final void raise(int amount) {
         call(amount);
+        _lastCommand = GameType.RAISE_ACTION_FULL;
     }
     
     /**
@@ -280,6 +286,7 @@ public abstract class Player implements IPokerPlayer {
         increaseOnBetMoney(_offBetMoney);
         _offBetMoney = 0;
         _isAllIn = true;
+        _lastCommand = GameType.ALL_IN_ACTION_FULL;
     }
 
     /**
@@ -288,6 +295,7 @@ public abstract class Player implements IPokerPlayer {
     @Override
     public final void unfoldPlayer() {
         _isFold = false;
+        _lastCommand = "none";
     }
 
     /**
@@ -335,36 +343,18 @@ public abstract class Player implements IPokerPlayer {
         return String.format("Player: %s - %s%s", _name, carta1, carta2);
     }
 
-    @Override
-    public final int getPlayerId() { return _id; }
 
-    @Override
-    public final String getPlayerName() { return _name; }
-    
-    @Override
-    public final Card[] getPlayerCards() { return _cards; }
-    
-    @Override
-    public final int getCardsCounter() { return _numCards; }
+    @Override public final int getPlayerId() { return _id; }
+    @Override public final String getPlayerName() { return _name; }
+    @Override public final Card[] getPlayerCards() { return _cards; }
+    @Override public final int getCardsCounter() { return _numCards; }
+    @Override public final int getMoneyOnBet() { return _onBetMoney; }
+    @Override public final int getMoneyOffBet() { return _offBetMoney; }
+    @Override public final PlayerRole getRole() { return _role; }
+    @Override public final boolean isFolded() { return _isFold; }
+    @Override public final boolean isWinner() { return _isWinner; }   
+    @Override public final boolean isAllIn() { return _isAllIn; }   
+    @Override public final boolean isEliminated() { return _isEliminated; }
+    @Override public final String getLastCommand() { return _lastCommand; }
 
-    @Override
-    public final int getMoneyOnBet() { return _onBetMoney; }
-    
-    @Override
-    public final int getMoneyOffBet() { return _offBetMoney; }
-
-    @Override
-    public final PlayerRole getRole() { return _role; }
-
-    @Override
-    public final boolean isFolded() { return _isFold; }
-
-    @Override
-    public final boolean isWinner() { return _isWinner; }
-    
-    @Override
-    public final boolean isAllIn() { return _isAllIn; }
-    
-    @Override
-    public final boolean isEliminated() { return _isEliminated; }
 }
