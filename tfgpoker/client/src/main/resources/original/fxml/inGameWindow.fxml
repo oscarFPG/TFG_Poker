@@ -2,6 +2,7 @@
 
 <?import java.lang.String?>
 <?import javafx.geometry.Insets?>
+<?import javafx.geometry.Point3D?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
@@ -267,66 +268,213 @@
    <center>
       <AnchorPane prefHeight="551.0" prefWidth="1238.0" BorderPane.alignment="CENTER">
          <children>
-            <ImageView fx:id="imgTableInGame" fitHeight="388.0" fitWidth="810.0" layoutX="267.0" layoutY="117.0" pickOnBounds="true" preserveRatio="true" />
-            <HBox fx:id="hboxImageCards0" layoutX="624.0" layoutY="383.0" prefHeight="100.0" prefWidth="200.0">
+            <ImageView fx:id="imgTableInGame" fitHeight="489.0" fitWidth="821.0" layoutX="392.0" layoutY="125.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/tableGame.png" />
+               </image></ImageView>
+            <HBox fx:id="hboxImageCards0" layoutX="694.0" layoutY="494.0" prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <ImageView fx:id="imgLeftCard0" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" />
-                  <ImageView fx:id="imgRightCard0" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fx:id="imgLeftCard0" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
+                     <image>
+                        <Image url="@../../images/cards/2_of_clubs.png" />
+                     </image></ImageView>
+                  <ImageView fx:id="imgRightCard0" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0">
+                     <image>
+                        <Image url="@../../images/cards/2_of_diamonds.png" />
+                     </image></ImageView>
                </children>
             </HBox>
-            <HBox fx:id="hboxImageCards1" layoutX="339.0" layoutY="392.0" prefHeight="80.0" prefWidth="146.0">
+            <HBox fx:id="hboxImageCards1" layoutX="331.0" layoutY="430.0" prefHeight="80.0" prefWidth="146.0">
                <children>
-                  <ImageView fx:id="imgLeftCard1" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0" />
-                  <ImageView fx:id="imgRightCard1" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0" />
+                  <ImageView fx:id="imgLeftCard1" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
+                     <image>
+                        <Image url="@../../images/reversePokerCardGame.png" />
+                     </image></ImageView>
+                  <ImageView fx:id="imgRightCard1" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0">
+                     <image>
+                        <Image url="@../../images/reversePokerCardGame.png" />
+                     </image></ImageView>
                </children>
             </HBox>
-            <HBox fx:id="hboxImageCards2" layoutX="245.0" layoutY="231.0" prefHeight="100.0" prefWidth="135.0">
+            <HBox fx:id="hboxImageCards2" layoutX="251.0" layoutY="281.0" prefHeight="100.0" prefWidth="135.0">
                <children>
-                  <ImageView fx:id="imgLeftCard2" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0" />
+                  <ImageView fx:id="imgLeftCard2" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
+                     <image>
+                        <Image url="@../../images/reversePokerCardGame.png" />
+                     </image></ImageView>
                   <ImageView fx:id="imgRightCard2" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0">
                      <image>
-                        <Image url="@../../images" />
+                        <Image url="@../../images/reversePokerCardGame.png" />
                      </image>
                   </ImageView>
                </children>
             </HBox>
-            <HBox fx:id="hboxImageCards3" layoutX="245.0" layoutY="76.0" prefHeight="100.0" prefWidth="147.0">
+            <HBox fx:id="hboxImageCards3" layoutX="290.0" layoutY="126.0" prefHeight="100.0" prefWidth="147.0">
                <children>
-                  <ImageView fx:id="imgLeftCard3" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0" />
-                  <ImageView fx:id="imgRightCard3" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0" />
+                  <ImageView fx:id="imgLeftCard3" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
+                     <image>
+                        <Image url="@../../images/reversePokerCardGame.png" />
+                     </image></ImageView>
+                  <ImageView fx:id="imgRightCard3" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0">
+                     <image>
+                        <Image url="@../../images/reversePokerCardGame.png" />
+                     </image></ImageView>
                </children>
             </HBox>
-            <HBox fx:id="hboxImageCards4" layoutX="506.0" layoutY="-25.0" prefHeight="88.0" prefWidth="147.0">
+            <HBox fx:id="hboxImageCards4" layoutX="508.0" layoutY="14.0" prefHeight="88.0" prefWidth="147.0">
                <children>
-                  <ImageView fx:id="imgLeftCard4" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0" />
-                  <ImageView fx:id="imgRightCard4" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0" />
+                  <ImageView fx:id="imgLeftCard4" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
+                     <image>
+                        <Image url="@../../images/reversePokerCardGame.png" />
+                     </image></ImageView>
+                  <ImageView fx:id="imgRightCard4" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0">
+                     <image>
+                        <Image url="@../../images/reversePokerCardGame.png" />
+                     </image></ImageView>
                </children>
             </HBox>
-            <HBox fx:id="hboxImageCards5" layoutX="821.0" layoutY="-27.0" prefHeight="94.0" prefWidth="137.0">
+            <HBox fx:id="hboxImageCards5" layoutX="922.0" layoutY="14.0" prefHeight="94.0" prefWidth="137.0">
                <children>
-                  <ImageView fx:id="imgLeftCard5" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0" />
-                  <ImageView fx:id="imgRightCard5" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0" />
+                  <ImageView fx:id="imgLeftCard5" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
+                     <image>
+                        <Image url="@../../images/reversePokerCardGame.png" />
+                     </image></ImageView>
+                  <ImageView fx:id="imgRightCard5" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0">
+                     <image>
+                        <Image url="@../../images/reversePokerCardGame.png" />
+                     </image></ImageView>
                </children>
             </HBox>
-            <HBox fx:id="hboxImageCards6" layoutX="1070.0" layoutY="77.0" prefHeight="100.0" prefWidth="145.0">
+            <HBox fx:id="hboxImageCards6" layoutX="1123.0" layoutY="126.0" prefHeight="100.0" prefWidth="145.0">
                <children>
-                  <ImageView fx:id="imgLeftCard6" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0" />
-                  <ImageView fx:id="imgRightCard6" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0" />
+                  <ImageView fx:id="imgLeftCard6" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
+                     <image>
+                        <Image url="@../../images/reversePokerCardGame.png" />
+                     </image></ImageView>
+                  <ImageView fx:id="imgRightCard6" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0">
+                     <image>
+                        <Image url="@../../images/reversePokerCardGame.png" />
+                     </image></ImageView>
                </children>
             </HBox>
-            <HBox fx:id="hboxImageCards7" layoutX="1074.0" layoutY="232.0" prefHeight="97.0" prefWidth="147.0">
+            <HBox fx:id="hboxHandBet0" layoutX="712.0" layoutY="441.0" prefHeight="37.0" prefWidth="119.0">
                <children>
-                  <ImageView fx:id="imgLeftCard7" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0" />
-                  <ImageView fx:id="imgRightCard7" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0" />
+                  <Label fx:id="labelOnBetMoney0" styleClass="username-label" text="Label" />
+                  <ImageView fitHeight="41.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../images/pilaFichasPoker.png" />
+                     </image>
+                  </ImageView>
                </children>
             </HBox>
-            <HBox fx:id="hboxImageCards8" layoutX="944.0" layoutY="389.0" prefHeight="93.0" prefWidth="152.0">
+            <HBox fx:id="hboxHandBet8" layoutX="913.0" layoutY="481.0" prefHeight="38.0" prefWidth="110.0">
                <children>
-                  <ImageView fx:id="imgLeftCard8" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0" />
-                  <ImageView fx:id="imgRightCard8" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0" />
+                  <Label fx:id="labelOnBetMoney8" styleClass="username-label" text="Label" />
+                  <ImageView fitHeight="41.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../images/pilaFichasPoker.png" />
+                     </image>
+                  </ImageView>
                </children>
             </HBox>
-            <StackPane fx:id="pokerPlayer5" layoutX="758.0" layoutY="43.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
+            <HBox fx:id="hboxImageCards7" layoutX="1169.0" layoutY="280.0" prefHeight="97.0" prefWidth="147.0">
+               <children>
+                  <ImageView fx:id="imgLeftCard7" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
+                     <image>
+                        <Image url="@../../images/reversePokerCardGame.png" />
+                     </image></ImageView>
+                  <ImageView fx:id="imgRightCard7" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0">
+                     <image>
+                        <Image url="@../../images/reversePokerCardGame.png" />
+                     </image></ImageView>
+               </children>
+            </HBox>
+            <HBox fx:id="hboxHandBet7" layoutX="1012.0" layoutY="385.0" prefHeight="41.0" prefWidth="119.0">
+               <children>
+                  <Label fx:id="labelOnBetMoney7" styleClass="username-label" text="Label" />
+                  <ImageView fitHeight="41.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../images/pilaFichasPoker.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </HBox>
+            <HBox fx:id="hboxHandBet6" layoutX="991.0" layoutY="260.0" prefHeight="18.0" prefWidth="123.0">
+               <children>
+                  <Label fx:id="labelOnBetMoney6" styleClass="username-label" text="Label" />
+                  <ImageView fitHeight="41.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../images/pilaFichasPoker.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </HBox>
+            <HBox fx:id="hboxImageCards8" layoutX="1075.0" layoutY="430.0" prefHeight="93.0" prefWidth="152.0">
+               <children>
+                  <ImageView fx:id="imgLeftCard8" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
+                     <image>
+                        <Image url="@../../images/reversePokerCardGame.png" />
+                     </image></ImageView>
+                  <ImageView fx:id="imgRightCard8" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="10.0">
+                     <image>
+                        <Image url="@../../images/reversePokerCardGame.png" />
+                     </image></ImageView>
+               </children>
+            </HBox>
+            <HBox fx:id="hboxHandBet5" layoutX="872.0" layoutY="186.0" prefHeight="40.0" prefWidth="118.0">
+               <children>
+                  <Label fx:id="labelOnBetMoney5" styleClass="username-label" text="Label" />
+                  <ImageView fitHeight="41.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../images/pilaFichasPoker.png" />
+                     </image>
+                  </ImageView>
+               </children>
+               <rotationAxis>
+                  <Point3D />
+               </rotationAxis>
+            </HBox>
+            <HBox fx:id="hboxHandBet4" layoutX="700.0" layoutY="156.0" prefHeight="40.0" prefWidth="146.0">
+               <children>
+                  <ImageView fitHeight="41.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../images/pilaFichasPoker.png" />
+                     </image>
+                  </ImageView>
+                  <Label fx:id="labelOnBetMoney4" styleClass="username-label" text="Label" />
+               </children>
+            </HBox>
+            <HBox fx:id="hboxHandBet3" layoutX="517.0" layoutY="228.0" prefHeight="39.0" prefWidth="128.0">
+               <children>
+                  <ImageView fitHeight="41.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../images/pilaFichasPoker.png" />
+                     </image>
+                  </ImageView>
+                  <Label fx:id="labelOnBetMoney3" styleClass="username-label" text="Label" />
+               </children>
+            </HBox>
+            <HBox fx:id="hboxHandBet2" layoutX="445.0" layoutY="339.0" prefHeight="42.0" prefWidth="127.0">
+               <children>
+                  <ImageView fitHeight="41.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../images/pilaFichasPoker.png" />
+                     </image>
+                  </ImageView>
+                  <Label fx:id="labelOnBetMoney2" styleClass="username-label" text="Label" />
+               </children>
+            </HBox>
+            <HBox fx:id="hboxHandBet1" layoutX="535.0" layoutY="472.0" prefHeight="41.0" prefWidth="125.0">
+               <children>
+                  <ImageView fitHeight="41.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../images/pilaFichasPoker.png" />
+                     </image>
+                  </ImageView>
+                  <Label fx:id="labelOnBetMoney1" styleClass="username-label" text="Label" />
+               </children>
+            </HBox>
+            <StackPane fx:id="pokerPlayer5" layoutX="844.0" layoutY="74.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
                <children>
                   <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                      <styleClass>
@@ -422,7 +570,7 @@
                   </StackPane>
                </children>
             </StackPane>
-            <StackPane fx:id="pokerPlayer4" layoutX="443.0" layoutY="43.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
+            <StackPane fx:id="pokerPlayer4" layoutX="449.0" layoutY="74.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
                <children>
                   <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                      <styleClass>
@@ -430,7 +578,7 @@
                         <String fx:value="container-gradiant-colors" />
                      </styleClass>
                      <children>
-                        <VBox alignment="CENTER" prefHeight="56.0" prefWidth="138.0" spacing="10.0">
+                        <VBox alignment="CENTER" prefHeight="56.0" prefWidth="187.0" spacing="10.0">
                            <children>
                               <Label fx:id="playerName4" styleClass="bold-general-text-font" text="Label" />
                               <Region prefHeight="2.0" prefWidth="80.0" styleClass="spacer" />
@@ -441,7 +589,7 @@
                   </HBox>
                   <StackPane prefHeight="150.0" prefWidth="200.0">
                      <children>
-                        <Circle radius="43.0" strokeType="INSIDE" strokeWidth="2.0" StackPane.alignment="CENTER_LEFT">
+                        <Circle radius="43.0" strokeType="INSIDE" strokeWidth="2.0" StackPane.alignment="CENTER_RIGHT">
                            <fill>
                               <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
                                  <stops>
@@ -510,15 +658,16 @@
                               </LinearGradient>
                            </stroke>
                         </Circle>
-                        <ImageView fx:id="imgAvatarProfile4" fitHeight="73.0" fitWidth="129.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT">
+                        <ImageView fx:id="imgAvatarProfile4" fitHeight="73.0" fitWidth="129.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_RIGHT">
                            <StackPane.margin>
-                              <Insets left="3.0" />
-                           </StackPane.margin></ImageView>
+                              <Insets right="3.0" />
+                           </StackPane.margin>
+                        </ImageView>
                      </children>
                   </StackPane>
                </children>
             </StackPane>
-            <StackPane fx:id="pokerPlayer3" layoutX="183.0" layoutY="137.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
+            <StackPane fx:id="pokerPlayer3" layoutX="231.0" layoutY="185.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
                <children>
                   <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                      <styleClass>
@@ -526,7 +675,7 @@
                         <String fx:value="container-gradiant-colors" />
                      </styleClass>
                      <children>
-                        <VBox alignment="CENTER" prefHeight="56.0" prefWidth="138.0" spacing="10.0">
+                        <VBox alignment="CENTER" prefHeight="56.0" prefWidth="187.0" spacing="10.0">
                            <children>
                               <Label fx:id="playerName3" styleClass="bold-general-text-font" text="Label" />
                               <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
@@ -537,7 +686,7 @@
                   </HBox>
                   <StackPane prefHeight="150.0" prefWidth="200.0">
                      <children>
-                        <Circle radius="43.0" strokeType="INSIDE" strokeWidth="2.0" StackPane.alignment="CENTER_LEFT">
+                        <Circle radius="43.0" strokeType="INSIDE" strokeWidth="2.0" StackPane.alignment="CENTER_RIGHT">
                            <fill>
                               <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
                                  <stops>
@@ -606,15 +755,15 @@
                               </LinearGradient>
                            </stroke>
                         </Circle>
-                        <ImageView fx:id="imgAvatarProfile3" fitHeight="76.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT">
+                        <ImageView fx:id="imgAvatarProfile3" fitHeight="76.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_RIGHT">
                            <StackPane.margin>
-                              <Insets left="3.0" />
+                              <Insets right="3.0" />
                            </StackPane.margin></ImageView>
                      </children>
                   </StackPane>
                </children>
             </StackPane>
-            <StackPane fx:id="pokerPlayer2" layoutX="180.0" layoutY="301.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
+            <StackPane fx:id="pokerPlayer2" layoutX="183.0" layoutY="340.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
                <children>
                   <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                      <styleClass>
@@ -622,7 +771,7 @@
                         <String fx:value="container-gradiant-colors" />
                      </styleClass>
                      <children>
-                        <VBox alignment="CENTER" prefHeight="56.0" prefWidth="138.0" spacing="10.0">
+                        <VBox alignment="CENTER" prefHeight="56.0" prefWidth="187.0" spacing="10.0">
                            <children>
                               <Label fx:id="playerName2" styleClass="bold-general-text-font" text="Label" />
                               <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
@@ -633,7 +782,7 @@
                   </HBox>
                   <StackPane prefHeight="150.0" prefWidth="200.0">
                      <children>
-                        <Circle radius="43.0" strokeType="INSIDE" strokeWidth="2.0" StackPane.alignment="CENTER_LEFT">
+                        <Circle radius="43.0" strokeType="INSIDE" strokeWidth="2.0" StackPane.alignment="CENTER_RIGHT">
                            <fill>
                               <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
                                  <stops>
@@ -702,15 +851,15 @@
                               </LinearGradient>
                            </stroke>
                         </Circle>
-                        <ImageView fx:id="imgAvatarProfile2" fitHeight="77.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT">
+                        <ImageView fx:id="imgAvatarProfile2" fitHeight="77.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_RIGHT">
                            <StackPane.margin>
-                              <Insets left="3.0" />
+                              <Insets right="3.0" />
                            </StackPane.margin></ImageView>
                      </children>
                   </StackPane>
                </children>
             </StackPane>
-            <StackPane fx:id="pokerPlayer1" layoutX="280.0" layoutY="459.0" prefHeight="83.0" prefWidth="273.0" scaleX="0.9" scaleY="0.9">
+            <StackPane fx:id="pokerPlayer1" layoutX="276.0" layoutY="488.0" prefHeight="83.0" prefWidth="273.0" scaleX="0.9" scaleY="0.9">
                <children>
                   <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                      <styleClass>
@@ -718,7 +867,7 @@
                         <String fx:value="container-gradiant-colors" />
                      </styleClass>
                      <children>
-                        <VBox alignment="CENTER" prefHeight="56.0" prefWidth="138.0" spacing="10.0">
+                        <VBox alignment="CENTER" prefHeight="56.0" prefWidth="187.0" spacing="10.0">
                            <children>
                               <Label fx:id="playerName1" styleClass="bold-general-text-font" text="Label" />
                               <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
@@ -729,7 +878,7 @@
                   </HBox>
                   <StackPane prefHeight="150.0" prefWidth="200.0">
                      <children>
-                        <Circle radius="43.0" strokeType="INSIDE" strokeWidth="2.0" StackPane.alignment="CENTER_LEFT">
+                        <Circle radius="43.0" strokeType="INSIDE" strokeWidth="2.0" StackPane.alignment="CENTER_RIGHT">
                            <fill>
                               <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
                                  <stops>
@@ -798,15 +947,15 @@
                               </LinearGradient>
                            </stroke>
                         </Circle>
-                        <ImageView fx:id="imgAvatarProfile1" fitHeight="74.0" fitWidth="104.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT">
+                        <ImageView fx:id="imgAvatarProfile1" fitHeight="74.0" fitWidth="104.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_RIGHT">
                            <StackPane.margin>
-                              <Insets left="3.0" />
+                              <Insets right="3.0" />
                            </StackPane.margin></ImageView>
                      </children>
                   </StackPane>
                </children>
             </StackPane>
-            <StackPane fx:id="pokerPlayer0" layoutX="588.0" layoutY="459.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
+            <StackPane fx:id="pokerPlayer0" layoutX="635.0" layoutY="571.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
                <children>
                   <HBox id="usersOwn" alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                      <styleClass>
@@ -814,7 +963,7 @@
                         <String fx:value="container-gradiant-colors" />
                      </styleClass>
                      <children>
-                        <VBox alignment="CENTER" prefHeight="56.0" prefWidth="138.0" spacing="10.0">
+                        <VBox alignment="CENTER" prefHeight="56.0" prefWidth="187.0" spacing="10.0">
                            <children>
                               <Label fx:id="playerName0" styleClass="bold-general-text-font" text="Label" />
                               <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
@@ -825,7 +974,7 @@
                   </HBox>
                   <StackPane prefHeight="150.0" prefWidth="200.0">
                      <children>
-                        <Circle radius="43.0" strokeType="INSIDE" strokeWidth="2.0" StackPane.alignment="CENTER_LEFT">
+                        <Circle radius="43.0" strokeType="INSIDE" strokeWidth="2.0" StackPane.alignment="CENTER_RIGHT">
                            <fill>
                               <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
                                  <stops>
@@ -894,15 +1043,15 @@
                               </LinearGradient>
                            </stroke>
                         </Circle>
-                        <ImageView fx:id="imgAvatarProfile0" fitHeight="74.0" fitWidth="111.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_LEFT">
+                        <ImageView fx:id="imgAvatarProfile0" fitHeight="74.0" fitWidth="111.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_RIGHT">
                            <StackPane.margin>
-                              <Insets left="3.0" />
+                              <Insets right="3.0" />
                            </StackPane.margin></ImageView>
                      </children>
                   </StackPane>
                </children>
             </StackPane>
-            <StackPane fx:id="pokerPlayer8" layoutX="881.0" layoutY="459.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
+            <StackPane fx:id="pokerPlayer8" layoutX="1000.0" layoutY="488.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
                <children>
                   <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                      <styleClass>
@@ -998,7 +1147,7 @@
                   </StackPane>
                </children>
             </StackPane>
-            <StackPane fx:id="pokerPlayer7" layoutX="1012.0" layoutY="301.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
+            <StackPane fx:id="pokerPlayer7" layoutX="1096.0" layoutY="340.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
                <children>
                   <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                      <styleClass>
@@ -1094,7 +1243,7 @@
                   </StackPane>
                </children>
             </StackPane>
-            <StackPane fx:id="pokerPlayer6" layoutX="1007.0" layoutY="137.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
+            <StackPane fx:id="pokerPlayer6" layoutX="1050.0" layoutY="185.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
                <children>
                   <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                      <styleClass>
@@ -1190,21 +1339,97 @@
                   </StackPane>
                </children>
             </StackPane>
-            <HBox layoutX="628.0" layoutY="180.0" prefHeight="41.0" prefWidth="200.0" AnchorPane.bottomAnchor="330.0" AnchorPane.leftAnchor="628.0" AnchorPane.rightAnchor="464.0" AnchorPane.topAnchor="180.0">
+            <HBox layoutX="664.0" layoutY="225.0" prefHeight="41.0" prefWidth="200.0" AnchorPane.bottomAnchor="285.0" AnchorPane.leftAnchor="664.0" AnchorPane.rightAnchor="428.0" AnchorPane.topAnchor="225.0">
                <children>
-                  <Label alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="38.0" styleClass="username-label">
+                  <Label fx:id="labelTotalPot" alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="38.0" styleClass="username-label">
                      <graphic>
-                        <Label alignment="CENTER" styleClass="bold-general-text-font" text="TOTAL POT:" />
+                        <Label alignment="CENTER" styleClass="bold-general-text-font" text="TOTAL POT:">
+                           <graphic>
+                              <ImageView fitHeight="40.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../images/fichaPokerGame.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Label>
                      </graphic>
                   </Label>
-                  <Label fx:id="labelTotalPot" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="85.0" styleClass="bold-general-text-font" text="Total pot" />
                </children>
             </HBox>
-            <ImageView fx:id="tableCard0" fitHeight="105.0" fitWidth="72.0" layoutX="539.0" layoutY="225.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="tableCard1" fitHeight="105.0" fitWidth="72.0" layoutX="619.0" layoutY="225.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="tableCard2" fitHeight="105.0" fitWidth="72.0" layoutX="701.0" layoutY="225.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="tableCard4" fitHeight="105.0" fitWidth="72.0" layoutX="865.0" layoutY="225.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="tableCard3" fitHeight="105.0" fitWidth="72.0" layoutX="784.0" layoutY="225.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="tableCard0" fitHeight="98.0" fitWidth="70.0" layoutX="585.0" layoutY="292.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/cards/2_of_clubs.png" />
+               </image></ImageView>
+            <ImageView fx:id="tableCard1" fitHeight="98.0" fitWidth="70.0" layoutX="660.0" layoutY="292.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/cards/2_of_clubs.png" />
+               </image></ImageView>
+            <ImageView fx:id="tableCard2" fitHeight="98.0" fitWidth="70.0" layoutX="735.0" layoutY="292.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/cards/2_of_clubs.png" />
+               </image></ImageView>
+            <ImageView fx:id="tableCard4" fitHeight="98.0" fitWidth="70.0" layoutX="885.0" layoutY="292.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/cards/4_of_clubs.png" />
+               </image></ImageView>
+            <ImageView fx:id="tableCard3" fitHeight="98.0" fitWidth="70.0" layoutX="810.0" layoutY="292.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/cards/2_of_diamonds.png" />
+               </image></ImageView>
+            <ImageView fx:id="ImgDealer7" fitHeight="56.0" fitWidth="60.0" layoutX="1045.0" layoutY="350.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/fichaDealer.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="ImgDealer8" fitHeight="56.0" fitWidth="60.0" layoutX="975.0" layoutY="457.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/fichaDealer.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="ImgDealer6" fitHeight="56.0" fitWidth="60.0" layoutX="984.0" layoutY="228.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/fichaDealer.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="ImgDealer5" fitHeight="56.0" fitWidth="60.0" layoutX="828.0" layoutY="157.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/fichaDealer.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="ImgDealer4" fitHeight="56.0" fitWidth="60.0" layoutX="625.0" layoutY="166.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/fichaDealer.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="ImgDealer3" fitHeight="56.0" fitWidth="60.0" layoutX="459.0" layoutY="261.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/fichaDealer.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="ImgDealer2" fitHeight="56.0" fitWidth="60.0" layoutX="447.0" layoutY="383.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/fichaDealer.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="ImgDealer1" fitHeight="56.0" fitWidth="60.0" layoutX="555.0" layoutY="493.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/fichaDealer.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="ImgDealer0" fitHeight="56.0" fitWidth="60.0" layoutX="835.0" layoutY="518.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/fichaDealer.png" />
+               </image>
+            </ImageView>
+            <Label fx:id="labelEquity8" layoutX="1244.0" layoutY="524.0" styleClass="general-text-font" text="Label" />
+            <Label fx:id="labelEquity7" layoutX="1340.0" layoutY="378.0" styleClass="general-text-font" text="Label" />
+            <Label fx:id="labelEquity6" layoutX="1302.0" layoutY="218.0" styleClass="general-text-font" text="Label" />
+            <Label fx:id="labelEquity5" layoutX="1109.0" layoutY="94.0" styleClass="general-text-font" text="Label" />
+            <Label fx:id="labelEquity4" layoutX="445.0" layoutY="101.0" styleClass="general-text-font" text="Label" />
+            <Label fx:id="labelEquity3" layoutX="222.0" layoutY="248.0" styleClass="general-text-font" text="Label" />
+            <Label fx:id="labelEquity2" layoutX="245.0" layoutY="434.0" styleClass="general-text-font" text="Label" />
+            <Label fx:id="labelEquity1" layoutX="260.0" layoutY="544.0" styleClass="general-text-font" text="Label" />
+            <Label fx:id="labelEquity0" layoutX="625.0" layoutY="614.0" styleClass="general-text-font" text="Label" />
          </children>
       </AnchorPane>
    </center>

@@ -13,6 +13,7 @@ import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.gameobjects.Player;
 import com.ucm.server.interfaces.IPokerPlayer;
+import com.ucm.server.logic.Game;
 
 
 public class HumanPlayer extends Player {

@@ -30,6 +30,4 @@ public class PokerGame {
 		return c;
     }
 
-    
-
 }
