@@ -4,7 +4,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -16,7 +15,7 @@
    <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0">
          <bottom>
-            <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="40.0" BorderPane.alignment="CENTER">
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="40.0" BorderPane.alignment="CENTER">
                <children>
                   <Button fx:id="btnStartAddTables" mnemonicParsing="false" prefHeight="40.0" prefWidth="137.0" text="SAVE">
                      <styleClass>
@@ -34,12 +33,15 @@
                <children>
                   <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                      <children>
-                        <Button mnemonicParsing="false" prefHeight="48.0" prefWidth="40.0">
+                        <Button fx:id="btnBackChooseGame" mnemonicParsing="false" onAction="#returnChooseGame" prefHeight="48.0" prefWidth="40.0">
                            <styleClass>
                               <String fx:value="arrow-back" />
                               <String fx:value="arrow-colors" />
                            </styleClass></Button>
-                        <Label styleClass="general-text-font" text="Direction" />
+                        <Label styleClass="general-text-font" text="Create/Join Game">
+                           <font>
+                              <Font size="20.0" />
+                           </font></Label>
                      </children>
                      <padding>
                         <Insets left="5.0" />
@@ -72,22 +74,29 @@
                               <String fx:value="arrow-colors" />
                            </styleClass></Button>
                      </children></HBox>
-                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="50.0">
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="1344.0" spacing="50.0">
                      <children>
-                        <Button mnemonicParsing="false" prefHeight="44.0" prefWidth="36.0">
+                        <Button fx:id="btnBackImageTable" mnemonicParsing="false" onAction="#backImage" prefHeight="44.0" prefWidth="36.0">
                            <styleClass>
                               <String fx:value="arrow-back" />
                               <String fx:value="arrow-colors" />
                            </styleClass></Button>
-                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../images/tableCreateGame.jpg" />
-                           </image></ImageView>
-                        <Button mnemonicParsing="false" prefHeight="44.0" prefWidth="36.0" rotate="180.0">
+                        <ImageView fx:id="imageTable" fitHeight="137.0" fitWidth="292.0" pickOnBounds="true" preserveRatio="true" />
+                        <Button fx:id="btnNextImageTable" alignment="CENTER" mnemonicParsing="false" onAction="#nextImage" prefHeight="44.0" prefWidth="36.0" rotate="180.0">
                            <styleClass>
                               <String fx:value="arrow-back" />
                               <String fx:value="arrow-colors" />
                            </styleClass></Button>
+                     </children>
+                  </HBox>
+                  <HBox alignment="TOP_CENTER" prefHeight="70.0" prefWidth="1344.0">
+                     <children>
+                        <Button fx:id="btnSelectTable" alignment="CENTER" mnemonicParsing="false" onAction="#onSelectTable" prefHeight="31.0" prefWidth="118.0" text="SELECT">
+                           <styleClass>
+                              <String fx:value="general-button" />
+                              <String fx:value="general-text-font" />
+                           </styleClass>
+                        </Button>
                      </children>
                   </HBox>
                </children>

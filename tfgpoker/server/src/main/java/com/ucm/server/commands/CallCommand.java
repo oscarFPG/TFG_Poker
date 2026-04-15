@@ -4,6 +4,7 @@ package com.ucm.server.commands;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.ucm.common.GameType;
 import com.ucm.server.interfaces.IPokerActions;
 import com.ucm.server.middleclasses.CommandResult;
 
@@ -42,7 +43,7 @@ public class CallCommand extends Command {
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
 
-        if(_currentHandBet == _playersOffBetMoney + _playersOnBetMoney){
+        if(maxBet == _playersOffBetMoney + _playersOnBetMoney){
             AllInCommand allIn = new AllInCommand(_player);
             return allIn.execute(sb, bb, maxBet);
         }
@@ -63,12 +64,12 @@ public class CallCommand extends Command {
 
     @Override
     public String getCommandFormat() {
-        return "call";
+        return GameType.CALL_ACTION_FULL;
     }
 
     @Override
     public String getCommandFormatShortcut() {
-        return "c";
+        return GameType.CALL_ACTION_SHORTCUT;
     }
 
 }

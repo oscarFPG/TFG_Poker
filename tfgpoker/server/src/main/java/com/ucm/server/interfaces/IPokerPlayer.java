@@ -1,7 +1,9 @@
 package com.ucm.server.interfaces;
 
-import com.ucm.server.gameobjects.Card;
-import com.ucm.server.gameobjects.PlayerRole;
+import java.io.IOException;
+
+import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.PlayerRole;
 
 
 public interface IPokerPlayer extends IPokerActions, IPokerNotification {
@@ -33,6 +35,6 @@ public interface IPokerPlayer extends IPokerActions, IPokerNotification {
     // Actions available during players turn as small blind, big blind and turn player
     public void actionSmallBlindBet(final int sb);
     public void actionBigBlindBet(final int bb);
-    public String actionMakePlay(final int sb, final int bb, final int maxBet);
+    public String actionMakePlay(final int sb, final int bb, final int maxBet) throws IOException;
 
 }

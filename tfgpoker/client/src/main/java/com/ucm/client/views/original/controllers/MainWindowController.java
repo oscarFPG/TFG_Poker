@@ -1,5 +1,6 @@
 package com.ucm.client.views.original.controllers;
 
+import com.ucm.client.AvatarGenerator;
 import com.ucm.client.ClientInfo;
 
 import javafx.animation.KeyFrame;
@@ -14,12 +15,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class MainWindowController extends GenericController {
@@ -30,10 +33,13 @@ public class MainWindowController extends GenericController {
     @FXML
     private ToggleButton informationIcon;
 
-     @FXML
+    @FXML
     private ToggleButton exitIcon;
 
-     @FXML
+    @FXML
+    private ImageView imgAvatarProfile;
+
+    @FXML
     private Text informationLabel;
 
     @FXML
@@ -77,9 +83,10 @@ public class MainWindowController extends GenericController {
     private boolean isFlipped = false;
 
 
-    @FXML
-    public void initialize() {
+    @Override
+    protected void onViewShown() {
         cardBack.setRotate(180);
+        imgAvatarProfile.setImage(_clientInfo.getAvatar(_clientInfo.name,64));
         setupInitialState();
         setupListeners();
     }
@@ -207,16 +214,10 @@ public class MainWindowController extends GenericController {
         next();
     }
 
-    @Override
-    public void onNextEvent() {}
-
 
     @Override
-    public void onBackEvent() {}
-
-    @Override
-    public void setMainController(MainController mainController) {
-        super.setMainController(mainController);
+    public void setMainController(MainController mainController, Stage stage) {
+        super.setMainController(mainController, stage);
         playerNamePlaceholder.setText(_clientInfo.name);
     }
 

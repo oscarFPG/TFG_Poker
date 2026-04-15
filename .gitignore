@@ -4,11 +4,9 @@ target/
 
 # Ignorar archivos temporales de IDEs
 .idea/
-.vscode/
 *.log
 *.tmp
 *.bak
-.vscode/credentials.json
 tfgpoker/server/src/main/resources/credentials.json
 
 # Ignorar otros archivos comunes

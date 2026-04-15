@@ -14,8 +14,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import com.ucm.server.FakePlayer;
-import com.ucm.server.exceptions.OnlyOnePlayerLeftException;
-import com.ucm.server.gameobjects.PlayerRole;
+import com.ucm.common.exceptions.CancelGameException;
+import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
+import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.middleclasses.PlayerEvaluation;
 
 
@@ -23,104 +24,19 @@ public class PlayerListTest {
  
     private static final int INITIAL_MONEY = 1000;
 
-    private static final List<PlayerRole> _rolePositions = new ArrayList<>(
-        List.of(
-            PlayerRole.DEALER,
-            PlayerRole.SMALL_BLIND,
-            PlayerRole.BIG_BLIND,
-            PlayerRole.UNDER_THE_GUN,
-            PlayerRole.MIDDLE_POSITION,
-            PlayerRole.CUT_OFF,
-            PlayerRole.NO_ROLE,
-            PlayerRole.NO_ROLE,
-            PlayerRole.NO_ROLE
-        )
-    );
-
     static Stream<Arguments> playerRoleProvider() {
         return Stream.of(
-            Arguments.of(2, 
-                List.of(
-                    PlayerRole.SMALL_BLIND, 
-                    PlayerRole.BIG_BLIND
-                )
-            ),
-            Arguments.of(3, 
-                List.of(
-                    PlayerRole.DEALER,
-                    PlayerRole.SMALL_BLIND, 
-                    PlayerRole.BIG_BLIND
-                )
-            ),
-            Arguments.of(4, 
-                List.of(
-                    PlayerRole.DEALER, 
-                    PlayerRole.SMALL_BLIND, 
-                    PlayerRole.BIG_BLIND,
-                    PlayerRole.UNDER_THE_GUN
-                )
-            ),
-            Arguments.of(5, 
-                List.of(
-                    PlayerRole.DEALER, 
-                    PlayerRole.SMALL_BLIND, 
-                    PlayerRole.BIG_BLIND,
-                    PlayerRole.UNDER_THE_GUN,
-                    PlayerRole.MIDDLE_POSITION
-                )
-            ),
-            Arguments.of(6, 
-                List.of(
-                    PlayerRole.DEALER, 
-                    PlayerRole.SMALL_BLIND, 
-                    PlayerRole.BIG_BLIND,
-                    PlayerRole.UNDER_THE_GUN,
-                    PlayerRole.MIDDLE_POSITION,
-                    PlayerRole.CUT_OFF
-                )
-            ),
-            Arguments.of(7, 
-                List.of(
-                    PlayerRole.DEALER, 
-                    PlayerRole.SMALL_BLIND, 
-                    PlayerRole.BIG_BLIND,
-                    PlayerRole.UNDER_THE_GUN,
-                    PlayerRole.MIDDLE_POSITION,
-                    PlayerRole.CUT_OFF,
-                    PlayerRole.NO_ROLE
-                )
-            ),
-            Arguments.of(8, 
-                List.of(
-                    PlayerRole.DEALER, 
-                    PlayerRole.SMALL_BLIND, 
-                    PlayerRole.BIG_BLIND,
-                    PlayerRole.UNDER_THE_GUN,
-                    PlayerRole.MIDDLE_POSITION,
-                    PlayerRole.CUT_OFF,
-                    PlayerRole.NO_ROLE,
-                    PlayerRole.NO_ROLE
-                )
-            ),
-            Arguments.of(9, 
-                List.of(
-                    PlayerRole.DEALER, 
-                    PlayerRole.SMALL_BLIND, 
-                    PlayerRole.BIG_BLIND,
-                    PlayerRole.UNDER_THE_GUN,
-                    PlayerRole.MIDDLE_POSITION,
-                    PlayerRole.CUT_OFF,
-                    PlayerRole.NO_ROLE,
-                    PlayerRole.NO_ROLE,
-                    PlayerRole.NO_ROLE
-                )
-            )
+            Arguments.of(2, PlayerRole.getRolesDistribution(2) ),
+            Arguments.of(3, PlayerRole.getRolesDistribution(3) ),
+            Arguments.of(4, PlayerRole.getRolesDistribution(4) ),
+            Arguments.of(5, PlayerRole.getRolesDistribution(5) ),
+            Arguments.of(6, PlayerRole.getRolesDistribution(6) ),
+            Arguments.of(7, PlayerRole.getRolesDistribution(7) ),
+            Arguments.of(8, PlayerRole.getRolesDistribution(8) ),
+            Arguments.of(9, PlayerRole.getRolesDistribution(9) )
         );
     }
 
-    private List<PlayerRole> getSubListWithSize(final int size) {
-        return _rolePositions.subList(0, size);
-    }
 
     private List<FakePlayer> getPlayerSubsetWithSize(final int size) {
         
@@ -131,14 +47,18 @@ public class PlayerListTest {
         return players;
     }
 
+    private List<PlayerRole> getPlayerRoleDistributionWithSize(final int size) {
+        return PlayerRole.getRolesDistribution(size);
+    }
+
     @ParameterizedTest
     @MethodSource("playerRoleProvider")
-    void initialRoleAssigment(int numPlayers, List<PlayerRole> expectedRoles) {
+    void initialRoleAssigment(int numPlayers, List<PlayerRole> expectedRoles) throws CancelGameException {
 
         PlayerList playerList = new PlayerList(numPlayers);
         FakePlayer[] players = new FakePlayer[numPlayers];
         for (int i = 0; i < numPlayers; i++) {
-            players[i] = new FakePlayer(0, INITIAL_MONEY, 0);
+            players[i] = new FakePlayer(i, INITIAL_MONEY, 0);
             playerList.addPlayer( players[i] );
         }
 
@@ -149,7 +69,7 @@ public class PlayerListTest {
     }
 
     @Test
-    void assignNewRolesOnPassTurnWithTwoPlayers() {
+    void assignNewRolesOnPassTurnWithTwoPlayers() throws CancelGameException {
 
         FakePlayer player1 = new FakePlayer(0, INITIAL_MONEY, 0);
         FakePlayer player2 = new FakePlayer(1, INITIAL_MONEY, 0);
@@ -175,10 +95,10 @@ public class PlayerListTest {
 
     @ParameterizedTest(name = "Roles assignment on turns in {0} players")
     @ValueSource(ints = {3, 4, 5, 6, 7, 8, 9})
-    void roleAssigmentsOnPassTurn(int numPlayers) {
+    void roleAssigmentsOnPassTurn(int numPlayers) throws CancelGameException {
 
         List<FakePlayer> players = getPlayerSubsetWithSize(numPlayers);
-        List<PlayerRole> roles = getSubListWithSize(numPlayers);
+        List<PlayerRole> roles = getPlayerRoleDistributionWithSize(numPlayers);
         PlayerList playerList = new PlayerList(numPlayers);
         for(FakePlayer p : players)
             playerList.addPlayer(p);
@@ -206,7 +126,7 @@ public class PlayerListTest {
 
 
     @Test
-    void call() {
+    void call() throws CancelGameException {
 
         final int SB = 1;
         final int BB = SB * 2;
@@ -241,7 +161,7 @@ public class PlayerListTest {
     }
 
     @Test
-    void raise() {
+    void raise() throws CancelGameException {
         
         final int SB = 1;
         final int BB = SB * 2;
@@ -285,7 +205,7 @@ public class PlayerListTest {
     }
 
     @Test
-    void allin_raise() {
+    void allin_raise() throws CancelGameException {
 
         final int SB = 1;
         final int BB = SB * 2;
@@ -308,8 +228,8 @@ public class PlayerListTest {
             p2.commands = new ArrayList<>( List.of("call") );
             playerList.playHand(SB, BB, true);      // 2 + 2 + 2 = 6$ total - 2$ = 4$ beneficio
 
-            p2.commands = new ArrayList<>( List.of("check", "call", "allin") );
-            p3.commands = new ArrayList<>( List.of("check", "allin") );
+            p2.commands = new ArrayList<>( List.of("check", "call", "all-in") );
+            p3.commands = new ArrayList<>( List.of("check", "all-in") );
             p1.commands = new ArrayList<>( List.of("raise 500", "raise 1200") );
             playerList.playHand(SB, BB, false);
             
@@ -329,7 +249,7 @@ public class PlayerListTest {
     }
 
     @Test
-    void allin1_allin2() {
+    void allin1_allin2() throws CancelGameException {
         
         final int SB = 1;
         final int BB = SB * 2;
@@ -349,10 +269,10 @@ public class PlayerListTest {
 
             playerList.assignRolesToAllPlayers();
 
-            p2.commands = new ArrayList<>( List.of("allin") );  // 1000
-            p3.commands = new ArrayList<>( List.of("allin") );  // 1000
-            p4.commands = new ArrayList<>( List.of("allin") );  // 2000
-            p1.commands = new ArrayList<>( List.of("allin") );  // 2000
+            p2.commands = new ArrayList<>( List.of("all-in") );  // 1000
+            p3.commands = new ArrayList<>( List.of("all-in") );  // 1000
+            p4.commands = new ArrayList<>( List.of("all-in") );  // 2000
+            p1.commands = new ArrayList<>( List.of("all-in") );  // 2000
             playerList.playHand(SB, BB, false);
 
             playerList.playHand(SB, BB, false); // No player should play here because all went all-in

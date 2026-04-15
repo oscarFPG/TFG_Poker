@@ -8,9 +8,10 @@ import java.io.InputStreamReader;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.Suit;
 import com.ucm.server.ServerMain;
-import com.ucm.server.gameobjects.Card;
-import com.ucm.server.gameobjects.Suit;
+import com.ucm.server.exceptions.EvaluatorException;
 import com.ucm.server.interfaces.IPokerPlayer;
 import com.ucm.server.middleclasses.HandInfo;
 import com.ucm.server.middleclasses.PlayerEvaluation;
@@ -50,11 +51,11 @@ public class Evaluator {
     private static Evaluator instance;
 
 
-    private Evaluator() throws IOException {
+    private Evaluator() throws EvaluatorException {
         loadEvaluator();
     }
 
-    public static Evaluator getInstance() throws IOException {
+    public static Evaluator getInstance() throws EvaluatorException {
 
         if (instance == null) {
             instance = new Evaluator();
@@ -81,31 +82,37 @@ public class Evaluator {
         }
     }
 
-    private void loadEvaluator() throws IOException {
+    private void loadEvaluator() throws EvaluatorException {
 
-        List<String> lineasFlushes = getFileResource("flushes.txt");
-        List<String> lineasUnique = getFileResource("unique.txt");
-        List<String> lineasHashAdjust = getFileResource("hash_adjust.txt");
-        List<String> lineasHashValues = getFileResource("hash_values.txt");
+        try {
 
-        _flushes = new short[lineasFlushes.size()];
-        for (int i = 0; i < lineasFlushes.size(); i++) {
-            _flushes[i] = Short.parseShort(lineasFlushes.get(i).trim());
+            List<String> lineasFlushes = getFileResource("flushes.txt");
+            List<String> lineasUnique = getFileResource("unique.txt");
+            List<String> lineasHashAdjust = getFileResource("hash_adjust.txt");
+            List<String> lineasHashValues = getFileResource("hash_values.txt");
+
+            _flushes = new short[lineasFlushes.size()];
+            for (int i = 0; i < lineasFlushes.size(); i++) {
+                _flushes[i] = Short.parseShort(lineasFlushes.get(i).trim());
+            }
+
+            _unique5 = new short[lineasUnique.size()];
+            for (int i = 0; i < lineasUnique.size(); i++) {
+                _unique5[i] = Short.parseShort(lineasUnique.get(i).trim());
+            }
+
+            _hashAdjust = new short[lineasHashAdjust.size()];
+            for (int i = 0; i < lineasHashAdjust.size(); i++) {
+                _hashAdjust[i] = Short.parseShort(lineasHashAdjust.get(i).trim());
+            }
+
+            _hashValues = new short[lineasHashValues.size()];
+            for (int i = 0; i < lineasHashValues.size(); i++) {
+                _hashValues[i] = Short.parseShort(lineasHashValues.get(i).trim());
+            }
         }
-
-        _unique5 = new short[lineasUnique.size()];
-        for (int i = 0; i < lineasUnique.size(); i++) {
-            _unique5[i] = Short.parseShort(lineasUnique.get(i).trim());
-        }
-
-        _hashAdjust = new short[lineasHashAdjust.size()];
-        for (int i = 0; i < lineasHashAdjust.size(); i++) {
-            _hashAdjust[i] = Short.parseShort(lineasHashAdjust.get(i).trim());
-        }
-
-        _hashValues = new short[lineasHashValues.size()];
-        for (int i = 0; i < lineasHashValues.size(); i++) {
-            _hashValues[i] = Short.parseShort(lineasHashValues.get(i).trim());
+        catch(Exception e) {
+            throw new EvaluatorException( String.format("Error loading the evaluator: %s", e.getMessage()) );
         }
     }
 

@@ -1,6 +1,7 @@
 package com.ucm.server.players;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -12,9 +13,16 @@ import java.util.regex.Pattern;
 
 import org.json.JSONObject;
 
+import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.PlayerRole;
+import com.ucm.server.commands.Command;
+import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.gameobjects.BotLLM;
-import com.ucm.server.gameobjects.Card;
-import com.ucm.server.gameobjects.PlayerRole;
+import com.ucm.server.gameobjects.Player;
+import com.ucm.server.interfaces.IPokerPlayer;
+import com.ucm.server.middleclasses.CommandResult;
+
+
 
 public class LlamaPokerLLM extends BotLLM {
 
@@ -25,13 +33,12 @@ public class LlamaPokerLLM extends BotLLM {
     private int money;
     private int smallBlind;
     private int bigBlind;
-    private PlayerRole role;
 
     private static final String OLLAMA_URL = "http://localhost:11434/api/generate";
     private static final String MODEL_NAME = "llamaPokerBot";
 
     public LlamaPokerLLM(int id, int money) {
-        super(id, "LlamaPoker", money, null);
+        super(id, "LlamaPoker", money);
         this.money = money;
     }
 
@@ -59,7 +66,7 @@ public class LlamaPokerLLM extends BotLLM {
     @Override public void notifyMoneyAmount(int amount) { money = amount; }
     @Override public void notifySmallBlindBet(int amount) { smallBlind = amount; }
     @Override public void notifyBigBlindBet(int amount) { bigBlind = amount; }
-    @Override public void notifyPlayerRole(PlayerRole role) { this.role = role; }
+    @Override public void notifyPlayerRole(PlayerRole role) { _role = role; }
 
     @Override
     public void notifyPlayerAction(PlayerRole role, String action, double amount) {
@@ -99,6 +106,8 @@ public class LlamaPokerLLM extends BotLLM {
     @Override public void notifyGameWinner() {}
     @Override public void notifyGameLoser() {}
     @Override public void notifyHandEndsByFolds() {}
+    @Override public void notifyOtherPlayerAction(IPokerPlayer p) {}
+    
 
     // ---------------------------------------------METODOS PERSOLANIZADOS PARA ESTE BOT------------------------------------------------
    
@@ -120,7 +129,7 @@ public class LlamaPokerLLM extends BotLLM {
         sb.append("The player positions involved in this game are UTG, HJ, CO, BTN, SB, BB.\n");
 
         sb.append("In this hand, your position is ")
-          .append(mapRole(role))
+          .append(mapRole(_role))
           .append(", and your holding is ")
           .append(formatCardsVerbose(hand))
           .append(".\n");
@@ -179,7 +188,7 @@ public class LlamaPokerLLM extends BotLLM {
 
         sb.append("Here is a game summary:\n\n");
 
-        sb.append("Position: ").append(mapRole(role)).append("\n");
+        sb.append("Position: ").append(mapRole(_role)).append("\n");
         sb.append("Hand: ").append(formatCardsVerbose(hand)).append("\n");
 
         if (!table.isEmpty()) {
@@ -265,7 +274,10 @@ public class LlamaPokerLLM extends BotLLM {
             case SMALL_BLIND -> "SB";
             case BIG_BLIND -> "BB";
             case UNDER_THE_GUN -> "UTG";
-            case MIDDLE_POSITION -> "HJ";
+            case UNDER_THE_GUN_1 -> "UTG+1";
+            case UNDER_THE_GUN_2 -> "UTG+2";
+            case LOJACK -> "LJ";
+            case HIJACK -> "HJ";
             case CUT_OFF -> "CO";
             default -> "UNKNOWN";
         };
@@ -365,8 +377,9 @@ public class LlamaPokerLLM extends BotLLM {
 
        
         if (m.find()) {
-            return m.group(1) + " " + m.group(2);
+            return "raise " + m.group(1);
         }
+
 
       
         if (action.startsWith("raise")) {
@@ -375,4 +388,26 @@ public class LlamaPokerLLM extends BotLLM {
 
         return "fold";
     }
+
+    @Override
+    public void notifyPlayerState(final IPokerPlayer player, final boolean last) throws IOException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'notifyPlayerState'");
+    }
+
+    @Override
+    public void notifyTotalPot(int total) throws IOException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'notifyTotalPot'");
+    }
+
+    public void notifyEquity(double equity) {
+        
+    }
+
+	@Override
+	public Bot create(int ID, int initialMoney) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'create'");
+	}
 }

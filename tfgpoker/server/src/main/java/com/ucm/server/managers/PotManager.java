@@ -1,4 +1,4 @@
-package com.ucm.server.logic;
+package com.ucm.server.managers;
 
 
 import java.util.ArrayList;

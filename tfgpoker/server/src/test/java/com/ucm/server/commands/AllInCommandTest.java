@@ -37,7 +37,7 @@ public class AllInCommandTest {
 
 
         IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
-        String input = "allin";
+        String input = "all-in";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
 
@@ -57,7 +57,7 @@ public class AllInCommandTest {
         int maxBet = 0;
 
         IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
-        String input = "allin";
+        String input = "all-in";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
 
@@ -77,7 +77,7 @@ public class AllInCommandTest {
         int maxBet = 20;
 
         IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
-        String input = "allin";
+        String input = "all-in";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
 
@@ -97,7 +97,7 @@ public class AllInCommandTest {
         int maxBet = 20;
 
         IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
-        String input = "allin";
+        String input = "all-in";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
 
@@ -117,7 +117,7 @@ public class AllInCommandTest {
         int maxBet = INITIAL_MONEY;
 
         IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
-        String input = "allin";
+        String input = "all-in";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
 
@@ -137,7 +137,7 @@ public class AllInCommandTest {
         int maxBet = INITIAL_MONEY;
 
         IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
-        String input = "allin";
+        String input = "all-in";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
 

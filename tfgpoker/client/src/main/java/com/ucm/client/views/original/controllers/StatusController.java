@@ -18,11 +18,9 @@ public class StatusController {
 
     private State currentState;
 
-
     public StatusController() {
         currentState = State.START_APP;
     }
-
 
     public void next() {
 
@@ -64,6 +62,10 @@ public class StatusController {
             break;
 
         case GAME:
+            currentState = State.START_APP;
+            break;
+
+        default:
             currentState = State.START_APP;
             break;
         }
@@ -110,9 +112,12 @@ public class StatusController {
             break;
 
         case GAME:
-            currentState = State.CHOOSE_GAME;
+            currentState = State.START_APP;
             break;
         
+        default:
+            currentState = State.START_APP;
+            break;
         }
     }
 
@@ -123,6 +128,10 @@ public class StatusController {
 
     public void stateJoinGame() {
         currentState = State.WAITING_GAME;
+    }
+
+    public void stateChooseGame() {
+        currentState = State.CHOOSE_GAME;
     }
 
     public State getCurrentState() {

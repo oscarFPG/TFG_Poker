@@ -16,12 +16,4 @@ public class StartWindowController extends GenericController {
     private void startApp() {
         next();
     }
-
-    @Override
-    public void onNextEvent() {
-    }
-
-    @Override
-    public void onBackEvent() {
-    }
 }

@@ -2,107 +2,32 @@ package com.ucm.common;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Socket;
 
+import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.PlayerRole;
+import com.ucm.common.gameobjects.Suit;
 
 public class PokerGame {
-
-    public static final String LOCAL_HOST = "localhost"; 
-
-
+ 
     private PokerGame() {}
 
 
-    public static Socket connect(final String serverIP) throws IOException {
-
-		Socket socket = new Socket(serverIP, GameType.PORT);
-		return socket;
-	}
-
-    public static void sendName(final String name, Socket socket) throws IOException {
-
-        SocketUtils.sendInteger(socket.getOutputStream(), GameType.PETITION_PLAYER_NAME);
-        SocketUtils.sendString(socket.getOutputStream(), name);
+    public static PlayerRole receivePlayerRole(InputStream in) throws IOException {
+        int roleCode = SocketUtils.receiveInt(in);
+        return PlayerRole.getPlayerRoleFromCode(roleCode);
     }
 
-    public static String receiveName(InputStream input, OutputStream output) throws IOException {
-
-        String name = SocketUtils.receiveString(input);
-        return name;
-    }
-
-    public static void sendGameConfig(GameConfig config, OutputStream out) throws IOException {
-    
-        SocketUtils.sendInteger(out, GameType.PETITION_CREATE_GAME);
-        int allowBotsCode = (config._allowBots) ? 1 : 0;
-
-        SocketUtils.sendString(out, config._roomName);
-        SocketUtils.sendString(out, config._userName);
-        SocketUtils.sendInteger(out, allowBotsCode);
-    
-
-        // TODO
-        // Aqui habria que enviar los demas datos...
-        // Id, numero de jugadores, etc...
-    }
-
-    public static GameConfig receiveGameConfig(InputStream input, OutputStream output) throws IOException {
-
-        String roomName = SocketUtils.receiveString(input);
-        String userName = SocketUtils.receiveString(input);
-        boolean allowBots = (SocketUtils.receiveInt(input) == 1) ? true : false;
-
-        GameConfig config = new GameConfig();
-        config._roomName = roomName;
-        config._userName = userName;
-        config._allowBots = allowBots;
-
-        return config;
-    }
-
-    public static void sendWaitingRoomConfirmation(Socket socket) throws IOException {
-        SocketUtils.sendInteger(socket.getOutputStream(), GameType.CONFIRMATION_WAITING_GAME);
-    }
-
-    public static int receiveWaitingRoomConfirmation(Socket socket) throws IOException {
-       
-        int response = SocketUtils.receiveInt(socket.getInputStream());
-        return response;
-    }
-
-    public static void sendPlayerInRoomInfo(PlayerInfo p, Socket socket) throws IOException {
-
-        SocketUtils.sendInteger(socket.getOutputStream(), GameType.EVENT_PLAYER_JOINED);
-        SocketUtils.sendInteger(socket.getOutputStream(), p.id);
-        SocketUtils.sendString(socket.getOutputStream(), p.name);
-    }
-
-    public static PlayerInfo receivePlayerInRoomInfo(InputStream input, OutputStream output) throws IOException {
-
-        int response = SocketUtils.receiveInt(input);
-        if(response != GameType.EVENT_PLAYER_JOINED) {
-            return null;
-        }
+    public static Card receiveCard(InputStream in) throws IOException {
         
+		int valueCode = SocketUtils.receiveInt(in);
+		int suitCode = SocketUtils.receiveInt(in);
+
+        Card c = new Card(
+            Card.getCardValueFromCode(valueCode), 
+            Suit.getSuitFromCode(suitCode)
+        );
         
-        int id = SocketUtils.receiveInt(input);
-        String name = SocketUtils.receiveString(input);
-
-        return new PlayerInfo(id, name);
-    }
-
-    /* Auxiliar methods */
-    public static boolean checkIpValid(final String IP){
-		return !IP.trim().isEmpty();
-	}
-
-    public static boolean checkNameIsTooShort(final String name) {
-        return name.length() < 3;
-    }
-
-    public static boolean checkNameIsTooLong(final String name) {
-        return 10 < name.length();
+		return c;
     }
 
 }

@@ -1,8 +1,16 @@
 package com.ucm.client;
 
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.ucm.common.GameConfig;
+import com.ucm.common.PlayerInfo;
+
+import javafx.scene.image.Image;
+
+
 
 public class ClientInfo {
     
@@ -14,7 +22,11 @@ public class ClientInfo {
     public Socket socket;
     public boolean isHost;
 
+    public List<PlayerInfo> playerPositions;
+
     private static ClientInfo instance;
+
+    private Map<Integer, Image> avatarCache = new HashMap<>();
 
     private ClientInfo() {}
 
@@ -26,4 +38,23 @@ public class ClientInfo {
         
         return instance;
     }
+
+    
+    public Image getAvatar(String name, int size) {
+        if(name.startsWith("GeminiLLM")) {
+            return AvatarGenerator.generateBot(AvatarType.GEMINI_BOT, size);
+        }
+        else if(name.startsWith("LlamaPoker")) {
+            return AvatarGenerator.generateBot(AvatarType.LLAMA_BOT, size);
+        }
+        else {
+            return AvatarGenerator.generateHuman(name, size);
+        }
+    }
+
+    public void onNameChanged(String newName) {
+        this.name = newName;
+        avatarCache.clear();
+    }
+
 }

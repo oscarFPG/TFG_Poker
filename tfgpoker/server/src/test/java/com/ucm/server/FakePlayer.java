@@ -1,11 +1,13 @@
 package com.ucm.server;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ucm.server.gameobjects.Card;
+import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.gameobjects.Player;
-import com.ucm.server.gameobjects.PlayerRole;
+import com.ucm.server.interfaces.IPokerPlayer;
 
 
 public class FakePlayer extends Player {
@@ -24,10 +26,8 @@ public class FakePlayer extends Player {
 
     @Override
     public String actionMakePlay(int sb, int bb, int maxBet) { 
-        String command = commands.removeFirst();
-        return command; 
+        return commands.removeFirst(); 
     }
-
 
     @Override
     public void notifySmallBlindBet(final int amount) {}
@@ -54,12 +54,6 @@ public class FakePlayer extends Player {
     public void notifyGameKeeps() {}
 
     @Override
-    public void notifyHandWinner() {}
-
-    @Override
-    public void notifyHandLoser() {}
-
-    @Override
     public void notifyGameWinner() {}
 
     @Override
@@ -79,5 +73,16 @@ public class FakePlayer extends Player {
 
     @Override
     public void notifyMoneyAmount(int amount) {}
+
+    @Override
+    public void notifyOtherPlayerAction(IPokerPlayer p) {}
+
+    @Override
+    public void notifyPlayerState(IPokerPlayer player, boolean last) throws IOException {}
+
+    @Override
+    public void notifyTotalPot(int total) throws IOException {}
+    
+    public void notifyEquity(double equity) {}
     
 }

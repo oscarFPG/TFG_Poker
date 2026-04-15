@@ -5,7 +5,7 @@ import java.io.IOException;
 import com.ucm.client.ClientInfo;
 import com.ucm.common.GameConfig;
 import com.ucm.common.GameType;
-import com.ucm.common.PokerGame;
+import com.ucm.common.PokerPreGame;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -25,6 +25,10 @@ public class HomeCreateGameWindowController extends GenericController {
     private static final int MIN_INITIAL_MONEY = 100;
 
     private static final int MAX_INITIAL_MONEY = 1000000;
+
+    private static final String DEFAULT_LEVEL_DURATION = "15";
+
+    private static final String DEFAULT_HIKE_PERCENTAGE = "25";
 
     @FXML
     private Button btnBackChooseGame;
@@ -65,7 +69,6 @@ public class HomeCreateGameWindowController extends GenericController {
         btnStartHome.setDisable(true);
         labelUserName.setText(_clientInfo.name);
         checkBoxAllowBots.setSelected(_clientInfo.gameConfig._allowBots);
-
         initializeRoomName();
         initializeSpinner();
         initializeBlindsValue();
@@ -165,14 +168,24 @@ public class HomeCreateGameWindowController extends GenericController {
     
     private void updateDinamicBlinds(){
         boolean enabled =  _clientInfo.gameConfig._dinamicBlinds;
+        if(!_clientInfo.gameConfig._dinamicBlinds) {
+            comboLevelDuration.setValue(DEFAULT_LEVEL_DURATION);
+            comboHikePercentage.setValue(DEFAULT_HIKE_PERCENTAGE);
+        }
         comboLevelDuration.setDisable(!enabled);
         comboHikePercentage.setDisable(!enabled);
+
         btnDinamicBlinds.setText(enabled ? "yes" : "no");
     }
 
     @FXML
+    private void onAllowBots() {
+        _clientInfo.gameConfig._allowBots = checkBoxAllowBots.isSelected();
+    }
+
+    @FXML
     public void returnChooseGame() {
-        back();
+        backWindow();
     }
 
     @FXML
@@ -185,7 +198,6 @@ public class HomeCreateGameWindowController extends GenericController {
         String roomName = textFieldRoomName.getText();
         String userName = labelUserName.getText();
         Integer initialMoney = spinnerInitialMoney.getValue();
-        boolean allowBots = checkBoxAllowBots.isSelected();
         String blindsValue = comboBlindsValue.getValue();
         String levelDuration = comboLevelDuration.getValue();
         String hikePercentage = comboHikePercentage.getValue();
@@ -206,7 +218,6 @@ public class HomeCreateGameWindowController extends GenericController {
         _clientInfo.gameConfig._roomName = roomName;
         _clientInfo.gameConfig._userName = userName;
         _clientInfo.gameConfig._initialMoney = initialMoney;
-        _clientInfo.gameConfig._allowBots = allowBots;
         _clientInfo.gameConfig._blindsValue = blindsValue;
         _clientInfo.gameConfig._levelDuration = levelDuration;
         _clientInfo.gameConfig._hikePercentage = hikePercentage;

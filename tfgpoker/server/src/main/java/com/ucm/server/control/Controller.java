@@ -1,16 +1,16 @@
 package com.ucm.server.control;
 
 
-import com.ucm.server.exceptions.OnlyOnePlayerLeftException;
+import com.ucm.common.exceptions.CancelGameException;
+import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.server.logic.Game;
+import com.ucm.server.logic.Timer;
+import com.ucm.common.BotStruct;
 import com.ucm.common.ClientStruct;
-import com.ucm.server.players.HumanPlayer;
 
 import org.apache.logging.log4j.ThreadContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.List;
 
 
 public class Controller {
@@ -22,10 +22,12 @@ public class Controller {
      */
     private Game _game;
 
-    
-    public Controller(Game game, List<ClientStruct> players) {
+    private Timer _timer;
+
+
+    public Controller(Game game) {
         _game = game;
-        addPlayersToGame(players);
+        _timer = game.getGameTimerConfiguration();
     }
 
     /**
@@ -36,46 +38,35 @@ public class Controller {
      */
     public Controller(Game game, int numPlayers) {
         _game = game;
-        addPlayersToGameLocally(numPlayers);
     }
 
 
-    private void addPlayersToGame(List<ClientStruct> players) {
+    public void run() throws CancelGameException {
 
-        int id = 0;
-        for(ClientStruct cs : players) {
-            _game.addPlayer( new HumanPlayer(id, cs.name(), cs.socket(), 1000) );
-            ++id;
-        }
+        log.debug("Game starts!");
+        runGame();
+        log.debug("Game ends!");
     }
 
-    private void addPlayersToGameLocally(int numPlayers) {
-
-        int id = 0;
-        for(int i = 0; i < numPlayers; ++i){
-            _game.addPlayer( new HumanPlayer(id, "Player" + i, null, 1000) );
-            ++id;
-        }
-
-    }
-
-    public void run() {
+    private void runGame() throws CancelGameException {
 
         int handCounter = 0;
         boolean endOfGame = false;
 
-        ThreadContext.put("match", "0");
-        ThreadContext.put("hand", String.valueOf(handCounter));
+        //ThreadContext.put("match", "0");
+        //ThreadContext.put("hand", String.valueOf(handCounter));
 
-
-        log.debug("Assigning roles to all players");
         _game.assignRolesToAllPlayers();
-        
         while (!endOfGame) {
 
             log.debug("Starting hand {}", handCounter);
             try {
                 
+                if(_timer != null && !_timer.isRunning()) {
+                    _game.increaseBlinds();
+                    _timer.restart();
+                }
+
                 // Pre-flop (2)
                 log.debug("Pre-flop round");
                 _game.shareOutCardsToAllPlayers();
@@ -113,10 +104,9 @@ public class Controller {
             // Logger configuration for the next hand -> Write on file match{0}_hand{handCounter}.log
             log.debug("Finishing hand {}", handCounter);
             ++handCounter;
-            ThreadContext.put("hand", String.valueOf(handCounter));
+            //ThreadContext.put("hand", String.valueOf(handCounter));
         }
 
-        log.debug("Game ends!");
     }
 
 }

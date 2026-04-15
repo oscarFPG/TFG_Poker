@@ -37,7 +37,7 @@
     <Loggers>
         <Root level="debug">
             <AppenderRef ref="Console"/>
-            <AppenderRef ref="FileRouter"/>
+            <!--  <AppenderRef ref="FileRouter"/> -->
         </Root>
     </Loggers>
 

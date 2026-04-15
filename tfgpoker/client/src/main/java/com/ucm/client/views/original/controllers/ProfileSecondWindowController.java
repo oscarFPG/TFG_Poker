@@ -3,15 +3,17 @@ package com.ucm.client.views.original.controllers;
 import java.io.IOException;
 import java.net.Socket;
 
+import com.ucm.client.AvatarGenerator;
 import com.ucm.client.ClientInfo;
 import com.ucm.common.GameType;
-import com.ucm.common.PokerGame;
+import com.ucm.common.PokerPreGame;
 import com.ucm.common.SocketUtils;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 
 
 
@@ -29,9 +31,12 @@ public class ProfileSecondWindowController extends GenericController {
     @FXML
     private Button btnCancel;
 
-
     @FXML
-    public void initialize() {
+    private ImageView imgAvatarProfile;
+
+
+    @Override
+    protected void onViewShown() {
 
         btnSave.setDisable(true);
         nameLabel.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -40,6 +45,8 @@ public class ProfileSecondWindowController extends GenericController {
             } 
             else {
                 btnSave.setDisable(false);
+                _clientInfo.onNameChanged(newValue.trim());
+                imgAvatarProfile.setImage(_clientInfo.getAvatar(_clientInfo.name,140));
             }
         });
     }
@@ -51,17 +58,17 @@ public class ProfileSecondWindowController extends GenericController {
         String serverIP = ipLabel.getText();
         String name = nameLabel.getText();
 
-        boolean validIP = PokerGame.checkIpValid(serverIP);
+        boolean validIP = PokerPreGame.checkIpValid(serverIP);
         if(!validIP) {
-            serverIP = PokerGame.LOCAL_HOST;
+            serverIP = PokerPreGame.LOCAL_HOST;
         }
 
         _clientInfo.ip = serverIP;
         _clientInfo.name = name;
 
         try {
-            _clientInfo.socket = PokerGame.connect(serverIP);
-            PokerGame.sendName(_clientInfo.name, _clientInfo.socket);
+            _clientInfo.socket = PokerPreGame.connect(serverIP);
+            PokerPreGame.sendName(_clientInfo.name, _clientInfo.socket);
             
             int response = SocketUtils.receiveInt(_clientInfo.socket.getInputStream());
             if(response == GameType.ERROR_NAME_TOO_SHORT) {
@@ -89,10 +96,4 @@ public class ProfileSecondWindowController extends GenericController {
     private void cancel() {
         Platform.exit();
     }
-
-    @Override
-    public void onNextEvent() {}
-
-    @Override
-    public void onBackEvent() {}
 }

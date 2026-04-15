@@ -1,6 +1,7 @@
 package com.ucm.server.players;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -10,9 +11,15 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.PlayerRole;
+import com.ucm.server.commands.Command;
+import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.gameobjects.BotLLM;
-import com.ucm.server.gameobjects.Card;
-import com.ucm.server.gameobjects.PlayerRole;
+import com.ucm.server.gameobjects.Player;
+import com.ucm.server.interfaces.IPokerPlayer;
+import com.ucm.server.middleclasses.CommandResult;
+
 
 public class QwenPokerLLM extends BotLLM {
 
@@ -30,7 +37,7 @@ public class QwenPokerLLM extends BotLLM {
     private static final String MODEL_NAME = "qwenPokerBot"; 
 
     public QwenPokerLLM(int id, int money) {
-        super(id, "QwenPoker", money, null);
+        super(id, "QwenPoker", money);
         this.money = money;
     }
 
@@ -213,6 +220,28 @@ public class QwenPokerLLM extends BotLLM {
     @Override public void notifyGameWinner() {}
     @Override public void notifyGameLoser() {}
     @Override public void notifyHandEndsByFolds() {}
+    @Override public void notifyOtherPlayerAction(IPokerPlayer p) {}
+
+    @Override
+    public void notifyPlayerState(final IPokerPlayer player, final boolean last) throws IOException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'notifyPlayerState'");
+    }
+
+    @Override
+    public void notifyTotalPot(int total) throws IOException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'notifyTotalPot'");
+    }
+    public void notifyEquity(double equity) {
+       
+    }
+
+    @Override
+    public Bot create(int ID, int initialMoney) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'create'");
+    }
 
     
 }

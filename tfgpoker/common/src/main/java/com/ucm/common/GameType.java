@@ -9,6 +9,10 @@ public class GameType {
     public static final int PORT = 5005;
     public static final int MAX_PLAYERS = 9;
 
+    /* ---------------- BOOLEAN TYPES ----------------*/
+    public static final int TRUE = 1;
+    public static final int FALSE = 0;
+
     /* ---------------- PREGAME CODES ----------------  */
     public static final int PETITION_PLAYER_NAME = 1;
     public static final int PETITION_CREATE_GAME = 2;
@@ -34,16 +38,19 @@ public class GameType {
     public static final int ERROR_GAME_NOT_CREATED = 503;
     public static final int ERROR_GAME_NOT_JOINED = 504;
     public static final int ERROR_GAME_CANNOT_START = 505;
+    public static final int ERROR_GAME_CANCELS = 506;
 
     /* ---------------- GAME CODES ----------------  */
     // Player roles
-    public static final int PLAYER_ROLE_NO_ROLE = 80;
-    public static final int PLAYER_ROLE_DEALER = 81;
-    public static final int PLAYER_ROLE_SMALL_BLIND = 82;
-    public static final int PLAYER_ROLE_BIG_BLIND = 83;
-    public static final int PLAYER_ROLE_UNDER_THE_GUN = 84;
-    public static final int PLAYER_ROLE_MIDDLE_POSITION = 85;
-    public static final int PLAYER_ROLE_CUT_OFF = 86;
+    public static final int PLAYER_ROLE_UNDER_THE_GUN = 80;
+    public static final int PLAYER_ROLE_UNDER_THE_GUN_1 = 81;
+    public static final int PLAYER_ROLE_UNDER_THE_GUN_2 = 82;
+    public static final int PLAYER_ROLE_LOJACK = 83;
+    public static final int PLAYER_ROLE_HIJACK = 84;
+    public static final int PLAYER_ROLE_CUT_OFF = 85;
+    public static final int PLAYER_ROLE_DEALER = 86;
+    public static final int PLAYER_ROLE_SMALL_BLIND = 87;
+    public static final int PLAYER_ROLE_BIG_BLIND = 88;
 
     // Card suits
     public static final int HEARTS = 100;
@@ -72,6 +79,8 @@ public class GameType {
     public static final int TURN_FORCED_BB = 202;
     public static final int TURN_WAIT = 203;
     public static final int TURN_FOLD = 204;
+    public static final int TURN_OTHER_PLAYER = 205;
+    public static final int MY_TURN_ACTION = 206;
 
     // Round, hand and game status
     public static final int GAME_STARTS = 300;
@@ -86,12 +95,24 @@ public class GameType {
     public static final int PLAYER_LOSES_HAND = 321;
     public static final int PLAYER_WINS_GAME = 330;
     public static final int PLAYER_LOSES_GAME = 331;
+    public static final int TOTAL_POT = 331;
 
     // Player actions
-    public static final int FOLD_ACTION = 400;
-    public static final int CHECK_ACTION = 401;
-    public static final int ALL_IN_ACTION = 402;
-    public static final int CALL_ACTION = 403;
-    public static final int RAISE_ACTION = 404;
+    public static final String FOLD_ACTION_FULL = "fold";
+    public static final String FOLD_ACTION_SHORTCUT = "f";
+    public static final String CHECK_ACTION_FULL = "check";
+    public static final String CHECK_ACTION_SHORTCUT = "k";
+    public static final String ALL_IN_ACTION_FULL = "all-in";
+    public static final String ALL_IN_ACTION_SHORTCUT = "a";
+    public static final String CALL_ACTION_FULL = "call";
+    public static final String CALL_ACTION_SHORTCUT = "c";
+    public static final String RAISE_ACTION_FULL = "raise"; // This requires an amount parameter: e.g: "raise 100"
+    public static final String RAISE_ACTION_SHORTCUT = "r"; // This requires an amount parameter: e.g: "raise 100"
 
+    // Bots identifier
+    public static final int BOT_GEMINI = 10000;
+    public static final int BOT_LLAMA = 10001;
+
+    //Equity identifier
+    public static final int EQUITY_UPDATE = 40000;
 }
