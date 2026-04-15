@@ -217,7 +217,6 @@ public class PlayerList implements Iterable<Node> {
 
         if( checkAllPlayersAllIn() ) { // Avoid asking if all active players have used all their money
             log.debug("All players are ALL_IN, skipping betting round");
-            notifyGameStateToAllPlayers();
             notifyRoundEnded();
             return;
         }
@@ -225,7 +224,7 @@ public class PlayerList implements Iterable<Node> {
 
         int playersRemaining = activePlayersCounter();        
         Node playerOnTurn = calculatePlayerOnTurn(playersRemaining, isPreflop);
-        Node pivotPlayer = calculatePivotPlayer(playersRemaining, isPreflop);
+        Node pivotPlayer = calculatePivotPlayer(playersRemaining, isPreflop, playerOnTurn);
         int maxBet = (isPreflop) ? bb : 0;
         int currentBet = maxBet;
         int totalPot = 0;
@@ -236,12 +235,10 @@ public class PlayerList implements Iterable<Node> {
             return;
         }
 
-
-        notifyGameStateToAllPlayers();
         if(isPreflop)
             smallBlindAndBigBlindPlays(sb, bb, playersRemaining);
-        notifyWaitExceptTo(playerOnTurn);
 
+        notifyWaitExceptTo(playerOnTurn);
         do {
 
             if(isPreflop)
@@ -301,7 +298,7 @@ public class PlayerList implements Iterable<Node> {
 
                 player.notifyTurnPlay();
                 
-                String commandString = player.actionMakePlay(sb, bb, maxBet);
+                String commandString = player.notifyMakePlay(sb, bb, maxBet);
                 String[] commandFormatted = commandString.split(" ");
 
                 log.debug("Player {} with command: {}", player.getPlayerName(), commandString);
@@ -355,11 +352,14 @@ public class PlayerList implements Iterable<Node> {
 
         List<PotDistribution> distribution = _potManager.calculatePrizeDistribution(players);
         List<IPokerPlayer> winners = new ArrayList<>();
-        for(PotDistribution dist : distribution){
+        for(PotDistribution dist : distribution) {
             givePriceToPlayerWithID(dist.playerID(), dist.potPrize());
+
+            Node player = getPlayerById( dist.playerID() );
+            winners.add( player._player );
         }
 
-        notifyGameStateToAllPlayers();
+        notifyWinnersToAllPlayers(winners);
     }
 
     public void calculatePrizeForPlayerLeft() throws CancelGameException {
@@ -376,9 +376,7 @@ public class PlayerList implements Iterable<Node> {
 
         PotDistribution distribution = _potManager.calculatePrizeForPlayer(winner._player.getPlayerId());
         givePriceToPlayerWithID(distribution.playerID(), distribution.potPrize());
-        winner._player.setIsWinner(true);
-
-        notifyGameStateToAllPlayers();
+        notifyWinnersToAllPlayers( List.of(winner._player) );
     }
 
     public boolean checkEndOfGame() {
@@ -483,9 +481,9 @@ public class PlayerList implements Iterable<Node> {
             }
             else {
                 Node dealer = _first;
-                Node sb = getNextPlayerToPlay(dealer);
-                Node bb = getNextPlayerToPlay(sb);
-                return getNextPlayerToPlay(bb);
+                Node sb = getNextPlayerActive(dealer);
+                Node bb = getNextPlayerActive(sb);
+                return getNextPlayerActive(bb);
             }
         }
         else {
@@ -495,21 +493,38 @@ public class PlayerList implements Iterable<Node> {
         }
     }
 
-    private Node calculatePivotPlayer(final int numPlayers, final boolean isPreflop) {
+    private Node calculatePivotPlayer(final int numPlayers, final boolean isPreflop, Node current) {
 
         if(numPlayers == 2)
-            return (isPreflop) ? getNextPlayerToPlay(_first) : _first;
+            return (isPreflop) ? getNextPlayerActive(current) : current;
         
         
         Node dealer = _first;
         if(isPreflop) {
-            Node sb = getNextPlayerToPlay(dealer);
-            return getNextPlayerToPlay(sb);
+            Node sb = getNextPlayerActive(dealer);
+            return getNextPlayerActive(sb);
         }
         else {
-            return getNextPlayerToPlay(dealer);
+            return getNextPlayerActive(dealer);
         }
 
+    }
+
+    private void givePriceToPlayerWithID(final int id, final int amount) {
+
+        Iterator<Node> it = iterator();
+        Node winner = null;
+        boolean found = false;
+        while( !found && it.hasNext() ) {
+
+            winner = it.next();
+            if(winner._player.getPlayerId() == id) {
+                found = true;
+            }
+        }
+
+        winner._player.receivePriceMoney(amount);
+        winner._player.setIsWinner(true);    
     }
 
     private void resetPlayers() {
@@ -544,89 +559,6 @@ public class PlayerList implements Iterable<Node> {
         return contador;
     } 
 
-    private Node getNextPlayerActive(Node current) {
-
-        Node iNode = current._next;
-        if(!iNode._player.isEliminated() && !iNode._player.isFolded() && !iNode._isDisconnected)
-            return iNode;
-
-
-        boolean found = false;
-        while (!found && iNode != current) {
-            iNode = iNode._next;
-            found = (!iNode._player.isEliminated() && !iNode._player.isFolded() && !iNode._isDisconnected);
-        }
-
-        return iNode;
-    }
-
-    private Node getNextPlayerToPlay(Node current) {
-
-        Node iNode = current._next;
-        if(!iNode._player.isEliminated() && !iNode._player.isFolded() && !iNode._player.isAllIn() && !iNode._isDisconnected)
-            return iNode;
-
-
-        boolean found = false;
-        while (!found && iNode != current) {
-            iNode = iNode._next;
-            if(!iNode._player.isEliminated() && !iNode._player.isFolded() && !iNode._player.isAllIn() && !iNode._isDisconnected)
-                found = true;
-        
-        }
-
-        return iNode;
-    }
-
-    private Node getNextNotEliminatedPlayer(Node current) {
-
-        Node iNode = current._next;
-        if(!iNode._player.isEliminated() && !iNode._isDisconnected)
-            return iNode;
-
-
-        boolean found = false;
-        while (!found && iNode != current) {
-            iNode = iNode._next;
-            if(!iNode._player.isEliminated() && !iNode._isDisconnected)
-                found = true;
-        }
-
-        return iNode;
-    }
-
-    private Node getPlayerByRole(final PlayerRole role) {
-
-        Iterator<Node> it = iterator();
-        Node player = null;
-        boolean found = false;
-        while( !found && it.hasNext() ) {
-
-            player = it.next();
-            if(player._player.getRole() == role) {
-                found = true;
-            }
-        }
-
-        return player;
-    }
-
-    private void givePriceToPlayerWithID(final int id, final int amount) {
-
-        Iterator<Node> it = iterator();
-        Node winner = null;
-        boolean found = false;
-        while( !found && it.hasNext() ) {
-
-            winner = it.next();
-            if(winner._player.getPlayerId() == id) {
-                found = true;
-            }
-        }
-
-        winner._player.receivePriceMoney(amount);
-        winner._player.setIsWinner(true);    
-    }
 
     private void notifyWaitExceptTo(final Node playerOnTurn) throws CancelGameException {
 
@@ -730,34 +662,6 @@ public class PlayerList implements Iterable<Node> {
 
     }
 
-    private void notifyGameStateToAllPlayers() throws CancelGameException {
-
-        Iterator<Node> targetIt = iterator();
-        while( targetIt.hasNext() ) {
-
-            Node targetPlayer = targetIt.next();
-            if(targetPlayer._isDisconnected || targetPlayer._player.isFolded() || targetPlayer._player.isEliminated())
-                continue;
-
-            Iterator<Node> infoIt = iterator();
-            while( infoIt.hasNext() ) {
-
-                Node infoPlayer = infoIt.next();
-                boolean isLast = (infoPlayer._next == _first);
-                try {
-                    targetPlayer._player.notifyPlayerState(infoPlayer._player, isLast);
-                }
-                catch (IOException e) {
-                    
-                    targetPlayer._isDisconnected = true;
-                    if( checkIfGameCancel() )
-                        throw new CancelGameException();
-                }
-            }
-        }
-
-    }
-
     public void notifyGameEnds(final boolean gameEnds) throws CancelGameException {
 
         Iterator<Node> it = iterator();
@@ -781,6 +685,28 @@ public class PlayerList implements Iterable<Node> {
             }
         }
 
+    }
+
+    private void notifyWinnersToAllPlayers(final List<IPokerPlayer> winners) throws CancelGameException {
+
+        Iterator<Node> it = iterator();
+        while( it.hasNext() ) {
+
+            Node player = it.next();
+            if( !player._isDisconnected && !player._player.isEliminated() ) {
+
+                try {
+                    boolean currentIsWinners = winners.contains(player._player);
+                    player._player.notifyHandWinners(winners, currentIsWinners);
+                }
+                catch(IOException e) {
+                    player._isDisconnected = true;
+                    if( checkIfGameCancel() )
+                        throw new CancelGameException();
+                }
+
+            }
+        }
     }
 
     public void notifyEquityToPlayers(Map<Integer, Double> equityMap) throws CancelGameException {
@@ -818,6 +744,7 @@ public class PlayerList implements Iterable<Node> {
 
     }
 
+
     private boolean checkIfGameCancel() {
 
         int connectedPlayers = 0;
@@ -829,6 +756,68 @@ public class PlayerList implements Iterable<Node> {
         }
 
         return (connectedPlayers <= 1);
+    }
+
+    private Node getNextPlayerActive(Node current) {
+
+        Iterator<Node> it = iterator(current._next);
+        while( it.hasNext() ) {
+
+            Node player = it.next();
+            if(!player._player.isEliminated() && !player._player.isFolded() && !player._isDisconnected)
+                return player;
+        }
+
+        return current;
+    }
+
+    private Node getNextNotEliminatedPlayer(Node current) {
+
+        Node iNode = current._next;
+        if(!iNode._player.isEliminated() && !iNode._isDisconnected)
+            return iNode;
+
+
+        boolean found = false;
+        while (!found && iNode != current) {
+            iNode = iNode._next;
+            if(!iNode._player.isEliminated() && !iNode._isDisconnected)
+                found = true;
+        }
+
+        return iNode;
+    }
+
+    private Node getPlayerById(final int ID) {
+
+        Iterator<Node> it = iterator();
+        Node player = null;
+        boolean found = false;
+        while( !found && it.hasNext() ) {
+
+            player = it.next();
+            if(player._player.getPlayerId() == ID) {
+                found = true;
+            }
+        }
+
+        return player;
+    }
+
+    private Node getPlayerByRole(final PlayerRole role) {
+
+        Iterator<Node> it = iterator();
+        Node player = null;
+        boolean found = false;
+        while( !found && it.hasNext() ) {
+
+            player = it.next();
+            if(player._player.getRole() == role) {
+                found = true;
+            }
+        }
+
+        return player;
     }
 
 
@@ -844,6 +833,13 @@ public class PlayerList implements Iterable<Node> {
         private Node pivot = _first;
         private Node current = pivot;
         private boolean start = true;
+
+
+        public PlayerIterator() {}
+        public PlayerIterator(Node start) {
+            pivot = start;
+            current = pivot;
+        }
 
         @Override
         public boolean hasNext() {
@@ -866,9 +862,12 @@ public class PlayerList implements Iterable<Node> {
 
     }
 
-    @Override
     public Iterator<Node> iterator() {
         return new PlayerIterator();
+    }
+
+    public Iterator<Node> iterator(Node start) {
+        return new PlayerIterator(start);
     }
 
 

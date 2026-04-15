@@ -37,14 +37,4 @@ public interface IPokerPlayer extends IPokerActions, IPokerNotification {
     public void actionSmallBlindBet(final int sb);
     public void actionBigBlindBet(final int bb);
 
-    /**
-     * Determines the action to take during the player's turn.
-     * 
-     * @param sb     small blind amount
-     * @param bb     big blind amount
-     * @param maxBet current maximum bet
-     * @return {@link String} representing the chosen action
-     */
-    public String actionMakePlay(final int sb, final int bb, final int maxBet) throws IOException;
-
 }

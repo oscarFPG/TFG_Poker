@@ -23,7 +23,7 @@ public class GeminiTest {
             
             GeminiLLM geminiLLM = new GeminiLLM(0, 1000);
             geminiLLM.receiveRole(PlayerRole.DEALER);
-            String response = geminiLLM.actionMakePlay(0, 0, 0);
+            String response = geminiLLM.notifyMakePlay(0, 0, 0);
 
             System.out.printf("Gemini response: %s\n", response);
             assertEquals(true, true);

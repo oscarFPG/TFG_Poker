@@ -108,7 +108,7 @@ public abstract class BotLLM extends Bot {
      * @return sanitized poker action (fold, call, check or raise X)
      */
     @Override
-    public String actionMakePlay(int sb, int bb, int maxBet) {
+    public String notifyMakePlay(int sb, int bb, int maxBet) {
 
         this.smallBlind = sb;
         this.bigBlind = bb;
@@ -337,11 +337,13 @@ public abstract class BotLLM extends Bot {
         // TODO : Notificar el total del pot para mostrarlo en el prompt
     }
 
+    /*
     @Override
     public void notifyPlayerState(IPokerPlayer player, boolean last) throws IOException {
         // TODO : Notifies the state of all players in the game, including the bot itself
         // Update information
     }
+    */
 
     /**
      * Resets the internal state at the end of a hand.
@@ -351,6 +353,11 @@ public abstract class BotLLM extends Bot {
         hand.clear();
         table.clear();
         actionHistory.clear();
+    }
+
+    @Override
+    public void notifyHandWinners(List<IPokerPlayer> winners, boolean imWinner) throws IOException {
+        
     }
 
     @Override public void notifyTurnWait() throws IOException {}

@@ -29,6 +29,7 @@ public class Game {
     private static final Logger log = LogManager.getLogger(Game.class);
 
     public static final boolean DEBUG = true;
+    public static boolean DEBUG_PLAYERS = false;
     public static final int MAX_CARDS_IN_TABLE = 5;
 
     private GameConfig _gameConfig;

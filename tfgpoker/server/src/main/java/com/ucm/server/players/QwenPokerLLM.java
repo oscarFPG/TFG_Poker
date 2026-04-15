@@ -78,7 +78,7 @@ public class QwenPokerLLM extends BotLLM {
 
     
     @Override
-    public String actionMakePlay(int sb, int bb, int maxBet) {
+    public String notifyMakePlay(int sb, int bb, int maxBet) {
 
         String prompt = buildPrompt(maxBet);
         String response = callModel(prompt);

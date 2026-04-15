@@ -84,15 +84,12 @@ public class GameType {
 
     // Round, hand and game status
     public static final int GAME_STARTS = 300;
-    public static final int ROUND_STARTS = 301;
-    public static final int HAND_STARTS = 302;
     public static final int GAME_KEEPS = 303;
     public static final int GAME_ENDS = 304;
     public static final int ROUND_ENDS = 305;
     public static final int HAND_ENDS = 306;
     public static final int HAND_ENDS_BY_FOLD = 310;
-    public static final int PLAYER_WINS_HAND = 320;
-    public static final int PLAYER_LOSES_HAND = 321;
+    public static final int PLAYER_RANKINGS = 311;
     public static final int PLAYER_WINS_GAME = 330;
     public static final int PLAYER_LOSES_GAME = 331;
     public static final int TOTAL_POT = 331;

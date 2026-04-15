@@ -42,7 +42,7 @@ public class TestGeminiBot {
 
         bot.notifyEquity(0.65);
 
-        String action = bot.actionMakePlay(5, 10, 10);
+        String action = bot.notifyMakePlay(5, 10, 10);
 
         System.out.println("Preflop action: " + action);
 
@@ -69,7 +69,7 @@ public class TestGeminiBot {
         //bot.notifyPlayerAction(PlayerRole.UNDER_THE_GUN, "raise", 10);
         //bot.notifyPlayerAction(PlayerRole.HIJACK, "call", 10);
 
-        String action = bot.actionMakePlay(5, 10, 20);
+        String action = bot.notifyMakePlay(5, 10, 20);
 
         System.out.println("Flop action: " + action);
 
@@ -93,7 +93,7 @@ public class TestGeminiBot {
 
         bot.notifyEquity(0.05);
 
-        String action = bot.actionMakePlay(5, 10, 20);
+        String action = bot.notifyMakePlay(5, 10, 20);
 
         System.out.println("Low equity action: " + action);
 

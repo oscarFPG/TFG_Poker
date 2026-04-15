@@ -42,7 +42,7 @@ public class LlamaPokerLLM extends BotLLM {
     }
 
     @Override
-    public String actionMakePlay(int sb, int bb, int maxBet) {
+    public String notifyMakePlay(int sb, int bb, int maxBet) {
         this.smallBlind = sb;
         this.bigBlind = bb;
         String prompt = buildPrompt(maxBet);
