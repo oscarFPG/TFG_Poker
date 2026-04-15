@@ -21,10 +21,13 @@ public class Controller {
      * Atributo que referencia la clase Game
      */
     private Game _game;
-    
+
+    private Timer _timer;
+
 
     public Controller(Game game) {
         _game = game;
+        _timer = game.getGameTimerConfiguration();
     }
 
     /**
@@ -53,11 +56,16 @@ public class Controller {
         //ThreadContext.put("match", "0");
         //ThreadContext.put("hand", String.valueOf(handCounter));
 
-        _game.assignRolesToAllPlayers();    
+        _game.assignRolesToAllPlayers();
         while (!endOfGame) {
 
             log.debug("Starting hand {}", handCounter);
             try {
+                
+                if(_timer != null && !_timer.isRunning()) {
+                    _game.increaseBlinds();
+                    _timer.restart();
+                }
 
                 // Pre-flop (2)
                 log.debug("Pre-flop round");
