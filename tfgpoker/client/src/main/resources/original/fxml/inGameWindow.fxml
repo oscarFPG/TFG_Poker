@@ -367,7 +367,7 @@
                   </ImageView>
                </children>
             </HBox>
-            <HBox fx:id="hboxHandBet8" layoutX="895.0" layoutY="493.0" prefHeight="38.0" prefWidth="110.0">
+            <HBox fx:id="hboxHandBet8" layoutX="913.0" layoutY="481.0" prefHeight="38.0" prefWidth="110.0">
                <children>
                   <Label fx:id="labelOnBetMoney8" styleClass="username-label" text="Label" />
                   <ImageView fitHeight="41.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
@@ -389,7 +389,7 @@
                      </image></ImageView>
                </children>
             </HBox>
-            <HBox fx:id="hboxHandBet7" layoutX="991.0" layoutY="382.0" prefHeight="41.0" prefWidth="119.0">
+            <HBox fx:id="hboxHandBet7" layoutX="1012.0" layoutY="385.0" prefHeight="41.0" prefWidth="119.0">
                <children>
                   <Label fx:id="labelOnBetMoney7" styleClass="username-label" text="Label" />
                   <ImageView fitHeight="41.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
@@ -399,7 +399,7 @@
                   </ImageView>
                </children>
             </HBox>
-            <HBox fx:id="hboxHandBet6" layoutX="968.0" layoutY="258.0" prefHeight="18.0" prefWidth="123.0">
+            <HBox fx:id="hboxHandBet6" layoutX="991.0" layoutY="260.0" prefHeight="18.0" prefWidth="123.0">
                <children>
                   <Label fx:id="labelOnBetMoney6" styleClass="username-label" text="Label" />
                   <ImageView fitHeight="41.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
@@ -464,7 +464,7 @@
                   <Label fx:id="labelOnBetMoney2" styleClass="username-label" text="Label" />
                </children>
             </HBox>
-            <HBox fx:id="hboxHandBet1" layoutX="527.0" layoutY="452.0" prefHeight="41.0" prefWidth="125.0">
+            <HBox fx:id="hboxHandBet1" layoutX="535.0" layoutY="472.0" prefHeight="41.0" prefWidth="125.0">
                <children>
                   <ImageView fitHeight="41.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -1376,32 +1376,32 @@
                <image>
                   <Image url="@../../images/cards/2_of_diamonds.png" />
                </image></ImageView>
-            <ImageView fx:id="ImgDealer7" fitHeight="56.0" fitWidth="60.0" layoutX="1021.0" layoutY="340.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="ImgDealer7" fitHeight="56.0" fitWidth="60.0" layoutX="1045.0" layoutY="350.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../images/fichaDealer.png" />
                </image>
             </ImageView>
-            <ImageView fx:id="ImgDealer8" fitHeight="56.0" fitWidth="60.0" layoutX="950.0" layoutY="457.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="ImgDealer8" fitHeight="56.0" fitWidth="60.0" layoutX="975.0" layoutY="457.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../images/fichaDealer.png" />
                </image>
             </ImageView>
-            <ImageView fx:id="ImgDealer6" fitHeight="56.0" fitWidth="60.0" layoutX="970.0" layoutY="216.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="ImgDealer6" fitHeight="56.0" fitWidth="60.0" layoutX="984.0" layoutY="228.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../images/fichaDealer.png" />
                </image>
             </ImageView>
-            <ImageView fx:id="ImgDealer5" fitHeight="56.0" fitWidth="60.0" layoutX="801.0" layoutY="158.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="ImgDealer5" fitHeight="56.0" fitWidth="60.0" layoutX="828.0" layoutY="157.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../images/fichaDealer.png" />
                </image>
             </ImageView>
-            <ImageView fx:id="ImgDealer4" fitHeight="56.0" fitWidth="60.0" layoutX="605.0" layoutY="177.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="ImgDealer4" fitHeight="56.0" fitWidth="60.0" layoutX="625.0" layoutY="166.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../images/fichaDealer.png" />
                </image>
             </ImageView>
-            <ImageView fx:id="ImgDealer3" fitHeight="56.0" fitWidth="60.0" layoutX="459.0" layoutY="272.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="ImgDealer3" fitHeight="56.0" fitWidth="60.0" layoutX="459.0" layoutY="261.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../images/fichaDealer.png" />
                </image>
@@ -1416,11 +1416,20 @@
                   <Image url="@../../images/fichaDealer.png" />
                </image>
             </ImageView>
-            <ImageView fx:id="ImgDealer0" fitHeight="56.0" fitWidth="60.0" layoutX="810.0" layoutY="441.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="ImgDealer0" fitHeight="56.0" fitWidth="60.0" layoutX="835.0" layoutY="518.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../images/fichaDealer.png" />
                </image>
             </ImageView>
+            <Label fx:id="labelEquity8" layoutX="1244.0" layoutY="524.0" styleClass="general-text-font" text="Label" />
+            <Label fx:id="labelEquity7" layoutX="1340.0" layoutY="378.0" styleClass="general-text-font" text="Label" />
+            <Label fx:id="labelEquity6" layoutX="1302.0" layoutY="218.0" styleClass="general-text-font" text="Label" />
+            <Label fx:id="labelEquity5" layoutX="1109.0" layoutY="94.0" styleClass="general-text-font" text="Label" />
+            <Label fx:id="labelEquity4" layoutX="445.0" layoutY="101.0" styleClass="general-text-font" text="Label" />
+            <Label fx:id="labelEquity3" layoutX="222.0" layoutY="248.0" styleClass="general-text-font" text="Label" />
+            <Label fx:id="labelEquity2" layoutX="245.0" layoutY="434.0" styleClass="general-text-font" text="Label" />
+            <Label fx:id="labelEquity1" layoutX="260.0" layoutY="544.0" styleClass="general-text-font" text="Label" />
+            <Label fx:id="labelEquity0" layoutX="625.0" layoutY="614.0" styleClass="general-text-font" text="Label" />
          </children>
       </AnchorPane>
    </center>
