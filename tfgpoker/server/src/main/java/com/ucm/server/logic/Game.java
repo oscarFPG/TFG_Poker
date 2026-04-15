@@ -44,9 +44,7 @@ public class Game {
     private int _tableCardsCounter;
     private boolean _isPreflop;
 
-    private Timer _timer;
     private int _level;
-    private boolean _firstHand = true;
     private int _handCounter = 0;
     
 
@@ -69,19 +67,23 @@ public class Game {
         _tableCardsCounter = 0;
         _isPreflop = true;
 
-        if(config._dinamicBlinds) {
-            int seconds = Integer.parseInt( config._levelDuration );
-            _timer = new Timer(seconds);
-            log.debug("Dynamic blinds enabled! Level duration: {} seconds", seconds);
-        }
-        else {
-            _timer = null;
-        }
         _level = 1;
 
         Evaluator.getInstance();
     }
 
+    
+    public void increaseBlinds() {
+
+        double increase = Math.pow( (1 + _hikePercentage) , _level);
+        double newSB = _currentSB * increase;
+        ++_level;
+
+        _currentSB = (int)Math.round(newSB);
+        _currentBB = _currentSB * 2;
+
+        log.debug("Blinds increased to {}/{}", _currentSB, _currentBB);
+    }
 
     public void assignRolesToAllPlayers() throws CancelGameException {
        _playerList.assignRolesToAllPlayers();
@@ -125,22 +127,6 @@ public class Game {
 
         ++_handCounter;
         try {
-
-            if(_isPreflop && _gameConfig._dinamicBlinds) {
-
-                if( !_timer.isRunning() ) {
-
-                    // Start timer and increase blinds only if it is enabled and it is NOT the first hand
-                    if(_firstHand) {
-                        _firstHand = false;
-                    }
-                    else {
-                        increaseBlinds();
-                        _timer.restart();
-                    }
-                }
-            }
-
             _playerList.playHand(_currentSB, _currentBB, _isPreflop);
             _isPreflop = false;
         }
@@ -180,6 +166,17 @@ public class Game {
         return endOfGame;
     }
 
+    public Timer getGameTimerConfiguration() {
+
+        if(!_gameConfig._dinamicBlinds) 
+            return null;
+
+
+        int minutes = Integer.parseInt( _gameConfig._levelDuration );
+        //return new Timer(minutes * 60);
+        return new Timer(10);
+    }
+
     private void addAllPlayersInitial(final List<ClientStruct> players, final List<BotStruct> bots, final GameConfig config) {
 
         int id = 0;
@@ -205,19 +202,7 @@ public class Game {
         _tableCardsCounter = 0;
     }
 
-    private void increaseBlinds() {
-
-        double increase = Math.pow( (1 + _hikePercentage) , _level);
-        double newSB = _currentSB * increase;
-        ++_level;
-
-        _currentSB = (int)Math.round(newSB);
-        _currentBB = _currentSB * 2;
-
-        log.debug("Blinds increased to {}/{}", _currentSB, _currentBB);
-    }
-
-    private void updateEquity() throws CancelGameException {
+    private void updateEquity() throws CancelGameException{
 
         List<HandInfo> players = _playerList.getPlayerHandsInfo();
 
