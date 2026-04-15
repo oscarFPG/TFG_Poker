@@ -26,6 +26,14 @@ import com.ucm.server.middleclasses.CommandResult;
 
 public class LlamaPokerLLM extends BotLLM {
 
+    private List<Card> hand = new ArrayList<>();
+    private List<Card> table = new ArrayList<>();
+    private List<String> actionHistory = new ArrayList<>();
+
+    private int money;
+    private int smallBlind;
+    private int bigBlind;
+
     private static final String OLLAMA_URL = "http://localhost:11434/api/generate";
     private static final String MODEL_NAME = "llamaPokerBot";
 
@@ -36,7 +44,7 @@ public class LlamaPokerLLM extends BotLLM {
 
     // -------------------------------------METODOS COMUNES PARA TODOS LOS BOTS------------------------------------------------
 
-    @Override
+     @Override
     public String getDescription() {
         return "Llama Poker LLM (Ollama)";
     }
@@ -46,17 +54,66 @@ public class LlamaPokerLLM extends BotLLM {
         this.smallBlind = sb;
         this.bigBlind = bb;
         String prompt = buildPrompt(maxBet);
-        String response = callModel(prompt);
+        String response = callOllama(prompt);
         System.out.println("PROMPT:\n" + prompt);
         String action = extractAction(response);
         return sanitize(action);
-    }  
+    }
+
+    
+    @Override public void notifyPlayerCard(Card c) { hand.add(c); }
+    @Override public void notifyTableCard(Card c) { table.add(c); }
+    @Override public void notifyMoneyAmount(int amount) { money = amount; }
+    @Override public void notifySmallBlindBet(int amount) { smallBlind = amount; }
+    @Override public void notifyBigBlindBet(int amount) { bigBlind = amount; }
+    @Override public void notifyPlayerRole(PlayerRole role) { _role = role; }
+
+    @Override
+    public void notifyPlayerAction(PlayerRole role, String action, double amount) {
+        String entry = mapRole(role) + " " + action +
+                ((action.equals("raise") || action.equals("all-in")) ? " " + amount : "");
+        actionHistory.add(entry);
+    }
+
+    private int estimatePot() {
+        int pot = smallBlind + bigBlind;
+
+        for (String action : actionHistory) {
+            String[] parts = action.split(" ");
+            try {
+                pot += Double.parseDouble(parts[parts.length - 1]);
+            } catch (Exception ignored) {}
+        }
+
+        return pot;
+    }
+
+    @Override
+    public void notifyHandEnded() {
+        hand.clear();
+        table.clear();
+        actionHistory.clear();
+    }
+
+
+    @Override public void notifyTurnWait() {}
+    @Override public void notifyTurnPlay() {}
+    @Override public void notifyRoundEnded() {}
+    @Override public void notifyGameEnded() {}
+    @Override public void notifyGameKeeps() {}
+    @Override public void notifyHandWinner() {}
+    @Override public void notifyHandLoser() {}
+    @Override public void notifyGameWinner() {}
+    @Override public void notifyGameLoser() {}
+    @Override public void notifyHandEndsByFolds() {}
+    @Override public void notifyOtherPlayerAction(IPokerPlayer p) {}
+    
 
     // ---------------------------------------------METODOS PERSOLANIZADOS PARA ESTE BOT------------------------------------------------
    
 
-    // VA MAS LENTO PERO ACIERTA MAS
-    protected String buildPrompt(int maxBet) {
+    //VA MAS LENTO PERO ACIERTA MAS
+    private String buildPrompt(int maxBet) {
 
         StringBuilder sb = new StringBuilder();
 
@@ -122,7 +179,7 @@ public class LlamaPokerLLM extends BotLLM {
 
 
 
-    // VA MAS RAPIDO PERO ACIERTA CON MENOS FRECUENCIA 
+    //VA MAS RAPIDO PERO ACIERTA CON MENOS FRECUENCIA 
    private String reducedPrompt(int maxBet) {
 
         StringBuilder sb = new StringBuilder();
@@ -211,9 +268,88 @@ public class LlamaPokerLLM extends BotLLM {
         return actionHistory.isEmpty() ? "None" : String.join(", ", actionHistory);
     }
 
+    private String mapRole(PlayerRole role) {
+        return switch (role) {
+            case DEALER -> "BTN";
+            case SMALL_BLIND -> "SB";
+            case BIG_BLIND -> "BB";
+            case UNDER_THE_GUN -> "UTG";
+            case UNDER_THE_GUN_1 -> "UTG+1";
+            case UNDER_THE_GUN_2 -> "UTG+2";
+            case LOJACK -> "LJ";
+            case HIJACK -> "HJ";
+            case CUT_OFF -> "CO";
+            default -> "UNKNOWN";
+        };
+    }
 
-    @Override
-    protected String extractAction(String text) {
+   
+
+   private String callOllama(String prompt) {
+    try {
+        URL url = new URL(OLLAMA_URL);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Content-Type", "application/json");
+        conn.setDoOutput(true);
+
+        String safePrompt = prompt
+                .replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n");
+
+        String json = """
+        {
+          "model": "%s",
+          "system": "You are an expert poker player. Respond ONLY with <action>answer</action>.",
+          "prompt": "%s",
+          "stream": false,
+          "options": {
+            "temperature": 0,
+            "top_p": 0.1,
+            "num_predict": 30
+          }
+        }
+        """.formatted(MODEL_NAME, safePrompt);
+
+        OutputStream os = conn.getOutputStream();
+        os.write(json.getBytes());
+        os.flush();
+        os.close();
+
+        BufferedReader br = new BufferedReader(
+                new InputStreamReader(conn.getInputStream()));
+
+        StringBuilder response = new StringBuilder();
+        String line;
+
+        while ((line = br.readLine()) != null) {
+            response.append(line);
+        }
+
+        conn.disconnect();
+
+        
+        String raw = response.toString();
+        //System.out.println("RAW JSON:\n" + raw); 
+
+        JSONObject obj = new JSONObject(raw);
+        String clean = obj.getString("response");
+
+        
+        clean = clean.replace("\\u003c", "<")
+                     .replace("\\u003e", ">");
+
+        return clean;
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        return "<action>fold</action>";
+    }
+}
+
+    private String extractAction(String text) {
         //System.out.println("TEXT BEFORE FILTER: " + text);
         Pattern p = Pattern.compile("<action>(.*?)</action>", Pattern.DOTALL);
         Matcher m = p.matcher(text);
@@ -225,9 +361,7 @@ public class LlamaPokerLLM extends BotLLM {
         return "fold";
     }
 
-    @Override
-    protected String sanitize(String action) {
-
+    private String sanitize(String action) {
         action = action.toLowerCase().trim();
 
         if (action.contains("fold")) return "fold";
@@ -255,78 +389,25 @@ public class LlamaPokerLLM extends BotLLM {
         return "fold";
     }
 
+    @Override
+    public void notifyPlayerState(final IPokerPlayer player, final boolean last) throws IOException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'notifyPlayerState'");
+    }
+
+    @Override
+    public void notifyTotalPot(int total) throws IOException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'notifyTotalPot'");
+    }
+
+    public void notifyEquity(double equity) {
+        
+    }
 
 	@Override
 	public Bot create(int ID, int initialMoney) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Unimplemented method 'create'");
 	}
-
-    @Override
-    protected String callModel(String prompt) {
-        
-        try {
-            URL url = new URL(OLLAMA_URL);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type", "application/json");
-            conn.setDoOutput(true);
-
-            String safePrompt = prompt
-                    .replace("\\", "\\\\")
-                    .replace("\"", "\\\"")
-                    .replace("\n", "\\n");
-
-            String json = """
-            {
-                "model": "%s",
-                "system": "You are an expert poker player. Respond ONLY with <action>answer</action>.",
-                "prompt": "%s",
-                "stream": false,
-                "options": {
-                "temperature": 0,
-                "top_p": 0.1,
-                "num_predict": 30
-                }
-            }
-            """.formatted(MODEL_NAME, safePrompt);
-
-            OutputStream os = conn.getOutputStream();
-            os.write(json.getBytes());
-            os.flush();
-            os.close();
-
-            BufferedReader br = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream()));
-
-            StringBuilder response = new StringBuilder();
-            String line;
-
-            while ((line = br.readLine()) != null) {
-                response.append(line);
-            }
-
-            conn.disconnect();
-
-            
-            String raw = response.toString();
-            //System.out.println("RAW JSON:\n" + raw); 
-
-            JSONObject obj = new JSONObject(raw);
-            String clean = obj.getString("response");
-
-            
-            clean = clean.replace("\\u003c", "<")
-                            .replace("\\u003e", ">");
-
-            return clean;
-
-        } 
-        catch (Exception e) {
-            e.printStackTrace();
-            return "<action>fold</action>";
-        }
-    }
-
 }

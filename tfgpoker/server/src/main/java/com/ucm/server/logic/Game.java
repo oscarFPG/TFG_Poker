@@ -202,7 +202,7 @@ public class Game {
         _tableCardsCounter = 0;
     }
 
-    private void updateEquity() throws CancelGameException{
+    private void updateEquity() {
 
         List<HandInfo> players = _playerList.getPlayerHandsInfo();
 

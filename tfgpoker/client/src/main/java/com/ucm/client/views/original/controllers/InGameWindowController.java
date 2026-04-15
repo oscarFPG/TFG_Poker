@@ -284,7 +284,7 @@ public class InGameWindowController extends GenericController {
         if(!_commandQueue.isEmpty())
             return;
 
-        System.out.printf("FOLD BUTTON\n");
+
         _commandQueue.offer(GameType.FOLD_ACTION_FULL);
     }
 
@@ -294,7 +294,7 @@ public class InGameWindowController extends GenericController {
         if(!_commandQueue.isEmpty())
             return;
 
-        System.out.printf("CALL BUTTON\n");
+
         if(_swapCallToCheck)
             _commandQueue.offer(GameType.CHECK_ACTION_FULL);    
         else
@@ -307,7 +307,7 @@ public class InGameWindowController extends GenericController {
         if(!_commandQueue.isEmpty())
             return;
 
-        System.out.printf("RAISE BUTTON\n");
+
         int amount = Integer.parseInt( labelMoney.getText() );
         _commandQueue.offer( String.format("%s %d", GameType.RAISE_ACTION_FULL, amount) );
     }
