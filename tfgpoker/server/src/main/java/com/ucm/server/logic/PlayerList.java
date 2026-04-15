@@ -783,7 +783,7 @@ public class PlayerList implements Iterable<Node> {
 
     }
 
-    public void notifyEquityToPlayers(Map<Integer, Double> equityMap) {
+    public void notifyEquityToPlayers(Map<Integer, Double> equityMap) throws CancelGameException {
 
         if (isEmpty())
             return;
@@ -804,7 +804,15 @@ public class PlayerList implements Iterable<Node> {
                     equity = equityMap.getOrDefault(player.getPlayerId(), 0.0);
                 }
 
-                player.notifyEquity(equity);
+                try {
+                    player.notifyEquity(equity);
+                }
+                catch(IOException e) {
+                    
+                    node._isDisconnected = true;
+                    if( checkIfGameCancel() )
+                        throw new CancelGameException();
+                }
             }
         }
 

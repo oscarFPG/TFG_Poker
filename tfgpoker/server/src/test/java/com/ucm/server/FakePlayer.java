@@ -72,9 +72,6 @@ public class FakePlayer extends Player {
     public void notifyTableCard(Card c) {}
 
     @Override
-    public void notifyMoneyAmount(int amount) {}
-
-    @Override
     public void notifyOtherPlayerAction(IPokerPlayer p) {}
 
     @Override
