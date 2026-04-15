@@ -60,49 +60,67 @@ public class InGameWindowController extends GenericController {
     
     /* All poker players seats */
     @FXML private StackPane pokerPlayer0;           // Always playing-client seat
-    @FXML private Label playerName0, playerMoney0;  // Always playing-client seat
-    @FXML private HBox hboxImageCards0;
+    @FXML private Label playerName0, playerMoney0, labelOnBetMoney0;  // Always playing-client seat
+    @FXML private Label labelEquity0;
+    @FXML private HBox hboxImageCards0, hboxHandBet0;
     @FXML private ImageView imgLeftCard0, imgRightCard0, imgAvatarProfile0;
+    @FXML private ImageView ImgDealer0;
 
     @FXML private StackPane pokerPlayer1;
-    @FXML private Label playerName1, playerMoney1;
-    @FXML private HBox hboxImageCards1;
+    @FXML private Label playerName1, playerMoney1, labelOnBetMoney1;
+    @FXML private Label labelEquity1;
+    @FXML private HBox hboxImageCards1, hboxHandBet1;
     @FXML private ImageView imgLeftCard1, imgRightCard1, imgAvatarProfile1;
+    @FXML private ImageView ImgDealer1;
 
     @FXML private StackPane pokerPlayer2;
-    @FXML private Label playerName2, playerMoney2;
-    @FXML private HBox hboxImageCards2;
+    @FXML private Label playerName2, playerMoney2, labelOnBetMoney2;
+    @FXML private Label labelEquity2;
+    @FXML private HBox hboxImageCards2, hboxHandBet2;
     @FXML private ImageView imgLeftCard2, imgRightCard2, imgAvatarProfile2;
+    @FXML private ImageView ImgDealer2;
 
     @FXML private StackPane pokerPlayer3;
-    @FXML private Label playerName3, playerMoney3;
-    @FXML private HBox hboxImageCards3;
+    @FXML private Label playerName3, playerMoney3, labelOnBetMoney3;
+    @FXML private Label labelEquity3;
+    @FXML private HBox hboxImageCards3, hboxHandBet3;
     @FXML private ImageView imgLeftCard3, imgRightCard3, imgAvatarProfile3;
+    @FXML private ImageView ImgDealer3;
 
     @FXML private StackPane pokerPlayer4;
-    @FXML private Label playerName4, playerMoney4;
-    @FXML private HBox hboxImageCards4;
+    @FXML private Label playerName4, playerMoney4, labelOnBetMoney4;
+    @FXML private Label labelEquity4;
+    @FXML private HBox hboxImageCards4, hboxHandBet4;
     @FXML private ImageView imgLeftCard4, imgRightCard4, imgAvatarProfile4;
+    @FXML private ImageView ImgDealer4;
 
     @FXML private StackPane pokerPlayer5;
-    @FXML private Label playerName5, playerMoney5;
-    @FXML private HBox hboxImageCards5;
+    @FXML private Label playerName5, playerMoney5, labelOnBetMoney5;
+    @FXML private Label labelEquity5;
+    @FXML private HBox hboxImageCards5, hboxHandBet5;
     @FXML private ImageView imgLeftCard5, imgRightCard5, imgAvatarProfile5;
+    @FXML private ImageView ImgDealer5;
 
     @FXML private StackPane pokerPlayer6;
-    @FXML private Label playerName6, playerMoney6;
-    @FXML private HBox hboxImageCards6;
+    @FXML private Label playerName6, playerMoney6, labelOnBetMoney6;
+    @FXML private Label labelEquity6;
+    @FXML private HBox hboxImageCards6, hboxHandBet6;
     @FXML private ImageView imgLeftCard6, imgRightCard6, imgAvatarProfile6;
+    @FXML private ImageView ImgDealer6;
 
     @FXML private StackPane pokerPlayer7;
-    @FXML private Label playerName7, playerMoney7;
-    @FXML private HBox hboxImageCards7;
+    @FXML private Label playerName7, playerMoney7, labelOnBetMoney7;
+    @FXML private Label labelEquity7;
+    @FXML private HBox hboxImageCards7, hboxHandBet7;
     @FXML private ImageView imgLeftCard7, imgRightCard7, imgAvatarProfile7;
+    @FXML private ImageView ImgDealer7;
 
     @FXML private StackPane pokerPlayer8;
-    @FXML private Label playerName8, playerMoney8;
-    @FXML private HBox hboxImageCards8;
+    @FXML private Label playerName8, playerMoney8, labelOnBetMoney8;
+    @FXML private Label labelEquity8;
+    @FXML private HBox hboxImageCards8, hboxHandBet8;
     @FXML private ImageView imgLeftCard8, imgRightCard8, imgAvatarProfile8;
+    @FXML private ImageView ImgDealer8;
     
     /* Member variables to group */
     private List<Label> _listNameLabels;
@@ -126,11 +144,23 @@ public class InGameWindowController extends GenericController {
     @Override
     protected void onViewShown() {
 
+        buttonsHolder.setStyle("-fx-border-color: red; -fx-border-width: 2;");
+        btnFold.setStyle("-fx-border-color: red; -fx-border-width: 2;");
+        btnCall.setStyle("-fx-border-color: red; -fx-border-width: 2;");
+        btnRaise.setStyle("-fx-border-color: red; -fx-border-width: 2;");
+        btnRound.setStyle("-fx-border-color: red; -fx-border-width: 2;");
+        btnMinBet.setStyle("-fx-border-color: red; -fx-border-width: 2;");
+        btnHalfBet.setStyle("-fx-border-color: red; -fx-border-width: 2;");
+        btnMaxBet.setStyle("-fx-border-color: red; -fx-border-width: 2;");
+        btnDecreaseMoney.setStyle("-fx-border-color: red; -fx-border-width: 2;");
+        btnIncreaseMoney.setStyle("-fx-border-color: red; -fx-border-width: 2;");
+
         initializePlayerLabels();
         initializeImageCards();
         initializeCardsPosition();
         initializeAvatarProfiles();
         initializeDealer();
+        initializeSlider();
         initializeOnBetMoney();
         initializeHandBet();
         initializeEquity();
@@ -139,7 +169,6 @@ public class InGameWindowController extends GenericController {
         imgAvatarProfile.setImage(_clientInfo.getAvatar(_clientInfo.name,64));
         
         showPlayers(_clientInfo.playerPositions);
-        initializeSlider(_clientInfo.gameConfig);
 
         usernamePlaceHolder.setText( _clientInfo.name );
         labelTotalPot.setText("0");
@@ -268,7 +297,7 @@ public class InGameWindowController extends GenericController {
     }
 
     private void initializeAvatarProfiles() {
-        _listaAvatarProfiles = List.of(
+        _listAvatarProfiles = List.of(
             imgAvatarProfile0,
             imgAvatarProfile1,
             imgAvatarProfile2,
@@ -281,7 +310,7 @@ public class InGameWindowController extends GenericController {
         );
     }
 
-    private void initializeSlider(final GameConfig config) {   
+    private void initializeSlider() {   
         sliderMoney.setMin(0);
         sliderMoney.setValue(0);
 
@@ -446,7 +475,6 @@ public class InGameWindowController extends GenericController {
                 try {
 
                     clearTableCards();
-                    clearPlayersOnBetMoney();
                     _listDealer.forEach(iv -> iv.setVisible(false));
 
                     // Player role and cards
@@ -463,9 +491,7 @@ public class InGameWindowController extends GenericController {
                     Platform.runLater(() -> {
                         btnRound.setText("PREFLOP");
                     });
-                    receivePlayersUpdatedInfo(socket);
                     playRound(playerCards[0], playerCards[1], role, socket);
-                    
                     tableCardValues[0] = PokerGame.receiveCard(input);  // First table card
                     tableCardValues[1] = PokerGame.receiveCard(input);  // Second table card
                     tableCardValues[2] = PokerGame.receiveCard(input);  // Third table card
@@ -473,15 +499,16 @@ public class InGameWindowController extends GenericController {
                     showCards(tableCard1, tableCardValues[1]);
                     showCards(tableCard2, tableCardValues[2]);
 
+
                     // Flop
                     System.out.printf("-- Flop --\n");
                     Platform.runLater(() -> {
                         btnRound.setText("FLOP");
                     });
                     playRound(playerCards[0], playerCards[1], role, socket);
-
                     tableCardValues[3] = PokerGame.receiveCard(input);  // Fourth table card
                     showCards(tableCard3, tableCardValues[3]);
+
 
                     // Turn
                     System.out.printf("-- Turn --\n");
@@ -489,9 +516,9 @@ public class InGameWindowController extends GenericController {
                         btnRound.setText("TURN");
                     });
                     playRound(playerCards[0], playerCards[1], role, socket);
-
                     tableCardValues[4] = PokerGame.receiveCard(input);  // fifth table card
                     showCards(tableCard4, tableCardValues[4]);
+
 
                     // River
                     System.out.printf("-- River --\n");
@@ -499,6 +526,7 @@ public class InGameWindowController extends GenericController {
                         btnRound.setText("RIVER");
                     });
                     playRound(playerCards[0], playerCards[1], role, socket);
+
 
                     // Showdown
                     System.out.printf("-- Showdown --\n");
@@ -525,6 +553,7 @@ public class InGameWindowController extends GenericController {
                         return false;
                     }
                     
+
                     final int seconds = 3;
                     System.out.printf("%d seconds pause to see the winner...\n", seconds);
                     Thread.sleep(seconds * 1000);
@@ -536,7 +565,6 @@ public class InGameWindowController extends GenericController {
                         System.out.printf("Match ended!\n\n");
                     else if(gameStatusCode == GameType.GAME_KEEPS)
                         System.out.printf("Match keeps!\n\n");
-
                 }
                 catch (OnlyOnePlayerLeftException e) {
 
@@ -777,8 +805,6 @@ public class InGameWindowController extends GenericController {
             System.out.printf("Error sending the command: %s\n", e.getMessage());
         }
     }
-    
-
     
 
     private StackPane getPlayerStackPaneByPosition(final int position) {
@@ -1039,17 +1065,6 @@ public class InGameWindowController extends GenericController {
             tableCard2.setImage(null);
             tableCard3.setImage(null);
             tableCard4.setImage(null);
-        });
-    }
-
-    private void clearPlayersOnBetMoney() {
-        Platform.runLater(() -> {
-            for(Label label : _listMoneyLabels) {
-
-                String[] parts = label.getText().split(" - ");
-                int offBetMoney = Integer.parseInt( parts[1] );
-                label.setText( String.format("0 - %d", offBetMoney) );
-            }
         });
     }
 
