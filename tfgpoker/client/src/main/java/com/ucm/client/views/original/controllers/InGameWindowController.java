@@ -779,8 +779,9 @@ public class InGameWindowController extends GenericController {
         }
     }
 
-    private ImageView getDealerImageByPosition(final int position) {
-        return _listDealer.get(position);
+    private void updateDealer(int seatID) {
+        _listDealer.forEach(iv -> iv.setVisible(false));
+        _listDealer.get(seatID).setVisible(true);
     }
 
     private void receivePlayersUpdatedInfo(Socket socket) throws IOException {
@@ -822,12 +823,11 @@ public class InGameWindowController extends GenericController {
 
         Label nameLabel = getNameLabelByPosition(seatID);
         Label moneyLabel = getMoneyLabelByPosition(seatID);
-        ImageView dealerImageView = getDealerImageByPosition(seatID);
         _listOnBetMoney.get(seatID).setText(String.valueOf(onBetMoney));
-        if(role == PlayerRole.DEALER) {dealerImageView.setVisible(true);}
+        
 
         Platform.runLater(() -> {
-
+            if(role == PlayerRole.DEALER) {updateDealer(seatID);}
             PauseTransition transition = new PauseTransition(Duration.seconds(3));
             if(isWinner) {
                 nameLabel.setText( nameLabel.getText() + " (Winner!)" );
