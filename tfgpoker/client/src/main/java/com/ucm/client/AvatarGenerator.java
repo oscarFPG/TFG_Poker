@@ -40,8 +40,22 @@ public class AvatarGenerator {
 
         // Ojos LED
         gc.setFill(Color.CYAN);
-        gc.fillOval(size * 0.3, size * 0.37, size * 0.1, size * 0.1);
-        gc.fillOval(size * 0.6, size * 0.37, size * 0.1, size * 0.1);
+        double eyeSize = size * 0.1;
+        gc.fillRect(size * 0.3, size * 0.37, eyeSize, eyeSize);
+        gc.fillRect(size * 0.6, size * 0.37, eyeSize, eyeSize);
+
+        
+        // Boca RECTA
+        gc.setStroke(Color.BLACK);
+        gc.setLineWidth(size * 0.03);
+        gc.strokeLine(
+            size * 0.35,
+            size * 0.65,
+            size * 0.65,
+            size * 0.65
+        );
+
+
 
         WritableImage image = new WritableImage(size, size);
         canvas.snapshot(null, image);

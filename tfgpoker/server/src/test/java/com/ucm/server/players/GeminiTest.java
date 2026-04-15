@@ -2,6 +2,8 @@ package com.ucm.server.players;
 
 import java.io.InputStream;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.ucm.common.gameobjects.PlayerRole;
@@ -12,7 +14,7 @@ import com.ucm.server.ServerMain;
 public class GeminiTest {
  
     
-    //@Test
+    @Test
     public void testApi() {
 
         try {
