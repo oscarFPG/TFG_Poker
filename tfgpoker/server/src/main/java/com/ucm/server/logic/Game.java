@@ -55,7 +55,7 @@ public class Game {
         String[] parts = config._blindsValue.split("/");
         _initialSmallBlind = Integer.parseInt(parts[0]);    // TODO : Controlar errores de formato
         _initialBigBlind = Integer.parseInt(parts[1]);      // TODO : Controlar errores de formato
-        _hikePercentage =  Float.parseFloat( config._hikePercentage ) / 100;
+        _hikePercentage = Integer.parseInt( config._hikePercentage ) / 100;
         _currentSB = _initialSmallBlind;
         _currentBB = _initialBigBlind;
 
@@ -75,14 +75,11 @@ public class Game {
     
     public void increaseBlinds() {
 
-        double increase = Math.pow( (1 + _hikePercentage) , _level);
-        double newSB = _currentSB * increase;
+        double newSB = _currentSB * Math.pow( (1 + _hikePercentage) , _level);
         ++_level;
 
         _currentSB = (int)Math.round(newSB);
         _currentBB = _currentSB * 2;
-
-        log.debug("Blinds increased to {}/{}", _currentSB, _currentBB);
     }
 
     public void assignRolesToAllPlayers() throws CancelGameException {
@@ -94,7 +91,7 @@ public class Game {
         for (int i = 0; i < _playerList.size(); i++) {
             Card randomCard1 = _deck.takeRandomCard();
             Card randomCard2 = _deck.takeRandomCard();
-            _playerList.shareOutCardsToSomePlayer(randomCard1, randomCard2);
+            _playerList.shareOutAllCardsFromPlayer(randomCard1, randomCard2);
         }
 
         //updateEquity();
@@ -173,8 +170,7 @@ public class Game {
 
 
         int minutes = Integer.parseInt( _gameConfig._levelDuration );
-        //return new Timer(minutes * 60);
-        return new Timer(10);
+        return new Timer(minutes * 60);
     }
 
     private void addAllPlayersInitial(final List<ClientStruct> players, final List<BotStruct> bots, final GameConfig config) {

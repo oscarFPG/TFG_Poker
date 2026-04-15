@@ -51,25 +51,20 @@ public class Controller {
     private void runGame() throws CancelGameException {
 
         int handCounter = 0;
-        boolean allowIncrease = false;
         boolean endOfGame = false;
 
         //ThreadContext.put("match", "0");
         //ThreadContext.put("hand", String.valueOf(handCounter));
 
-        _game.assignRolesToAllPlayers();    
+        _game.assignRolesToAllPlayers();
         while (!endOfGame) {
 
             log.debug("Starting hand {}", handCounter);
             try {
                 
-                if( _timer != null && !_timer.isRunning() ) {
-                    
-                    if(allowIncrease)
-                        _game.increaseBlinds();
-
+                if(_timer != null && !_timer.isRunning()) {
+                    _game.increaseBlinds();
                     _timer.restart();
-                    allowIncrease = true;
                 }
 
                 // Pre-flop (2)

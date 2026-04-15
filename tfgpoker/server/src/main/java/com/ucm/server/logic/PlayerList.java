@@ -32,7 +32,6 @@ public class PlayerList implements Iterable<Node> {
     private int _playerCounter;
     private int _maxNumberOfPlayers;
 
-    private int _totalPot;
     private PotManager _potManager;
 
 
@@ -42,7 +41,6 @@ public class PlayerList implements Iterable<Node> {
         _playerCounter = 0;
         _maxNumberOfPlayers = n;
 
-        _totalPot = 0;
         _potManager = new PotManager(n);
     }
 
@@ -134,7 +132,7 @@ public class PlayerList implements Iterable<Node> {
 
     }
 
-    public void shareOutCardsToSomePlayer(Card c1, Card c2) throws CancelGameException {
+    public void shareOutAllCardsFromPlayer(Card c1, Card c2) throws CancelGameException {
 
         if (isEmpty())
             return;
@@ -154,7 +152,6 @@ public class PlayerList implements Iterable<Node> {
                     player._player.notifyPlayerCard(c2);
 
                     log.debug("Player {} receives the cards: {} {}", player._player.getPlayerName(), c1.toString(), c2.toString());
-                    return;
                 }
                 catch (IOException e) {
                     
@@ -260,13 +257,12 @@ public class PlayerList implements Iterable<Node> {
             CommandResult result = command.execute(sb, bb, maxBet);
             notifyOtherPlayerActionToAllPlayers(playerOnTurn._player);
 
-            totalPot = calculateTotalPot() + _totalPot;
+            totalPot = calculateTotalPot();
             notifyTotalPotToAllPlayers(totalPot);
 
             if( result.folds() ) {
                 --playersRemaining; 
                 if (playersRemaining == 1) {
-                    _totalPot = totalPot;
                     updateHandState();
                     notifyHandEndsByFold();
                     throw new OnlyOnePlayerLeftException();
@@ -285,7 +281,6 @@ public class PlayerList implements Iterable<Node> {
         }
         while( pivotPlayer != playerOnTurn && playersRemaining != 0);
 
-        _totalPot = totalPot;
         updateHandState();
         notifyRoundEnded();
     }
