@@ -1297,7 +1297,7 @@
                               </Label>
                            </graphic>
                         </Label>
-                        <VBox alignment="BOTTOM_CENTER" layoutX="839.0" layoutY="531.0" prefHeight="140.0" prefWidth="476.0">
+                        <VBox fx:id="buttonsHolder" alignment="BOTTOM_CENTER" layoutX="839.0" layoutY="531.0" prefHeight="140.0" prefWidth="476.0">
                            <children>
                               <BorderPane prefHeight="123.0" prefWidth="471.0">
                                  <left>
