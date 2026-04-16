@@ -136,6 +136,18 @@
    -fx-font-size: 21px;
 }
 
+/**
+ * Estilo para la etiqueta del equity
+ */
+.equity-label {
+    -fx-background-color: #1B0359;
+   -fx-background-radius: 6, 5;
+   -fx-text-fill: #e5e5e5;
+   -fx-alignment: center;
+   -fx-font-family: "Constantia";
+   -fx-font-size: 21px;
+}
+
 .general-text-font {
     -fx-text-fill: #e5e5e5;
     -fx-font-family: "Constantia";

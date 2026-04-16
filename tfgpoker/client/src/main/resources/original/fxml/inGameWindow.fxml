@@ -107,12 +107,12 @@
                <children>
                   <AnchorPane minWidth="-Infinity" prefHeight="644.0" prefWidth="1333.0">
                      <children>
-                        <ImageView fx:id="imgTableInGame" fitHeight="506.0" fitWidth="771.0" layoutX="313.0" layoutY="41.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="imgTableInGame" fitHeight="506.0" fitWidth="771.0" layoutX="285.0" layoutY="36.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../images/tableGame.png" />
                            </image>
                         </ImageView>
-                        <HBox fx:id="hboxImageCards0" layoutX="609.0" layoutY="430.0" prefHeight="100.0" prefWidth="154.0">
+                        <HBox fx:id="hboxImageCards0" layoutX="610.0" layoutY="459.0" prefHeight="100.0" prefWidth="154.0">
                            <children>
                               <ImageView fx:id="imgLeftCard0" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
                                  <image>
@@ -126,7 +126,7 @@
                               </ImageView>
                            </children>
                         </HBox>
-                        <HBox fx:id="hboxImageCards1" layoutX="295.0" layoutY="429.0" prefHeight="80.0" prefWidth="146.0">
+                        <HBox fx:id="hboxImageCards1" layoutX="263.0" layoutY="383.0" prefHeight="80.0" prefWidth="146.0">
                            <children>
                               <ImageView fx:id="imgLeftCard1" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
                                  <image>
@@ -140,7 +140,7 @@
                               </ImageView>
                            </children>
                         </HBox>
-                        <HBox fx:id="hboxImageCards2" layoutX="155.0" layoutY="279.0" prefHeight="100.0" prefWidth="135.0">
+                        <HBox fx:id="hboxImageCards2" layoutX="147.0" layoutY="216.0" prefHeight="100.0" prefWidth="135.0">
                            <children>
                               <ImageView fx:id="imgLeftCard2" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
                                  <image>
@@ -154,7 +154,7 @@
                               </ImageView>
                            </children>
                         </HBox>
-                        <HBox fx:id="hboxImageCards3" layoutX="187.0" layoutY="94.0" prefHeight="100.0" prefWidth="147.0">
+                        <HBox fx:id="hboxImageCards3" layoutX="194.0" layoutY="56.0" prefHeight="100.0" prefWidth="147.0">
                            <children>
                               <ImageView fx:id="imgLeftCard3" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
                                  <image>
@@ -168,7 +168,7 @@
                               </ImageView>
                            </children>
                         </HBox>
-                        <HBox fx:id="hboxImageCards4" layoutX="508.0" layoutY="-49.0" prefHeight="88.0" prefWidth="147.0">
+                        <HBox fx:id="hboxImageCards4" layoutX="418.0" layoutY="-54.0" prefHeight="88.0" prefWidth="147.0">
                            <children>
                               <ImageView fx:id="imgLeftCard4" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
                                  <image>
@@ -182,7 +182,7 @@
                               </ImageView>
                            </children>
                         </HBox>
-                        <HBox fx:id="hboxImageCards5" layoutX="827.0" layoutY="-55.0" prefHeight="94.0" prefWidth="137.0">
+                        <HBox fx:id="hboxImageCards5" layoutX="791.0" layoutY="-53.0" prefHeight="94.0" prefWidth="137.0">
                            <children>
                               <ImageView fx:id="imgLeftCard5" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
                                  <image>
@@ -196,7 +196,7 @@
                               </ImageView>
                            </children>
                         </HBox>
-                        <HBox fx:id="hboxImageCards6" layoutX="1084.0" layoutY="44.0" prefHeight="100.0" prefWidth="145.0">
+                        <HBox fx:id="hboxImageCards6" layoutX="993.0" layoutY="63.0" prefHeight="100.0" prefWidth="145.0">
                            <children>
                               <ImageView fx:id="imgLeftCard6" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
                                  <image>
@@ -210,7 +210,7 @@
                               </ImageView>
                            </children>
                         </HBox>
-                        <HBox fx:id="hboxHandBet0" layoutX="593.0" layoutY="381.0" prefHeight="40.0" prefWidth="110.0">
+                        <HBox fx:id="hboxHandBet0" layoutX="616.0" layoutY="410.0" prefHeight="40.0" prefWidth="110.0">
                            <children>
                               <Label fx:id="labelOnBetMoney0" styleClass="username-label" text="Label" />
                               <ImageView fitHeight="41.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
@@ -220,7 +220,7 @@
                               </ImageView>
                            </children>
                         </HBox>
-                        <HBox fx:id="hboxHandBet8" layoutX="811.0" layoutY="422.0" prefHeight="38.0" prefWidth="110.0">
+                        <HBox fx:id="hboxHandBet8" alignment="CENTER" layoutX="817.0" layoutY="390.0" prefHeight="38.0" prefWidth="110.0">
                            <children>
                               <Label fx:id="labelOnBetMoney8" styleClass="username-label" text="Label" />
                               <ImageView fitHeight="41.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
@@ -230,7 +230,7 @@
                               </ImageView>
                            </children>
                         </HBox>
-                        <HBox fx:id="hboxImageCards7" layoutX="1106.0" layoutY="225.0" prefHeight="97.0" prefWidth="147.0">
+                        <HBox fx:id="hboxImageCards7" layoutX="1062.0" layoutY="215.0" prefHeight="97.0" prefWidth="147.0">
                            <children>
                               <ImageView fx:id="imgLeftCard7" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
                                  <image>
@@ -244,7 +244,7 @@
                               </ImageView>
                            </children>
                         </HBox>
-                        <HBox fx:id="hboxHandBet7" layoutX="951.0" layoutY="284.0" prefHeight="41.0" prefWidth="119.0">
+                        <HBox fx:id="hboxHandBet7" alignment="CENTER" layoutX="897.0" layoutY="284.0" prefHeight="41.0" prefWidth="119.0">
                            <children>
                               <Label fx:id="labelOnBetMoney7" styleClass="username-label" text="Label" />
                               <ImageView fitHeight="41.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
@@ -254,7 +254,7 @@
                               </ImageView>
                            </children>
                         </HBox>
-                        <HBox fx:id="hboxHandBet6" layoutX="931.0" layoutY="186.0" prefHeight="18.0" prefWidth="123.0">
+                        <HBox fx:id="hboxHandBet6" alignment="CENTER" layoutX="830.0" layoutY="147.0" prefHeight="18.0" prefWidth="123.0">
                            <children>
                               <Label fx:id="labelOnBetMoney6" styleClass="username-label" text="Label" />
                               <ImageView fitHeight="41.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
@@ -264,7 +264,7 @@
                               </ImageView>
                            </children>
                         </HBox>
-                        <HBox fx:id="hboxImageCards8" layoutX="978.0" layoutY="387.0" prefHeight="93.0" prefWidth="152.0">
+                        <HBox fx:id="hboxImageCards8" layoutX="937.0" layoutY="382.0" prefHeight="93.0" prefWidth="152.0">
                            <children>
                               <ImageView fx:id="imgLeftCard8" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
                                  <image>
@@ -278,7 +278,7 @@
                               </ImageView>
                            </children>
                         </HBox>
-                        <HBox fx:id="hboxHandBet5" layoutX="813.0" layoutY="115.0" prefHeight="40.0" prefWidth="118.0">
+                        <HBox fx:id="hboxHandBet5" alignment="CENTER" layoutX="675.0" layoutY="79.0" prefHeight="40.0" prefWidth="118.0">
                            <children>
                               <Label fx:id="labelOnBetMoney5" styleClass="username-label" text="Label" />
                               <ImageView fitHeight="41.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
@@ -291,7 +291,7 @@
                               <Point3D />
                            </rotationAxis>
                         </HBox>
-                        <HBox fx:id="hboxHandBet4" layoutX="651.0" layoutY="88.0" prefHeight="40.0" prefWidth="146.0">
+                        <HBox fx:id="hboxHandBet4" alignment="CENTER" layoutX="495.0" layoutY="86.0" prefHeight="40.0" prefWidth="146.0">
                            <children>
                               <ImageView fitHeight="41.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -301,7 +301,7 @@
                               <Label fx:id="labelOnBetMoney4" styleClass="username-label" text="Label" />
                            </children>
                         </HBox>
-                        <HBox fx:id="hboxHandBet3" layoutX="396.0" layoutY="174.0" prefHeight="39.0" prefWidth="128.0">
+                        <HBox fx:id="hboxHandBet3" alignment="CENTER" layoutX="359.0" layoutY="167.0" prefHeight="39.0" prefWidth="128.0">
                            <children>
                               <ImageView fitHeight="41.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -311,7 +311,7 @@
                               <Label fx:id="labelOnBetMoney3" styleClass="username-label" text="Label" />
                            </children>
                         </HBox>
-                        <HBox fx:id="hboxHandBet2" layoutX="375.0" layoutY="320.0" prefHeight="42.0" prefWidth="127.0">
+                        <HBox fx:id="hboxHandBet2" alignment="CENTER" layoutX="325.0" layoutY="299.0" prefHeight="42.0" prefWidth="127.0">
                            <children>
                               <ImageView fitHeight="41.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -321,7 +321,7 @@
                               <Label fx:id="labelOnBetMoney2" styleClass="username-label" text="Label" />
                            </children>
                         </HBox>
-                        <HBox fx:id="hboxHandBet1" layoutX="456.0" layoutY="401.0" prefHeight="41.0" prefWidth="125.0">
+                        <HBox fx:id="hboxHandBet1" alignment="CENTER" layoutX="430.0" layoutY="401.0" prefHeight="41.0" prefWidth="125.0">
                            <children>
                               <ImageView fitHeight="41.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -331,7 +331,7 @@
                               <Label fx:id="labelOnBetMoney1" styleClass="username-label" text="Label" />
                            </children>
                         </HBox>
-                        <StackPane fx:id="pokerPlayer5" layoutX="752.0" layoutY="2.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
+                        <StackPane fx:id="pokerPlayer5" layoutX="720.0" layoutY="-4.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
                            <children>
                               <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                                  <styleClass>
@@ -428,7 +428,7 @@
                               </StackPane>
                            </children>
                         </StackPane>
-                        <StackPane fx:id="pokerPlayer4" layoutX="436.0" layoutY="2.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
+                        <StackPane fx:id="pokerPlayer4" layoutX="350.0" layoutY="-5.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
                            <children>
                               <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                                  <styleClass>
@@ -525,7 +525,7 @@
                               </StackPane>
                            </children>
                         </StackPane>
-                        <StackPane fx:id="pokerPlayer3" layoutX="124.0" layoutY="163.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
+                        <StackPane fx:id="pokerPlayer3" layoutX="127.0" layoutY="105.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
                            <children>
                               <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                                  <styleClass>
@@ -622,7 +622,7 @@
                               </StackPane>
                            </children>
                         </StackPane>
-                        <StackPane fx:id="pokerPlayer2" layoutX="86.0" layoutY="334.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
+                        <StackPane fx:id="pokerPlayer2" layoutX="77.0" layoutY="265.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
                            <children>
                               <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                                  <styleClass>
@@ -719,7 +719,7 @@
                               </StackPane>
                            </children>
                         </StackPane>
-                        <StackPane fx:id="pokerPlayer1" layoutX="231.0" layoutY="476.0" prefHeight="83.0" prefWidth="273.0" scaleX="0.9" scaleY="0.9">
+                        <StackPane fx:id="pokerPlayer1" layoutX="199.0" layoutY="431.0" prefHeight="83.0" prefWidth="273.0" scaleX="0.9" scaleY="0.9">
                            <children>
                               <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                                  <styleClass>
@@ -807,16 +807,12 @@
                                           </LinearGradient>
                                        </stroke>
                                     </Circle>
-                                    <ImageView fx:id="imgAvatarProfile1" fitHeight="74.0" fitWidth="104.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_RIGHT">
-                                       <StackPane.margin>
-                                          <Insets right="3.0" />
-                                       </StackPane.margin>
-                                    </ImageView>
+                                    <ImageView fx:id="imgAvatarProfile1" fitHeight="74.0" fitWidth="104.0" pickOnBounds="true" preserveRatio="true" />
                                  </children>
                               </StackPane>
                            </children>
                         </StackPane>
-                        <StackPane fx:id="pokerPlayer0" layoutX="542.0" layoutY="515.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
+                        <StackPane fx:id="pokerPlayer0" layoutX="535.0" layoutY="515.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
                            <children>
                               <HBox id="usersOwn" alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                                  <styleClass>
@@ -913,7 +909,7 @@
                               </StackPane>
                            </children>
                         </StackPane>
-                        <StackPane fx:id="pokerPlayer8" layoutX="910.0" layoutY="424.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
+                        <StackPane fx:id="pokerPlayer8" layoutX="871.0" layoutY="431.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
                            <children>
                               <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                                  <styleClass>
@@ -1010,7 +1006,7 @@
                               </StackPane>
                            </children>
                         </StackPane>
-                        <StackPane fx:id="pokerPlayer7" layoutX="1032.0" layoutY="286.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
+                        <StackPane fx:id="pokerPlayer7" layoutX="993.0" layoutY="265.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
                            <children>
                               <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                                  <styleClass>
@@ -1107,7 +1103,7 @@
                               </StackPane>
                            </children>
                         </StackPane>
-                        <StackPane fx:id="pokerPlayer6" layoutX="1006.0" layoutY="112.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
+                        <StackPane fx:id="pokerPlayer6" layoutX="923.0" layoutY="112.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
                            <children>
                               <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                                  <styleClass>
@@ -1204,92 +1200,91 @@
                               </StackPane>
                            </children>
                         </StackPane>
-                        <HBox layoutX="664.0" layoutY="225.0" prefHeight="41.0" prefWidth="200.0" AnchorPane.bottomAnchor="285.0" AnchorPane.leftAnchor="664.0" AnchorPane.rightAnchor="428.0" AnchorPane.topAnchor="225.0" />
-                        <ImageView fx:id="tableCard0" fitHeight="98.0" fitWidth="70.0" layoutX="548.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="tableCard0" fitHeight="98.0" fitWidth="70.0" layoutX="491.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../images/cards/2_of_clubs.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="tableCard1" fitHeight="98.0" fitWidth="70.0" layoutX="619.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="tableCard1" fitHeight="98.0" fitWidth="70.0" layoutX="564.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../images/cards/2_of_clubs.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="tableCard2" fitHeight="98.0" fitWidth="70.0" layoutX="690.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="tableCard2" fitHeight="98.0" fitWidth="70.0" layoutX="637.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../images/cards/2_of_clubs.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="tableCard4" fitHeight="98.0" fitWidth="70.0" layoutX="832.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="tableCard4" fitHeight="98.0" fitWidth="70.0" layoutX="783.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../images/cards/4_of_clubs.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="tableCard3" fitHeight="98.0" fitWidth="70.0" layoutX="761.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="tableCard3" fitHeight="98.0" fitWidth="70.0" layoutX="710.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../images/cards/2_of_diamonds.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="ImgDealer7" fitHeight="56.0" fitWidth="60.0" layoutX="969.0" layoutY="321.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="ImgDealer7" fitHeight="56.0" fitWidth="60.0" layoutX="932.0" layoutY="322.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../images/fichaDealer.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="ImgDealer8" fitHeight="56.0" fitWidth="60.0" layoutX="875.0" layoutY="400.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="ImgDealer8" fitHeight="56.0" fitWidth="60.0" layoutX="800.0" layoutY="430.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../images/fichaDealer.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="ImgDealer6" fitHeight="56.0" fitWidth="60.0" layoutX="939.0" layoutY="147.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="ImgDealer6" fitHeight="56.0" fitWidth="60.0" layoutX="932.0" layoutY="194.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../images/fichaDealer.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="ImgDealer5" fitHeight="56.0" fitWidth="60.0" layoutX="767.0" layoutY="88.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="ImgDealer5" fitHeight="56.0" fitWidth="60.0" layoutX="787.0" layoutY="84.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../images/fichaDealer.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="ImgDealer4" fitHeight="56.0" fitWidth="60.0" layoutX="593.0" layoutY="88.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="ImgDealer4" fitHeight="56.0" fitWidth="60.0" layoutX="598.0" layoutY="65.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../images/fichaDealer.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="ImgDealer3" fitHeight="56.0" fitWidth="60.0" layoutX="378.0" layoutY="212.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="ImgDealer3" fitHeight="56.0" fitWidth="60.0" layoutX="407.0" layoutY="136.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../images/fichaDealer.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="ImgDealer2" fitHeight="56.0" fitWidth="60.0" layoutX="393.0" layoutY="357.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="ImgDealer2" fitHeight="56.0" fitWidth="60.0" layoutX="326.0" layoutY="261.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../images/fichaDealer.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="ImgDealer1" fitHeight="56.0" fitWidth="60.0" layoutX="478.0" layoutY="428.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="ImgDealer1" fitHeight="56.0" fitWidth="60.0" layoutX="398.0" layoutY="371.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../images/fichaDealer.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="ImgDealer0" fitHeight="56.0" fitWidth="60.0" layoutX="686.0" layoutY="381.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="ImgDealer0" fitHeight="56.0" fitWidth="60.0" layoutX="538.0" layoutY="440.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../images/fichaDealer.png" />
                            </image>
                         </ImageView>
-                        <Label fx:id="labelEquity8" layoutX="1180.0" layoutY="460.0" styleClass="general-text-font" text="Label" />
-                        <Label fx:id="labelEquity7" layoutX="1290.0" layoutY="322.0" styleClass="general-text-font" text="Label" />
-                        <Label fx:id="labelEquity6" layoutX="1264.0" layoutY="148.0" styleClass="general-text-font" text="Label" />
-                        <Label fx:id="labelEquity5" layoutX="999.0" layoutY="38.0" styleClass="general-text-font" text="Label" />
-                        <Label fx:id="labelEquity4" layoutX="424.0" layoutY="38.0" styleClass="general-text-font" text="Label" />
-                        <Label fx:id="labelEquity3" layoutX="222.0" layoutY="248.0" styleClass="general-text-font" text="Label" />
-                        <Label fx:id="labelEquity2" layoutX="245.0" layoutY="434.0" styleClass="general-text-font" text="Label" />
-                        <Label fx:id="labelEquity1" layoutX="179.0" layoutY="512.0" styleClass="general-text-font" text="Label" />
-                        <Label fx:id="labelEquity0" layoutX="408.0" layoutY="594.0" styleClass="general-text-font" text="Label" />
+                        <Label fx:id="labelEquity8" layoutX="1092.0" layoutY="462.0" styleClass="equity-label" text="Label" />
+                        <Label fx:id="labelEquity7" layoutX="1214.0" layoutY="296.0" styleClass="equity-label" text="Label" />
+                        <Label fx:id="labelEquity6" layoutX="1144.0" layoutY="143.0" styleClass="equity-label" text="Label" />
+                        <Label fx:id="labelEquity5" layoutX="941.0" layoutY="28.0" styleClass="equity-label" text="Label" />
+                        <Label fx:id="labelEquity4" layoutX="351.0" layoutY="26.0" styleClass="equity-label" text="Label" />
+                        <Label fx:id="labelEquity3" layoutX="128.0" layoutY="136.0" styleClass="equity-label" text="Label" />
+                        <Label fx:id="labelEquity2" layoutX="79.0" layoutY="296.0" styleClass="equity-label" text="Label" />
+                        <Label fx:id="labelEquity1" layoutX="202.0" layoutY="462.0" styleClass="equity-label" text="Label" />
+                        <Label fx:id="labelEquity0" layoutX="536.0" layoutY="546.0" styleClass="equity-label" text="Label" />
                         <ImageView fitHeight="85.0" fitWidth="148.0" layoutX="30.0" layoutY="558.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../images/logoPoker.png" />
                            </image>
                         </ImageView>
-                        <Label fx:id="labelTotalPot" alignment="CENTER" layoutX="617.0" layoutY="148.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="38.0" styleClass="username-label">
+                        <Label fx:id="labelTotalPot" alignment="CENTER" layoutX="609.0" layoutY="148.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="38.0" styleClass="username-label">
                            <graphic>
                               <Label alignment="CENTER" styleClass="bold-general-text-font" text="TOTAL POT:">
                                  <graphic>
@@ -1308,7 +1303,7 @@
                                  <left>
                                     <StackPane alignment="TOP_CENTER" prefHeight="111.0" prefWidth="171.0" BorderPane.alignment="CENTER">
                                        <children>
-                                          <Button mnemonicParsing="false" prefHeight="45.0" prefWidth="166.0" text="Button">
+                                          <Button fx:id="btnRound" mnemonicParsing="false" prefHeight="45.0" prefWidth="166.0" text="PREFLOP">
                                              <styleClass>
                                                 <String fx:value="parallelogram-pane" />
                                                 <String fx:value="slider-colors" />
@@ -1321,19 +1316,19 @@
                                  <right>
                                     <HBox alignment="TOP_CENTER" prefHeight="125.0" prefWidth="183.0" BorderPane.alignment="CENTER">
                                        <children>
-                                          <Button maxWidth="-Infinity" mnemonicParsing="false" text="MIN">
+                                          <Button fx:id="btnMinBet" maxWidth="-Infinity" mnemonicParsing="false" onAction="#minBetAction" text="MIN">
                                              <styleClass>
                                                 <String fx:value="semi-oval-pane" />
                                                 <String fx:value="slider-colors" />
                                                 <String fx:value="super-bold-general-text-font" />
                                              </styleClass></Button>
-                                          <Button maxWidth="-Infinity" mnemonicParsing="false" text="1/2 POT">
+                                          <Button fx:id="btnHalfBet" maxWidth="-Infinity" mnemonicParsing="false" onAction="#halfBetAction" text="1/2 POT">
                                              <styleClass>
                                                 <String fx:value="semi-oval-pane" />
                                                 <String fx:value="slider-colors" />
                                                 <String fx:value="super-bold-general-text-font" />
                                              </styleClass></Button>
-                                          <Button maxWidth="-Infinity" mnemonicParsing="false" text="MAX">
+                                          <Button fx:id="btnMaxBet" maxWidth="-Infinity" mnemonicParsing="false" onAction="#maxBetAction" text="MAX">
                                              <styleClass>
                                                 <String fx:value="semi-oval-pane" />
                                                 <String fx:value="slider-colors" />
@@ -1347,17 +1342,17 @@
                                        <children>
                                           <HBox alignment="CENTER" prefHeight="100.0" prefWidth="179.0" spacing="4.0">
                                              <children>
-                                                <Button maxWidth="-Infinity" mnemonicParsing="false" prefHeight="45.0" prefWidth="52.0" text="FOLD">
+                                                <Button fx:id="btnFold" maxWidth="-Infinity" mnemonicParsing="false" onAction="#foldAction" prefHeight="45.0" prefWidth="52.0" text="FOLD">
                                                    <styleClass>
                                                       <String fx:value="general-button" />
                                                       <String fx:value="bold-general-text-font" />
                                                    </styleClass></Button>
-                                                <Button maxWidth="-Infinity" mnemonicParsing="false" prefHeight="45.0" prefWidth="49.0" text="CALL">
+                                                <Button fx:id="btnCall" maxWidth="-Infinity" mnemonicParsing="false" onAction="#callAction" prefHeight="45.0" prefWidth="49.0" text="CALL">
                                                    <styleClass>
                                                       <String fx:value="general-button" />
                                                       <String fx:value="bold-general-text-font" />
                                                    </styleClass></Button>
-                                                <Button maxWidth="-Infinity" mnemonicParsing="false" prefHeight="47.0" prefWidth="54.0" text="RAISE">
+                                                <Button fx:id="btnRaise" maxWidth="-Infinity" mnemonicParsing="false" onAction="#raiseAction" prefHeight="47.0" prefWidth="54.0" text="RAISE">
                                                    <styleClass>
                                                       <String fx:value="general-button" />
                                                       <String fx:value="bold-general-text-font" />
@@ -1366,19 +1361,19 @@
                                           </HBox>
                                           <HBox alignment="CENTER" maxHeight="-Infinity" prefHeight="68.0" prefWidth="267.0">
                                              <children>
-                                                <Label>
+                                                <Label fx:id="labelMoney">
                                                    <styleClass>
                                                       <String fx:value="semi-oval-pane" />
                                                       <String fx:value="bold-general-text-font" />
                                                    </styleClass></Label>
-                                                <Button maxWidth="-Infinity" mnemonicParsing="false" prefHeight="33.0" prefWidth="47.0" text="-">
+                                                <Button fx:id="btnDecreaseMoney" maxWidth="-Infinity" mnemonicParsing="false" onAction="#decreaseMoneyAction" prefHeight="33.0" prefWidth="47.0" text="-">
                                                    <styleClass>
                                                       <String fx:value="semi-oval-pane" />
                                                       <String fx:value="general-button" />
                                                       <String fx:value="super-bold-general-text-font" />
                                                    </styleClass></Button>
-                                                <Slider />
-                                                <Button maxWidth="-Infinity" mnemonicParsing="false" prefHeight="42.0" prefWidth="44.0" text="+">
+                                                <Slider fx:id="sliderMoney" />
+                                                <Button fx:id="btnIncreaseMoney" maxWidth="-Infinity" mnemonicParsing="false" onAction="#increaseMoneyAction" prefHeight="42.0" prefWidth="44.0" text="+">
                                                    <styleClass>
                                                       <String fx:value="semi-oval-pane" />
                                                       <String fx:value="general-button" />
