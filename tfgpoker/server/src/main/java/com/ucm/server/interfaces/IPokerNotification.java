@@ -83,15 +83,6 @@ public interface IPokerNotification {
     public void notifyTurnPlay() throws IOException;
 
     /**
-     * Notifies the player about their current state in the game. 
-     * This method is triggered multiple times during a hand
-     * @param player
-     * @param last
-     * @throws IOException
-     */
-    //public void notifyPlayerState(final IPokerPlayer player, final boolean last) throws IOException;
-
-    /**
      * Notifies the player that a round has ended (pre-flop + flop + turn + river + showdown)
      * @throws IOException
      */
@@ -121,9 +112,6 @@ public interface IPokerNotification {
      */
     public void notifyGameKeeps() throws IOException;
 
-    public void notifyHandWinners(List<IPokerPlayer> winners, boolean imWinner) throws IOException;
-
-
     /**
      * Notifies the player that they have won the game
      * @throws IOException
@@ -136,6 +124,20 @@ public interface IPokerNotification {
      */
     public void notifyGameLoser() throws IOException;
 
+    /**
+     * Notifies the player about their state after performing an action (e.g., after betting, calling, folding, etc.)
+     * @throws IOException
+     */
+    public void notifyOwnState() throws IOException;
+
+    /**
+     * Notifies the player about their current state in the game. 
+     * This method is triggered multiple times at the end of each hand
+     * @param player
+     * @param isLast indicates if this is the last player sent
+     * @throws IOException
+     */
+    public void notifyOtherPlayerState(IPokerPlayer player, boolean isLast) throws IOException;
 
     /**
      * Notifies the player about their current equity in the hand (chance of winning based on their cards and the table)

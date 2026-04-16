@@ -337,14 +337,6 @@ public abstract class BotLLM extends Bot {
         // TODO : Notificar el total del pot para mostrarlo en el prompt
     }
 
-    /*
-    @Override
-    public void notifyPlayerState(IPokerPlayer player, boolean last) throws IOException {
-        // TODO : Notifies the state of all players in the game, including the bot itself
-        // Update information
-    }
-    */
-
     /**
      * Resets the internal state at the end of a hand.
      */
@@ -356,8 +348,22 @@ public abstract class BotLLM extends Bot {
     }
 
     @Override
-    public void notifyHandWinners(List<IPokerPlayer> winners, boolean imWinner) throws IOException {
+    public void notifyOwnState() throws IOException {
         
+    }
+
+    @Override
+    public void notifyOtherPlayerState(IPokerPlayer player, boolean isLast) throws IOException {
+
+    }
+
+    /**
+     * Updates the player's equity.
+     * 
+     * @param equity probability of winning
+     */
+    @Override public void notifyEquity(double equity) {
+        _equity = equity; 
     }
 
     @Override public void notifyTurnWait() throws IOException {}
@@ -368,14 +374,5 @@ public abstract class BotLLM extends Bot {
     @Override public void notifyGameWinner() throws IOException {}
     @Override public void notifyGameLoser() throws IOException {}
     @Override public void notifyHandEndsByFolds() throws IOException {}
-
-    /**
-     * Updates the player's equity.
-     * 
-     * @param equity probability of winning
-     */
-    @Override public void notifyEquity(double equity) {
-        _equity = equity; 
-    }
 
 }

@@ -47,7 +47,7 @@ public class HumanPlayer extends Player {
     public String notifyMakePlay(int sb, int bb, int maxBet) throws IOException {
         if(Game.DEBUG_PLAYERS) {
             System.out.printf("%s hace: ", _name);
-            return _scanner.next();
+            return _scanner.nextLine();
         }
 
         // Send round info
@@ -143,26 +143,6 @@ public class HumanPlayer extends Player {
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_PLAY);
     }
 
-    /*
-    @Override
-    public void notifyPlayerState(final IPokerPlayer player, final boolean last) throws IOException {
-        if(Game.DEBUG_PLAYERS) return;
-
-        SocketUtils.sendInteger(_socket.getOutputStream(), player.getPlayerId());
-        SocketUtils.sendInteger(_socket.getOutputStream(), player.getRole().getNetworkCode());
-        SocketUtils.sendInteger(_socket.getOutputStream(), player.isFolded() ? GameType.TRUE : GameType.FALSE);
-        SocketUtils.sendInteger(_socket.getOutputStream(), player.isWinner() ? GameType.TRUE : GameType.FALSE);
-        SocketUtils.sendString(_socket.getOutputStream(), player.getLastCommand());
-        SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOffBet());
-        SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOnBet());
-
-        if(last)
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TRUE);
-        else
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.FALSE);
-    }
-    */
-
     @Override
     public void notifyRoundEnded() throws IOException {
         if(Game.DEBUG_PLAYERS) return;
@@ -188,19 +168,6 @@ public class HumanPlayer extends Player {
     }
     
     @Override
-    public void notifyHandWinners(List<IPokerPlayer> winners, boolean imWinner) throws IOException {
-        
-        SocketUtils.sendInteger(_socket.getOutputStream(), GameType.PLAYER_RANKINGS);
-        SocketUtils.sendInteger(_socket.getOutputStream(), winners.size());
-        for(IPokerPlayer w : winners) {
-            SocketUtils.sendInteger(_socket.getOutputStream(), w.getPlayerId());
-            SocketUtils.sendString(_socket.getOutputStream(), w.getPlayerName());
-            SocketUtils.sendInteger(_socket.getOutputStream(), w.getMoneyOffBet());
-        }
-
-    }
-
-    @Override
     public void notifyGameWinner() throws IOException {
         if(Game.DEBUG_PLAYERS) return;
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.PLAYER_WINS_GAME);
@@ -210,6 +177,30 @@ public class HumanPlayer extends Player {
     public void notifyGameLoser() throws IOException {
         if(Game.DEBUG_PLAYERS) return;
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.PLAYER_LOSES_GAME);
+    }
+
+    @Override
+    public void notifyOwnState() throws IOException {
+        if(Game.DEBUG_PLAYERS) return;
+
+        SocketUtils.sendInteger(_socket.getOutputStream(), getMoneyOffBet());
+        SocketUtils.sendInteger(_socket.getOutputStream(), getMoneyOnBet());
+        SocketUtils.sendInteger(_socket.getOutputStream(), isFolded() ? GameType.TRUE : GameType.FALSE);
+    }
+
+    @Override
+    public void notifyOtherPlayerState(IPokerPlayer player, boolean isLast) throws IOException {
+        if(Game.DEBUG_PLAYERS) return;
+
+        SocketUtils.sendInteger(_socket.getOutputStream(), GameType.PLAYER_STATUS);
+        SocketUtils.sendInteger(_socket.getOutputStream(), player.getPlayerId());
+        SocketUtils.sendString(_socket.getOutputStream(), player.getPlayerName());
+        SocketUtils.sendInteger(_socket.getOutputStream(), player.isFolded() ? GameType.TRUE : GameType.FALSE);
+        SocketUtils.sendInteger(_socket.getOutputStream(), player.isWinner() ? GameType.TRUE : GameType.FALSE);
+        SocketUtils.sendInteger(_socket.getOutputStream(), player.isEliminated() ? GameType.TRUE : GameType.FALSE);
+        SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOffBet());
+        SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOnBet());
+        SocketUtils.sendInteger(_socket.getOutputStream(), isLast ? GameType.TRUE : GameType.FALSE);
     }
 
     @Override

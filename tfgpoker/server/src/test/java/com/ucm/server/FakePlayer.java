@@ -80,7 +80,19 @@ public class FakePlayer extends Player {
     public void notifyEquity(double equity) {}
 
 
-    @Override
-    public void notifyHandWinners(List<IPokerPlayer> winners, boolean imWinner) throws IOException {}
+	@Override
+	public void notifyOwnState() throws IOException {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'notifyOwnState'");
+	}
+
+
+	@Override
+	public void notifyOtherPlayerState(IPokerPlayer player, boolean isLast) throws IOException {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'notifyOtherPlayerState'");
+	}
+
+
     
 }

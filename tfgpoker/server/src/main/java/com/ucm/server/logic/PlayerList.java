@@ -255,6 +255,7 @@ public class PlayerList implements Iterable<Node> {
 
             Command command = askCommandToPlayer(playerOnTurn, sb, bb, maxBet);
             CommandResult result = command.execute(sb, bb, maxBet);
+            notifyPlayerOwnState(playerOnTurn);
             notifyOtherPlayerActionToAllPlayers(playerOnTurn._player);
 
             totalPot = calculateTotalPot() + _totalPot;
@@ -351,15 +352,11 @@ public class PlayerList implements Iterable<Node> {
     public void calculatePrizeDistribution(final List<PlayerEvaluation> players) throws CancelGameException {
 
         List<PotDistribution> distribution = _potManager.calculatePrizeDistribution(players);
-        List<IPokerPlayer> winners = new ArrayList<>();
         for(PotDistribution dist : distribution) {
             givePriceToPlayerWithID(dist.playerID(), dist.potPrize());
-
-            Node player = getPlayerById( dist.playerID() );
-            winners.add( player._player );
         }
 
-        notifyWinnersToAllPlayers(winners);
+        notifyPlayerStateToAllPlayers();
     }
 
     public void calculatePrizeForPlayerLeft() throws CancelGameException {
@@ -376,7 +373,7 @@ public class PlayerList implements Iterable<Node> {
 
         PotDistribution distribution = _potManager.calculatePrizeForPlayer(winner._player.getPlayerId());
         givePriceToPlayerWithID(distribution.playerID(), distribution.potPrize());
-        notifyWinnersToAllPlayers( List.of(winner._player) );
+        notifyPlayerStateToAllPlayers();
     }
 
     public boolean checkEndOfGame() {
@@ -524,7 +521,8 @@ public class PlayerList implements Iterable<Node> {
         }
 
         winner._player.receivePriceMoney(amount);
-        winner._player.setIsWinner(true);    
+        winner._player.setIsWinner(true);
+        log.debug("Player {} receives {}$ as prize! It has now {}$", winner._player.getPlayerName(), amount, winner._player.getMoneyOffBet());
     }
 
     private void resetPlayers() {
@@ -582,13 +580,26 @@ public class PlayerList implements Iterable<Node> {
         
     }
 
+    private void notifyPlayerOwnState(Node player) throws CancelGameException {
+
+        try {
+            player._player.notifyOwnState();
+        }
+        catch(IOException e) {
+            
+            player._isDisconnected = true;
+            if( checkIfGameCancel() )
+                throw new CancelGameException();
+        }
+    }
+
     private void notifyOtherPlayerActionToAllPlayers(IPokerPlayer p) throws CancelGameException {
 
         Iterator<Node> it = iterator();
         while( it.hasNext() ) {
 
             Node player = it.next();
-            if(player._isDisconnected || player._player.isEliminated())
+            if(player._isDisconnected || player._player == p)
                 continue;
 
 
@@ -687,24 +698,31 @@ public class PlayerList implements Iterable<Node> {
 
     }
 
-    private void notifyWinnersToAllPlayers(final List<IPokerPlayer> winners) throws CancelGameException {
+    private void notifyPlayerStateToAllPlayers() throws CancelGameException {
 
-        Iterator<Node> it = iterator();
-        while( it.hasNext() ) {
+        Iterator<Node> targetIt = iterator();
+        while( targetIt.hasNext() ) {
 
-            Node player = it.next();
-            if( !player._isDisconnected && !player._player.isEliminated() ) {
+            Node receiverPlayer = targetIt.next();
+            if( !receiverPlayer._isDisconnected && !receiverPlayer._player.isEliminated() ) {
 
-                try {
-                    boolean currentIsWinners = winners.contains(player._player);
-                    player._player.notifyHandWinners(winners, currentIsWinners);
+                Iterator<Node> it = iterator();
+                while( it.hasNext() ) {
+
+                    Node player = it.next();
+                    if(player._player.isEliminated() || player._isDisconnected)
+                        continue;
+                
+                    try {
+                        boolean isLast = !it.hasNext();
+                        receiverPlayer._player.notifyOtherPlayerState(player._player, isLast);
+                    }
+                    catch(IOException e) {
+                        receiverPlayer._isDisconnected = true;
+                        if( checkIfGameCancel() )
+                            throw new CancelGameException();
+                    }
                 }
-                catch(IOException e) {
-                    player._isDisconnected = true;
-                    if( checkIfGameCancel() )
-                        throw new CancelGameException();
-                }
-
             }
         }
     }
