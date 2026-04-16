@@ -390,7 +390,6 @@ public class InGameWindowController extends GenericController {
             return;
         }
 
-
         _playerSeatMap = new HashMap<>(players.size());
         _playerSeatMap.put(myIndex, 0);
 
@@ -535,15 +534,16 @@ public class InGameWindowController extends GenericController {
 
                 try {
 
-                    //clearTableCards();
+                    GUI_clearTableCards();
+                    GUI_clearPlayerBets();
 
                     // Player role and cards
                     role = PokerGame.receivePlayerRole(input);
                     playerCards[0] = PokerGame.receiveCard(input);
                     playerCards[1] = PokerGame.receiveCard(input);
                     System.out.printf("Assigned role: %s\n", role.toString());
-                    //GUI_showCards(imgLeftCard0, playerCards[0]);
-                    //GUI_showCards(imgRightCard0, playerCards[1]);
+                    GUI_showCard(imgLeftCard0, playerCards[0]);
+                    GUI_showCard(imgRightCard0, playerCards[1]);
                     
                     
                     // Preflop
@@ -690,6 +690,10 @@ public class InGameWindowController extends GenericController {
                 final int offBetMoney = SocketUtils.receiveInt(socket.getInputStream());
 				System.out.printf("Forced play as the small blind with %d chips\n", amountSB);
 
+                Platform.runLater(() -> {
+                    GUI_putPlayerBet(_playerSeatMap.get(_clientInfo.id), amountSB);
+                });
+
 			}
 			else if(serverCode == GameType.TURN_FORCED_BB) {
 
@@ -698,6 +702,9 @@ public class InGameWindowController extends GenericController {
                 final int offBetMoney = SocketUtils.receiveInt(socket.getInputStream());
 				System.out.printf("Forced play as the big blind with %d chips\n", amountBB);
 
+                Platform.runLater(() -> {
+                    GUI_putPlayerBet(_playerSeatMap.get(_clientInfo.id), amountBB);
+                });
 			}
 			else if(serverCode == GameType.TURN_WAIT) {
 
@@ -741,7 +748,7 @@ public class InGameWindowController extends GenericController {
 			else if(serverCode == GameType.HAND_ENDS_BY_FOLD) {
 				handEndsByFold = true;
 			}
-            else if(serverCode == GameType.TURN_OTHER_PLAYER || serverCode == GameType.MY_TURN_ACTION ) {
+            else if(serverCode == GameType.TURN_OTHER_PLAYER) {
 
                 final int otherPlayerID = SocketUtils.receiveInt( socket.getInputStream() );
                 final String otherPlayerName = SocketUtils.receiveString( socket.getInputStream() );
@@ -759,6 +766,11 @@ public class InGameWindowController extends GenericController {
                     otherPlayerLastCommand,
                     otherPlayerOffBetMoney, otherPlayerOnBetMoney
                 );
+
+                Platform.runLater(() -> {
+                    int seatID = _playerSeatMap.get(otherPlayerID);
+                    GUI_putPlayerBet(seatID, otherPlayerOnBetMoney);
+                });
 
             }
             else if(serverCode == GameType.TOTAL_POT) {
@@ -846,10 +858,7 @@ public class InGameWindowController extends GenericController {
     }
     
 
-    private void GUI_updateDealer(int seatID) {
-        _listDealer.forEach(iv -> iv.setVisible(false));
-        _listDealer.get(seatID).setVisible(true);
-    }
+    
 
     private void GUI_receivePlayersUpdatedInfo(Socket socket) throws IOException {
 
@@ -890,7 +899,7 @@ public class InGameWindowController extends GenericController {
         Label equityLabel = _listEquity.get(seatID);
 
         if(role == PlayerRole.DEALER) {
-            GUI_updateDealer(seatID);
+            GUI_putDealerButton(seatID);
         }
 
         PauseTransition transition = new PauseTransition(Duration.seconds(3));
@@ -926,7 +935,7 @@ public class InGameWindowController extends GenericController {
         avatarImage.setVisible(true);
     }
 
-    private void GUI_showCards(ImageView imageView, Card card) {
+    private void GUI_showCard(ImageView imageView, Card card) {
 
         System.out.printf("Received card: %s\n", card.toString());
 
@@ -962,6 +971,19 @@ public class InGameWindowController extends GenericController {
     }
 
     
+    private void GUI_putDealerButton(int seatID) {
+        _listDealer.get(seatID).setVisible(true);
+    }
+
+    private void GUI_putPlayerBet(int seatID, int amount) {
+        
+        Label betLabel = _listOnBetMoney.get(seatID);
+        _listHandBet.get(seatID).setVisible(true);
+        betLabel.setText( String.valueOf(amount) );
+        betLabel.setVisible(true);
+    }
+
+
     private void GUI_clearTableCards() {
         tableCard0.setImage(null);
         tableCard1.setImage(null);
@@ -971,7 +993,8 @@ public class InGameWindowController extends GenericController {
     }
 
     private void GUI_clearPlayerBets() {
-        _listOnBetMoney.forEach(label -> label.setText("0"));
+        _listOnBetMoney.forEach(label -> label.setVisible(false));
+        _listHandBet.forEach(bet -> bet.setVisible(false));
     }
 
 }
