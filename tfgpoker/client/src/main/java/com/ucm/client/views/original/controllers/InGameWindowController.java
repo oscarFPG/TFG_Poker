@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.IntStream;
@@ -122,57 +124,39 @@ public class InGameWindowController extends GenericController {
     @FXML private ImageView imgLeftCard8, imgRightCard8, imgAvatarProfile8;
     @FXML private ImageView ImgDealer8;
     
-    /* Member variables to group */
-    private List<Label> _listNameLabels;
-    private List<Label> _listMoneyLabels;
-    private List<HBox> _listImageCards;
-    private List<ImageView> _listPaintCards;
-    private List<ImageView> _listAvatarProfiles;
-    private List<ImageView> _listDealer;
-    private List<HBox> _listHandBet;
-    private List<Label> _listOnBetMoney;
-    private List<Label> _listEquity;
+    /* Member variables to group all players variables */
+    private List<StackPane> _listPlayerStackPanes;  // Player stackpanes
+    private List<Label> _listNameLabels, _listMoneyLabels; // Player names and money OFF bet
+    private List<HBox> _listHandBet;    // Player money ON bet + chips image
+    private List<Label> _listOnBetMoney;    // Player money ON bet number
+    private List<Label> _listEquity;    // Player equities
+    private List<HBox> _listImageCards;     // Player cards
+    private List<ImageView> _listPaintCards, _listAvatarProfiles; // Player cards images and avatar
+    private List<ImageView> _listDealer;    // Player dealer chip
+    
 
     /* Variables to add logic */
-    private Thread _gameThread = null;
     private BlockingQueue<String> _commandQueue = new LinkedBlockingQueue<>();
+    private Map<Integer, Integer> _playerSeatMap; // Player id = i -> list[i] = m -> m stackpane label
     private boolean _swapCallToCheck = false;
-    private List<Integer> _playerSeatLabel = null; // Player id = i -> list[i] = m -> m stackpane label
     private boolean _userCloses = false;
+    private Thread _gameThread;
 
     
     @Override
     protected void onViewShown() {
 
-        buttonsHolder.setStyle("-fx-border-color: red; -fx-border-width: 2;");
-        btnFold.setStyle("-fx-border-color: red; -fx-border-width: 2;");
-        btnCall.setStyle("-fx-border-color: red; -fx-border-width: 2;");
-        btnRaise.setStyle("-fx-border-color: red; -fx-border-width: 2;");
-        btnRound.setStyle("-fx-border-color: red; -fx-border-width: 2;");
-        btnMinBet.setStyle("-fx-border-color: red; -fx-border-width: 2;");
-        btnHalfBet.setStyle("-fx-border-color: red; -fx-border-width: 2;");
-        btnMaxBet.setStyle("-fx-border-color: red; -fx-border-width: 2;");
-        btnDecreaseMoney.setStyle("-fx-border-color: red; -fx-border-width: 2;");
-        btnIncreaseMoney.setStyle("-fx-border-color: red; -fx-border-width: 2;");
-
-        initializePlayerLabels();
-        initializeImageCards();
-        initializeCardsPosition();
-        initializeAvatarProfiles();
-        initializeDealer();
-        initializeSlider();
-        initializeOnBetMoney();
-        initializeHandBet();
-        initializeEquity();
-
-        imgTableInGame.setImage(new Image(getClass().getResource(_clientInfo.gameConfig._selectedTable).toExternalForm()));
-        imgAvatarProfile.setImage(_clientInfo.getAvatar(_clientInfo.name,64));
-        
-        showPlayers(_clientInfo.playerPositions);
+        initialize();
+        GUI_initializePlayersInfo();
+        GUI_initializeCardStyle();
+        GUI_initializeDealerButton();
+        GUI_initializeMoneySlider();
+        GUI_showWaitingPlayers(_clientInfo.playerPositions);
 
         usernamePlaceHolder.setText( _clientInfo.name );
-        labelTotalPot.setText("0");
-
+        imgAvatarProfile.setImage( _clientInfo.getAvatar(_clientInfo.name,64) );
+        imgTableInGame.setImage(new Image(getClass().getResource(_clientInfo.gameConfig._selectedTable).toExternalForm()));
+        
         _stage.setOnCloseRequest(event -> {
 
             try {
@@ -232,7 +216,19 @@ public class InGameWindowController extends GenericController {
         _gameThread.start();
     }
 
-    private void initializePlayerLabels() {
+    private void initialize() {
+        
+        _listPlayerStackPanes = List.of(
+            pokerPlayer0,
+            pokerPlayer1,
+            pokerPlayer2,
+            pokerPlayer3,
+            pokerPlayer4,
+            pokerPlayer5,
+            pokerPlayer6,
+            pokerPlayer7,
+            pokerPlayer8
+        );
 
         _listNameLabels = List.of(
             playerName0,
@@ -258,12 +254,6 @@ public class InGameWindowController extends GenericController {
             playerMoney8
         );
 
-        _listNameLabels.forEach(label -> label.setText("") );
-        _listMoneyLabels.forEach(label -> label.setText("0 - 0") );
-
-    }
-
-    private void initializeCardsPosition() {
         _listImageCards = List.of (
             hboxImageCards0,
             hboxImageCards1,
@@ -276,10 +266,6 @@ public class InGameWindowController extends GenericController {
             hboxImageCards8
         );
 
-        _listImageCards.forEach(hbox -> hbox.setVisible(false));
-    }
-
-    private void initializeImageCards() {
         _listPaintCards = List.of(
             imgLeftCard0, imgRightCard0,
             imgLeftCard1, imgRightCard1,
@@ -292,11 +278,6 @@ public class InGameWindowController extends GenericController {
             imgLeftCard8, imgRightCard8
         );
 
-        Image cardImage = new Image(getClass().getResource(_clientInfo.gameConfig._selectedCard).toExternalForm());
-        _listPaintCards.subList(2, _listPaintCards.size()).forEach(iv -> iv.setImage(cardImage));
-    }
-
-    private void initializeAvatarProfiles() {
         _listAvatarProfiles = List.of(
             imgAvatarProfile0,
             imgAvatarProfile1,
@@ -308,9 +289,81 @@ public class InGameWindowController extends GenericController {
             imgAvatarProfile7,
             imgAvatarProfile8
         );
+
+        _listDealer = List.of(
+            ImgDealer0,
+            ImgDealer1,
+            ImgDealer2,
+            ImgDealer3,
+            ImgDealer4,
+            ImgDealer5,
+            ImgDealer6,
+            ImgDealer7,
+            ImgDealer8
+        );
+
+        _listHandBet = List.of(
+            hboxHandBet0,
+            hboxHandBet1,
+            hboxHandBet2,
+            hboxHandBet3,
+            hboxHandBet4,
+            hboxHandBet5,
+            hboxHandBet6,
+            hboxHandBet7,
+            hboxHandBet8
+        );
+
+        _listOnBetMoney = List.of(
+            labelOnBetMoney0,
+            labelOnBetMoney1,
+            labelOnBetMoney2,
+            labelOnBetMoney3,
+            labelOnBetMoney4,
+            labelOnBetMoney5,
+            labelOnBetMoney6,
+            labelOnBetMoney7,
+            labelOnBetMoney8
+        );
+
+        _listEquity = List.of(
+            labelEquity0,
+            labelEquity1,
+            labelEquity2,
+            labelEquity3,
+            labelEquity4,
+            labelEquity5,
+            labelEquity6,
+            labelEquity7,
+            labelEquity8
+        );
+    } 
+
+    private void GUI_initializePlayersInfo() {
+        _listNameLabels.forEach(label -> label.setText("") );
+        _listMoneyLabels.forEach(label -> label.setText("") );
+        _listPlayerStackPanes.forEach(stack -> stack.setVisible(false));
+
+        _listImageCards.forEach(hbox -> hbox.setVisible(false));
+        _listHandBet.forEach(hbox -> hbox.setVisible(false));
+         _listEquity.forEach(lb -> lb.setVisible(false));
     }
 
-    private void initializeSlider() {   
+    private void GUI_initializeCardStyle() { 
+        Image cardImage = new Image(getClass().getResource(_clientInfo.gameConfig._selectedCard).toExternalForm());
+        _listPaintCards.subList(2, _listPaintCards.size()).forEach(iv -> iv.setImage(cardImage));
+    }
+
+    private void GUI_initializeDealerButton() {
+        
+        Image DealerImage = new Image(getClass().getResource("/images/fichaDealer.png").toExternalForm());
+        _listDealer.forEach(iv -> {
+            iv.setImage(DealerImage);
+            iv.setVisible(false);
+        });
+    }
+
+    private void GUI_initializeMoneySlider() {   
         sliderMoney.setMin(0);
         sliderMoney.setValue(0);
 
@@ -325,66 +378,74 @@ public class InGameWindowController extends GenericController {
         });
     }
 
-    private void initializeDealer() {
-        _listDealer = List.of(
-            ImgDealer0,
-            ImgDealer1,
-            ImgDealer2,
-            ImgDealer3,
-            ImgDealer4,
-            ImgDealer5,
-            ImgDealer6,
-            ImgDealer7,
-            ImgDealer8
-        );
+    private void GUI_showWaitingPlayers(final List<PlayerInfo> players) {
 
-        Image DealerImage = new Image(getClass().getResource("/images/fichaDealer.png").toExternalForm());
-        _listDealer.forEach(iv -> iv.setImage(DealerImage));
-    }
+        int myIndex = IntStream.range(0, players.size())
+                        .filter(i -> players.get(i).id == _clientInfo.id)
+                        .findFirst()
+                        .orElse(-1);
 
-    private void initializeHandBet() {
-        _listHandBet = List.of(
-            hboxHandBet0,
-            hboxHandBet1,
-            hboxHandBet2,
-            hboxHandBet3,
-            hboxHandBet4,
-            hboxHandBet5,
-            hboxHandBet6,
-            hboxHandBet7,
-            hboxHandBet8
-        );
+        if(myIndex == -1){
+            System.out.printf("We are not in the list! Something is wrong...\n");
+            return;
+        }
 
-        _listHandBet.forEach(hbox -> hbox.setVisible(false));
-    }
 
-    private void initializeOnBetMoney() {
-        _listOnBetMoney = List.of(
-            labelOnBetMoney0,
-            labelOnBetMoney1,
-            labelOnBetMoney2,
-            labelOnBetMoney3,
-            labelOnBetMoney4,
-            labelOnBetMoney5,
-            labelOnBetMoney6,
-            labelOnBetMoney7,
-            labelOnBetMoney8
-        );
-    }
+        _playerSeatMap = new HashMap<>(players.size());
+        _playerSeatMap.put(myIndex, 0);
 
-    private void initializeEquity() {
-        _listEquity = List.of(
-            labelEquity0,
-            labelEquity1,
-            labelEquity2,
-            labelEquity3,
-            labelEquity4,
-            labelEquity5,
-            labelEquity6,
-            labelEquity7,
-            labelEquity8
-        );
-        _listEquity.forEach(lb -> lb.setVisible(false));
+        GUI_getAvatarPosition(0, _clientInfo.name);
+        playerName0.setText( _clientInfo.name );
+        playerMoney0.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
+        pokerPlayer0.setVisible(true);
+        _listImageCards.get(0).setVisible(true);
+        _listHandBet.get(0).setVisible(true);
+
+        // Show players behind me(in the list) : position 1, 2, 3, ...
+        int beforePosition = 1;
+        for(int i = myIndex - 1; 0 <= i; i--) {
+
+            PlayerInfo p = players.get(i);
+            _playerSeatMap.put(p.id, beforePosition);
+
+            Label nameLabel = _listNameLabels.get(beforePosition);
+            Label moneyLabel = _listMoneyLabels.get(beforePosition);
+            StackPane playerStackPane = _listPlayerStackPanes.get(beforePosition);
+            HBox cardsHBox = _listImageCards.get(beforePosition);
+            HBox onBetHBox = _listHandBet.get(beforePosition);
+            
+            nameLabel.setText(p.name);
+            moneyLabel.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
+            playerStackPane.setVisible(true);
+            cardsHBox.setVisible(true);
+            onBetHBox.setVisible(true);
+            GUI_getAvatarPosition(beforePosition, p.name);
+
+            ++beforePosition;
+        }
+
+        // Show players ahead of me(in the list) : position 8, 7, 6, ...
+        int nextPosition = 8;
+        for(int i = myIndex + 1; i < players.size(); i++) {
+
+            PlayerInfo p = players.get(i);
+            _playerSeatMap.put(p.id, nextPosition);
+
+            Label nameLabel = _listNameLabels.get(nextPosition);
+            Label moneyLabel = _listMoneyLabels.get(nextPosition);
+            StackPane playerStackPane = _listPlayerStackPanes.get(nextPosition);
+            HBox cardsHBox = _listImageCards.get(nextPosition);
+            HBox onBetHBox = _listHandBet.get(nextPosition);
+            
+            nameLabel.setText(p.name);
+            moneyLabel.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
+            playerStackPane.setVisible(true);
+            cardsHBox.setVisible(true);
+            onBetHBox.setVisible(true);
+            GUI_getAvatarPosition(nextPosition, p.name);
+
+            --nextPosition;
+        }
     }
 
     
@@ -474,16 +535,15 @@ public class InGameWindowController extends GenericController {
 
                 try {
 
-                    clearTableCards();
-                    _listDealer.forEach(iv -> iv.setVisible(false));
+                    //clearTableCards();
 
                     // Player role and cards
                     role = PokerGame.receivePlayerRole(input);
                     playerCards[0] = PokerGame.receiveCard(input);
                     playerCards[1] = PokerGame.receiveCard(input);
                     System.out.printf("Assigned role: %s\n", role.toString());
-                    showCards(imgLeftCard0, playerCards[0]);
-                    showCards(imgRightCard0, playerCards[1]);
+                    //GUI_showCards(imgLeftCard0, playerCards[0]);
+                    //GUI_showCards(imgRightCard0, playerCards[1]);
                     
                     
                     // Preflop
@@ -495,9 +555,9 @@ public class InGameWindowController extends GenericController {
                     tableCardValues[0] = PokerGame.receiveCard(input);  // First table card
                     tableCardValues[1] = PokerGame.receiveCard(input);  // Second table card
                     tableCardValues[2] = PokerGame.receiveCard(input);  // Third table card
-                    showCards(tableCard0, tableCardValues[0]);
-                    showCards(tableCard1, tableCardValues[1]);
-                    showCards(tableCard2, tableCardValues[2]);
+                    //GUI_showCards(tableCard0, tableCardValues[0]);
+                    //GUI_showCards(tableCard1, tableCardValues[1]);
+                    //GUI_showCards(tableCard2, tableCardValues[2]);
 
 
                     // Flop
@@ -507,7 +567,7 @@ public class InGameWindowController extends GenericController {
                     });
                     playRound(playerCards[0], playerCards[1], role, socket);
                     tableCardValues[3] = PokerGame.receiveCard(input);  // Fourth table card
-                    showCards(tableCard3, tableCardValues[3]);
+                    //GUI_showCards(tableCard3, tableCardValues[3]);
 
 
                     // Turn
@@ -517,7 +577,7 @@ public class InGameWindowController extends GenericController {
                     });
                     playRound(playerCards[0], playerCards[1], role, socket);
                     tableCardValues[4] = PokerGame.receiveCard(input);  // fifth table card
-                    showCards(tableCard4, tableCardValues[4]);
+                    //GUI_showCards(tableCard4, tableCardValues[4]);
 
 
                     // River
@@ -554,9 +614,9 @@ public class InGameWindowController extends GenericController {
                     }
                     
 
-                    final int seconds = 3;
-                    System.out.printf("%d seconds pause to see the winner...\n", seconds);
-                    Thread.sleep(seconds * 1000);
+                    int sleep_seconds = 3;
+                    System.out.printf("%d seconds pause to see the winner...\n", sleep_seconds);
+                    Thread.sleep(sleep_seconds * 1000);
 
                     // Game ends or keeps
                     gameStatusCode = SocketUtils.receiveInt(input);
@@ -572,7 +632,7 @@ public class InGameWindowController extends GenericController {
                     try {
 
                         // Get winner/loser state
-                        receivePlayersUpdatedInfo(socket);
+                        //receivePlayersUpdatedInfo(socket);
 
                         final int seconds = 3;
                         System.out.printf("%d seconds pause to see the winner...\n", seconds);
@@ -630,9 +690,6 @@ public class InGameWindowController extends GenericController {
                 final int offBetMoney = SocketUtils.receiveInt(socket.getInputStream());
 				System.out.printf("Forced play as the small blind with %d chips\n", amountSB);
 
-                Platform.runLater(() -> {
-                    updatePlayerInfo(0, role, onBetMoney, offBetMoney, false, false, "");
-                });
 			}
 			else if(serverCode == GameType.TURN_FORCED_BB) {
 
@@ -641,9 +698,6 @@ public class InGameWindowController extends GenericController {
                 final int offBetMoney = SocketUtils.receiveInt(socket.getInputStream());
 				System.out.printf("Forced play as the big blind with %d chips\n", amountBB);
 
-                Platform.runLater(() -> {
-                    updatePlayerInfo(0, role, onBetMoney, offBetMoney, false, false, "");
-                });
 			}
 			else if(serverCode == GameType.TURN_WAIT) {
 
@@ -676,8 +730,6 @@ public class InGameWindowController extends GenericController {
                 Platform.runLater(() -> {
                     sliderMoney.setMin( (double)maxBet );
                     sliderMoney.setMax( (double)(offBetMoney + onBetMoney)  );
-
-                    updatePlayerInfo(0, role, onBetMoney, offBetMoney, false, false, "");
                 });
 
                 selectCommand(socket, sb, bb, maxBet, offBetMoney, onBetMoney);
@@ -707,19 +759,6 @@ public class InGameWindowController extends GenericController {
                     otherPlayerLastCommand,
                     otherPlayerOffBetMoney, otherPlayerOnBetMoney
                 );
-
-                final int seatID = _playerSeatLabel.get(otherPlayerID).intValue();
-                Label nameLabel = getNameLabelByPosition(seatID);
-                Label moneyLabel = getMoneyLabelByPosition(seatID);
-
-                Platform.runLater(() -> {
-                    nameLabel.setText( otherPlayerName );
-                    updatePlayerInfo(
-                        seatID, otherPlayerRole, 
-                        otherPlayerOnBetMoney, otherPlayerOffBetMoney, 
-                        otherPlayerIsFolded, otherPlayerIsWinner, ""
-                    );
-                });
 
             }
             else if(serverCode == GameType.TOTAL_POT) {
@@ -807,57 +846,12 @@ public class InGameWindowController extends GenericController {
     }
     
 
-    private StackPane getPlayerStackPaneByPosition(final int position) {
-        switch(position) {
-            case 0: return pokerPlayer0;
-            case 1: return pokerPlayer1;
-            case 2: return pokerPlayer2;
-            case 3: return pokerPlayer3;
-            case 4: return pokerPlayer4;
-            case 5: return pokerPlayer5;
-            case 6: return pokerPlayer6;
-            case 7: return pokerPlayer7;
-            case 8: return pokerPlayer8;
-            default: throw new IllegalArgumentException( String.format("Invalid player position %d", position) );
-        }
-    }
-
-    private Label getNameLabelByPosition(final int position) {
-        switch(position) {
-            case 0: return playerName0;
-            case 1: return playerName1;
-            case 2: return playerName2;
-            case 3: return playerName3;
-            case 4: return playerName4;
-            case 5: return playerName5;
-            case 6: return playerName6;
-            case 7: return playerName7;
-            case 8: return playerName8;
-            default: throw new IllegalArgumentException( String.format("Invalid player position %d", position) );
-        }
-    }
-
-    private Label getMoneyLabelByPosition(final int position) {
-        switch(position) {
-            case 0: return playerMoney0;
-            case 1: return playerMoney1;
-            case 2: return playerMoney2;
-            case 3: return playerMoney3;
-            case 4: return playerMoney4;
-            case 5: return playerMoney5;
-            case 6: return playerMoney6;
-            case 7: return playerMoney7;
-            case 8: return playerMoney8;
-            default: throw new IllegalArgumentException( String.format("Invalid player position %d", position) );
-        }
-    }
-
-    private void updateDealer(int seatID) {
+    private void GUI_updateDealer(int seatID) {
         _listDealer.forEach(iv -> iv.setVisible(false));
         _listDealer.get(seatID).setVisible(true);
     }
 
-    private void receivePlayersUpdatedInfo(Socket socket) throws IOException {
+    private void GUI_receivePlayersUpdatedInfo(Socket socket) throws IOException {
 
         InputStream input = socket.getInputStream();
 
@@ -879,49 +873,42 @@ public class InGameWindowController extends GenericController {
             );
             */
 
-            Platform.runLater(() -> {
-
-                int seatID = _playerSeatLabel.get(playerID).intValue();
-                updatePlayerInfo(seatID, r, onBetMoney, offBetMoney, isFolded, isWinner, equity);
-                _listEquity.get(seatID).setText(equity);
-            });
+            int seatID = _playerSeatLabel.get(playerID).intValue();
+            GUI_updatePlayerInfo(seatID, r, onBetMoney, offBetMoney, isFolded, isWinner, equity);
+            _listEquity.get(seatID).setText(equity);
 
             isLast = SocketUtils.receiveInt(input);
         }
         while(isLast != GameType.TRUE);
     }
 
-    private String playerMoneyToString(int onBetMoney, int offBetMoney) {
-        return String.format(
-            "%d", offBetMoney
-        );
-    }
+    private void GUI_updatePlayerInfo(int seatID, PlayerRole role, int onBetMoney, int offBetMoney, boolean isFolded, boolean isWinner, String equity) {
 
-    private void updatePlayerInfo(int seatID, PlayerRole role, int onBetMoney, int offBetMoney, boolean isFolded, boolean isWinner, String equity) {
-
-        Label nameLabel = getNameLabelByPosition(seatID);
-        Label moneyLabel = getMoneyLabelByPosition(seatID);
-        _listOnBetMoney.get(seatID).setText(String.valueOf(onBetMoney));
+        Label nameLabel = null;
+        Label moneyLabel = null;
+        Label betLabel = _listOnBetMoney.get(seatID);
         Label equityLabel = _listEquity.get(seatID);
 
-        Platform.runLater(() -> {
-            if(role == PlayerRole.DEALER) {updateDealer(seatID);}
-            PauseTransition transition = new PauseTransition(Duration.seconds(3));
-            if(isWinner) {
-                nameLabel.setText( nameLabel.getText() + " (Winner!)" );
-                transition.setOnFinished(event -> {
-                    nameLabel.setText( nameLabel.getText().replace(" (Winner!)", "") );
-                });
-                transition.play();
+        if(role == PlayerRole.DEALER) {
+            GUI_updateDealer(seatID);
+        }
 
-                System.out.printf("Player %s is the winner of the hand!\n", nameLabel.getText());
-            }
+        PauseTransition transition = new PauseTransition(Duration.seconds(3));
+        if(isWinner) {
+            betLabel.setText( String.valueOf(onBetMoney) );
+            nameLabel.setText( nameLabel.getText() + " (Winner!)" );
+            transition.setOnFinished(event -> {
+                nameLabel.setText( nameLabel.getText().replace(" (Winner!)", "") );
+            });
+            transition.play();
 
-            moneyLabel.setText( playerMoneyToString(onBetMoney, offBetMoney) );
-        });
+            System.out.printf("Player %s is the winner of the hand!\n", nameLabel.getText());
+        }
+
+        moneyLabel.setText( String.valueOf(offBetMoney) );
     }
     
-    private void getAvatarPosition(final int position, String name) {
+    private void GUI_getAvatarPosition(final int position, String name) {
         ImageView avatarImage = _listAvatarProfiles.get(position);
         Image avatar = _clientInfo.getAvatar(name, 80);
 
@@ -939,88 +926,7 @@ public class InGameWindowController extends GenericController {
         avatarImage.setVisible(true);
     }
 
-    private void showPlayers(final List<PlayerInfo> players) {
-
-        int myID = _clientInfo.id;
-        int myIndex = IntStream.range(0, players.size())
-                        .filter(i -> players.get(i).id == myID)
-                        .findFirst()
-                        .orElse(-1);
-
-        if(myIndex == -1){
-            System.out.printf("We are not in the list! Something is wrong...\n");
-            return;
-        }
-
-
-        _playerSeatLabel = new ArrayList<>();
-        for(int i = 0; i < players.size(); i++)
-            _playerSeatLabel.add(-1);
-
-        _playerSeatLabel.set(myIndex, 0);
-        playerName0.setText( _clientInfo.name );
-        playerMoney0.setText( playerMoneyToString(0, _clientInfo.gameConfig._initialMoney) );
-        pokerPlayer0.setVisible(true);
-        getAvatarPosition(0, _clientInfo.name);
-        HBox cardsHBoxHost = _listImageCards.get(0);
-        cardsHBoxHost.setVisible(true);
-        HBox onBetHBoxHost = _listHandBet.get(0);
-        onBetHBoxHost.setVisible(true);
-
-        // Show players behind me(in the list) : position 1, 2, 3, ...
-        int beforePosition = 1;
-        for(int i = myIndex - 1; 0 <= i; i--) {
-
-            PlayerInfo p = players.get(i);
-            _playerSeatLabel.set(p.id, beforePosition);
-
-            Label nameLabel = getNameLabelByPosition(beforePosition);
-            Label moneyLabel = getMoneyLabelByPosition(beforePosition);
-            StackPane playerStackPane = getPlayerStackPaneByPosition(beforePosition);
-            HBox cardsHBox = _listImageCards.get(beforePosition);
-            HBox onBetHBox = _listHandBet.get(beforePosition);
-            
-            final int pos = beforePosition;
-            Platform.runLater(() -> {
-                nameLabel.setText(p.name);
-                moneyLabel.setText( playerMoneyToString(0, _clientInfo.gameConfig._initialMoney) );
-                playerStackPane.setVisible(true);
-                cardsHBox.setVisible(true);
-                onBetHBox.setVisible(true);
-                getAvatarPosition(pos, p.name);
-            });
-
-            ++beforePosition;
-        }
-
-        // Show players ahead of me(in the list) : position 8, 7, 6, ...
-        int nextPosition = 8;
-        for(int i = myIndex + 1; i < players.size(); i++) {
-
-            PlayerInfo p = players.get(i);
-            _playerSeatLabel.set(p.id, nextPosition);
-
-            Label nameLabel = getNameLabelByPosition(nextPosition);
-            Label moneyLabel = getMoneyLabelByPosition(nextPosition);
-            StackPane playerStackPane = getPlayerStackPaneByPosition(nextPosition);
-            HBox cardsHBox = _listImageCards.get(nextPosition);
-            HBox onBetHBox = _listHandBet.get(nextPosition);
-            
-            final int pos = nextPosition;
-            Platform.runLater(() -> {
-                nameLabel.setText(p.name);
-                moneyLabel.setText( playerMoneyToString(0, _clientInfo.gameConfig._initialMoney) );
-                playerStackPane.setVisible(true);
-                cardsHBox.setVisible(true);
-                onBetHBox.setVisible(true);
-                getAvatarPosition(pos, p.name);
-            });
-
-            --nextPosition;
-        }
-    }
-
-    private void showCards(ImageView imageView, Card card) {
+    private void GUI_showCards(ImageView imageView, Card card) {
 
         System.out.printf("Received card: %s\n", card.toString());
 
@@ -1050,22 +956,22 @@ public class InGameWindowController extends GenericController {
         InputStream in = getClass().getClassLoader().getResourceAsStream(  
             String.format("%s%s_of_%s.png", path, cardValue, cardSuit)
         );
-        Image cardImage = new Image(in);
 
-        Platform.runLater(() -> {
-            imageView.setImage( cardImage );
-        });
+        Image cardImage = new Image(in);
+        imageView.setImage( cardImage );
     }
 
     
-    private void clearTableCards() {
-        Platform.runLater(() -> {
-            tableCard0.setImage(null);
-            tableCard1.setImage(null);
-            tableCard2.setImage(null);
-            tableCard3.setImage(null);
-            tableCard4.setImage(null);
-        });
+    private void GUI_clearTableCards() {
+        tableCard0.setImage(null);
+        tableCard1.setImage(null);
+        tableCard2.setImage(null);
+        tableCard3.setImage(null);
+        tableCard4.setImage(null);
+    }
+
+    private void GUI_clearPlayerBets() {
+        _listOnBetMoney.forEach(label -> label.setText("0"));
     }
 
 }

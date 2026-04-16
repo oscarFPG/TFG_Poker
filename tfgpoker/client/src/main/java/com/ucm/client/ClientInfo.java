@@ -41,6 +41,7 @@ public class ClientInfo {
 
     
     public Image getAvatar(String name, int size) {
+        
         if(name.startsWith("GeminiLLM")) {
             return AvatarGenerator.generateBot(AvatarType.GEMINI_BOT, size);
         }
