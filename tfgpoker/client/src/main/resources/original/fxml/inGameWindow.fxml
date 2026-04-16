@@ -20,7 +20,6 @@
 <?import javafx.scene.paint.RadialGradient?>
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.shape.Circle?>
-<?import javafx.scene.shape.Rectangle?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.InGameWindowController">
    <top>
@@ -1309,36 +1308,55 @@
                                  <left>
                                     <StackPane alignment="TOP_CENTER" prefHeight="111.0" prefWidth="171.0" BorderPane.alignment="CENTER">
                                        <children>
-                                          <Rectangle arcHeight="4.0" arcWidth="5.0" fill="DODGERBLUE" height="57.0" stroke="BLACK" strokeType="INSIDE" width="153.0" />
+                                          <Label prefHeight="55.0" prefWidth="154.0" styleClass="parallelogram-pane" text="Label" />
                                        </children>
                                     </StackPane>
                                  </left>
                                  <right>
                                     <HBox alignment="TOP_CENTER" prefHeight="125.0" prefWidth="183.0" BorderPane.alignment="CENTER">
                                        <children>
-                                          <Button maxWidth="-Infinity" mnemonicParsing="false" text="Button" />
-                                          <Button maxWidth="-Infinity" mnemonicParsing="false" text="Button" />
-                                          <Button maxWidth="-Infinity" mnemonicParsing="false" text="Button" />
+                                          <Button maxWidth="-Infinity" mnemonicParsing="false" text="MIN">
+                                             <styleClass>
+                                                <String fx:value="semi-oval-pane" />
+                                                <String fx:value="slider-gradiant-colors" />
+                                                <String fx:value="super-bold-general-text-font" />
+                                             </styleClass></Button>
+                                          <Button maxWidth="-Infinity" mnemonicParsing="false" text="1/2 POT">
+                                             <styleClass>
+                                                <String fx:value="semi-oval-pane" />
+                                                <String fx:value="slider-gradiant-colors" />
+                                                <String fx:value="super-bold-general-text-font" />
+                                             </styleClass></Button>
+                                          <Button maxWidth="-Infinity" mnemonicParsing="false" text="MAX">
+                                             <styleClass>
+                                                <String fx:value="semi-oval-pane" />
+                                                <String fx:value="slider-gradiant-colors" />
+                                                <String fx:value="super-bold-general-text-font" />
+                                             </styleClass></Button>
                                        </children>
                                     </HBox>
                                  </right>
                                  <bottom>
-                                    <HBox prefHeight="47.0" prefWidth="356.0" BorderPane.alignment="CENTER">
+                                    <HBox alignment="CENTER" prefHeight="61.0" prefWidth="356.0" styleClass="slider-gradiant-colors" BorderPane.alignment="CENTER">
                                        <children>
-                                          <HBox prefHeight="100.0" prefWidth="179.0">
+                                          <HBox alignment="CENTER" prefHeight="100.0" prefWidth="179.0">
                                              <children>
                                                 <Button maxWidth="-Infinity" mnemonicParsing="false" text="Button" />
                                                 <Button maxWidth="-Infinity" mnemonicParsing="false" text="Button" />
                                                 <Button maxWidth="-Infinity" mnemonicParsing="false" text="Button" />
                                              </children>
                                           </HBox>
-                                          <HBox prefHeight="100.0" prefWidth="200.0">
+                                          <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                                              <children>
                                                 <Label text="Label" />
                                                 <Button maxWidth="-Infinity" mnemonicParsing="false" text="Button" />
                                                 <Slider />
                                                 <Button maxWidth="-Infinity" mnemonicParsing="false" text="Button" />
                                              </children>
+                                             <styleClass>
+                                                <String fx:value="slider-colors" />
+                                                <String fx:value="semi-oval-pane" />
+                                             </styleClass>
                                           </HBox>
                                        </children>
                                     </HBox>
