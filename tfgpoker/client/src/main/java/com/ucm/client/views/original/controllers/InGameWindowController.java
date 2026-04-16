@@ -873,9 +873,9 @@ public class InGameWindowController extends GenericController {
             );
             */
 
-            int seatID = _playerSeatLabel.get(playerID).intValue();
-            GUI_updatePlayerInfo(seatID, r, onBetMoney, offBetMoney, isFolded, isWinner, equity);
-            _listEquity.get(seatID).setText(equity);
+            //int seatID = _playerSeatLabel.get(playerID).intValue();
+            //GUI_updatePlayerInfo(seatID, r, onBetMoney, offBetMoney, isFolded, isWinner, equity);
+            //_listEquity.get(seatID).setText(equity);
 
             isLast = SocketUtils.receiveInt(input);
         }
