@@ -77,6 +77,7 @@ public class MainController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
             Scene scene = new Scene(loader.load());
             _stage.setScene(scene);
+            _stage.setResizable(false);
 
             GenericController controller = loader.getController();
             controller.setMainController(this, _stage);

@@ -1302,16 +1302,16 @@
                               </Label>
                            </graphic>
                         </Label>
-                        <VBox alignment="BOTTOM_CENTER" layoutX="817.0" layoutY="531.0" prefHeight="123.0" prefWidth="473.0">
+                        <VBox alignment="BOTTOM_CENTER" layoutX="839.0" layoutY="531.0" prefHeight="140.0" prefWidth="476.0">
                            <children>
-                              <BorderPane prefHeight="200.0" prefWidth="200.0">
+                              <BorderPane prefHeight="123.0" prefWidth="471.0">
                                  <left>
                                     <StackPane alignment="TOP_CENTER" prefHeight="111.0" prefWidth="171.0" BorderPane.alignment="CENTER">
                                        <children>
                                           <Button mnemonicParsing="false" prefHeight="45.0" prefWidth="166.0" text="Button">
                                              <styleClass>
                                                 <String fx:value="parallelogram-pane" />
-                                                <String fx:value="slider-gradiant-colors" />
+                                                <String fx:value="slider-colors" />
                                                 <String fx:value="super-bold-general-text-font" />
                                              </styleClass>
                                           </Button>
@@ -1324,72 +1324,69 @@
                                           <Button maxWidth="-Infinity" mnemonicParsing="false" text="MIN">
                                              <styleClass>
                                                 <String fx:value="semi-oval-pane" />
-                                                <String fx:value="slider-gradiant-colors" />
+                                                <String fx:value="slider-colors" />
                                                 <String fx:value="super-bold-general-text-font" />
                                              </styleClass></Button>
                                           <Button maxWidth="-Infinity" mnemonicParsing="false" text="1/2 POT">
                                              <styleClass>
                                                 <String fx:value="semi-oval-pane" />
-                                                <String fx:value="slider-gradiant-colors" />
+                                                <String fx:value="slider-colors" />
                                                 <String fx:value="super-bold-general-text-font" />
                                              </styleClass></Button>
                                           <Button maxWidth="-Infinity" mnemonicParsing="false" text="MAX">
                                              <styleClass>
                                                 <String fx:value="semi-oval-pane" />
-                                                <String fx:value="slider-gradiant-colors" />
+                                                <String fx:value="slider-colors" />
                                                 <String fx:value="super-bold-general-text-font" />
                                              </styleClass></Button>
                                        </children>
                                     </HBox>
                                  </right>
                                  <bottom>
-                                    <HBox alignment="CENTER" prefHeight="81.0" prefWidth="473.0" spacing="10.0" styleClass="slider-gradiant-colors" BorderPane.alignment="CENTER">
+                                    <HBox alignment="CENTER" prefHeight="98.0" prefWidth="498.0" spacing="5.0" styleClass="slider-gradiant-colors" BorderPane.alignment="CENTER">
                                        <children>
-                                          <HBox alignment="CENTER" prefHeight="100.0" prefWidth="179.0">
+                                          <HBox alignment="CENTER" prefHeight="100.0" prefWidth="179.0" spacing="4.0">
                                              <children>
-                                                <Button maxWidth="-Infinity" mnemonicParsing="false" text="FOLD">
+                                                <Button maxWidth="-Infinity" mnemonicParsing="false" prefHeight="45.0" prefWidth="52.0" text="FOLD">
                                                    <styleClass>
-                                                      <String fx:value="semi-oval-pane" />
-                                                      <String fx:value="slider-gradiant-colors" />
+                                                      <String fx:value="general-button" />
                                                       <String fx:value="bold-general-text-font" />
                                                    </styleClass></Button>
-                                                <Button maxWidth="-Infinity" mnemonicParsing="false" text="CALL">
+                                                <Button maxWidth="-Infinity" mnemonicParsing="false" prefHeight="45.0" prefWidth="49.0" text="CALL">
                                                    <styleClass>
-                                                      <String fx:value="semi-oval-pane" />
-                                                      <String fx:value="slider-gradiant-colors" />
+                                                      <String fx:value="general-button" />
                                                       <String fx:value="bold-general-text-font" />
                                                    </styleClass></Button>
-                                                <Button maxWidth="-Infinity" mnemonicParsing="false" text="RAISE">
+                                                <Button maxWidth="-Infinity" mnemonicParsing="false" prefHeight="47.0" prefWidth="54.0" text="RAISE">
                                                    <styleClass>
-                                                      <String fx:value="semi-oval-pane" />
-                                                      <String fx:value="slider-gradiant-colors" />
+                                                      <String fx:value="general-button" />
                                                       <String fx:value="bold-general-text-font" />
                                                    </styleClass></Button>
                                              </children>
                                           </HBox>
-                                          <HBox alignment="CENTER" prefHeight="73.0" prefWidth="267.0">
+                                          <HBox alignment="CENTER" maxHeight="-Infinity" prefHeight="68.0" prefWidth="267.0">
                                              <children>
                                                 <Label>
                                                    <styleClass>
                                                       <String fx:value="semi-oval-pane" />
                                                       <String fx:value="bold-general-text-font" />
                                                    </styleClass></Label>
-                                                <Button maxWidth="-Infinity" mnemonicParsing="false" text="-">
+                                                <Button maxWidth="-Infinity" mnemonicParsing="false" prefHeight="33.0" prefWidth="47.0" text="-">
                                                    <styleClass>
                                                       <String fx:value="semi-oval-pane" />
-                                                      <String fx:value="slider-gradiant-colors" />
+                                                      <String fx:value="general-button" />
                                                       <String fx:value="super-bold-general-text-font" />
                                                    </styleClass></Button>
                                                 <Slider />
-                                                <Button maxWidth="-Infinity" mnemonicParsing="false" text="+">
+                                                <Button maxWidth="-Infinity" mnemonicParsing="false" prefHeight="42.0" prefWidth="44.0" text="+">
                                                    <styleClass>
                                                       <String fx:value="semi-oval-pane" />
-                                                      <String fx:value="slider-gradiant-colors" />
+                                                      <String fx:value="general-button" />
                                                       <String fx:value="super-bold-general-text-font" />
                                                    </styleClass></Button>
                                              </children>
                                              <styleClass>
-                                                <String fx:value="slider-colors" />
+                                                <String fx:value="subtitle-label" />
                                                 <String fx:value="semi-oval-pane" />
                                              </styleClass>
                                           </HBox>
