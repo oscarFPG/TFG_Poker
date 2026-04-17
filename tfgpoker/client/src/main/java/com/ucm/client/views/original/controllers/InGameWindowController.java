@@ -137,6 +137,7 @@ public class InGameWindowController extends GenericController {
     private Map<Integer, Integer> _playerSeatMap; // Player id = i -> list[i] = m -> m stackpane label
     private boolean _swapCallToCheck = false;
     private boolean _userCloses = false;
+    private int _sliderStep = 0;
     private Thread _gameThread;
 
     
@@ -363,6 +364,7 @@ public class InGameWindowController extends GenericController {
     private void GUI_initializeMoneySlider() {   
         sliderMoney.setMin(0);
         sliderMoney.setValue(0);
+        sliderMoney.setMax(1_000_000);
 
         sliderMoney.valueProperty().addListener((obs, oldVal, newVal) -> {
             
@@ -706,9 +708,6 @@ public class InGameWindowController extends GenericController {
 			else if(serverCode == GameType.TURN_PLAY) {
 
 				System.out.printf("It's your turn to play!\n");
-                Platform.runLater(() -> {
-                    buttonsHolder.setVisible(true);
-                });
 
 				// Receive round info
 				final int sb = SocketUtils.receiveInt( socket.getInputStream() );
@@ -724,6 +723,10 @@ public class InGameWindowController extends GenericController {
 
                 // Do not allow to bet less than the current max bet
                 Platform.runLater(() -> {
+                    buttonsHolder.setVisible(true);
+
+                    int sliderStep = Math.clamp(offBetMoney / 100, 1, offBetMoney);
+                    sliderMoney.setMajorTickUnit( sliderStep );
                     sliderMoney.setMin( (double)maxBet );
                     sliderMoney.setMax( (double)(offBetMoney + onBetMoney)  );
                 });
