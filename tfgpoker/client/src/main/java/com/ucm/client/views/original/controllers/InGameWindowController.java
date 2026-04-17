@@ -355,10 +355,8 @@ public class InGameWindowController extends GenericController {
     private void GUI_initializeDealerButton() {
         
         Image DealerImage = new Image(getClass().getResource("/images/fichaDealer.png").toExternalForm());
-        _listDealer.forEach(iv -> {
-            iv.setImage(DealerImage);
-            iv.setVisible(false);
-        });
+        _listDealer.forEach(iv -> iv.setImage(DealerImage));
+        _listDealer.forEach(iv -> iv.setVisible(false));
     }
 
     private void GUI_initializeMoneySlider() {   

@@ -928,7 +928,10 @@
                               </LinearGradient>
                            </stroke>
                         </Circle>
-                        <ImageView fx:id="imgAvatarProfile1" fitHeight="74.0" fitWidth="104.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_RIGHT" />
+                        <ImageView fx:id="imgAvatarProfile1" fitHeight="74.0" fitWidth="104.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_RIGHT">
+                           <StackPane.margin>
+                              <Insets right="3.0" />
+                           </StackPane.margin></ImageView>
                      </children>
                   </StackPane>
                </children>
@@ -1321,76 +1324,6 @@
                   </StackPane>
                </children>
             </StackPane>
-            <ImageView fx:id="tableCard0" fitHeight="98.0" fitWidth="70.0" layoutX="491.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../images/cards/2_of_clubs.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="tableCard1" fitHeight="98.0" fitWidth="70.0" layoutX="564.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../images/cards/2_of_clubs.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="tableCard2" fitHeight="98.0" fitWidth="70.0" layoutX="637.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../images/cards/2_of_clubs.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="tableCard4" fitHeight="98.0" fitWidth="70.0" layoutX="783.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../images/cards/4_of_clubs.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="tableCard3" fitHeight="98.0" fitWidth="70.0" layoutX="710.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../images/cards/2_of_diamonds.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="ImgDealer7" fitHeight="56.0" fitWidth="60.0" layoutX="932.0" layoutY="322.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../images/fichaDealer.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="ImgDealer8" fitHeight="56.0" fitWidth="60.0" layoutX="800.0" layoutY="430.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../images/fichaDealer.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="ImgDealer6" fitHeight="56.0" fitWidth="60.0" layoutX="932.0" layoutY="194.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../images/fichaDealer.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="ImgDealer5" fitHeight="56.0" fitWidth="60.0" layoutX="787.0" layoutY="84.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../images/fichaDealer.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="ImgDealer4" fitHeight="56.0" fitWidth="60.0" layoutX="598.0" layoutY="65.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../images/fichaDealer.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="ImgDealer3" fitHeight="56.0" fitWidth="60.0" layoutX="407.0" layoutY="136.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../images/fichaDealer.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="ImgDealer2" fitHeight="56.0" fitWidth="60.0" layoutX="326.0" layoutY="261.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../images/fichaDealer.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="ImgDealer1" fitHeight="56.0" fitWidth="60.0" layoutX="398.0" layoutY="371.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../images/fichaDealer.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="ImgDealer0" fitHeight="56.0" fitWidth="60.0" layoutX="538.0" layoutY="440.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../images/fichaDealer.png" />
-               </image>
-            </ImageView>
             <Label fx:id="labelEquity8" layoutX="1092.0" layoutY="462.0" styleClass="equity-label" text="Label" />
             <Label fx:id="labelEquity7" layoutX="1214.0" layoutY="296.0" styleClass="equity-label" text="Label" />
             <Label fx:id="labelEquity6" layoutX="1144.0" layoutY="143.0" styleClass="equity-label" text="Label" />
@@ -1413,6 +1346,76 @@
                   </Label>
                </graphic>
             </Label>
+            <ImageView fx:id="ImgDealer1" fitHeight="56.0" fitWidth="60.0" layoutX="398.0" layoutY="371.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/fichaDealer.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="ImgDealer0" fitHeight="56.0" fitWidth="60.0" layoutX="538.0" layoutY="440.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/fichaDealer.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="ImgDealer2" fitHeight="56.0" fitWidth="60.0" layoutX="326.0" layoutY="261.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/fichaDealer.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="ImgDealer3" fitHeight="56.0" fitWidth="60.0" layoutX="407.0" layoutY="136.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/fichaDealer.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="ImgDealer4" fitHeight="56.0" fitWidth="60.0" layoutX="598.0" layoutY="65.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/fichaDealer.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="ImgDealer5" fitHeight="56.0" fitWidth="60.0" layoutX="787.0" layoutY="84.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/fichaDealer.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="ImgDealer6" fitHeight="56.0" fitWidth="60.0" layoutX="932.0" layoutY="194.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/fichaDealer.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="ImgDealer8" fitHeight="56.0" fitWidth="60.0" layoutX="800.0" layoutY="430.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/fichaDealer.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="ImgDealer7" fitHeight="56.0" fitWidth="60.0" layoutX="932.0" layoutY="322.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/fichaDealer.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="tableCard3" fitHeight="98.0" fitWidth="70.0" layoutX="710.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/cards/2_of_diamonds.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="tableCard4" fitHeight="98.0" fitWidth="70.0" layoutX="783.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/cards/4_of_clubs.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="tableCard2" fitHeight="98.0" fitWidth="70.0" layoutX="637.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/cards/2_of_clubs.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="tableCard1" fitHeight="98.0" fitWidth="70.0" layoutX="564.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/cards/2_of_clubs.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="tableCard0" fitHeight="98.0" fitWidth="70.0" layoutX="491.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/cards/2_of_clubs.png" />
+               </image>
+            </ImageView>
          </children>
       </AnchorPane>
    </center>
