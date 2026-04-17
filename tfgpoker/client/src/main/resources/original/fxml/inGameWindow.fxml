@@ -21,7 +21,7 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.shape.Circle?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.InGameWindowController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.InGameWindowController">
    <top>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="1292.0" BorderPane.alignment="CENTER">
          <children>
@@ -103,16 +103,19 @@
    <bottom>
       <HBox alignment="CENTER" prefHeight="133.0" prefWidth="1326.0" BorderPane.alignment="CENTER">
          <children>
-            <HBox alignment="CENTER_LEFT" mouseTransparent="true" prefHeight="136.0" prefWidth="842.0">
+            <HBox alignment="CENTER_LEFT" mouseTransparent="true" prefHeight="7.0" prefWidth="847.0">
                <children>
-                  <ImageView fitHeight="85.0" fitWidth="180.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="85.0" fitWidth="138.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../images/logoPoker.png" />
                      </image>
+                     <HBox.margin>
+                        <Insets bottom="-20.0" left="10.0" />
+                     </HBox.margin>
                   </ImageView>
                </children>
             </HBox>
-            <VBox fx:id="buttonsHolder" alignment="CENTER_RIGHT" prefHeight="133.0" prefWidth="446.0">
+            <VBox fx:id="buttonsHolder" alignment="CENTER_RIGHT" prefHeight="133.0" prefWidth="542.0">
                <children>
                   <BorderPane prefHeight="136.0" prefWidth="494.0">
                      <left>
@@ -129,7 +132,7 @@
                         </StackPane>
                      </left>
                      <right>
-                        <HBox alignment="TOP_CENTER" prefHeight="38.0" prefWidth="197.0" spacing="5.0" BorderPane.alignment="CENTER">
+                        <HBox alignment="TOP_CENTER" prefHeight="38.0" prefWidth="274.0" spacing="5.0" BorderPane.alignment="CENTER">
                            <children>
                               <Button fx:id="btnMinBet" maxWidth="-Infinity" mnemonicParsing="false" onAction="#minBetAction" prefHeight="42.0" prefWidth="56.0" text="MIN">
                                  <styleClass>
@@ -156,47 +159,48 @@
                         </HBox>
                      </right>
                      <bottom>
-                        <HBox alignment="CENTER" pickOnBounds="false" prefHeight="95.0" prefWidth="484.0" spacing="2.0" styleClass="slider-gradiant-colors" BorderPane.alignment="CENTER">
+                        <HBox alignment="CENTER" pickOnBounds="false" prefHeight="95.0" prefWidth="457.0" spacing="2.0" styleClass="slider-gradiant-colors" BorderPane.alignment="CENTER">
                            <children>
-                              <HBox alignment="CENTER" pickOnBounds="false" prefHeight="87.0" prefWidth="205.0" spacing="4.0">
+                              <HBox alignment="CENTER" pickOnBounds="false" prefHeight="87.0" prefWidth="170.0" spacing="4.0">
                                  <children>
-                                    <Button fx:id="btnFold" maxWidth="-Infinity" mnemonicParsing="false" onAction="#foldAction" prefHeight="45.0" prefWidth="59.0" text="FOLD">
+                                    <Button fx:id="btnFold" maxWidth="-Infinity" mnemonicParsing="false" onAction="#foldAction" prefHeight="45.0" prefWidth="52.0" text="FOLD">
                                        <styleClass>
-                                          <String fx:value="general-button" />
-                                          <String fx:value="bold-general-text-font" />
+                                          <String fx:value="general-apuesta-button" />
+                                          <String fx:value="general-text-font" />
                                        </styleClass>
                                     </Button>
-                                    <Button fx:id="btnCall" maxWidth="-Infinity" mnemonicParsing="false" onAction="#callAction" prefHeight="45.0" prefWidth="57.0" text="CALL">
+                                    <Button fx:id="btnCall" maxWidth="-Infinity" mnemonicParsing="false" onAction="#callAction" prefHeight="45.0" prefWidth="52.0" text="CALL">
                                        <styleClass>
-                                          <String fx:value="general-button" />
-                                          <String fx:value="bold-general-text-font" />
+                                          <String fx:value="general-apuesta-button" />
+                                          <String fx:value="general-text-font" />
                                        </styleClass>
                                     </Button>
-                                    <Button fx:id="btnRaise" maxWidth="-Infinity" mnemonicParsing="false" onAction="#raiseAction" prefHeight="47.0" prefWidth="54.0" text="RAISE">
+                                    <Button fx:id="btnRaise" maxWidth="-Infinity" mnemonicParsing="false" onAction="#raiseAction" prefHeight="45.0" prefWidth="56.0" text="RAISE">
                                        <styleClass>
-                                          <String fx:value="general-button" />
-                                          <String fx:value="bold-general-text-font" />
+                                          <String fx:value="general-apuesta-button" />
+                                          <String fx:value="general-text-font" />
                                        </styleClass>
                                     </Button>
                                  </children>
                               </HBox>
-                              <HBox alignment="CENTER" maxHeight="-Infinity" prefHeight="70.0" prefWidth="289.0" spacing="3.0">
+                              <HBox alignment="CENTER" maxHeight="-Infinity" prefHeight="70.0" prefWidth="314.0" spacing="3.0">
                                  <children>
-                                    <Label fx:id="labelMoney" prefHeight="50.0" prefWidth="101.0" text="1000000">
+                                    <Label fx:id="labelMoney" prefHeight="50.0" prefWidth="70.0" text="1000000">
                                        <styleClass>
-                                          <String fx:value="semi-oval-pane" />
+                                          <String fx:value="username-label" />
                                           <String fx:value="bold-general-text-font" />
+                                          <String fx:value="apueseta-text-size" />
                                        </styleClass>
                                     </Label>
-                                    <Button fx:id="btnDecreaseMoney" maxWidth="-Infinity" mnemonicParsing="false" onAction="#decreaseMoneyAction" prefHeight="39.0" prefWidth="39.0" text="-">
+                                    <Button fx:id="btnDecreaseMoney" maxWidth="-Infinity" mnemonicParsing="false" onAction="#decreaseMoneyAction" prefHeight="38.0" prefWidth="38.0" text="-">
                                        <styleClass>
                                           <String fx:value="semi-oval-pane" />
                                           <String fx:value="general-button" />
                                           <String fx:value="super-bold-general-text-font" />
                                        </styleClass>
                                     </Button>
-                                    <Slider fx:id="sliderMoney" />
-                                    <Button fx:id="btnIncreaseMoney" maxWidth="-Infinity" mnemonicParsing="false" onAction="#increaseMoneyAction" prefHeight="39.0" prefWidth="39.0" text="+">
+                                    <Slider fx:id="sliderMoney" prefHeight="20.0" prefWidth="139.0" />
+                                    <Button fx:id="btnIncreaseMoney" maxWidth="-Infinity" mnemonicParsing="false" onAction="#increaseMoneyAction" prefHeight="38.0" prefWidth="38.0" text="+">
                                        <styleClass>
                                           <String fx:value="semi-oval-pane" />
                                           <String fx:value="general-button" />
@@ -214,6 +218,9 @@
                      </bottom>
                   </BorderPane>
                </children>
+               <HBox.margin>
+                  <Insets right="20.0" />
+               </HBox.margin>
             </VBox>
          </children>
       </HBox>
