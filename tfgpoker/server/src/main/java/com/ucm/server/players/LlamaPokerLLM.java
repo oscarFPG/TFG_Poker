@@ -1,7 +1,6 @@
 package com.ucm.server.players;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -14,13 +13,8 @@ import java.util.regex.Pattern;
 import org.json.JSONObject;
 
 import com.ucm.common.gameobjects.Card;
-import com.ucm.common.gameobjects.PlayerRole;
-import com.ucm.server.commands.Command;
 import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.gameobjects.BotLLM;
-import com.ucm.server.gameobjects.Player;
-import com.ucm.server.interfaces.IPokerPlayer;
-import com.ucm.server.middleclasses.CommandResult;
 
 
 
@@ -31,29 +25,13 @@ public class LlamaPokerLLM extends BotLLM {
 
     public LlamaPokerLLM(int id, int money) {
         super(id, "LlamaPoker", money);
-        this.money = money;
     }
-
-    // -------------------------------------METODOS COMUNES PARA TODOS LOS BOTS------------------------------------------------
 
     @Override
     public String getDescription() {
         return "Llama Poker LLM (Ollama)";
     }
 
-    @Override
-    public String notifyMakePlay(int sb, int bb, int maxBet) {
-        this.smallBlind = sb;
-        this.bigBlind = bb;
-        String prompt = buildPrompt(maxBet);
-        String response = callModel(prompt);
-        System.out.println("PROMPT:\n" + prompt);
-        String action = extractAction(response);
-        return sanitize(action);
-    }  
-
-    // ---------------------------------------------METODOS PERSOLANIZADOS PARA ESTE BOT------------------------------------------------
-   
 
     // VA MAS LENTO PERO ACIERTA MAS
     protected String buildPrompt(int maxBet) {
@@ -65,8 +43,8 @@ public class LlamaPokerLLM extends BotLLM {
 
         sb.append("Here is a game summary:\n\n");
 
-        sb.append("The small blind is ").append(smallBlind / 2.0)
-          .append(" chips and the big blind is ").append(bigBlind)
+        sb.append("The small blind is ").append(_smallBlind / 2.0)
+          .append(" chips and the big blind is ").append(_bigBlind)
           .append(" chips. Everyone started with 100 chips.\n");
 
         sb.append("The player positions involved in this game are UTG, HJ, CO, BTN, SB, BB.\n");
@@ -108,7 +86,7 @@ public class LlamaPokerLLM extends BotLLM {
         sb.append("\nNow it is your turn to make a move.\n");
 
         sb.append("To remind you, the current pot size is ")
-          .append(estimatePot())
+          .append(_totalPot)
           .append(" chips, and your holding is ")
           .append(formatCardsVerbose(hand))
           .append(".\n\n");
@@ -119,8 +97,6 @@ public class LlamaPokerLLM extends BotLLM {
 
         return sb.toString();
     }
-
-
 
     // VA MAS RAPIDO PERO ACIERTA CON MENOS FRECUENCIA 
     private String reducedPrompt(int maxBet) {
@@ -138,9 +114,9 @@ public class LlamaPokerLLM extends BotLLM {
             sb.append("Board: ").append(formatCardsVerbose(table)).append("\n");
         }
 
-        sb.append("Stack: ").append(money).append("\n");
-        sb.append("Pot: ").append(estimatePot()).append("\n");
-        sb.append("Blinds: ").append(smallBlind / 2.0).append("/").append(bigBlind).append("\n\n");
+        sb.append("Stack: ").append( getMoneyOffBet() ).append("\n");
+        sb.append("Pot: ").append(_totalPot).append("\n");
+        sb.append("Blinds: ").append(_smallBlind / 2.0).append("/").append(_bigBlind).append("\n\n");
 
         sb.append("Action history: ").append(getPreflopHistory()).append(".\n");
         sb.append("Assume that all other players that is not mentioned folded.\n\n");
@@ -202,7 +178,6 @@ public class LlamaPokerLLM extends BotLLM {
         return String.join(", ", parts);
     }
 
-   
     private String getPreflopHistory() {
         return actionHistory.isEmpty() ? "None" : String.join(", ", actionHistory);
     }
@@ -255,12 +230,6 @@ public class LlamaPokerLLM extends BotLLM {
         return "fold";
     }
 
-
-	@Override
-	public Bot create(int ID, int initialMoney) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'create'");
-	}
 
     @Override
     protected String callModel(String prompt) {
@@ -328,5 +297,10 @@ public class LlamaPokerLLM extends BotLLM {
             return "<action>fold</action>";
         }
     }
+
+    @Override
+	public Bot create(int ID, int initialMoney) {
+		return new LlamaPokerLLM(ID, initialMoney);
+	}
 
 }

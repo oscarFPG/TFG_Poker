@@ -1,24 +1,13 @@
 package com.ucm.server.players;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import com.ucm.common.gameobjects.Card;
-import com.ucm.common.gameobjects.PlayerRole;
-import com.ucm.server.commands.Command;
 import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.gameobjects.BotLLM;
-import com.ucm.server.gameobjects.Player;
-import com.ucm.server.interfaces.IPokerPlayer;
-import com.ucm.server.middleclasses.CommandResult;
 
 
 public class QwenPokerLLM extends BotLLM {
@@ -30,7 +19,6 @@ public class QwenPokerLLM extends BotLLM {
 
     public QwenPokerLLM(int id, int money) {
         super(id, "QwenPoker", money);
-        this.money = money;
     }
 
 
@@ -40,9 +28,10 @@ public class QwenPokerLLM extends BotLLM {
     }
 
 
-    private String buildPrompt(int maxBet) {
+    @Override
+    protected String buildPrompt() {
+
         return """
-        You are an expert Texas Hold'em poker player.
 
         Game state:
         - Role: %s
@@ -56,34 +45,16 @@ public class QwenPokerLLM extends BotLLM {
         Respond EXACTLY in this format:
         <think>your reasoning</think>
         <action>fold/call/raise X/all-in</action>
-        """.formatted(_role, hand, table, money, smallBlind, bigBlind, maxBet);
-    }
-
-
-    @Override
-    protected String sanitize(String action) {
-
-        action = action.toLowerCase();
-
-        if (action.contains("fold")) return "fold";
-        if (action.contains("call")) return "call";
-        if (action.contains("all-in")) return "all-in";
-
-        if (action.contains("raise")) {
-            return action;
-        }
-
-        return "fold";
-    }
-
-    
-    @Override
-    public String notifyMakePlay(int sb, int bb, int maxBet) {
-
-        String prompt = buildPrompt(maxBet);
-        String response = callModel(prompt);
-        String action = extractAction(response);
-        return sanitize(action);
+        """
+        .formatted(
+            _role, 
+            hand, 
+            table, 
+            getMoneyOffBet(), 
+            _smallBlind, 
+            _bigBlind, 
+            _maxBet
+        );
     }
 
     @Override
@@ -128,6 +99,22 @@ public class QwenPokerLLM extends BotLLM {
             e.printStackTrace();
             return "<action>fold</action>";
         }
+    }
+
+    @Override
+    protected String sanitize(String action) {
+
+        action = action.toLowerCase();
+
+        if (action.contains("fold")) return "fold";
+        if (action.contains("call")) return "call";
+        if (action.contains("all-in")) return "all-in";
+
+        if (action.contains("raise")) {
+            return action;
+        }
+
+        return "fold";
     }
 
 

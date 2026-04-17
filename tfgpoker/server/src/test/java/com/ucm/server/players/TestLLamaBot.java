@@ -1,6 +1,8 @@
 package com.ucm.server.players;
 
 
+import org.junit.jupiter.api.Test;
+
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.common.gameobjects.Suit;
@@ -8,7 +10,17 @@ import com.ucm.common.gameobjects.Suit;
 
 public class TestLLamaBot {
 
-    public static void main(String[] args) {
+    private static final int INIT_MONEY = 1000;
+
+    @Test
+    private void testPromptBasic_2Players() {
+
+        LlamaPokerLLM llama = new LlamaPokerLLM(0, INIT_MONEY);
+
+    }
+
+    //@Test
+    private void testFullPrompt() {
 
         LlamaPokerLLM bot = new LlamaPokerLLM(1, 100);
 
@@ -107,4 +119,5 @@ public class TestLLamaBot {
         bot.notifyHandEnded();
         
     }
+
 }

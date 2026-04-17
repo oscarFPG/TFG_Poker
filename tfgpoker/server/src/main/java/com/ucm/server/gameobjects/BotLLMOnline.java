@@ -70,7 +70,6 @@ public abstract class BotLLMOnline extends BotLLM {
      */
     public BotLLMOnline(int id, String name, int money) {
         super(id, name, money);
-        this.money = money;
         _credentialKey = getCredentialKey();
         _apiKey = loadApiKey();
     }

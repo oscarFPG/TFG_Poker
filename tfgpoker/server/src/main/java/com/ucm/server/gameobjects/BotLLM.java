@@ -54,19 +54,24 @@ public abstract class BotLLM extends Bot {
     protected List<String> actionHistory = new ArrayList<>();
 
     /**
-     * Current amount of money available.
-     */
-    protected int money;
-
-    /**
      * Small blind value.
      */
-    protected int smallBlind;
+    protected int _smallBlind;
 
     /**
      * Big blind value.
      */
-    protected int bigBlind;
+    protected int _bigBlind;
+
+    /**
+     * Max bet in the current hand
+     */
+    protected int _maxBet;
+
+    /**
+     * Total pot in the table
+     */
+    protected int _totalPot;
 
     /**
      * Estimated probability of winning the hand.
@@ -98,8 +103,12 @@ public abstract class BotLLM extends Bot {
      * Determines the action to take using the LLM.
      * 
      * <p>
-     * The method builds a prompt, sends it to the model, extracts the action
-     * from the response and sanitizes it to ensure validity.
+     * THis method performs the next actions in order:
+     * 1 - Buids the full prompt with all the info necessary: previous player actions, total pot, own cards, equity, etc...
+     * 2 - Calls the model to send the prompt
+     * 3 - Extract the action that the model is trying to perform
+     * 4 - Sanitize the output if necessary to return the command in the expected format(e.g: "call", "all-in", "raise <amount>", etc...)
+     * 5 - Returns the final action
      * </p>
      * 
      * @param sb     small blind amount
@@ -108,10 +117,11 @@ public abstract class BotLLM extends Bot {
      * @return sanitized poker action (fold, call, check or raise X)
      */
     @Override
-    public String notifyMakePlay(int sb, int bb, int maxBet) {
+    public final String notifyMakePlay(int sb, int bb, int maxBet) {
 
-        this.smallBlind = sb;
-        this.bigBlind = bb;
+        _smallBlind = sb;
+        _bigBlind = bb;
+        _maxBet = maxBet;
 
         String prompt = buildPrompt();
         String response = callModel(prompt);
@@ -133,10 +143,6 @@ public abstract class BotLLM extends Bot {
      * @return raw response from the model
      */
     protected abstract String callModel(String prompt);
-
-    
-
-    // ---------------------- PROMPT ----------------------
 
     /**
      * Builds the prompt sent to the LLM.
@@ -186,13 +192,26 @@ public abstract class BotLLM extends Bot {
                 mapRole(_role),
                 formatCards(hand),
                 table.isEmpty() ? "[]" : formatCards(table),
-                money,
-                estimatePot(),
-                smallBlind / 2.0,
-                bigBlind,
+                getMoneyOffBet(),
+                _totalPot,
+                _smallBlind / 2.0,
+                _bigBlind,
                 getHistory(),
                 _equity
         );
+    }
+
+
+    /**
+     * Extracts the action from the LLM response using XML-like tags.
+     * 
+     * @param text raw response from the model
+     * @return extracted action or "fold" if not found
+     */
+    protected String extractAction(String text) {
+        Pattern p = Pattern.compile("<action>(.*?)</action>", Pattern.DOTALL);
+        Matcher m = p.matcher(text);
+        return m.find() ? m.group(1).trim() : "fold";
     }
 
     /**
@@ -231,13 +250,15 @@ public abstract class BotLLM extends Bot {
         return "fold";
     }
 
+
+
     /**
      * Formats a list of cards into a string representation.
      * 
      * @param cards list of {@link Card}
      * @return formatted string (e.g., [Ah, Kd])
      */
-    protected String formatCards(List<Card> cards) {
+    protected final String formatCards(List<Card> cards) {
 
         List<String> result = new ArrayList<>();
         for (Card c : cards)
@@ -251,26 +272,8 @@ public abstract class BotLLM extends Bot {
      * 
      * @return {@link String} with all actions or "None" if empty
      */
-    protected String getHistory() {
+    protected final String getHistory() {
         return actionHistory.isEmpty() ? "None" : String.join(", ", actionHistory);
-    }
-
-    /**
-     * Estimates the current pot size based on blinds and action history.
-     * 
-     * @return estimated pot size
-     */
-    protected int estimatePot() {
-        int pot = smallBlind + bigBlind;
-
-        for (String action : actionHistory) {
-            String[] parts = action.split(" ");
-            try {
-                pot += Double.parseDouble(parts[parts.length - 1]);
-            } catch (Exception ignored) {}
-        }
-
-        return pot;
     }
 
     /**
@@ -279,7 +282,7 @@ public abstract class BotLLM extends Bot {
      * @param role player role
      * @return position string (BTN, SB, BB, UTG, etc.)
      */
-    protected String mapRole(PlayerRole role) {
+    protected final String mapRole(PlayerRole role) {
         return switch (role) {
             case DEALER -> "BTN";
             case SMALL_BLIND -> "SB";
@@ -292,36 +295,23 @@ public abstract class BotLLM extends Bot {
         };
     }
 
-    /**
-     * Extracts the action from the LLM response using XML-like tags.
-     * 
-     * @param text raw response from the model
-     * @return extracted action or "fold" if not found
-     */
-    protected String extractAction(String text) {
-        Pattern p = Pattern.compile("<action>(.*?)</action>", Pattern.DOTALL);
-        Matcher m = p.matcher(text);
-        return m.find() ? m.group(1).trim() : "fold";
-    }
+    
 
+    @Override
+    public void notifyPlayerCard(Card c) { hand.add(c); }
 
-    @Override public void notifyPlayerCard(Card c) { hand.add(c); }
+    @Override
+    public void notifyTableCard(Card c) { table.add(c); }
 
-    @Override public void notifyTableCard(Card c) { table.add(c); }
+    @Override
+    public void notifySmallBlindBet(int amount) { _smallBlind = amount; }
 
-    @Override public void notifySmallBlindBet(int amount) { smallBlind = amount; }
+    @Override
+    public void notifyBigBlindBet(int amount) { _bigBlind = amount; }
 
-    @Override public void notifyBigBlindBet(int amount) { bigBlind = amount; }
+    @Override
+    public void notifyPlayerRole(PlayerRole role) { _role = role; }
 
-    @Override public void notifyPlayerRole(PlayerRole role) { _role = role; }
-
-    /**
-     * Registers an action performed by another player.
-     * 
-     * @param role   player's role
-     * @param action action performed
-     * @param amount associated amount (if applicable)
-     */
     @Override
     public void notifyOtherPlayerAction(IPokerPlayer p) throws IOException {
 
@@ -336,7 +326,7 @@ public abstract class BotLLM extends Bot {
 
     @Override
     public void notifyTotalPot(int total) throws IOException {
-        // TODO : Notificar el total del pot para mostrarlo en el prompt
+        _totalPot = total;
     }
 
     /**
@@ -351,12 +341,12 @@ public abstract class BotLLM extends Bot {
 
     @Override
     public void notifyOwnState() throws IOException {
-        
+        // TODO
     }
 
     @Override
     public void notifyOtherPlayerState(IPokerPlayer player, boolean isLast) throws IOException {
-
+        // TODO
     }
 
     /**
@@ -376,6 +366,5 @@ public abstract class BotLLM extends Bot {
     @Override public void notifyGameWinner() throws IOException {}
     @Override public void notifyGameLoser() throws IOException {}
     @Override public void notifyHandEndsByFolds() throws IOException {}
-
 
 }

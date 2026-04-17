@@ -99,6 +99,14 @@ public abstract class Player implements IPokerPlayer {
      */
     protected boolean _isEliminated;
 
+    /**
+     * Represents the player's equity in the current hand
+     */
+    protected double _equity;
+
+    /**
+     * Stores the last command executed by the player. Can be "call", "raise <amount>", "fold", "check", "small-blind", "big-blind", "all-in" or "none"
+     */
     protected String _lastCommand;
 
 
@@ -128,6 +136,7 @@ public abstract class Player implements IPokerPlayer {
         _isWinner = false;
         _isAllIn = false;
         _isEliminated = false;
+        _equity = 0;
         _lastCommand = "none";
     }
 

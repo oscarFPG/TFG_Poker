@@ -28,6 +28,7 @@ public abstract class Bot extends Player {
 
     protected int _idBot;
 
+
     /**
      * Default constructor.
      */
@@ -47,13 +48,17 @@ public abstract class Bot extends Player {
     }
 
 
+    public int getIdBot() {
+        return _idBot;
+    }
+
     /**
      * Returns a full description of the bot, including its name and behavior.
      * 
      * @return {@link String} in the format "name : description"
      */
     public String getFullDescription() {
-        return this.getPlayerName() + " : " + this.getDescription();
+        return getPlayerName() + " : " + getDescription();
     }
 
     /**
@@ -63,10 +68,6 @@ public abstract class Bot extends Player {
      */
     public abstract String getDescription();
     
-    public int getIdBot() {
-        return _idBot;
-    }
-
 
     /** 
      * Creates a specific instance of any kind of bot implementation with and ID and initial money
