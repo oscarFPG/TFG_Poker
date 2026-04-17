@@ -707,9 +707,6 @@ public class InGameWindowController extends GenericController {
 				System.out.printf("Wait for the other players to play...\n");
                 Platform.runLater(() -> {
                     buttonsHolder.setVisible(false);
-                    if(role == PlayerRole.DEALER)  {
-                        GUI_putDealerButton(_clientInfo.id);
-                    }
                 });
 
 			}
@@ -737,6 +734,10 @@ public class InGameWindowController extends GenericController {
                     sliderMoney.setMajorTickUnit( sliderStep );
                     sliderMoney.setMin( (double)maxBet );
                     sliderMoney.setMax( (double)(offBetMoney + onBetMoney)  );
+                    
+                    if(role == PlayerRole.DEALER)  {
+                        GUI_putDealerButton(_clientInfo.id);
+                    }
                 });
 
                 selectCommand(socket, sb, bb, maxBet, offBetMoney, onBetMoney);
@@ -752,9 +753,6 @@ public class InGameWindowController extends GenericController {
                     }
                     else {
                         GUI_putPlayerBet(_clientInfo.id, newOnBetMoney, newOffBetMoney);
-                        if(role == PlayerRole.DEALER)  {
-                            GUI_putDealerButton(_clientInfo.id);
-                        }
                     }
 
                     buttonsHolder.setVisible(false);
