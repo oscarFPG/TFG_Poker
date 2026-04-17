@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.Suit;
 import com.ucm.server.logic.Game;
+
 
 /**
  * This class is the responsible of managing all the {@link Card} objects of the
@@ -19,7 +17,7 @@ import com.ucm.server.logic.Game;
  */
 public class Deck {
 
-    private static final Logger log = LogManager.getLogger(Deck.class);
+
     private static final int DEBUG_SEED = 123;
 
     /**

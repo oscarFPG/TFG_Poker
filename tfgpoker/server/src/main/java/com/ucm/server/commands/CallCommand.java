@@ -1,9 +1,6 @@
 package com.ucm.server.commands;
 
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.ucm.common.GameType;
 import com.ucm.server.interfaces.IPlayerActions;
 import com.ucm.server.middleclasses.CommandResult;
@@ -14,8 +11,6 @@ import com.ucm.server.middleclasses.CommandResult;
  * Class that represents the Call command, which is used when a player wants to call the current bet.
  */
 public class CallCommand extends Command {
-
-    private static final Logger log = LogManager.getLogger(CallCommand.class);
 
 
     public CallCommand() {}

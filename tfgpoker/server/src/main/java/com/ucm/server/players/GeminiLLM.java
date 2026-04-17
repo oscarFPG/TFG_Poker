@@ -1,6 +1,5 @@
 package com.ucm.server.players;
 
-import java.io.IOException;
 
 import com.ucm.common.GameType;
 import com.ucm.server.gameobjects.Bot;

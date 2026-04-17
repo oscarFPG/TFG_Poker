@@ -3,8 +3,6 @@ package com.ucm.server.commands;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import com.ucm.server.interfaces.IPlayerActions;
 import com.ucm.server.middleclasses.CommandResult;
@@ -20,8 +18,6 @@ import com.ucm.server.middleclasses.CommandResult;
  * perform the corresponding actions in the game.
  */
 public abstract class Command {
-
-    private static final Logger log = LogManager.getLogger(Command.class);
 
     protected IPlayerActions _player;
     protected int _playersOffBetMoney;

@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 import com.ucm.server.control.Controller;
 import com.ucm.server.exceptions.EvaluatorException;
 import com.ucm.server.logic.Game;
-import com.ucm.server.logic.Timer;
 import com.ucm.common.BotStruct;
 import com.ucm.common.ClientStruct;
 import com.ucm.common.GameConfig;
