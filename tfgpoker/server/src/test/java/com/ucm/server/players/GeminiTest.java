@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.ServerMain;
+import com.ucm.server.gameobjects.Player;
 
 
 
@@ -23,11 +24,14 @@ public class GeminiTest {
                                 .getResourceAsStream("credentials.json");
 
             
-            GeminiLLM geminiLLM = new GeminiLLM(0, 1000);
-            geminiLLM.receiveRole(PlayerRole.DEALER);
-            String response = geminiLLM.notifyMakePlay(0, 0, 0);
+            GeminiLLM geminiLLM = new GeminiLLM();
+            Player player = new Player(0, "Gemini", 1000, geminiLLM);
+
+            player.receiveRole(PlayerRole.DEALER);
+            String response = player.makePlay(1, 2, 2);
 
             System.out.printf("Gemini response: %s\n", response);
+            
             assertEquals(true, true);
         }
         catch(Exception e) {

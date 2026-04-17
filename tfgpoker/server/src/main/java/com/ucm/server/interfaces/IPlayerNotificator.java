@@ -1,14 +1,13 @@
 package com.ucm.server.interfaces;
 
 import java.io.IOException;
-import java.util.List;
 
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 
 
 
-public interface IPokerNotification {
+public interface IPlayerNotificator {
 
     /**
      * Determines the action to take during the player's turn.
@@ -18,21 +17,21 @@ public interface IPokerNotification {
      * @param maxBet current maximum bet
      * @return {@link String} representing the chosen action
      */
-    public String notifyMakePlay(final int sb, final int bb, final int maxBet) throws IOException;
+    public String notifyMakePlay(final int sb, final int bb, final int maxBet, IPlayerInfo player) throws IOException;
 
     /**
      * Notifies the player the small blind bet made automatically made by him
      * 
      *  @param amount small blind amount 
      */
-    public void notifySmallBlindBet(final int amount) throws IOException;
+    public void notifySmallBlindBet(final int amount, IPlayerInfo player) throws IOException;
 
     /**
      * Notifies the player the big blind bet made automatically made by him
      * 
      *  @param amount big blind amount 
      */
-    public void notifyBigBlindBet(final int amount) throws IOException;
+    public void notifyBigBlindBet(final int amount, IPlayerInfo player) throws IOException;
 
     /**
      * Notifies the player about their assigned role in the game (e.g., dealer, small blind, big blind)
@@ -68,13 +67,13 @@ public interface IPokerNotification {
      * @param p the player performing the action
      * @throws IOException
      */
-    public void notifyOtherPlayerAction(IPokerPlayer p) throws IOException;
+    public void notifyOtherPlayerAction(IPlayerInfo other) throws IOException;
 
     /**
      * Notifies the player about their state after performing an action (e.g., after betting, calling, folding, etc.)
      * @throws IOException
      */
-    public void notifyOwnState() throws IOException;
+    public void notifyOwnState(IPlayerInfo player) throws IOException;
 
     /**
      * Notifies the player about their current state in the game. 
@@ -83,7 +82,7 @@ public interface IPokerNotification {
      * @param isLast indicates if this is the last player sent
      * @throws IOException
      */
-    public void notifyOtherPlayerState(IPokerPlayer player, boolean isLast) throws IOException;
+    public void notifyOtherPlayerState(IPlayerInfo other, boolean isLast) throws IOException;
 
     /**
      * Notifies the player that it's other player's turn to play

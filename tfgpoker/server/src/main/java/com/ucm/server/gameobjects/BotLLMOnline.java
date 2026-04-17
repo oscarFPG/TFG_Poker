@@ -1,16 +1,11 @@
 package com.ucm.server.gameobjects;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ucm.common.gameobjects.Card;
-import com.ucm.common.gameobjects.PlayerRole;
+
 
 /**
  * Abstract class that represents an online LLM-based poker bot.
@@ -58,24 +53,13 @@ public abstract class BotLLMOnline extends BotLLM {
     /**
      * Default empty constructor
      */
-    public BotLLMOnline() {}
-
-    /**
-     * Constructs an online LLM bot.
-     * 
-     * @param id     player identifier
-     * @param name   player name
-     * @param money  initial stack
-     * @param apiKey API key used to access the LLM provider
-     */
-    public BotLLMOnline(int id, String name, int money) {
-        super(id, name, money);
+    public BotLLMOnline(int botID) {
+        super(botID);
         _credentialKey = getCredentialKey();
         _apiKey = loadApiKey();
     }
 
    
-
     /**
      * Loads the API key from a {@code credentials.json} file.
      * 

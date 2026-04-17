@@ -17,6 +17,7 @@ import com.ucm.server.evaluator.Evaluator;
 import com.ucm.server.exceptions.EvaluatorException;
 import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.gameobjects.Deck;
+import com.ucm.server.gameobjects.Player;
 import com.ucm.server.managers.BotManager;
 import com.ucm.server.middleclasses.HandInfo;
 import com.ucm.server.middleclasses.PlayerEvaluation;
@@ -198,14 +199,15 @@ public class Game {
 
         int id = 0;
         for(ClientStruct cs : players) {
-            _playerList.addPlayer( new HumanPlayer(id, cs.name(), cs.socket(), config._initialMoney) );
+            HumanPlayer hp = new HumanPlayer(cs.socket());
+            _playerList.addPlayer( new Player(id, cs.name(), config._initialMoney, hp) );
             ++id;
         }
 
         for(BotStruct bs : bots) {
             Bot bot = BotManager.createBot( bs.botId() );
-            Bot specificBot = bot.create(id, config._initialMoney);
-            _playerList.addPlayer(specificBot);
+            Bot specificBot = bot.create();
+            _playerList.addPlayer( new Player(id, bs.botName(), config._initialMoney, specificBot) );
         }
     }
 

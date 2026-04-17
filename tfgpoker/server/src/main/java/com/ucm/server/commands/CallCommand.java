@@ -5,7 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ucm.common.GameType;
-import com.ucm.server.interfaces.IPokerActions;
+import com.ucm.server.interfaces.IPlayerActions;
 import com.ucm.server.middleclasses.CommandResult;
 
 
@@ -26,12 +26,12 @@ public class CallCommand extends Command {
      * @param money the total amount of money that the player has not bet yet.
      * @param pocketMoney the amount of money that the player has already bet in the current hand.
      */
-    public CallCommand(IPokerActions p) {
+    public CallCommand(IPlayerActions p) {
         super(p);
     }
 
 	@Override
-	protected Command createCommand(final String[] commandFormat, final IPokerActions player){
+	protected Command createCommand(final String[] commandFormat, final IPlayerActions player){
 		return new CallCommand(player);
 	}
 

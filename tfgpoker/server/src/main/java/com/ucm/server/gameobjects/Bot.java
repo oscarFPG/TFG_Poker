@@ -1,5 +1,7 @@
 package com.ucm.server.gameobjects;
 
+import com.ucm.server.interfaces.IPlayerNotificator;
+
 /**
  * Abstract class that represents an automated poker player (bot).
  * 
@@ -24,42 +26,36 @@ package com.ucm.server.gameobjects;
  * @see Player
  * @see BotLLM
  */
-public abstract class Bot extends Player {
+public abstract class Bot implements IPlayerNotificator {
 
-    protected int _idBot;
+    /**
+     * Unique identifier for the bot, used to distinguish it from other bots.
+     */
+    private int _botID;
+
 
 
     /**
-     * Default constructor.
+     * Constructs a bot with a given identifier.
+      *
+     * @param botID unique identifier for the bot
      */
-    public Bot() {
-        super();
-    }
-    
-    /**
-     * Constructs a bot with an identifier, name and initial money.
-     * 
-     * @param id    player identifier
-     * @param name  bot name
-     * @param money initial stack
-     */
-    public Bot(int id, String name, int money) {
-        super(id, name, money);
+    public Bot(final int botID) {
+        _botID = botID;
     }
 
 
     public int getIdBot() {
-        return _idBot;
+        return _botID;
     }
+
 
     /**
      * Returns a full description of the bot, including its name and behavior.
      * 
      * @return {@link String} in the format "name : description"
      */
-    public String getFullDescription() {
-        return getPlayerName() + " : " + getDescription();
-    }
+    public abstract String getFullDescription();
 
     /**
      * Returns a textual description of the bot's behavior or strategy.
@@ -68,12 +64,12 @@ public abstract class Bot extends Player {
      */
     public abstract String getDescription();
     
-
     /** 
      * Creates a specific instance of any kind of bot implementation with and ID and initial money
      * @param ID player identifier
      * @param initialMoney initial stack
      * @return a new instance of a bot ready to play
     */
-    public abstract Bot create(final int ID, final int initialMoney);
+    public abstract Bot create();
+    
 }

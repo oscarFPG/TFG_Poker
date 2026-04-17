@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 import com.ucm.common.GameType;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
-import com.ucm.server.interfaces.IPokerPlayer;
+import com.ucm.server.interfaces.IPlayerInfo;
 
 /**
  * Abstract class that represents a poker bot powered by a Large Language Model (LLM).
@@ -38,6 +38,7 @@ import com.ucm.server.interfaces.IPokerPlayer;
  */
 public abstract class BotLLM extends Bot {
 
+
     /**
      * Player's private hand cards.
      */
@@ -64,6 +65,11 @@ public abstract class BotLLM extends Bot {
     protected int _bigBlind;
 
     /**
+     * Player's role/position in the current hand.
+     */
+    protected PlayerRole _role;
+
+    /**
      * Max bet in the current hand
      */
     protected int _maxBet;
@@ -80,57 +86,15 @@ public abstract class BotLLM extends Bot {
 
 
     /**
-     * Default LLM constructor
-     */
-    public BotLLM() {
-        super();
-    }
-
-    /**
-     * Constructs an LLM-based bot with basic configuration
+     * Default constructor.
      * 
-     * @param id     player identifier
-     * @param name   player name
-     * @param money  initial stack
-     * @param apiKey API key for the LLM provider
+     * @param botID unique identifier for the bot
      */
-    public BotLLM(int id, String name, int money) {
-        super(id, name, money);
+    public BotLLM(int botID) {
+        super(botID);
     }
+ 
 
-
-    /**
-     * Determines the action to take using the LLM.
-     * 
-     * <p>
-     * THis method performs the next actions in order:
-     * 1 - Buids the full prompt with all the info necessary: previous player actions, total pot, own cards, equity, etc...
-     * 2 - Calls the model to send the prompt
-     * 3 - Extract the action that the model is trying to perform
-     * 4 - Sanitize the output if necessary to return the command in the expected format(e.g: "call", "all-in", "raise <amount>", etc...)
-     * 5 - Returns the final action
-     * </p>
-     * 
-     * @param sb     small blind amount
-     * @param bb     big blind amount
-     * @param maxBet current maximum bet
-     * @return sanitized poker action (fold, call, check or raise X)
-     */
-    @Override
-    public final String notifyMakePlay(int sb, int bb, int maxBet) {
-
-        _smallBlind = sb;
-        _bigBlind = bb;
-        _maxBet = maxBet;
-
-        String prompt = buildPrompt();
-        String response = callModel(prompt);
-        String action = extractAction(response);
-        String sanitized = sanitize(action);
-
-        return sanitized;
-    }
-    
     /**
      * Calls the external LLM with the given prompt.
      * 
@@ -144,6 +108,7 @@ public abstract class BotLLM extends Bot {
      */
     protected abstract String callModel(String prompt);
 
+
     /**
      * Builds the prompt sent to the LLM.
      * 
@@ -154,7 +119,7 @@ public abstract class BotLLM extends Bot {
      * 
      * @return {@link String} prompt ready to be sent to the model
      */
-    protected String buildPrompt() {
+    protected String buildPrompt(IPlayerInfo player, int sb, int bb, int maxBet) {
         return String.format("""
             You are an expert No Limit Texas Hold'em player.
 
@@ -189,10 +154,10 @@ public abstract class BotLLM extends Bot {
             <action>check</action>
             <action>raise AMOUNT</action>
             """,
-                mapRole(_role),
+                mapRole( player.getRole() ),
                 formatCards(hand),
                 table.isEmpty() ? "[]" : formatCards(table),
-                getMoneyOffBet(),
+                player.getMoneyOffBet(),
                 _totalPot,
                 _smallBlind / 2.0,
                 _bigBlind,
@@ -200,7 +165,6 @@ public abstract class BotLLM extends Bot {
                 _equity
         );
     }
-
 
     /**
      * Extracts the action from the LLM response using XML-like tags.
@@ -251,14 +215,13 @@ public abstract class BotLLM extends Bot {
     }
 
 
-
     /**
      * Formats a list of cards into a string representation.
      * 
      * @param cards list of {@link Card}
      * @return formatted string (e.g., [Ah, Kd])
      */
-    protected final String formatCards(List<Card> cards) {
+    protected String formatCards(List<Card> cards) {
 
         List<String> result = new ArrayList<>();
         for (Card c : cards)
@@ -272,7 +235,7 @@ public abstract class BotLLM extends Bot {
      * 
      * @return {@link String} with all actions or "None" if empty
      */
-    protected final String getHistory() {
+    protected String getHistory() {
         return actionHistory.isEmpty() ? "None" : String.join(", ", actionHistory);
     }
 
@@ -282,7 +245,7 @@ public abstract class BotLLM extends Bot {
      * @param role player role
      * @return position string (BTN, SB, BB, UTG, etc.)
      */
-    protected final String mapRole(PlayerRole role) {
+    protected String mapRole(PlayerRole role) {
         return switch (role) {
             case DEALER -> "BTN";
             case SMALL_BLIND -> "SB";
@@ -295,33 +258,62 @@ public abstract class BotLLM extends Bot {
         };
     }
 
-    
+
+    /**
+     * Determines the action to take using the LLM.
+     * 
+     * <p>
+     * THis method performs the next actions in order:
+     * 1 - Buids the full prompt with all the info necessary: previous player actions, total pot, own cards, equity, etc...
+     * 2 - Calls the model to send the prompt
+     * 3 - Extract the action that the model is trying to perform
+     * 4 - Sanitize the output if necessary to return the command in the expected format(e.g: "call", "all-in", "raise <amount>", etc...)
+     * 5 - Returns the final action
+     * </p>
+     * 
+     * @param sb     small blind amount
+     * @param bb     big blind amount
+     * @param maxBet current maximum bet
+     * @return sanitized poker action (fold, call, check or raise X)
+     */
+    @Override
+    public String notifyMakePlay(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException {
+        
+        _smallBlind = sb;
+        _bigBlind = bb;
+        _maxBet = maxBet;
+
+        String prompt = buildPrompt(player, sb, bb, maxBet);
+        String response = callModel(prompt);
+        String action = extractAction(response);
+        String sanitized = sanitize(action);
+
+        return sanitized;
+    }
 
     @Override
-    public void notifyPlayerCard(Card c) { hand.add(c); }
+    public void notifySmallBlindBet(int amount, IPlayerInfo player) throws IOException {
+        _smallBlind = amount;
+    }
 
     @Override
-    public void notifyTableCard(Card c) { table.add(c); }
+    public void notifyBigBlindBet(int amount, IPlayerInfo player) throws IOException {
+        _bigBlind = amount;
+    }
 
     @Override
-    public void notifySmallBlindBet(int amount) { _smallBlind = amount; }
+    public void notifyPlayerRole(PlayerRole role) throws IOException {
+        _role = role;
+    }
 
     @Override
-    public void notifyBigBlindBet(int amount) { _bigBlind = amount; }
+    public void notifyPlayerCard(Card c) throws IOException {
+        hand.add(c);
+    }
 
     @Override
-    public void notifyPlayerRole(PlayerRole role) { _role = role; }
-
-    @Override
-    public void notifyOtherPlayerAction(IPokerPlayer p) throws IOException {
-
-        String action = p.getLastCommand();
-        if(action.equals(GameType.RAISE_ACTION_FULL) || action.equals(GameType.ALL_IN_ACTION_FULL)) {
-            actionHistory.add( mapRole(p.getRole()) + " " + action + " " + p.getMoneyOnBet() );
-        }
-        else {
-            actionHistory.add( mapRole(p.getRole()) + " " + action );
-        }
+    public void notifyTableCard(Card c) throws IOException {
+        table.add(c);
     }
 
     @Override
@@ -329,42 +321,41 @@ public abstract class BotLLM extends Bot {
         _totalPot = total;
     }
 
-    /**
-     * Resets the internal state at the end of a hand.
-     */
     @Override
-    public void notifyHandEnded() {
-        hand.clear();
-        table.clear();
-        actionHistory.clear();
+    public void notifyOtherPlayerAction(IPlayerInfo other) throws IOException {
+        
+        String action = other.getLastCommand();
+        if(action.equals(GameType.RAISE_ACTION_FULL) || action.equals(GameType.ALL_IN_ACTION_FULL)) {
+            actionHistory.add( mapRole(other.getRole()) + " " + action + " " + other.getMoneyOnBet() );
+        }
+        else {
+            actionHistory.add( mapRole(other.getRole()) + " " + action );
+        }
     }
 
     @Override
-    public void notifyOwnState() throws IOException {
+    public void notifyOwnState(IPlayerInfo player) throws IOException {
         // TODO
     }
 
     @Override
-    public void notifyOtherPlayerState(IPokerPlayer player, boolean isLast) throws IOException {
+    public void notifyOtherPlayerState(IPlayerInfo other, boolean isLast) throws IOException {
         // TODO
     }
 
-    /**
-     * Updates the player's equity.
-     * 
-     * @param equity probability of winning
-     */
-    @Override public void notifyEquity(double equity) {
+    @Override
+    public void notifyEquity(double equity) throws IOException {
         _equity = equity; 
     }
 
     @Override public void notifyTurnWait() throws IOException {}
     @Override public void notifyTurnPlay() throws IOException {}
     @Override public void notifyRoundEnded() throws IOException {}
+    @Override public void notifyHandEnded() throws IOException {}
+    @Override public void notifyHandEndsByFolds() throws IOException {}
     @Override public void notifyGameEnded() throws IOException {}
     @Override public void notifyGameKeeps() throws IOException {}
     @Override public void notifyGameWinner() throws IOException {}
     @Override public void notifyGameLoser() throws IOException {}
-    @Override public void notifyHandEndsByFolds() throws IOException {}
-
+    
 }

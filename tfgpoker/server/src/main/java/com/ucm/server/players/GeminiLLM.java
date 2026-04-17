@@ -5,7 +5,6 @@ import java.io.IOException;
 import com.ucm.common.GameType;
 import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.gameobjects.BotLLMOnline;
-import com.ucm.server.interfaces.IPokerPlayer;
 
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
@@ -35,6 +34,8 @@ import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
  */
 public class GeminiLLM extends BotLLMOnline {
 
+    private static final int GEMINI_ID = GameType.BOT_GEMINI;
+
     /**
      * Chat model instance used to interact with Gemini.
      */
@@ -42,7 +43,7 @@ public class GeminiLLM extends BotLLMOnline {
 
 
     public GeminiLLM() {
-        _idBot = GameType.BOT_GEMINI;
+        super(GEMINI_ID);
     }
 
     /**
@@ -56,15 +57,15 @@ public class GeminiLLM extends BotLLMOnline {
      * @param money  initial stack
      * @param apiKey Gemini API key (optional)
      */
-    public GeminiLLM(int id, int money) {
-        super(id, "GeminiLLM", money);
-        _idBot = GameType.BOT_GEMINI;
+    public GeminiLLM(int id) {
+        super(GEMINI_ID);
 
         gemini = GoogleAiGeminiChatModel.builder()
                 .apiKey(_apiKey)
                 .modelName("gemini-2.5-flash")
                 .build();
     }
+
 
     /**
      * Sends the prompt to the Gemini model and returns its response.
@@ -93,12 +94,17 @@ public class GeminiLLM extends BotLLMOnline {
     }
 
 	@Override
-	public Bot create(int ID, int initialMoney) {
-		return new GeminiLLM(ID, initialMoney);
+	public Bot create() {
+		return new GeminiLLM();
 	}
     
     public static String getGenericName() {
         return "Gemini LLM";
+    }
+
+    @Override
+    public String getFullDescription() {
+        return "This is a LLM powered by Google's Gemini model";
     }
 
     

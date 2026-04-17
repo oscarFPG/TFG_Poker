@@ -12,10 +12,8 @@ import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.Suit;
 import com.ucm.server.ServerMain;
 import com.ucm.server.exceptions.EvaluatorException;
-import com.ucm.server.interfaces.IPokerPlayer;
 import com.ucm.server.middleclasses.HandInfo;
 import com.ucm.server.middleclasses.PlayerEvaluation;
-import com.ucm.server.players.HumanPlayer;
 
 /**
  * Utility class responsible for evaluating poker hands.

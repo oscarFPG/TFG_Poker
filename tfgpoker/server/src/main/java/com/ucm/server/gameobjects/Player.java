@@ -1,11 +1,14 @@
 package com.ucm.server.gameobjects;
 
+import java.io.IOException;
 
 import com.ucm.common.GameType;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
-import com.ucm.server.commands.Command;
-import com.ucm.server.interfaces.IPokerPlayer;
+import com.ucm.server.interfaces.IPlayerActions;
+import com.ucm.server.interfaces.IPlayerInfo;
+import com.ucm.server.interfaces.IPlayerNotificator;
+
 
 /**
  * Abstract class that represents a player in the poker game.
@@ -31,7 +34,7 @@ import com.ucm.server.interfaces.IPokerPlayer;
  * subclasses.
  * </p>
  */
-public abstract class Player implements IPokerPlayer {
+public class Player implements IPlayerActions {
 
     /**
      * Player's unique identifier
@@ -109,6 +112,12 @@ public abstract class Player implements IPokerPlayer {
      */
     protected String _lastCommand;
 
+    /**
+     * Interface to access player information.
+     * This is used to send notifications to the player about the state of the game and other players.
+     */
+    protected IPlayerNotificator _playerInfo;
+    
 
     /**
      * Default constructor.
@@ -122,7 +131,7 @@ public abstract class Player implements IPokerPlayer {
      * @param name  player's name
      * @param money initial amount of money
      */
-    public Player(final int id, final String name, final int money) {
+    public Player(final int id, final String name, final int money, IPlayerNotificator playerInfo) {
 
         _id = id;
         _name = name;
@@ -131,6 +140,7 @@ public abstract class Player implements IPokerPlayer {
         _role = null;
         _cards = new Card[2];
         _numCards = 0;
+        _playerInfo = playerInfo;
 
         _isFold = false;
         _isWinner = false;
@@ -141,115 +151,9 @@ public abstract class Player implements IPokerPlayer {
     }
 
 
-    /**
-     * Decrements the {@link #_offBetMoney} variable by a certain amount.
-     * This method prevents negative values.
-     * 
-     * @param bet quantity to subtract
-     */
-    protected final void decreaseOffBetMoney(int bet) {
-        _offBetMoney = Math.clamp(_offBetMoney - bet, 0, _offBetMoney);
-    }
-
-    /**
-     * Adds to the {@link #_onBetMoney} variable by a certain amount.
-     * 
-     * @param bet quantity to add
-     */
-    protected final void increaseOnBetMoney(int bet) {
-        _onBetMoney += bet;
-    }
-
-    /**
-     * Places the small blind bet.
-     * 
-     * @param sb small blind amount
-     */
+    /* Actions */
     @Override
-    public final void actionSmallBlindBet(final int sb) {   
-        decreaseOffBetMoney(sb);
-        increaseOnBetMoney(sb);
-        _lastCommand = "small-blind";
-    }
-
-    /**
-     * Places the big blind bet.
-     * 
-     * @param bb big blind amount
-     */
-    @Override
-    public final void actionBigBlindBet(final int bb) {
-        decreaseOffBetMoney(bb);
-        increaseOnBetMoney(bb);
-        _lastCommand = "big-blind";
-    }
-    
-    /**
-     * Assigns a role to the player.
-     * 
-     * @param r {@link PlayerRole} assigned to the player
-     */
-    @Override
-    public final void receiveRole(PlayerRole r) {
-        _role = r;
-    }
-
-    /**
-     * Adds a card to the player's hand.
-     * If the player already has two cards, the card is ignored.
-     * 
-     * @param c {@link Card} received by the player
-     */
-    @Override
-    public final void receiveCard(Card c) {
-
-        if(_numCards == 2)
-            return;
-
-        _cards[_numCards++] = c;
-    }
-    
-    /**
-     * Moves all current bet money to the pot and resets it.
-     * 
-     * @return amount of money placed in the pot
-     */
-    @Override
-    public final int placeOnBetMoney() {
-
-        int money = _onBetMoney;
-        _onBetMoney = 0;
-        return money;
-    }
-
-    /**
-     * Eliminates the player's hand cards and resets the card counter.
-     */
-    @Override
-    public final void retrieveCards() {
-        
-        _cards[0] = null;
-        _cards[1] = null;
-        _numCards = 0;
-    }
-    
-    /**
-     * The player receives money.
-     * 
-     * @param money received by the player
-     */
-    @Override
-    public final void receivePriceMoney(int money) {
-        _offBetMoney += money;
-    }
-
-    /**
-     * Matches the current bet.
-     * 
-     * @param amount total amount to match
-     */
-    @Override
-    public final void call(int amount) {
+    public void call(int amount) {
 
         int resto = amount - _onBetMoney;
         increaseOnBetMoney(resto);
@@ -257,113 +161,292 @@ public abstract class Player implements IPokerPlayer {
         _lastCommand = GameType.CALL_ACTION_FULL;
     }
 
-    /**
-     * Checks (does nothing if no bet is required).
-     */
     @Override
-    public final void check() {
+    public void check() {
         _lastCommand = GameType.CHECK_ACTION_FULL;
     }
-    
-    /**
-     * Folds the hand.
-     */
+
     @Override
-    public final void fold() {
+    public void fold() {
         _isFold = true;
         _lastCommand = GameType.FOLD_ACTION_FULL;
     }
-    
-    /**
-     * Raises the bet.
-     * Internally behaves like a call to the specified amount.
-     * 
-     * @param amount amount to raise to
-     */
+
     @Override
-    public final void raise(int amount) {
+    public void raise(int amount) {
         call(amount);
         _lastCommand = GameType.RAISE_ACTION_FULL;
     }
-    
-    /**
-     * Performs an all-in action.
-     * The player bets all remaining money.
-     */
+
     @Override
-    public final void allIn() {
+    public void allIn() {
         increaseOnBetMoney(_offBetMoney);
         _offBetMoney = 0;
         _isAllIn = true;
         _lastCommand = GameType.ALL_IN_ACTION_FULL;
     }
 
-    /**
-     * Resets the fold state of the player.
-     */
-    @Override
-    public final void unfoldPlayer() {
+
+    /* Player methods */
+    public String makePlay(int sb, int bb, int maxBet) {
+        
+        String action = null;
+        try {
+            action = _playerInfo.notifyMakePlay(sb, bb, maxBet, this);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        return action;
+    }
+
+    public int placeOnBetMoney() {
+        
+        int amount = _onBetMoney;
+        _onBetMoney = 0;
+        return amount;
+    }
+
+    public void wins() {
+        _isWinner = true;
+    }
+
+    public void eliminate() {
+        _isEliminated = true;
+    }
+
+    public void resetStates() {
         _isFold = false;
+        _isWinner = false;
+        _isAllIn = false;
         _lastCommand = "none";
     }
 
-    /**
-     * Sets the all-in state of the player.
-     * 
-     * @param state new all-in state
-     */
+
+    public void receiveRole(PlayerRole r) {
+        _role = r;
+
+        try {
+            _playerInfo.notifyPlayerRole(r);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void receiveCard(Card c) {
+
+        if(_numCards >= 2) {
+            return;
+        }
+
+        _cards[_numCards++] = c;
+        try {
+            _playerInfo.notifyPlayerCard(c);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void receiveTableCard(Card c) {
+        try {
+            _playerInfo.notifyTableCard(c);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void receivePriceMoney(int amount) {
+        _offBetMoney += amount;
+    }
+
+    public void retrieveCards() {
+        
+        _cards[0] = null;
+        _cards[1] = null;
+        _numCards = 0;
+    }
+
+
+    public void notifyTurnWait() {
+        try {
+            _playerInfo.notifyTurnWait();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void notifyOwnState() {
+        try {
+            _playerInfo.notifyOwnState(this);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void notifyOtherPlayerAction(IPlayerInfo other) {
+        try {
+            _playerInfo.notifyOtherPlayerAction(other);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void notifyOtherPlayerState(IPlayerInfo other, boolean isLast) {
+        try {
+            _playerInfo.notifyOtherPlayerState(other, isLast);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void notifyTotalPot(int total) {
+        try {
+            _playerInfo.notifyTotalPot(total);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void notifyHandEndsByFolds() {
+        try {
+            _playerInfo.notifyHandEndsByFolds();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void notifyRoundEnded() {
+        try {
+            _playerInfo.notifyRoundEnded();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void notifyGameEnded() {
+        try {
+            _playerInfo.notifyGameEnded();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void notifyGameKeeps() {
+        try {
+            _playerInfo.notifyGameKeeps();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void notifyEquity(double equity) {
+        _equity = equity;
+        try {
+            _playerInfo.notifyEquity(equity);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+
+    public int putSmallBlindBet(int sb) {
+        
+        int bet = Math.min(sb, _offBetMoney);
+        _onBetMoney += bet;
+        _offBetMoney -= bet;
+        return bet;
+    }
+
+    public int putBigBlindBet(int bb) {
+
+        int bet = Math.min(bb, _offBetMoney);
+        _onBetMoney += bet;
+        _offBetMoney -= bet;
+        return bet;
+    }
+
+    public void decreaseOffBetMoney(int bet) {
+        _offBetMoney = Math.clamp(_offBetMoney - bet, 0, _offBetMoney);
+    }
+
+    public void increaseOnBetMoney(int bet) {
+        _onBetMoney += bet;
+    }
+
+    
+    /* Info methods */
     @Override
-    public final void setAllIn(boolean state) {
-        _isAllIn = state;
+    public int getMoneyOnBet() {
+        return _onBetMoney;
     }
 
-    /**
-     * Sets whether the player is a winner.
-     * 
-     * @param state winner state
-     */
     @Override
-    public final void setIsWinner(boolean state) {
-        _isWinner = state;
+    public int getMoneyOffBet() {
+        return _offBetMoney;
     }
 
-    /**
-     * Sets whether the player is eliminated.
-     * 
-     * @param state elimination state
-     */
     @Override
-    public final void setIsEliminated(boolean state) {
-        _isEliminated = state;
+    public int getPlayerId() {
+        return _id;
     }
 
-    /**
-     * String representation of the player.
-     * Includes the name and current cards.
-     * 
-     * @see {@link Card}
-     * @return {@link String} representation of the player
-     */
-    public String toString() {
-
-        String carta1 = (_cards[0] != null) ? _cards[0].toString() : Card.MissingCardToString();
-        String carta2 = (_cards[1] != null) ? _cards[1].toString() : Card.MissingCardToString();
-
-        return String.format("Player: %s - %s%s", _name, carta1, carta2);
+    @Override
+    public String getPlayerName() {
+        return _name;
     }
 
+    @Override
+    public Card[] getPlayerCards() {
+        return _cards;
+    }
 
-    @Override public final int getPlayerId() { return _id; }
-    @Override public final String getPlayerName() { return _name; }
-    @Override public final Card[] getPlayerCards() { return _cards; }
-    @Override public final int getCardsCounter() { return _numCards; }
-    @Override public final int getMoneyOnBet() { return _onBetMoney; }
-    @Override public final int getMoneyOffBet() { return _offBetMoney; }
-    @Override public final PlayerRole getRole() { return _role; }
-    @Override public final boolean isFolded() { return _isFold; }
-    @Override public final boolean isWinner() { return _isWinner; }   
-    @Override public final boolean isAllIn() { return _isAllIn; }   
-    @Override public final boolean isEliminated() { return _isEliminated; }
-    @Override public final String getLastCommand() { return _lastCommand; }
+    @Override
+    public int getCardsCounter() {
+        return _numCards;
+    }
+
+    @Override
+    public boolean isFolded() {
+        return _isFold;
+    }
+
+    @Override
+    public boolean isWinner() {
+        return _isWinner;
+    }
+
+    @Override
+    public boolean isAllIn() {
+        return _isAllIn;
+    }
+
+    @Override
+    public boolean isEliminated() {
+        return _isEliminated;
+    }
+
+    @Override
+    public PlayerRole getRole() {
+        return _role;
+    }
+
+    @Override
+    public String getLastCommand() {
+        return _lastCommand;
+    }
 
 }

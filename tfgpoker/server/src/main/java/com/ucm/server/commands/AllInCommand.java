@@ -2,7 +2,7 @@ package com.ucm.server.commands;
 
 
 import com.ucm.common.GameType;
-import com.ucm.server.interfaces.IPokerActions;
+import com.ucm.server.interfaces.IPlayerActions;
 import com.ucm.server.middleclasses.CommandResult;
 
 /**
@@ -20,13 +20,13 @@ public class AllInCommand extends Command {
      * @param money the total amount of money that the player has not bet yet.
      * @param pocketMoney the amount of money that the player has already bet in the current hand.
      */
-    public AllInCommand(IPokerActions p) {
+    public AllInCommand(IPlayerActions p) {
         super(p);
     }
 
 
     @Override
-	protected Command createCommand(final String[] commandFormat, final IPokerActions player){
+	protected Command createCommand(final String[] commandFormat, final IPlayerActions player){
 		return new AllInCommand(player);
 	}
 

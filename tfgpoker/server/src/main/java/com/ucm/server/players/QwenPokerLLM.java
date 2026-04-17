@@ -8,6 +8,7 @@ import java.net.URL;
 
 import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.gameobjects.BotLLM;
+import com.ucm.server.interfaces.IPlayerInfo;
 
 
 public class QwenPokerLLM extends BotLLM {
@@ -15,21 +16,17 @@ public class QwenPokerLLM extends BotLLM {
    
     private static final String OLLAMA_URL = "http://localhost:11434/api/generate";
     private static final String MODEL_NAME = "qwenPokerBot"; 
+    private static final int QWEN_ID = 123432;
 
 
-    public QwenPokerLLM(int id, int money) {
-        super(id, "QwenPoker", money);
+
+    public QwenPokerLLM() {
+        super(QWEN_ID);
     }
 
 
     @Override
-    public String getDescription() {
-        return "Qwen Poker LLM running locally with Ollama";
-    }
-
-
-    @Override
-    protected String buildPrompt() {
+    protected String buildPrompt(IPlayerInfo player, int sb, int bb, int maxBet) {
 
         return """
 
@@ -47,13 +44,13 @@ public class QwenPokerLLM extends BotLLM {
         <action>fold/call/raise X/all-in</action>
         """
         .formatted(
-            _role, 
+            mapRole( player.getRole() ), 
             hand, 
             table, 
-            getMoneyOffBet(), 
-            _smallBlind, 
-            _bigBlind, 
-            _maxBet
+            player.getMoneyOffBet(), 
+            sb, 
+            bb, 
+            maxBet
         );
     }
 
@@ -119,9 +116,19 @@ public class QwenPokerLLM extends BotLLM {
 
 
     @Override
-    public Bot create(int ID, int initialMoney) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'create'");
+    public Bot create() {
+        return new QwenPokerLLM();
     }
+
+    @Override
+    public String getDescription() {
+        return "Qwen Poker LLM running locally with Ollama";
+    }
+
+    @Override
+    public String getFullDescription() {
+        return "Qwen Poker LLM is a poker-playing bot that uses the Qwen language model, running locally with Ollama.";
+    }
+
     
 }
