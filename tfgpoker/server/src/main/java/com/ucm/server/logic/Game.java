@@ -45,8 +45,10 @@ public class Game {
     private int _tableCardsCounter;
     private boolean _isPreflop;
 
+    private Timer _timer;
     private int _level;
     private int _handCounter = 0;
+    private boolean _firstHand = true;
     
 
     public Game(final List<ClientStruct> players, final List<BotStruct> bots, final GameConfig config) throws EvaluatorException {
@@ -56,7 +58,7 @@ public class Game {
         String[] parts = config._blindsValue.split("/");
         _initialSmallBlind = Integer.parseInt(parts[0]);    // TODO : Controlar errores de formato
         _initialBigBlind = Integer.parseInt(parts[1]);      // TODO : Controlar errores de formato
-        _hikePercentage = Integer.parseInt( config._hikePercentage ) / 100;
+        _hikePercentage =  Float.parseFloat( config._hikePercentage ) / 100;
         _currentSB = _initialSmallBlind;
         _currentBB = _initialBigBlind;
 
@@ -68,20 +70,20 @@ public class Game {
         _tableCardsCounter = 0;
         _isPreflop = true;
 
+        if(config._dinamicBlinds) {
+            int seconds = Integer.parseInt( config._levelDuration );
+            _timer = new Timer(seconds);
+            log.debug("Dynamic blinds enabled! Level duration: {} seconds", seconds);
+        }
+        else {
+            _timer = null;
+        }
         _level = 1;
 
         Evaluator.getInstance();
     }
 
     
-    public void increaseBlinds() {
-
-        double newSB = _currentSB * Math.pow( (1 + _hikePercentage) , _level);
-        ++_level;
-
-        _currentSB = (int)Math.round(newSB);
-        _currentBB = _currentSB * 2;
-    }
 
     public void assignRolesToAllPlayers() throws CancelGameException {
        _playerList.assignRolesToAllPlayers();
@@ -92,7 +94,7 @@ public class Game {
         for (int i = 0; i < _playerList.size(); i++) {
             Card randomCard1 = _deck.takeRandomCard();
             Card randomCard2 = _deck.takeRandomCard();
-            _playerList.shareOutAllCardsFromPlayer(randomCard1, randomCard2);
+            _playerList.shareOutCardsToSomePlayer(randomCard1, randomCard2);
         }
 
         //updateEquity();
@@ -125,6 +127,22 @@ public class Game {
 
         ++_handCounter;
         try {
+
+            if(_isPreflop && _gameConfig._dinamicBlinds) {
+
+                if( !_timer.isRunning() ) {
+
+                    // Start timer and increase blinds only if it is enabled and it is NOT the first hand
+                    if(_firstHand) {
+                        _firstHand = false;
+                    }
+                    else {
+                        increaseBlinds();
+                        _timer.restart();
+                    }
+                }
+            }
+
             _playerList.playHand(_currentSB, _currentBB, _isPreflop);
             _isPreflop = false;
         }
@@ -164,14 +182,16 @@ public class Game {
         return endOfGame;
     }
 
-    public Timer getGameTimerConfiguration() {
+    private void increaseBlinds() {
 
-        if(!_gameConfig._dinamicBlinds) 
-            return null;
+        double increase = Math.pow( (1 + _hikePercentage) , _level);
+        double newSB = _currentSB * increase;
+        ++_level;
 
+        _currentSB = (int)Math.round(newSB);
+        _currentBB = _currentSB * 2;
 
-        int minutes = Integer.parseInt( _gameConfig._levelDuration );
-        return new Timer(minutes * 60);
+        log.debug("Blinds increased to {}/{}", _currentSB, _currentBB);
     }
 
     private void addAllPlayersInitial(final List<ClientStruct> players, final List<BotStruct> bots, final GameConfig config) {
@@ -208,7 +228,7 @@ public class Game {
         Map<Integer, Double> equity =
             EquityCalculator.calculateEquity(players, _tableCards, _deck);
 
-        _playerList.notifyEquityToPlayers(equity);
+        //_playerList.notifyEquityToPlayers(equity);
     }
 
 }

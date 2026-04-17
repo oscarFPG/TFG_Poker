@@ -72,9 +72,6 @@ public class FakePlayer extends Player {
     public void notifyTableCard(Card c) {}
 
     @Override
-    public void notifyMoneyAmount(int amount) {}
-
-    @Override
     public void notifyOtherPlayerAction(IPokerPlayer p) {}
 
     @Override
@@ -84,17 +81,11 @@ public class FakePlayer extends Player {
 
 
 	@Override
-	public void notifyOwnState() throws IOException {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'notifyOwnState'");
-	}
+	public void notifyOwnState() throws IOException {}
 
 
 	@Override
-	public void notifyOtherPlayerState(IPokerPlayer player, boolean isLast) throws IOException {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'notifyOtherPlayerState'");
-	}
+	public void notifyOtherPlayerState(IPokerPlayer player, boolean isLast) throws IOException {}
 
 
     

@@ -88,15 +88,6 @@ public class GeminiLLM extends BotLLMOnline {
     }
 
     @Override
-    public void notifyOtherPlayerAction(IPokerPlayer p) {}
-
-    @Override
-    public void notifyPlayerState(final IPokerPlayer player, boolean last) throws IOException {}
-
-    @Override
-    public void notifyTotalPot(int total) throws IOException {}
-
-    @Override
     protected String getCredentialKey() {
         return "GEMINI_API_KEY";
     }
@@ -109,5 +100,7 @@ public class GeminiLLM extends BotLLMOnline {
     public static String getGenericName() {
         return "Gemini LLM";
     }
+
+    
 
 }
