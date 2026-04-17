@@ -533,6 +533,7 @@ public class InGameWindowController extends GenericController {
                     Platform.runLater(() -> {
                         GUI_clearTableCards();
                         GUI_clearPlayerBets();
+                        GUI_clearDealer();
                     });
 
                     // Player role and cards
@@ -681,6 +682,9 @@ public class InGameWindowController extends GenericController {
 
                 Platform.runLater(() -> {
                     GUI_putPlayerBet(_clientInfo.id, onBetMoney, offBetMoney);
+                    if(role == PlayerRole.DEALER)  {
+                        GUI_putDealerButton(_clientInfo.id);
+                    }
                 });
 
 			}
@@ -693,6 +697,9 @@ public class InGameWindowController extends GenericController {
 
                 Platform.runLater(() -> {
                     GUI_putPlayerBet(_clientInfo.id, onBetMoney, offBetMoney);
+                    if(role == PlayerRole.DEALER)  {
+                        GUI_putDealerButton(_clientInfo.id);
+                    }
                 });
 			}
 			else if(serverCode == GameType.TURN_WAIT) {
@@ -700,6 +707,9 @@ public class InGameWindowController extends GenericController {
 				System.out.printf("Wait for the other players to play...\n");
                 Platform.runLater(() -> {
                     buttonsHolder.setVisible(false);
+                    if(role == PlayerRole.DEALER)  {
+                        GUI_putDealerButton(_clientInfo.id);
+                    }
                 });
 
 			}
@@ -742,6 +752,9 @@ public class InGameWindowController extends GenericController {
                     }
                     else {
                         GUI_putPlayerBet(_clientInfo.id, newOnBetMoney, newOffBetMoney);
+                        if(role == PlayerRole.DEALER)  {
+                            GUI_putDealerButton(_clientInfo.id);
+                        }
                     }
 
                     buttonsHolder.setVisible(false);
@@ -771,6 +784,9 @@ public class InGameWindowController extends GenericController {
 
                 Platform.runLater(() -> {
                     GUI_putPlayerBet(otherPlayerID, otherPlayerOnBetMoney, otherPlayerOffBetMoney);
+                    if(role == PlayerRole.DEALER)  {
+                        GUI_putDealerButton(_clientInfo.id);
+                    }
                 });
 
             }
@@ -1033,6 +1049,10 @@ public class InGameWindowController extends GenericController {
     private void GUI_clearPlayerBets() {
         _listOnBetMoney.forEach(label -> label.setVisible(false));
         _listHandBet.forEach(bet -> bet.setVisible(false));
+    }
+
+    private void GUI_clearDealer() {
+        _listDealer.forEach(iv -> iv.setVisible(false));
     }
 
 }
