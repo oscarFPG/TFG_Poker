@@ -743,6 +743,16 @@
    -fx-border-width: 4; 
 }
 
+.slider-apuesta-colors {
+    -fx-background-color: #1b0359;
+   -fx-border-color: linear-gradient(to top,
+    #DC8CFE 0%,
+    #FFF8FF 50%,
+    #FFF8FF 50%,
+    #DC8CFE 100%);
+   -fx-border-width: 2; 
+}
+
 /*SCROLL BAR --------------------------------------------------------------------------------------------*/
 
 .scroll-bar {
