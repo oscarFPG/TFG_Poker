@@ -639,6 +639,10 @@
 #usersOwn{
     -fx-effect:  dropshadow(gaussian, rgba(240,184,255,0.8), 25, 0.5, 0, 0);
 }
+
+.tourn-player-color {
+    -fx-effect:  dropshadow(gaussian, rgba(240,184,255,0.8), 25, 0.5, 0, 0);
+}
 /*ICONOS GENERALES ------------------------------------------------------------------------------------------------------------------------------ */
 
 .icon-colors {
