@@ -71,6 +71,13 @@ public interface IPokerNotification {
     public void notifyOtherPlayerAction(IPokerPlayer p) throws IOException;
 
     /**
+     * Notifies the player before an action has been performed by another player in the game
+     * @param p the player performing the action
+     * @throws IOException
+     */
+    public void notifyCurrentTournPlayer(IPokerPlayer p) throws IOException;
+
+    /**
      * Notifies the player that it's other player's turn to play
      * @throws IOException
      */

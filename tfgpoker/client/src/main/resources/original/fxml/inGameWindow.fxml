@@ -938,7 +938,7 @@
             </StackPane>
             <StackPane fx:id="pokerPlayer0" layoutX="535.0" layoutY="515.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
                <children>
-                  <HBox id="usersOwn" alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
+                  <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                      <styleClass>
                         <String fx:value="oval-pane" />
                         <String fx:value="container-gradiant-colors" />

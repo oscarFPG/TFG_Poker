@@ -80,6 +80,7 @@ public class GameType {
     public static final int TURN_WAIT = 203;
     public static final int TURN_FOLD = 204;
     public static final int TURN_OTHER_PLAYER = 205;
+    public static final int TURN_BEFORE_PLAY = 206;
 
     // Round, hand and game status
     public static final int GAME_STARTS = 300;

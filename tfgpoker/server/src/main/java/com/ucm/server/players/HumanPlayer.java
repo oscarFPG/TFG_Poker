@@ -221,5 +221,13 @@ public class HumanPlayer extends Player {
             log.error("Trying to send the equity value to player {}: {}", _name, e.getMessage());
         }
     }
+
+
+    @Override
+    public void notifyCurrentTournPlayer(IPokerPlayer p) throws IOException {
+        if(Game.DEBUG_PLAYERS) return;
+        SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_BEFORE_PLAY);
+        SocketUtils.sendInteger(_socket.getOutputStream(), p.getPlayerId());
+    }
     
 }

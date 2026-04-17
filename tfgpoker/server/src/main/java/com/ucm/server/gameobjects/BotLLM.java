@@ -315,6 +315,8 @@ public abstract class BotLLM extends Bot {
 
     @Override public void notifyPlayerRole(PlayerRole role) { _role = role; }
 
+    @Override public void notifyCurrentTournPlayer (IPokerPlayer p) {}
+
     /**
      * Registers an action performed by another player.
      * 

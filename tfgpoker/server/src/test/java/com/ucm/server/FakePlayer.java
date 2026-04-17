@@ -88,5 +88,9 @@ public class FakePlayer extends Player {
 	public void notifyOtherPlayerState(IPokerPlayer player, boolean isLast) throws IOException {}
 
 
+    @Override
+    public void notifyCurrentTournPlayer(IPokerPlayer p) throws IOException {}
+
+
     
 }
