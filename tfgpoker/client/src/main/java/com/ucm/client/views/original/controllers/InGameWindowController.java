@@ -340,7 +340,7 @@ public class InGameWindowController extends GenericController {
     private void GUI_initializePlayersInfo() {
         _listNameLabels.forEach(label -> label.setText("") );
         _listMoneyLabels.forEach(label -> label.setText("") );
-        //_listPlayerStackPanes.forEach(stack -> stack.setVisible(false));
+        _listPlayerStackPanes.forEach(stack -> stack.setVisible(false));
 
         _listImageCards.forEach(hbox -> hbox.setVisible(false));
         _listHandBet.forEach(hbox -> hbox.setVisible(false));

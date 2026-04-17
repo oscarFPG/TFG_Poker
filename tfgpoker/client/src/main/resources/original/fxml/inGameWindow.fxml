@@ -49,6 +49,54 @@
                   </HBox>
                </children>
             </StackPane>
+            <HBox alignment="CENTER_LEFT" minWidth="-Infinity" prefHeight="110.0" prefWidth="369.0" styleClass="semi-oval-pane">
+               <children>
+                  <HBox fx:id="hboxMenuItems" maxHeight="-Infinity" prefHeight="80.0" prefWidth="242.0" spacing="5.0">
+                     <children>
+                        <Button mnemonicParsing="false" styleClass="general-button">
+                           <graphic>
+                              <ImageView fitHeight="49.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../images/iconoExit.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button mnemonicParsing="false" prefHeight="59.0" prefWidth="54.0" styleClass="general-button">
+                           <graphic>
+                              <ImageView fitHeight="54.0" fitWidth="53.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../images/seeStatistic.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button mnemonicParsing="false" styleClass="general-button">
+                           <graphic>
+                              <ImageView fitHeight="49.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../images/rangeTable.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                     </children>
+                     <styleClass>
+                        <String fx:value="subtitle-label" />
+                        <String fx:value="semi-oval-pane" />
+                     </styleClass>
+                  </HBox>
+                  <Button fx:id="btnMenu" mnemonicParsing="false" onAction="#toggleMenu" prefHeight="80.0" prefWidth="85.0" styleClass="general-button">
+                     <graphic>
+                        <ImageView fitHeight="60.0" fitWidth="79.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/menuInGame.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </HBox>
          </children>
          <BorderPane.margin>
             <Insets />
@@ -185,7 +233,7 @@
                               </HBox>
                               <HBox alignment="CENTER" maxHeight="-Infinity" prefHeight="70.0" prefWidth="314.0" spacing="3.0">
                                  <children>
-                                    <Label fx:id="labelMoney" prefHeight="50.0" prefWidth="70.0" text="1000000">
+                                    <Label fx:id="labelMoney" prefHeight="50.0" prefWidth="70.0">
                                        <styleClass>
                                           <String fx:value="username-label" />
                                           <String fx:value="bold-general-text-font" />
