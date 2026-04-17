@@ -533,7 +533,6 @@ public class InGameWindowController extends GenericController {
                     Platform.runLater(() -> {
                         GUI_clearTableCards();
                         GUI_clearPlayerBets();
-                        GUI_clearDealer();
                     });
 
                     // Player role and cards
