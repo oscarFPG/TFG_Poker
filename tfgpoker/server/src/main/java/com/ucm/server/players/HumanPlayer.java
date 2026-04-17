@@ -64,11 +64,6 @@ public class HumanPlayer extends Player {
     }
 
     @Override
-    public void notifyMoneyAmount(final int amount) throws IOException {
-        SocketUtils.sendInteger(_socket.getOutputStream(), amount);
-    }
-
-    @Override
     public void notifyPlayerRole(final PlayerRole role) throws IOException {
         if(Game.DEBUG_PLAYERS) return;
         
@@ -226,6 +221,5 @@ public class HumanPlayer extends Player {
             log.error("Trying to send the equity value to player {}: {}", _name, e.getMessage());
         }
     }
-
     
 }

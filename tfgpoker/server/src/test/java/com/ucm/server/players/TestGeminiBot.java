@@ -66,9 +66,6 @@ public class TestGeminiBot {
 
         bot.notifyEquity(0.85);
 
-        bot.notifyPlayerAction(PlayerRole.UNDER_THE_GUN, "raise", 10);
-        bot.notifyPlayerAction(PlayerRole.HIJACK, "call", 10);
-
         String action = bot.notifyMakePlay(5, 10, 20);
 
         System.out.println("Flop action: " + action);

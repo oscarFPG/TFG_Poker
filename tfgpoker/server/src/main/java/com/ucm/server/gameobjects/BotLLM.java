@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import com.ucm.common.GameType;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
+import com.ucm.server.interfaces.IPokerPlayer;
 
 /**
  * Abstract class that represents a poker bot powered by a Large Language Model (LLM).
@@ -38,14 +39,50 @@ import com.ucm.common.gameobjects.PlayerRole;
 public abstract class BotLLM extends Bot {
 
     /**
-     * Default constructor.
+     * Player's private hand cards.
+     */
+    protected List<Card> hand = new ArrayList<>();
+
+    /**
+     * Community cards on the table.
+     */
+    protected List<Card> table = new ArrayList<>();
+
+    /**
+     * History of actions in the current hand.
+     */
+    protected List<String> actionHistory = new ArrayList<>();
+
+    /**
+     * Current amount of money available.
+     */
+    protected int money;
+
+    /**
+     * Small blind value.
+     */
+    protected int smallBlind;
+
+    /**
+     * Big blind value.
+     */
+    protected int bigBlind;
+
+    /**
+     * Estimated probability of winning the hand.
+     */
+    protected double _equity;
+
+
+    /**
+     * Default LLM constructor
      */
     public BotLLM() {
         super();
     }
 
     /**
-     * Constructs an LLM-based bot with basic configuration.
+     * Constructs an LLM-based bot with basic configuration
      * 
      * @param id     player identifier
      * @param name   player name
@@ -56,12 +93,19 @@ public abstract class BotLLM extends Bot {
         super(id, name, money);
     }
 
+
     /**
-     * Notifies the bot about an action performed by another player.
+     * Determines the action to take using the LLM.
      * 
-     * @param role   role of the player performing the action
-     * @param action action performed (e.g., fold, call, raise)
-     * @param amount amount associated with the action (if applicable)
+     * <p>
+     * The method builds a prompt, sends it to the model, extracts the action
+     * from the response and sanitizes it to ensure validity.
+     * </p>
+     * 
+     * @param sb     small blind amount
+     * @param bb     big blind amount
+     * @param maxBet current maximum bet
+     * @return sanitized poker action (fold, call, check or raise X)
      */
     @Override
     public String notifyMakePlay(int sb, int bb, int maxBet) {
@@ -90,41 +134,7 @@ public abstract class BotLLM extends Bot {
      */
     protected abstract String callModel(String prompt);
 
-    /**
-     * Sanitizes the extracted action to ensure it is valid.
-     * 
-     * <p>
-     * This method normalizes outputs, fixes malformed responses and applies
-     * fallback strategies when necessary.
-     * </p>
-     * 
-     * @param action raw extracted action
-     * @return valid poker action
-     */
-    protected String sanitize(String action) {
-
-        action = action.toLowerCase().trim();
-
-        if (action.contains("fold")) return "fold";
-        if (action.contains("call")) return "call";
-        if (action.contains("check")) return "check";
-
-        action = action.replace("bet", "raise");
-
-        Pattern p = Pattern.compile("raise\\s+(\\d+(\\.\\d+)?)");
-        Matcher m = p.matcher(action);
-
-        if (m.find()) {
-            return "raise " + m.group(1);
-        }
-
-       
-        if (action.contains("raise")) {
-            return "call";
-        }
-
-        return "fold";
-    }
+    
 
     // ---------------------- PROMPT ----------------------
 
@@ -183,6 +193,42 @@ public abstract class BotLLM extends Bot {
                 getHistory(),
                 _equity
         );
+    }
+
+    /**
+     * Sanitizes the extracted action to ensure it is valid.
+     * 
+     * <p>
+     * This method normalizes outputs, fixes malformed responses and applies
+     * fallback strategies when necessary.
+     * </p>
+     * 
+     * @param action raw extracted action
+     * @return valid poker action
+     */
+    protected String sanitize(String action) {
+
+        action = action.toLowerCase().trim();
+
+        if (action.contains("fold")) return "fold";
+        if (action.contains("call")) return "call";
+        if (action.contains("check")) return "check";
+
+        action = action.replace("bet", "raise");
+
+        Pattern p = Pattern.compile("raise\\s+(\\d+(\\.\\d+)?)");
+        Matcher m = p.matcher(action);
+
+        if (m.find()) {
+            return "raise " + m.group(1);
+        }
+
+       
+        if (action.contains("raise")) {
+            return "call";
+        }
+
+        return "fold";
     }
 
     /**
@@ -330,5 +376,6 @@ public abstract class BotLLM extends Bot {
     @Override public void notifyGameWinner() throws IOException {}
     @Override public void notifyGameLoser() throws IOException {}
     @Override public void notifyHandEndsByFolds() throws IOException {}
+
 
 }

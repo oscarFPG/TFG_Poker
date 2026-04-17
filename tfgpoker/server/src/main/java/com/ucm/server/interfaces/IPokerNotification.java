@@ -40,7 +40,19 @@ public interface IPokerNotification {
      * @throws IOException
      */
     public void notifyPlayerRole(final PlayerRole role) throws IOException;
+
+    /**
+     * Notifies the player about a card received in their hand or on the table
+     * @param c
+     * @throws IOException
+     */
     public void notifyPlayerCard(final Card c) throws IOException;
+
+    /**
+     * Notifies the player about a card revealed on the table (community card)
+     * @param c
+     * @throws IOException
+     */
     public void notifyTableCard(final Card c) throws IOException;
 
 
@@ -50,26 +62,72 @@ public interface IPokerNotification {
      * @throws IOException
      */
     public void notifyTotalPot(final int total) throws IOException;
-    public void notifyOtherPlayerAction(IPokerPlayer p) throws IOException;
-    public void notifyTurnWait() throws IOException;
-    public void notifyTurnPlay() throws IOException;
-    public void notifyPlayerState(final IPokerPlayer player, final boolean last) throws IOException;
 
+    /**
+     * Notifies the player about an action performed by another player in the game
+     * @param p the player performing the action
+     * @throws IOException
+     */
+    public void notifyOtherPlayerAction(IPokerPlayer p) throws IOException;
+
+    /**
+     * Notifies the player that it's other player's turn to play
+     * @throws IOException
+     */
+    public void notifyTurnWait() throws IOException;
+
+    /**
+     * Notifies the player that it's their turn to play and they should decide an action
+     * @throws IOException
+     */
+    public void notifyTurnPlay() throws IOException;
 
     /**
      * Notifies the player that a round has ended (pre-flop + flop + turn + river + showdown)
      * @throws IOException
      */
     public void notifyRoundEnded() throws IOException;
-    public void notifyHandEnded() throws IOException;
-    public void notifyHandEndsByFolds() throws IOException;
-    public void notifyGameEnded() throws IOException;
-    public void notifyGameKeeps() throws IOException;
-    public void notifyMoneyAmount(final int amount) throws IOException;
 
+    /**
+     * Notifies the player that a hand has ended
+     * @throws IOException
+     */
+    public void notifyHandEnded() throws IOException;
+
+    /**
+     * Notifies the player that a hand has ended due to all but one player folding
+     * @throws IOException
+     */
+    public void notifyHandEndsByFolds() throws IOException;
+
+    /**
+     * Notifies the player that the game has ended
+     * @throws IOException
+     */
+    public void notifyGameEnded() throws IOException;
+
+    /**
+     * Notifies the player that the game is ongoing and they should wait for the next hand to start
+     * @throws IOException
+     */
+    public void notifyGameKeeps() throws IOException;
+
+    /**
+     * Notifies the player that they have won the game
+     * @throws IOException
+     */
     public void notifyGameWinner() throws IOException;
+
+    /**
+     * Notifies the player that they have lost the game
+     * @throws IOException
+     */
     public void notifyGameLoser() throws IOException;
 
+    /**
+     * Notifies the player about their state after performing an action (e.g., after betting, calling, folding, etc.)
+     * @throws IOException
+     */
     public void notifyOwnState() throws IOException;
 
     /**
@@ -87,4 +145,5 @@ public interface IPokerNotification {
      * @throws IOException
      */
     public void notifyEquity(double equity) throws IOException;
+
 }

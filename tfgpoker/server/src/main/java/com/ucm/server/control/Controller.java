@@ -18,12 +18,9 @@ public class Controller {
      */
     private Game _game;
 
-    private Timer _timer;
-
 
     public Controller(Game game) {
         _game = game;
-        _timer = game.getGameTimerConfiguration();
     }
 
     /**
@@ -57,11 +54,6 @@ public class Controller {
 
             log.debug("Starting hand {}", handCounter);
             try {
-                
-                if(_timer != null && !_timer.isRunning()) {
-                    _game.increaseBlinds();
-                    _timer.restart();
-                }
 
                 // Pre-flop (2)
                 log.debug("Pre-flop round");
