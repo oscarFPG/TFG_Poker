@@ -4,11 +4,7 @@ package com.ucm.server.control;
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.server.logic.Game;
-import com.ucm.server.logic.Timer;
-import com.ucm.common.BotStruct;
-import com.ucm.common.ClientStruct;
 
-import org.apache.logging.log4j.ThreadContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

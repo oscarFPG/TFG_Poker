@@ -3,6 +3,7 @@ package com.ucm.server.players;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
+import java.util.Scanner;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,13 +21,13 @@ public class HumanPlayer extends Player {
 
     private static final Logger log = LogManager.getLogger(HumanPlayer.class);
 
-
     /**
      * Socket used for communication with the player.
      * Check {@link Socket} and {@link SocketUtils}.
      */
     private Socket _socket;
 
+    private static Scanner _scanner = (Game.DEBUG_PLAYERS) ? new Scanner(System.in) : null;
 
     /**
      * Constructor for the Player class.
@@ -41,10 +42,14 @@ public class HumanPlayer extends Player {
         _socket = socket;
     }
 
-
+    
     @Override
-    public String actionMakePlay(int sb, int bb, int maxBet) throws IOException {
-        
+    public String notifyMakePlay(int sb, int bb, int maxBet) throws IOException {
+        if(Game.DEBUG_PLAYERS) {
+            System.out.printf("%s hace: ", _name);
+            return _scanner.nextLine();
+        }
+
         // Send round info
         SocketUtils.sendInteger(_socket.getOutputStream(), sb);
         SocketUtils.sendInteger(_socket.getOutputStream(), bb);
@@ -65,23 +70,31 @@ public class HumanPlayer extends Player {
 
     @Override
     public void notifyPlayerRole(final PlayerRole role) throws IOException {
+        if(Game.DEBUG_PLAYERS) return;
+        
         SocketUtils.sendInteger(_socket.getOutputStream(), role.getNetworkCode());
     }
 
     @Override
     public void notifyPlayerCard(final Card c) throws IOException {
+        if(Game.DEBUG_PLAYERS) return;
+
         SocketUtils.sendInteger(_socket.getOutputStream(), c.getCardValueNetworkCode());
         SocketUtils.sendInteger(_socket.getOutputStream(), c.getSuit().getNetworkCode());
     }
 
     @Override
     public void notifyTableCard(final Card c) throws IOException {
+        if(Game.DEBUG_PLAYERS) return;
+
         SocketUtils.sendInteger(_socket.getOutputStream(), c.getCardValueNetworkCode());
         SocketUtils.sendInteger(_socket.getOutputStream(), c.getSuit().getNetworkCode());
     }
 
     @Override
     public void notifySmallBlindBet(final int amount) throws IOException {
+        if(Game.DEBUG_PLAYERS) return;
+
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_FORCED_SB);
         SocketUtils.sendInteger(_socket.getOutputStream(), amount);
         SocketUtils.sendInteger(_socket.getOutputStream(), _onBetMoney);
@@ -90,6 +103,8 @@ public class HumanPlayer extends Player {
 
     @Override
     public void notifyBigBlindBet(final int amount) throws IOException {
+        if(Game.DEBUG_PLAYERS) return;
+
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_FORCED_BB);
         SocketUtils.sendInteger(_socket.getOutputStream(), amount);
         SocketUtils.sendInteger(_socket.getOutputStream(), _onBetMoney);
@@ -98,90 +113,111 @@ public class HumanPlayer extends Player {
 
     @Override
     public void notifyTotalPot(int total) throws IOException {
+        if(Game.DEBUG_PLAYERS) return;
+
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TOTAL_POT);
         SocketUtils.sendInteger(_socket.getOutputStream(), total);
     }
 
     @Override
     public void notifyOtherPlayerAction(IPokerPlayer p) throws IOException {
-
-        if(this == p)
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.MY_TURN_ACTION);
-        else
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_OTHER_PLAYER);
-        
+        if(Game.DEBUG_PLAYERS) return;
+            
+        SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_OTHER_PLAYER);
         SocketUtils.sendInteger(_socket.getOutputStream(), p.getPlayerId());
         SocketUtils.sendString(_socket.getOutputStream(), p.getPlayerName());
         SocketUtils.sendInteger(_socket.getOutputStream(), p.getRole().getNetworkCode());
         SocketUtils.sendInteger(_socket.getOutputStream(), p.isFolded() ? GameType.TRUE : GameType.FALSE);
         SocketUtils.sendInteger(_socket.getOutputStream(), p.isWinner() ? GameType.TRUE : GameType.FALSE);
+        SocketUtils.sendString(_socket.getOutputStream(), p.getLastCommand());
         SocketUtils.sendInteger(_socket.getOutputStream(), p.getMoneyOffBet());
         SocketUtils.sendInteger(_socket.getOutputStream(), p.getMoneyOnBet());
     }
 
     @Override
     public void notifyTurnWait() throws IOException {
+        if(Game.DEBUG_PLAYERS) return;
+
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_WAIT);
     }
 
     @Override
     public void notifyTurnPlay() throws IOException {
+        if(Game.DEBUG_PLAYERS) return;
+
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_PLAY);
     }
 
     @Override
-    public void notifyPlayerState(final IPokerPlayer player, final boolean last) throws IOException {
-
-        SocketUtils.sendInteger(_socket.getOutputStream(), player.getPlayerId());
-        SocketUtils.sendInteger(_socket.getOutputStream(), player.getRole().getNetworkCode());
-        SocketUtils.sendInteger(_socket.getOutputStream(), player.isFolded() ? GameType.TRUE : GameType.FALSE);
-        SocketUtils.sendInteger(_socket.getOutputStream(), player.isWinner() ? GameType.TRUE : GameType.FALSE);
-        SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOffBet());
-        SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOnBet());
-
-        if(last)
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TRUE);
-        else
-            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.FALSE);
-    }
-
-    @Override
     public void notifyRoundEnded() throws IOException {
+        if(Game.DEBUG_PLAYERS) return;
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.ROUND_ENDS);
     }
 
     @Override
     public void notifyHandEnded() throws IOException {
+        if(Game.DEBUG_PLAYERS) return;
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.HAND_ENDS);
     }
 
     @Override
     public void notifyGameEnded() throws IOException {
+        if(Game.DEBUG_PLAYERS) return;
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.GAME_ENDS);
     }
 
     @Override
     public void notifyGameKeeps() throws IOException {
+        if(Game.DEBUG_PLAYERS) return;
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.GAME_KEEPS);
     }
     
     @Override
     public void notifyGameWinner() throws IOException {
+        if(Game.DEBUG_PLAYERS) return;
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.PLAYER_WINS_GAME);
     }
 
     @Override
     public void notifyGameLoser() throws IOException {
+        if(Game.DEBUG_PLAYERS) return;
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.PLAYER_LOSES_GAME);
     }
 
     @Override
+    public void notifyOwnState() throws IOException {
+        if(Game.DEBUG_PLAYERS) return;
+
+        SocketUtils.sendInteger(_socket.getOutputStream(), getMoneyOffBet());
+        SocketUtils.sendInteger(_socket.getOutputStream(), getMoneyOnBet());
+        SocketUtils.sendInteger(_socket.getOutputStream(), isFolded() ? GameType.TRUE : GameType.FALSE);
+    }
+
+    @Override
+    public void notifyOtherPlayerState(IPokerPlayer player, boolean isLast) throws IOException {
+        if(Game.DEBUG_PLAYERS) return;
+
+        SocketUtils.sendInteger(_socket.getOutputStream(), GameType.PLAYER_STATUS);
+        SocketUtils.sendInteger(_socket.getOutputStream(), player.getPlayerId());
+        SocketUtils.sendString(_socket.getOutputStream(), player.getPlayerName());
+        SocketUtils.sendInteger(_socket.getOutputStream(), player.isFolded() ? GameType.TRUE : GameType.FALSE);
+        SocketUtils.sendInteger(_socket.getOutputStream(), player.isWinner() ? GameType.TRUE : GameType.FALSE);
+        SocketUtils.sendInteger(_socket.getOutputStream(), player.isEliminated() ? GameType.TRUE : GameType.FALSE);
+        SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOffBet());
+        SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOnBet());
+        SocketUtils.sendInteger(_socket.getOutputStream(), isLast ? GameType.TRUE : GameType.FALSE);
+    }
+
+    @Override
     public void notifyHandEndsByFolds() throws IOException {
+        if(Game.DEBUG_PLAYERS) return;
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.HAND_ENDS_BY_FOLD);
     }
 
     @Override
     public void notifyEquity(double equity) {
+
+        if(Game.DEBUG_PLAYERS) return;
         try {
             String equityStr = String.format("%.2f%%", equity * 100);
             SocketUtils.sendString(_socket.getOutputStream(), equityStr);
@@ -189,7 +225,6 @@ public class HumanPlayer extends Player {
         catch (IOException e) {
             log.error("Trying to send the equity value to player {}: {}", _name, e.getMessage());
         }
-
     }
 
     

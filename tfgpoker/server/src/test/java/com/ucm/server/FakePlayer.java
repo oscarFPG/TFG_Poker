@@ -25,7 +25,7 @@ public class FakePlayer extends Player {
 
 
     @Override
-    public String actionMakePlay(int sb, int bb, int maxBet) { 
+    public String notifyMakePlay(int sb, int bb, int maxBet) { 
         return commands.removeFirst(); 
     }
 
@@ -78,11 +78,24 @@ public class FakePlayer extends Player {
     public void notifyOtherPlayerAction(IPokerPlayer p) {}
 
     @Override
-    public void notifyPlayerState(IPokerPlayer player, boolean last) throws IOException {}
-
-    @Override
     public void notifyTotalPot(int total) throws IOException {}
     
     public void notifyEquity(double equity) {}
+
+
+	@Override
+	public void notifyOwnState() throws IOException {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'notifyOwnState'");
+	}
+
+
+	@Override
+	public void notifyOtherPlayerState(IPokerPlayer player, boolean isLast) throws IOException {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'notifyOtherPlayerState'");
+	}
+
+
     
 }

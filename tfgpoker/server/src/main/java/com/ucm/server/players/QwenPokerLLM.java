@@ -66,8 +66,36 @@ public class QwenPokerLLM extends BotLLM {
         """.formatted(role, hand, table, money, smallBlind, bigBlind, maxBet);
     }
 
-   
-    private String callOllama(String prompt) {
+
+    @Override
+    protected String sanitize(String action) {
+
+        action = action.toLowerCase();
+
+        if (action.contains("fold")) return "fold";
+        if (action.contains("call")) return "call";
+        if (action.contains("all-in")) return "all-in";
+
+        if (action.contains("raise")) {
+            return action;
+        }
+
+        return "fold";
+    }
+
+    
+    @Override
+    public String notifyMakePlay(int sb, int bb, int maxBet) {
+
+        String prompt = buildPrompt(maxBet);
+        String response = callModel(prompt);
+        String action = extractAction(response);
+        return sanitize(action);
+    }
+
+    @Override
+    protected String callModel(String prompt) {
+
         try {
             URL url = new URL(OLLAMA_URL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();

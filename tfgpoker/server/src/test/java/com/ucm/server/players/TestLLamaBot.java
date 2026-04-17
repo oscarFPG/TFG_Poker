@@ -40,7 +40,7 @@ public class TestLLamaBot {
         bot.notifyPlayerAction(PlayerRole.LOJACK, "check", 0);
         bot.notifyPlayerAction(PlayerRole.DEALER, "bet", 23);
 
-        System.out.println("SCENARIO 1: " + bot.actionMakePlay(1, 1, 100));
+        System.out.println("SCENARIO 1: " + bot.notifyMakePlay(1, 1, 100));
         bot.notifyHandEnded();
 
 
@@ -72,7 +72,7 @@ public class TestLLamaBot {
         bot.notifyPlayerAction(PlayerRole.DEALER, "bet", 13);
         bot.notifyPlayerAction(PlayerRole.BIG_BLIND, "raise", 41);
 
-        System.out.println("SCENARIO 2: " + bot.actionMakePlay(1, 1, 100));
+        System.out.println("SCENARIO 2: " + bot.notifyMakePlay(1, 1, 100));
         bot.notifyHandEnded();
 
 
@@ -89,7 +89,7 @@ public class TestLLamaBot {
         bot.notifyPlayerAction(PlayerRole.BIG_BLIND, "all-in", 100);
         bot.notifyPlayerAction(PlayerRole.DEALER, "fold", 0);
 
-        System.out.println("SCENARIO 3: " + bot.actionMakePlay(1, 1, 100));
+        System.out.println("SCENARIO 3: " + bot.notifyMakePlay(1, 1, 100));
         bot.notifyHandEnded();
 
 
@@ -103,7 +103,7 @@ public class TestLLamaBot {
 
         bot.notifyPlayerAction(PlayerRole.DEALER, "raise", 2.5);
 
-        System.out.println("SCENARIO 4: " + bot.actionMakePlay(1, 1, 100));
+        System.out.println("SCENARIO 4: " + bot.notifyMakePlay(1, 1, 100));
         bot.notifyHandEnded();
         
     }
