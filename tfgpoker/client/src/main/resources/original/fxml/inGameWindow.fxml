@@ -21,7 +21,7 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.shape.Circle?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.InGameWindowController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.InGameWindowController">
    <top>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="1292.0" BorderPane.alignment="CENTER">
          <children>
@@ -49,6 +49,66 @@
                   </HBox>
                </children>
             </StackPane>
+            <HBox alignment="CENTER_LEFT" minWidth="-Infinity" prefHeight="110.0" prefWidth="369.0" styleClass="semi-oval-pane">
+               <children>
+                  <HBox fx:id="hboxMenuItems" maxHeight="-Infinity" prefHeight="82.0" prefWidth="250.0" spacing="5.0">
+                     <children>
+                        <Button mnemonicParsing="false" prefHeight="66.0" prefWidth="62.0">
+                           <graphic>
+                              <ImageView fitHeight="48.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../images/iconoExit.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                           <styleClass>
+                              <String fx:value="semi-oval-pane" />
+                              <String fx:value="container-gradiant-colors" />
+                           </styleClass>
+                        </Button>
+                        <Button mnemonicParsing="false" prefHeight="66.0" prefWidth="62.0">
+                           <graphic>
+                              <ImageView fitHeight="37.0" fitWidth="47.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../images/seeStatistic.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                           <styleClass>
+                              <String fx:value="semi-oval-pane" />
+                              <String fx:value="container-gradiant-colors" />
+                           </styleClass>
+                        </Button>
+                        <Button mnemonicParsing="false" prefHeight="66.0" prefWidth="62.0">
+                           <graphic>
+                              <ImageView fitHeight="41.0" fitWidth="52.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../images/rangeTable.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                           <styleClass>
+                              <String fx:value="semi-oval-pane" />
+                              <String fx:value="container-gradiant-colors" />
+                           </styleClass>
+                        </Button>
+                     </children>
+                     <styleClass>
+                        <String fx:value="subtitle-label" />
+                        <String fx:value="semi-oval-pane" />
+                     </styleClass>
+                  </HBox>
+                  <Button fx:id="btnMenu" mnemonicParsing="false" onAction="#openMenu" prefHeight="87.0" prefWidth="86.0" styleClass="general-button">
+                     <graphic>
+                        <ImageView fitHeight="60.0" fitWidth="79.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/menuInGame.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </HBox>
          </children>
          <BorderPane.margin>
             <Insets />
@@ -103,16 +163,19 @@
    <bottom>
       <HBox alignment="CENTER" prefHeight="133.0" prefWidth="1326.0" BorderPane.alignment="CENTER">
          <children>
-            <HBox alignment="CENTER_LEFT" mouseTransparent="true" prefHeight="136.0" prefWidth="842.0">
+            <HBox alignment="CENTER_LEFT" mouseTransparent="true" prefHeight="7.0" prefWidth="847.0">
                <children>
-                  <ImageView fitHeight="85.0" fitWidth="180.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="85.0" fitWidth="138.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../images/logoPoker.png" />
                      </image>
+                     <HBox.margin>
+                        <Insets bottom="-20.0" left="10.0" />
+                     </HBox.margin>
                   </ImageView>
                </children>
             </HBox>
-            <VBox fx:id="buttonsHolder" alignment="CENTER_RIGHT" prefHeight="133.0" prefWidth="446.0">
+            <VBox fx:id="buttonsHolder" alignment="CENTER_RIGHT" prefHeight="133.0" prefWidth="542.0">
                <children>
                   <BorderPane prefHeight="136.0" prefWidth="494.0">
                      <left>
@@ -129,7 +192,7 @@
                         </StackPane>
                      </left>
                      <right>
-                        <HBox alignment="TOP_CENTER" prefHeight="38.0" prefWidth="197.0" spacing="5.0" BorderPane.alignment="CENTER">
+                        <HBox alignment="TOP_CENTER" prefHeight="38.0" prefWidth="274.0" spacing="5.0" BorderPane.alignment="CENTER">
                            <children>
                               <Button fx:id="btnMinBet" maxWidth="-Infinity" mnemonicParsing="false" onAction="#minBetAction" prefHeight="42.0" prefWidth="56.0" text="MIN">
                                  <styleClass>
@@ -156,47 +219,48 @@
                         </HBox>
                      </right>
                      <bottom>
-                        <HBox alignment="CENTER" pickOnBounds="false" prefHeight="95.0" prefWidth="484.0" spacing="2.0" styleClass="slider-gradiant-colors" BorderPane.alignment="CENTER">
+                        <HBox alignment="CENTER" pickOnBounds="false" prefHeight="95.0" prefWidth="457.0" spacing="2.0" styleClass="slider-gradiant-colors" BorderPane.alignment="CENTER">
                            <children>
-                              <HBox alignment="CENTER" pickOnBounds="false" prefHeight="87.0" prefWidth="205.0" spacing="4.0">
+                              <HBox alignment="CENTER" pickOnBounds="false" prefHeight="87.0" prefWidth="170.0" spacing="4.0">
                                  <children>
-                                    <Button fx:id="btnFold" maxWidth="-Infinity" mnemonicParsing="false" onAction="#foldAction" prefHeight="45.0" prefWidth="59.0" text="FOLD">
+                                    <Button fx:id="btnFold" maxWidth="-Infinity" mnemonicParsing="false" onAction="#foldAction" prefHeight="45.0" prefWidth="52.0" text="FOLD">
                                        <styleClass>
-                                          <String fx:value="general-button" />
-                                          <String fx:value="bold-general-text-font" />
+                                          <String fx:value="general-apuesta-button" />
+                                          <String fx:value="general-text-font" />
                                        </styleClass>
                                     </Button>
-                                    <Button fx:id="btnCall" maxWidth="-Infinity" mnemonicParsing="false" onAction="#callAction" prefHeight="45.0" prefWidth="57.0" text="CALL">
+                                    <Button fx:id="btnCall" maxWidth="-Infinity" mnemonicParsing="false" onAction="#callAction" prefHeight="45.0" prefWidth="52.0" text="CALL">
                                        <styleClass>
-                                          <String fx:value="general-button" />
-                                          <String fx:value="bold-general-text-font" />
+                                          <String fx:value="general-apuesta-button" />
+                                          <String fx:value="general-text-font" />
                                        </styleClass>
                                     </Button>
-                                    <Button fx:id="btnRaise" maxWidth="-Infinity" mnemonicParsing="false" onAction="#raiseAction" prefHeight="47.0" prefWidth="54.0" text="RAISE">
+                                    <Button fx:id="btnRaise" maxWidth="-Infinity" mnemonicParsing="false" onAction="#raiseAction" prefHeight="45.0" prefWidth="56.0" text="RAISE">
                                        <styleClass>
-                                          <String fx:value="general-button" />
-                                          <String fx:value="bold-general-text-font" />
+                                          <String fx:value="general-apuesta-button" />
+                                          <String fx:value="general-text-font" />
                                        </styleClass>
                                     </Button>
                                  </children>
                               </HBox>
-                              <HBox alignment="CENTER" maxHeight="-Infinity" prefHeight="70.0" prefWidth="289.0" spacing="3.0">
+                              <HBox alignment="CENTER" maxHeight="-Infinity" prefHeight="70.0" prefWidth="314.0" spacing="3.0">
                                  <children>
-                                    <Label fx:id="labelMoney" prefHeight="50.0" prefWidth="101.0" text="1000000">
+                                    <Label fx:id="labelMoney" prefHeight="50.0" prefWidth="70.0">
                                        <styleClass>
-                                          <String fx:value="semi-oval-pane" />
+                                          <String fx:value="username-label" />
                                           <String fx:value="bold-general-text-font" />
+                                          <String fx:value="apueseta-text-size" />
                                        </styleClass>
                                     </Label>
-                                    <Button fx:id="btnDecreaseMoney" maxWidth="-Infinity" mnemonicParsing="false" onAction="#decreaseMoneyAction" prefHeight="39.0" prefWidth="39.0" text="-">
+                                    <Button fx:id="btnDecreaseMoney" maxWidth="-Infinity" mnemonicParsing="false" onAction="#decreaseMoneyAction" prefHeight="38.0" prefWidth="38.0" text="-">
                                        <styleClass>
                                           <String fx:value="semi-oval-pane" />
                                           <String fx:value="general-button" />
                                           <String fx:value="super-bold-general-text-font" />
                                        </styleClass>
                                     </Button>
-                                    <Slider fx:id="sliderMoney" />
-                                    <Button fx:id="btnIncreaseMoney" maxWidth="-Infinity" mnemonicParsing="false" onAction="#increaseMoneyAction" prefHeight="39.0" prefWidth="39.0" text="+">
+                                    <Slider fx:id="sliderMoney" prefHeight="20.0" prefWidth="139.0" />
+                                    <Button fx:id="btnIncreaseMoney" maxWidth="-Infinity" mnemonicParsing="false" onAction="#increaseMoneyAction" prefHeight="38.0" prefWidth="38.0" text="+">
                                        <styleClass>
                                           <String fx:value="semi-oval-pane" />
                                           <String fx:value="general-button" />
@@ -214,6 +278,9 @@
                      </bottom>
                   </BorderPane>
                </children>
+               <HBox.margin>
+                  <Insets right="20.0" />
+               </HBox.margin>
             </VBox>
          </children>
       </HBox>
@@ -921,14 +988,17 @@
                               </LinearGradient>
                            </stroke>
                         </Circle>
-                        <ImageView fx:id="imgAvatarProfile1" fitHeight="74.0" fitWidth="104.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_RIGHT" />
+                        <ImageView fx:id="imgAvatarProfile1" fitHeight="74.0" fitWidth="104.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_RIGHT">
+                           <StackPane.margin>
+                              <Insets right="3.0" />
+                           </StackPane.margin></ImageView>
                      </children>
                   </StackPane>
                </children>
             </StackPane>
             <StackPane fx:id="pokerPlayer0" layoutX="535.0" layoutY="515.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
                <children>
-                  <HBox id="usersOwn" alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
+                  <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                      <styleClass>
                         <String fx:value="oval-pane" />
                         <String fx:value="container-gradiant-colors" />
@@ -1314,76 +1384,6 @@
                   </StackPane>
                </children>
             </StackPane>
-            <ImageView fx:id="tableCard0" fitHeight="98.0" fitWidth="70.0" layoutX="491.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../images/cards/2_of_clubs.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="tableCard1" fitHeight="98.0" fitWidth="70.0" layoutX="564.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../images/cards/2_of_clubs.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="tableCard2" fitHeight="98.0" fitWidth="70.0" layoutX="637.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../images/cards/2_of_clubs.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="tableCard4" fitHeight="98.0" fitWidth="70.0" layoutX="783.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../images/cards/4_of_clubs.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="tableCard3" fitHeight="98.0" fitWidth="70.0" layoutX="710.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../images/cards/2_of_diamonds.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="ImgDealer7" fitHeight="56.0" fitWidth="60.0" layoutX="932.0" layoutY="322.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../images/fichaDealer.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="ImgDealer8" fitHeight="56.0" fitWidth="60.0" layoutX="800.0" layoutY="430.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../images/fichaDealer.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="ImgDealer6" fitHeight="56.0" fitWidth="60.0" layoutX="932.0" layoutY="194.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../images/fichaDealer.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="ImgDealer5" fitHeight="56.0" fitWidth="60.0" layoutX="787.0" layoutY="84.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../images/fichaDealer.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="ImgDealer4" fitHeight="56.0" fitWidth="60.0" layoutX="598.0" layoutY="65.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../images/fichaDealer.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="ImgDealer3" fitHeight="56.0" fitWidth="60.0" layoutX="407.0" layoutY="136.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../images/fichaDealer.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="ImgDealer2" fitHeight="56.0" fitWidth="60.0" layoutX="326.0" layoutY="261.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../images/fichaDealer.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="ImgDealer1" fitHeight="56.0" fitWidth="60.0" layoutX="398.0" layoutY="371.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../images/fichaDealer.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="ImgDealer0" fitHeight="56.0" fitWidth="60.0" layoutX="538.0" layoutY="440.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../images/fichaDealer.png" />
-               </image>
-            </ImageView>
             <Label fx:id="labelEquity8" layoutX="1092.0" layoutY="462.0" styleClass="equity-label" text="Label" />
             <Label fx:id="labelEquity7" layoutX="1214.0" layoutY="296.0" styleClass="equity-label" text="Label" />
             <Label fx:id="labelEquity6" layoutX="1144.0" layoutY="143.0" styleClass="equity-label" text="Label" />
@@ -1406,6 +1406,76 @@
                   </Label>
                </graphic>
             </Label>
+            <ImageView fx:id="ImgDealer1" fitHeight="56.0" fitWidth="60.0" layoutX="398.0" layoutY="371.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/fichaDealer.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="ImgDealer0" fitHeight="56.0" fitWidth="60.0" layoutX="538.0" layoutY="440.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/fichaDealer.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="ImgDealer2" fitHeight="56.0" fitWidth="60.0" layoutX="326.0" layoutY="261.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/fichaDealer.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="ImgDealer3" fitHeight="56.0" fitWidth="60.0" layoutX="407.0" layoutY="136.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/fichaDealer.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="ImgDealer4" fitHeight="56.0" fitWidth="60.0" layoutX="598.0" layoutY="65.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/fichaDealer.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="ImgDealer5" fitHeight="56.0" fitWidth="60.0" layoutX="787.0" layoutY="84.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/fichaDealer.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="ImgDealer6" fitHeight="56.0" fitWidth="60.0" layoutX="932.0" layoutY="194.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/fichaDealer.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="ImgDealer8" fitHeight="56.0" fitWidth="60.0" layoutX="800.0" layoutY="430.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/fichaDealer.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="ImgDealer7" fitHeight="56.0" fitWidth="60.0" layoutX="932.0" layoutY="322.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/fichaDealer.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="tableCard3" fitHeight="98.0" fitWidth="70.0" layoutX="710.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/cards/2_of_diamonds.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="tableCard4" fitHeight="98.0" fitWidth="70.0" layoutX="783.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/cards/4_of_clubs.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="tableCard2" fitHeight="98.0" fitWidth="70.0" layoutX="637.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/cards/2_of_clubs.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="tableCard1" fitHeight="98.0" fitWidth="70.0" layoutX="564.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/cards/2_of_clubs.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="tableCard0" fitHeight="98.0" fitWidth="70.0" layoutX="491.0" layoutY="206.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/cards/2_of_clubs.png" />
+               </image>
+            </ImageView>
          </children>
       </AnchorPane>
    </center>

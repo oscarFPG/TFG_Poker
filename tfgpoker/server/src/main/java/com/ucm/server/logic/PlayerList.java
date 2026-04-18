@@ -242,7 +242,7 @@ public class PlayerList implements Iterable<Node> {
                 continue;
             }
 
-
+            notifyTurnPlayer(playerOnTurn._player);
             Command command = askCommandToPlayer(playerOnTurn, sb, bb, maxBet);
             CommandResult result = command.execute(sb, bb, maxBet);
             notifyPlayerOwnState(playerOnTurn);
@@ -564,6 +564,27 @@ public class PlayerList implements Iterable<Node> {
             }
         }
         
+    }
+
+    private void notifyTurnPlayer(IPokerPlayer playerOnTurn) throws CancelGameException {
+        Iterator<Node> it = iterator();
+        while( it.hasNext() ) {
+
+            Node player = it.next();
+            if(player._isDisconnected || player._player == playerOnTurn)
+                continue;
+
+
+            try {
+                player._player.notifyCurrentTournPlayer (playerOnTurn);
+            }
+            catch(IOException e) {
+                
+                player._isDisconnected = true;
+                if( checkIfGameCancel() )
+                    throw new CancelGameException();
+            }
+        }
     }
 
     private void notifyPlayerOwnState(Node player) throws CancelGameException {

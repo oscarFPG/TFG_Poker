@@ -214,5 +214,13 @@ public class HumanPlayer implements IPlayerNotificator {
         String equityStr = String.format("%.2f%%", equity * 100);
         SocketUtils.sendString(_socket.getOutputStream(), equityStr);
     }
+
+
+    @Override
+    public void notifyCurrentTournPlayer(IPokerPlayer p) throws IOException {
+        if(Game.DEBUG_PLAYERS) return;
+        SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_BEFORE_PLAY);
+        SocketUtils.sendInteger(_socket.getOutputStream(), p.getPlayerId());
+    }
     
 }
