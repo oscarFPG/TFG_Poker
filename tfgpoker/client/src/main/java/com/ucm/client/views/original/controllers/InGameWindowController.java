@@ -353,7 +353,7 @@ public class InGameWindowController extends GenericController {
         _listPlayerStackPanes.forEach(stack -> stack.setVisible(false));
         _listImageCards.forEach(hbox -> hbox.setVisible(false));
         _listHandBet.forEach(hbox -> hbox.setVisible(false));
-        _listEquity.forEach(lb -> lb.setVisible(false));
+        //_listEquity.forEach(lb -> lb.setVisible(false));
     }
 
     private void GUI_initializeCardStyle() { 
@@ -550,6 +550,7 @@ public class InGameWindowController extends GenericController {
                         GUI_clearPlayerBets();
                         GUI_clearDealer();
                         GUI_clearTurnPlayer();
+                        GUI_clearEquity();
                     });
 
                     // Player role and cards
@@ -816,6 +817,9 @@ public class InGameWindowController extends GenericController {
                 });
 
             }
+            else if (serverCode == GameType.EQUITY_UPDATE) {
+                String equity = SocketUtils.receiveString(socket.getInputStream());
+            }
             else if(serverCode == GameType.TOTAL_POT) {
 
                 final int totalPot = SocketUtils.receiveInt( socket.getInputStream() );
@@ -862,7 +866,7 @@ public class InGameWindowController extends GenericController {
                 System.out.printf("Player %s lost the hand but keeps in the game with %d chips of money\n", playerName, moneyOffBet);
 
             Platform.runLater(() -> {
-                GUI_updatePlayerInfo(playerID, null, moneyOnBet, moneyOffBet, isFolded, isWinner, isEliminated, null, true);
+                GUI_updatePlayerInfo(playerID, null, moneyOnBet, moneyOffBet, isFolded, isWinner, isEliminated, true);
             });
             
             isLast = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
@@ -945,13 +949,12 @@ public class InGameWindowController extends GenericController {
     }
 
 
-    private void GUI_updatePlayerInfo(int playerID, PlayerRole role, int onBetMoney, int offBetMoney, boolean isFolded, boolean isWinner, boolean isEliminated,String equity, boolean isShowdown) {
+    private void GUI_updatePlayerInfo(int playerID, PlayerRole role, int onBetMoney, int offBetMoney, boolean isFolded, boolean isWinner, boolean isEliminated, boolean isShowdown) {
 
         int seatID = _playerSeatMap.get(playerID);
         Label nameLabel = _listNameLabels.get(seatID);
         Label moneyLabel = _listMoneyLabels.get(seatID);
         Label betLabel = _listOnBetMoney.get(seatID);
-        Label equityLabel = _listEquity.get(seatID);
 
 
         if(isShowdown && role == PlayerRole.DEALER) {
@@ -1071,6 +1074,10 @@ public class InGameWindowController extends GenericController {
         }
     }
 
+    private void GUI_putEquityToPlayer(String equity) {
+        _listEquity.get(0).setText(equity);
+    }
+
 
     private void GUI_clearTableCards() {
         tableCard0.setImage(null);
@@ -1091,5 +1098,9 @@ public class InGameWindowController extends GenericController {
 
     private void GUI_clearTurnPlayer() {
         _listPlayerStackPanes.forEach(pane -> pane.getStyleClass().remove("tourn-player-color"));
+    }
+
+    private void GUI_clearEquity() {
+        _listEquity.forEach(label -> label.setVisible(false));
     }
 }

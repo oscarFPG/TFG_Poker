@@ -92,6 +92,7 @@ public class HumanPlayer implements IPlayerNotificator {
         SocketUtils.sendInteger(_socket.getOutputStream(), amount);
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOnBet());
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOffBet());
+        
     }
 
     @Override
@@ -210,7 +211,7 @@ public class HumanPlayer implements IPlayerNotificator {
     @Override
     public void notifyEquity(double equity) throws IOException {
         if(Game.DEBUG_PLAYERS) return;
-
+        SocketUtils.sendInteger(_socket.getOutputStream(), GameType.EQUITY_UPDATE);
         String equityStr = String.format("%.2f%%", equity * 100);
         SocketUtils.sendString(_socket.getOutputStream(), equityStr);
     }
