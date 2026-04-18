@@ -10,6 +10,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.IntStream;
 
+import javax.security.auth.callback.TextInputCallback;
+
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.common.GameType;
@@ -20,7 +22,12 @@ import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.common.gameobjects.Suit;
 import com.ucm.common.SocketUtils;
 
+import javafx.animation.Interpolatable;
+import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -41,12 +48,14 @@ public class InGameWindowController extends GenericController {
     /* Player info */
     @FXML private Label usernamePlaceHolder;
     @FXML private ImageView imgAvatarProfile;
+    @FXML private HBox hboxMenuItems;
 
     /* Hodler + Buttons */
     @FXML private VBox buttonsHolder;
     @FXML private Button btnFold, btnCall, btnRaise;
     @FXML private Button btnRound, btnMinBet, btnHalfBet, btnMaxBet;
     @FXML private Button btnDecreaseMoney, btnIncreaseMoney;
+    @FXML private Button btnMenu;
 
     /* Money buttons, labels and slider */
     @FXML private Label labelMoney;
@@ -139,6 +148,7 @@ public class InGameWindowController extends GenericController {
     private boolean _userCloses = false;
     private int _sliderStep = 0;
     private Thread _gameThread;
+    private boolean _menuOpen = true;
 
     
     @Override
@@ -514,6 +524,13 @@ public class InGameWindowController extends GenericController {
         sliderMoney.setValue(newValue);
     }
 
+    @FXML
+    private void openMenu() {
+        _menuOpen = !_menuOpen;
+        
+        hboxMenuItems.setVisible(_menuOpen);
+    }
+
 
     private boolean pokerGame(String name, Socket socket) {
 
@@ -544,6 +561,7 @@ public class InGameWindowController extends GenericController {
                     System.out.printf("Assigned role: %s\n", role.toString());
                     Platform.runLater(() -> {
                         GUI_putMyCards(_clientInfo.id, playerCards[0], playerCards[1]);
+                        GUI_putTurnPlayer(_clientInfo.id);
                     });
 
                     // Preflop

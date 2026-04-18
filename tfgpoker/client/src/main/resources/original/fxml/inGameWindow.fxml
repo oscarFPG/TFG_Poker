@@ -51,34 +51,46 @@
             </StackPane>
             <HBox alignment="CENTER_LEFT" minWidth="-Infinity" prefHeight="110.0" prefWidth="369.0" styleClass="semi-oval-pane">
                <children>
-                  <HBox fx:id="hboxMenuItems" maxHeight="-Infinity" prefHeight="80.0" prefWidth="242.0" spacing="5.0">
+                  <HBox fx:id="hboxMenuItems" maxHeight="-Infinity" prefHeight="82.0" prefWidth="250.0" spacing="5.0">
                      <children>
-                        <Button mnemonicParsing="false" styleClass="general-button">
+                        <Button mnemonicParsing="false" prefHeight="66.0" prefWidth="62.0">
                            <graphic>
-                              <ImageView fitHeight="49.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="48.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../../images/iconoExit.png" />
                                  </image>
                               </ImageView>
                            </graphic>
+                           <styleClass>
+                              <String fx:value="semi-oval-pane" />
+                              <String fx:value="container-gradiant-colors" />
+                           </styleClass>
                         </Button>
-                        <Button mnemonicParsing="false" prefHeight="59.0" prefWidth="54.0" styleClass="general-button">
+                        <Button mnemonicParsing="false" prefHeight="66.0" prefWidth="62.0">
                            <graphic>
-                              <ImageView fitHeight="54.0" fitWidth="53.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="37.0" fitWidth="47.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../../images/seeStatistic.png" />
                                  </image>
                               </ImageView>
                            </graphic>
+                           <styleClass>
+                              <String fx:value="semi-oval-pane" />
+                              <String fx:value="container-gradiant-colors" />
+                           </styleClass>
                         </Button>
-                        <Button mnemonicParsing="false" styleClass="general-button">
+                        <Button mnemonicParsing="false" prefHeight="66.0" prefWidth="62.0">
                            <graphic>
-                              <ImageView fitHeight="49.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="41.0" fitWidth="52.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../../images/rangeTable.png" />
                                  </image>
                               </ImageView>
                            </graphic>
+                           <styleClass>
+                              <String fx:value="semi-oval-pane" />
+                              <String fx:value="container-gradiant-colors" />
+                           </styleClass>
                         </Button>
                      </children>
                      <styleClass>
@@ -86,7 +98,7 @@
                         <String fx:value="semi-oval-pane" />
                      </styleClass>
                   </HBox>
-                  <Button fx:id="btnMenu" mnemonicParsing="false" onAction="#toggleMenu" prefHeight="80.0" prefWidth="85.0" styleClass="general-button">
+                  <Button fx:id="btnMenu" mnemonicParsing="false" onAction="#openMenu" prefHeight="87.0" prefWidth="86.0" styleClass="general-button">
                      <graphic>
                         <ImageView fitHeight="60.0" fitWidth="79.0" pickOnBounds="true" preserveRatio="true">
                            <image>
