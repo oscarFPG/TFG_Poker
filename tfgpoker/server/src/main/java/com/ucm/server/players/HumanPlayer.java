@@ -217,10 +217,10 @@ public class HumanPlayer implements IPlayerNotificator {
 
 
     @Override
-    public void notifyCurrentTournPlayer(IPokerPlayer p) throws IOException {
+    public void notifyCurrentTournPlayer(IPlayerInfo player) throws IOException {
         if(Game.DEBUG_PLAYERS) return;
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_BEFORE_PLAY);
-        SocketUtils.sendInteger(_socket.getOutputStream(), p.getPlayerId());
+        SocketUtils.sendInteger(_socket.getOutputStream(), player.getPlayerId());
     }
     
 }

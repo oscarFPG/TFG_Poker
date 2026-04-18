@@ -89,7 +89,7 @@ public interface IPlayerNotificator {
      * @param p the player performing the action
      * @throws IOException
      */
-    public void notifyCurrentTournPlayer(IPokerPlayer p) throws IOException;
+    public void notifyCurrentTournPlayer(IPlayerInfo player) throws IOException;
 
     /**
      * Notifies the player that it's other player's turn to play

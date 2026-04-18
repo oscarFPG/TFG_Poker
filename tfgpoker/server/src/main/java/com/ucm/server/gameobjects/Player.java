@@ -298,6 +298,15 @@ public class Player implements IPlayerActions {
         }
     }
 
+    public void notifyCurrentTournPlayer(IPlayerInfo other) {
+        try {
+            _playerInfo.notifyCurrentTournPlayer(other);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
     public void notifyOtherPlayerState(IPlayerInfo other, boolean isLast) {
         try {
             _playerInfo.notifyOtherPlayerState(other, isLast);

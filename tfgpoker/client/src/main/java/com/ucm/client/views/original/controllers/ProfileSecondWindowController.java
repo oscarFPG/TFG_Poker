@@ -11,6 +11,7 @@ import com.ucm.common.SocketUtils;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
@@ -77,6 +78,9 @@ public class ProfileSecondWindowController extends GenericController {
             else if(response == GameType.ERROR_NAME_TOO_LONG) {
                 System.out.printf("Server response: Name is too long!\n");
             }
+            else if (response == GameType.ERROR_NAME_ALREADY_USED) {
+                showNameAlreadyUsedAlert();
+            }
             else if(response == GameType.CONFIRMATION_NAME_VALID) {
                 System.out.printf("Server response: Name is valid!\n");
 
@@ -90,6 +94,16 @@ public class ProfileSecondWindowController extends GenericController {
             System.out.printf("Error connecting to the socket: %s\n", e.getMessage());
         }
         
+    }
+
+    private void showNameAlreadyUsedAlert() {
+        Alert alert = new Alert (Alert.AlertType.WARNING);
+        alert.setTitle("Name cannot be registrated");
+        alert.setHeaderText("Name already used");
+        alert.setContentText("You must add a name that has not already register");
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/original/css/style.css").toExternalForm());
+        alert.getDialogPane().getStyleClass().add("custom-alert");
+        alert.showAndWait();
     }
 
     @FXML

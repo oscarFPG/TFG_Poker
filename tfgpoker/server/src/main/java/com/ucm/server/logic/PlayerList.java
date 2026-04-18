@@ -1,5 +1,6 @@
 package com.ucm.server.logic;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -428,7 +429,6 @@ public class PlayerList implements Iterable<Node> {
         return info;
     }
 
-
     private int calculateTotalPot() {
 
         int total = 0;
@@ -566,19 +566,19 @@ public class PlayerList implements Iterable<Node> {
         
     }
 
-    private void notifyTurnPlayer(IPokerPlayer playerOnTurn) throws CancelGameException {
+    private void notifyTurnPlayer(Player p) throws CancelGameException {
         Iterator<Node> it = iterator();
         while( it.hasNext() ) {
 
             Node player = it.next();
-            if(player._isDisconnected || player._player == playerOnTurn)
+            if(player._isDisconnected || player._player == p)
                 continue;
 
 
             try {
-                player._player.notifyCurrentTournPlayer (playerOnTurn);
+                player._player.notifyCurrentTournPlayer (p);
             }
-            catch(IOException e) {
+            catch(Exception e) {
                 
                 player._isDisconnected = true;
                 if( checkIfGameCancel() )

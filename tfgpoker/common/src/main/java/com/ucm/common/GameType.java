@@ -39,6 +39,7 @@ public class GameType {
     public static final int ERROR_GAME_NOT_JOINED = 504;
     public static final int ERROR_GAME_CANNOT_START = 505;
     public static final int ERROR_GAME_CANCELS = 506;
+     public static final int ERROR_NAME_ALREADY_USED = 507;
 
     /* ---------------- GAME CODES ----------------  */
     // Player roles
