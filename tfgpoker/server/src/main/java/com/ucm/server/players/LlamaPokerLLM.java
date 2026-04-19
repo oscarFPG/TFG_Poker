@@ -1,6 +1,7 @@
 package com.ucm.server.players;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -14,6 +15,7 @@ import org.json.JSONObject;
 
 import com.ucm.common.GameType;
 import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.gameobjects.BotLLM;
 import com.ucm.server.interfaces.IPlayerInfo;
@@ -117,10 +119,14 @@ public class LlamaPokerLLM extends BotLLM {
 
         action = action.toLowerCase().trim();
 
-        if (action.contains("fold")) return "fold";
-        if (action.contains("call")) return "call";
-        if (action.contains("check")) return "check";
-        if (action.contains("all-in")) return "all-in";
+        if ( action.contains("fold") )
+            return "fold";
+        if ( action.contains("call") 
+            || (action.contains("check") && _maxBet > 0 ) )
+            return "call";
+        if ( action.contains("check") 
+            || (action.contains("call") && _maxBet == 0) )
+            return "check";
 
         
         action = action.replace("bet", "raise");
@@ -130,11 +136,21 @@ public class LlamaPokerLLM extends BotLLM {
 
        
         if (m.find()) {
-            return "raise " + m.group(1);
+
+            String targetBet = m.group(1);
+            int targetBetInt = Integer.parseInt(targetBet);
+            if(targetBetInt == _maxBet) {
+                return "call";
+            }
+            else if(targetBetInt < _maxBet 
+                || targetBetInt == _player.getMoneyOffBet() + _player.getMoneyOnBet()
+                || targetBetInt > _player.getMoneyOffBet() + _player.getMoneyOnBet()) {
+                return "call";
+            }
+            else
+                return "raise " + m.group(1);
         }
 
-
-      
         if (action.startsWith("raise")) {
             return "call";
         }
@@ -145,7 +161,7 @@ public class LlamaPokerLLM extends BotLLM {
 
     // VA MAS LENTO PERO ACIERTA MAS
     @Override
-    protected String buildPrompt(IPlayerInfo player, int sb, int bb, int maxBet) {
+    protected String buildPrompt(int sb, int bb, int maxBet) {
 
         StringBuilder strBuilder = new StringBuilder();
 
@@ -153,17 +169,15 @@ public class LlamaPokerLLM extends BotLLM {
         strBuilder.append("The following will be a game scenario and you need to make the optimal decision.\n\n");
 
         strBuilder.append("Here is a game summary:\n\n");
-
-        strBuilder.append("The small blind is ").append(_smallBlind / 2.0)
+        strBuilder.append("The small blind is ").append(_smallBlind)
                   .append(" chips and the big blind is ").append(_bigBlind)
                   .append(" chips. Everyone started with 100 chips.\n");
 
         strBuilder.append("The player positions involved in this game are UTG, HJ, CO, BTN, SB, BB.\n");
-
         strBuilder.append("In this hand, your position is ")
-          .append(mapRole( player.getRole() ))
+          .append(mapRole( _player.getRole() ))
           .append(", and your holding is ")
-          .append(formatCardsVerbose(hand))
+          .append(formatCardsVerbose( List.of(_player.getPlayerCards()) ))
           .append(".\n");
 
         strBuilder.append("Before the flop, ")
@@ -199,7 +213,7 @@ public class LlamaPokerLLM extends BotLLM {
         strBuilder.append("To remind you, the current pot size is ")
           .append(_totalPot)
           .append(" chips, and your holding is ")
-          .append(formatCardsVerbose(hand))
+          .append( formatCardsVerbose(List.of(_player.getPlayerCards())) )
           .append(".\n\n");
 
         strBuilder.append("Decide on an action based on the strength of your hand on this board, your position, and actions before you. ");
@@ -210,7 +224,7 @@ public class LlamaPokerLLM extends BotLLM {
     }
 
     // VA MAS RAPIDO PERO ACIERTA CON MENOS FRECUENCIA 
-    private String reducedPrompt(IPlayerInfo player, int sb, int bb, int maxBet) {
+    private String reducedPrompt(int sb, int bb, int maxBet) {
 
         StringBuilder strBuilder = new StringBuilder();
 
@@ -218,14 +232,14 @@ public class LlamaPokerLLM extends BotLLM {
 
         strBuilder.append("Here is a game summary:\n\n");
 
-        strBuilder.append("Position: ").append(mapRole( player.getRole() )).append("\n");
-        strBuilder.append("Hand: ").append(formatCardsVerbose(hand)).append("\n");
+        strBuilder.append("Position: ").append(mapRole( _player.getRole() )).append("\n");
+        strBuilder.append("Hand: ").append(formatCardsVerbose( List.of(_player.getPlayerCards()) )).append("\n");
 
         if (!table.isEmpty()) {
             strBuilder.append("Board: ").append(formatCardsVerbose(table)).append("\n");
         }
 
-        strBuilder.append("Stack: ").append( player.getMoneyOffBet() ).append("\n");
+        strBuilder.append("Stack: ").append( _player.getMoneyOffBet() ).append("\n");
         strBuilder.append("Pot: ").append(_totalPot).append("\n");
         strBuilder.append("Blinds: ").append(sb / 2.0).append("/").append(bb).append("\n\n");
 

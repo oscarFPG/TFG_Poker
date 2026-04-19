@@ -54,7 +54,6 @@ public interface IPlayerNotificator {
      */
     public void notifyTableCard(final Card c) throws IOException;
 
-
     /**
      * Notifies the player the total pot amount
      * @param total
@@ -83,6 +82,12 @@ public interface IPlayerNotificator {
      * @throws IOException
      */
     public void notifyOtherPlayerState(IPlayerInfo other) throws IOException;
+
+    /**
+     * Notifies when server stops sending more player states info
+     * @throws IOException
+     */
+    public void notifyEndPlayerState() throws IOException;
 
     /**
      * Notifies the player that it's other player's turn to play

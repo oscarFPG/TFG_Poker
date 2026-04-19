@@ -119,7 +119,8 @@ public class ClientThread implements Runnable {
                            _roomBotsList.add( new BotStruct(_id.getAndIncrement(), GameType.BOT_GEMINI, GeminiLLM.NAME) );
                         }
                         for (int i = 0; i < _gameConfig._numBots2; i++) {
-                           _roomBotsList.add( new BotStruct(_id.getAndIncrement(), GameType.BOT_LLAMA, LlamaPokerLLM.MODEL_NAME) );
+                            int instance = _id.getAndIncrement();
+                           _roomBotsList.add( new BotStruct(instance, GameType.BOT_LLAMA, LlamaPokerLLM.MODEL_NAME + "#" + instance) );
                         }
 
                         SocketUtils.sendInteger(output, GameType.CONFIRMATION_WAITING_GAME);

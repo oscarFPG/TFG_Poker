@@ -74,6 +74,7 @@ public class PlayerList implements Iterable<Node> {
         log.debug("Player {} added!", p.getPlayerName());
     }
 
+
     public void assignRolesToAllPlayers() throws CancelGameException {
 
         int numPlayers = activePlayersCounter();
@@ -127,6 +128,7 @@ public class PlayerList implements Iterable<Node> {
             }
         }
 
+        notifyPlayerStateToAllPlayers();
     }
 
     public void shareOutCardsToSomePlayer(Card c1, Card c2) throws CancelGameException {
@@ -336,8 +338,7 @@ public class PlayerList implements Iterable<Node> {
 
         _first = newFirst;
         _last = newLast;
-        assignRolesToAllPlayers();
-
+        
         _potManager.restartPots();
     }
 
@@ -721,6 +722,15 @@ public class PlayerList implements Iterable<Node> {
                         if( checkIfGameCancel() )
                             throw new CancelGameException();
                     }
+                }
+
+                try {
+                    receiverPlayer._player.notifyEndPlayerState();
+                }
+                catch(Exception e) {
+                    receiverPlayer._isDisconnected = true;
+                    if( checkIfGameCancel() )
+                        throw new CancelGameException();
                 }
             }
         }

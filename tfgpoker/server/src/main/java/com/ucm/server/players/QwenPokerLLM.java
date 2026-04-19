@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.gameobjects.BotLLM;
@@ -26,7 +27,7 @@ public class QwenPokerLLM extends BotLLM {
 
 
     @Override
-    protected String buildPrompt(IPlayerInfo player, int sb, int bb, int maxBet) {
+    protected String buildPrompt(int sb, int bb, int maxBet) {
 
         return """
 
@@ -44,10 +45,10 @@ public class QwenPokerLLM extends BotLLM {
         <action>fold/call/raise X/all-in</action>
         """
         .formatted(
-            mapRole( player.getRole() ), 
-            hand, 
+            mapRole( _player.getRole() ), 
+            List.of(_player.getPlayerCards()), 
             table, 
-            player.getMoneyOffBet(), 
+            _player.getMoneyOffBet(), 
             sb, 
             bb, 
             maxBet

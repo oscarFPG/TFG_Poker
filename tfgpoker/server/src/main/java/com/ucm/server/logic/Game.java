@@ -211,7 +211,9 @@ public class Game {
             Bot bot = BotManager.createBot( bs.botId() );
             if(bot != null) {
                 Bot specificBot = bot.create();
-                _playerList.addPlayer( new Player(id, bs.botName(), config._initialMoney, specificBot) );
+                String botName = String.format("%s#%d", bs.botName(), id);
+                _playerList.addPlayer( new Player(id, botName, config._initialMoney, specificBot) );
+                ++id;
             }
             else {
                 log.error("Bot with ID {} could not be found! Ignoring request", bs.botId());

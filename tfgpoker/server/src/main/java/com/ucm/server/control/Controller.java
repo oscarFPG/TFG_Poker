@@ -49,11 +49,13 @@ public class Controller {
         //ThreadContext.put("match", "0");
         //ThreadContext.put("hand", String.valueOf(handCounter));
 
-        _game.assignRolesToAllPlayers();
         while (!endOfGame) {
 
             log.debug("Starting hand {}", handCounter);
             try {
+
+                // Player roles
+                _game.assignRolesToAllPlayers();
 
                 // Pre-flop (2)
                 log.debug("Pre-flop round");

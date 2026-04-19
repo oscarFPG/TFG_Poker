@@ -7,9 +7,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.ucm.common.GameType;
+import com.ucm.common.SocketUtils;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.interfaces.IPlayerInfo;
+import com.ucm.server.logic.Game;
 
 /**
  * Abstract class that represents a poker bot powered by a Large Language Model (LLM).
@@ -38,12 +40,6 @@ import com.ucm.server.interfaces.IPlayerInfo;
  */
 public abstract class BotLLM extends Bot {
 
-
-    /**
-     * Player's private hand cards.
-     */
-    protected List<Card> hand = new ArrayList<>();
-
     /**
      * Community cards on the table.
      */
@@ -65,11 +61,6 @@ public abstract class BotLLM extends Bot {
     protected int _bigBlind;
 
     /**
-     * Player's role/position in the current hand.
-     */
-    protected PlayerRole _role;
-
-    /**
      * Max bet in the current hand
      */
     protected int _maxBet;
@@ -83,6 +74,8 @@ public abstract class BotLLM extends Bot {
      * Estimated probability of winning the hand.
      */
     protected double _equity;
+
+    protected IPlayerInfo _player;
 
 
     /**
@@ -119,7 +112,7 @@ public abstract class BotLLM extends Bot {
      * 
      * @return {@link String} prompt ready to be sent to the model
      */
-    protected String buildPrompt(IPlayerInfo player, int sb, int bb, int maxBet) {
+    protected String buildPrompt(int sb, int bb, int maxBet) {
         return String.format("""
             You are an expert No Limit Texas Hold'em player.
 
@@ -154,10 +147,10 @@ public abstract class BotLLM extends Bot {
             <action>check</action>
             <action>raise AMOUNT</action>
             """,
-                mapRole( player.getRole() ),
-                formatCards(hand),
+                mapRole( _player.getRole() ),
+                formatCards( List.of(_player.getPlayerCards()) ),
                 table.isEmpty() ? "[]" : formatCards(table),
-                player.getMoneyOffBet(),
+                _player.getMoneyOffBet(),
                 _totalPot,
                 _smallBlind / 2.0,
                 _bigBlind,
@@ -192,13 +185,13 @@ public abstract class BotLLM extends Bot {
     protected String sanitize(String action) {
 
         action = action.toLowerCase().trim();
-
         if (action.contains("fold")) return "fold";
         if (action.contains("call")) return "call";
         if (action.contains("check")) return "check";
+        if (action.contains("all-in")) return "all-in";
+
 
         action = action.replace("bet", "raise");
-
         Pattern p = Pattern.compile("raise\\s+(\\d+(\\.\\d+)?)");
         Matcher m = p.matcher(action);
 
@@ -206,7 +199,6 @@ public abstract class BotLLM extends Bot {
             return "raise " + m.group(1);
         }
 
-       
         if (action.contains("raise")) {
             return "call";
         }
@@ -282,8 +274,9 @@ public abstract class BotLLM extends Bot {
         _smallBlind = sb;
         _bigBlind = bb;
         _maxBet = maxBet;
+        _player = player;
 
-        String prompt = buildPrompt(player, sb, bb, maxBet);
+        String prompt = buildPrompt(sb, bb, maxBet);
         String response = callModel(prompt);
         String action = extractAction(response);
         String sanitized = sanitize(action);
@@ -299,16 +292,6 @@ public abstract class BotLLM extends Bot {
     @Override
     public void notifyBigBlindBet(int amount, IPlayerInfo player) throws IOException {
         _bigBlind = amount;
-    }
-
-    @Override
-    public void notifyPlayerRole(PlayerRole role) throws IOException {
-        _role = role;
-    }
-
-    @Override
-    public void notifyPlayerCard(Card c) throws IOException {
-        hand.add(c);
     }
 
     @Override
@@ -334,16 +317,16 @@ public abstract class BotLLM extends Bot {
     }
 
     @Override
-    public void notifyOwnState(IPlayerInfo player) throws IOException {}
-
-    @Override
-    public void notifyOtherPlayerState(IPlayerInfo other) throws IOException {}
-
-    @Override
     public void notifyEquity(double equity) throws IOException {
         _equity = equity; 
     }
 
+
+    @Override public void notifyPlayerRole(PlayerRole role) throws IOException {}
+    @Override public void notifyPlayerCard(Card c) throws IOException {}
+    @Override public void notifyEndPlayerState() throws IOException {}
+    @Override public void notifyOwnState(IPlayerInfo player) throws IOException {}
+    @Override public void notifyOtherPlayerState(IPlayerInfo other) throws IOException {}
     @Override public void notifyTurnWait() throws IOException {}
     @Override public void notifyTurnPlay() throws IOException {}
     @Override public void notifyRoundEnded() throws IOException {}

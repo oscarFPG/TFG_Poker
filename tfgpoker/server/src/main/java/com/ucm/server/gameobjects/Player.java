@@ -271,6 +271,7 @@ public class Player implements IPlayerActions {
         _numCards = 0;
     }
 
+
     public void notifyTurnPlay() {
 
         try {
@@ -317,6 +318,16 @@ public class Player implements IPlayerActions {
             _playerInfo.notifyOtherPlayerState(other);
         }
         catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void notifyEndPlayerState() {
+
+        try {
+            _playerInfo.notifyEndPlayerState();
+        }
+        catch(IOException e) {
             e.printStackTrace();
         }
     }
