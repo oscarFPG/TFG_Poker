@@ -108,9 +108,10 @@ public class Game {
 
 
         Card c = _deck.takeRandomCard();
-        _playerList.sendTableCardToAllPlayers(c);
         _tableCards[_tableCardsCounter] = c;
         _tableCardsCounter++;
+
+        _playerList.sendTableCardToAllPlayers(c);
 
         StringBuilder sb = new StringBuilder();
         for(int i = 0; i < MAX_CARDS_IN_TABLE; i++){
@@ -183,6 +184,7 @@ public class Game {
         return endOfGame;
     }
 
+    
     private void increaseBlinds() {
 
         double increase = Math.pow( (1 + _hikePercentage) , _level);
@@ -205,9 +207,15 @@ public class Game {
         }
 
         for(BotStruct bs : bots) {
+            
             Bot bot = BotManager.createBot( bs.botId() );
-            Bot specificBot = bot.create();
-            _playerList.addPlayer( new Player(id, bs.botName(), config._initialMoney, specificBot) );
+            if(bot != null) {
+                Bot specificBot = bot.create();
+                _playerList.addPlayer( new Player(id, bs.botName(), config._initialMoney, specificBot) );
+            }
+            else {
+                log.error("Bot with ID {} could not be found! Ignoring request", bs.botId());
+            }
         }
     }
 

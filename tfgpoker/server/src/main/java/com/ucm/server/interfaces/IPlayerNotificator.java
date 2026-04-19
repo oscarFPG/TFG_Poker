@@ -82,7 +82,7 @@ public interface IPlayerNotificator {
      * @param isLast indicates if this is the last player sent
      * @throws IOException
      */
-    public void notifyOtherPlayerState(IPlayerInfo other, boolean isLast) throws IOException;
+    public void notifyOtherPlayerState(IPlayerInfo other) throws IOException;
 
     /**
      * Notifies the player that it's other player's turn to play
@@ -101,12 +101,6 @@ public interface IPlayerNotificator {
      * @throws IOException
      */
     public void notifyRoundEnded() throws IOException;
-
-    /**
-     * Notifies the player that a hand has ended
-     * @throws IOException
-     */
-    public void notifyHandEnded() throws IOException;
 
     /**
      * Notifies the player that a hand has ended due to all but one player folding

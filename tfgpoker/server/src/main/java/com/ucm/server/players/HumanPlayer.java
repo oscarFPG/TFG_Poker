@@ -49,6 +49,7 @@ public class HumanPlayer implements IPlayerNotificator {
         }
 
         // Send round info
+        SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_PLAY);
         SocketUtils.sendInteger(_socket.getOutputStream(), sb);
         SocketUtils.sendInteger(_socket.getOutputStream(), bb);
         SocketUtils.sendInteger(_socket.getOutputStream(), maxBet);
@@ -148,9 +149,9 @@ public class HumanPlayer implements IPlayerNotificator {
     }
 
     @Override
-    public void notifyHandEnded() throws IOException {
+    public void notifyHandEndsByFolds() throws IOException {
         if(Game.DEBUG_PLAYERS) return;
-        SocketUtils.sendInteger(_socket.getOutputStream(), GameType.HAND_ENDS);
+        SocketUtils.sendInteger(_socket.getOutputStream(), GameType.HAND_ENDS_BY_FOLD);
     }
 
     @Override
@@ -181,30 +182,25 @@ public class HumanPlayer implements IPlayerNotificator {
     public void notifyOwnState(IPlayerInfo player) throws IOException {
         if(Game.DEBUG_PLAYERS) return;
 
+        SocketUtils.sendInteger(_socket.getOutputStream(), GameType.MY_PLAYER_STATUS);
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOffBet());
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOnBet());
         SocketUtils.sendInteger(_socket.getOutputStream(), player.isFolded() ? GameType.TRUE : GameType.FALSE);
+        SocketUtils.sendInteger(_socket.getOutputStream(), player.isWinner() ? GameType.TRUE : GameType.FALSE);
+        SocketUtils.sendInteger(_socket.getOutputStream(), player.isEliminated() ? GameType.TRUE : GameType.FALSE);
     }
 
     @Override
-    public void notifyOtherPlayerState(IPlayerInfo player, boolean isLast) throws IOException {
+    public void notifyOtherPlayerState(IPlayerInfo player) throws IOException {
         if(Game.DEBUG_PLAYERS) return;
 
-        SocketUtils.sendInteger(_socket.getOutputStream(), GameType.PLAYER_STATUS);
+        SocketUtils.sendInteger(_socket.getOutputStream(), GameType.OTHER_PLAYER_STATUS);
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getPlayerId());
-        SocketUtils.sendString(_socket.getOutputStream(), player.getPlayerName());
         SocketUtils.sendInteger(_socket.getOutputStream(), player.isFolded() ? GameType.TRUE : GameType.FALSE);
         SocketUtils.sendInteger(_socket.getOutputStream(), player.isWinner() ? GameType.TRUE : GameType.FALSE);
         SocketUtils.sendInteger(_socket.getOutputStream(), player.isEliminated() ? GameType.TRUE : GameType.FALSE);
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOffBet());
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOnBet());
-        SocketUtils.sendInteger(_socket.getOutputStream(), isLast ? GameType.TRUE : GameType.FALSE);
-    }
-
-    @Override
-    public void notifyHandEndsByFolds() throws IOException {
-        if(Game.DEBUG_PLAYERS) return;
-        SocketUtils.sendInteger(_socket.getOutputStream(), GameType.HAND_ENDS_BY_FOLD);
     }
 
     @Override

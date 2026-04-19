@@ -34,6 +34,8 @@ import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
 public class GeminiLLM extends BotLLMOnline {
 
     private static final int GEMINI_ID = GameType.BOT_GEMINI;
+    public static final String NAME = "Gemini LLM";
+
 
     /**
      * Chat model instance used to interact with Gemini.
@@ -97,10 +99,6 @@ public class GeminiLLM extends BotLLMOnline {
 		return new GeminiLLM();
 	}
     
-    public static String getGenericName() {
-        return "Gemini LLM";
-    }
-
     @Override
     public String getFullDescription() {
         return "This is a LLM powered by Google's Gemini model";

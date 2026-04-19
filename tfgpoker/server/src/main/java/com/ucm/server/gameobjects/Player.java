@@ -225,12 +225,12 @@ public class Player implements IPlayerActions {
 
 
     public void receiveRole(PlayerRole r) {
-        _role = r;
 
+        _role = r;
         try {
             _playerInfo.notifyPlayerRole(r);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -244,17 +244,18 @@ public class Player implements IPlayerActions {
         _cards[_numCards++] = c;
         try {
             _playerInfo.notifyPlayerCard(c);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void receiveTableCard(Card c) {
+
         try {
             _playerInfo.notifyTableCard(c);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -270,94 +271,117 @@ public class Player implements IPlayerActions {
         _numCards = 0;
     }
 
+    public void notifyTurnPlay() {
 
-    public void notifyTurnWait() {
         try {
-            _playerInfo.notifyTurnWait();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
+            _playerInfo.notifyTurnPlay();
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void notifyOwnState() {
+    public void notifyTurnWait() {
+
         try {
-            _playerInfo.notifyOwnState(this);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
+            _playerInfo.notifyTurnWait();
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void notifyOtherPlayerAction(IPlayerInfo other) {
+
         try {
             _playerInfo.notifyOtherPlayerAction(other);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void notifyOtherPlayerState(IPlayerInfo other, boolean isLast) {
+    public void notifyOwnState() {
+
         try {
-            _playerInfo.notifyOtherPlayerState(other, isLast);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
+            _playerInfo.notifyOwnState(this);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void notifyOtherPlayerState(IPlayerInfo other) {
+
+        try {
+            _playerInfo.notifyOtherPlayerState(other);
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void notifyTotalPot(int total) {
+
         try {
             _playerInfo.notifyTotalPot(total);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void notifyHandEndsByFolds() {
+
         try {
             _playerInfo.notifyHandEndsByFolds();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void notifyRoundEnded() {
+
         try {
             _playerInfo.notifyRoundEnded();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void notifyGameEnded() {
+
         try {
             _playerInfo.notifyGameEnded();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
+            if(isWinner())
+                _playerInfo.notifyGameWinner();
+            else
+                _playerInfo.notifyGameLoser();
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void notifyGameKeeps() {
+
         try {
             _playerInfo.notifyGameKeeps();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void notifyEquity(double equity) {
+
         _equity = equity;
         try {
             _playerInfo.notifyEquity(equity);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -368,6 +392,14 @@ public class Player implements IPlayerActions {
         int bet = Math.min(sb, _offBetMoney);
         _onBetMoney += bet;
         _offBetMoney -= bet;
+
+        try {
+            _playerInfo.notifySmallBlindBet(bet, this);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return bet;
     }
 
@@ -376,14 +408,22 @@ public class Player implements IPlayerActions {
         int bet = Math.min(bb, _offBetMoney);
         _onBetMoney += bet;
         _offBetMoney -= bet;
+
+        try {
+            _playerInfo.notifyBigBlindBet(bet, this);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return bet;
     }
 
-    public void decreaseOffBetMoney(int bet) {
+    protected void decreaseOffBetMoney(int bet) {
         _offBetMoney = Math.clamp(_offBetMoney - bet, 0, _offBetMoney);
     }
 
-    public void increaseOnBetMoney(int bet) {
+    protected void increaseOnBetMoney(int bet) {
         _onBetMoney += bet;
     }
 
@@ -411,7 +451,7 @@ public class Player implements IPlayerActions {
 
     @Override
     public Card[] getPlayerCards() {
-        return _cards;
+        return _cards.clone();
     }
 
     @Override

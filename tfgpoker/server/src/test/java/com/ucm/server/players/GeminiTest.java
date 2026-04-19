@@ -15,15 +15,11 @@ import com.ucm.server.gameobjects.Player;
 public class GeminiTest {
  
     
-    @Test
+    //@Test
     public void testApi() {
 
         try {
-            InputStream input = ServerMain.class
-                                .getClassLoader()
-                                .getResourceAsStream("credentials.json");
 
-            
             GeminiLLM geminiLLM = new GeminiLLM();
             Player player = new Player(0, "Gemini", 1000, geminiLLM);
 

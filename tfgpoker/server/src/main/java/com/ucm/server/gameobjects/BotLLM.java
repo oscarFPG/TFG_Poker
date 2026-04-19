@@ -225,7 +225,7 @@ public abstract class BotLLM extends Bot {
 
         List<String> result = new ArrayList<>();
         for (Card c : cards)
-            result.add(c.toLetterString()); // TODO : Existe un metodo toString() en Card con el simbolo de la carta
+            result.add( c.toLetterString() );
 
         return "[" + String.join(", ", result) + "]";
     }
@@ -334,14 +334,10 @@ public abstract class BotLLM extends Bot {
     }
 
     @Override
-    public void notifyOwnState(IPlayerInfo player) throws IOException {
-        // TODO
-    }
+    public void notifyOwnState(IPlayerInfo player) throws IOException {}
 
     @Override
-    public void notifyOtherPlayerState(IPlayerInfo other, boolean isLast) throws IOException {
-        // TODO
-    }
+    public void notifyOtherPlayerState(IPlayerInfo other) throws IOException {}
 
     @Override
     public void notifyEquity(double equity) throws IOException {
@@ -351,7 +347,6 @@ public abstract class BotLLM extends Bot {
     @Override public void notifyTurnWait() throws IOException {}
     @Override public void notifyTurnPlay() throws IOException {}
     @Override public void notifyRoundEnded() throws IOException {}
-    @Override public void notifyHandEnded() throws IOException {}
     @Override public void notifyHandEndsByFolds() throws IOException {}
     @Override public void notifyGameEnded() throws IOException {}
     @Override public void notifyGameKeeps() throws IOException {}

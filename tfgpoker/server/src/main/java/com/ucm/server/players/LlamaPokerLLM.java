@@ -23,7 +23,7 @@ import com.ucm.server.interfaces.IPlayerInfo;
 public class LlamaPokerLLM extends BotLLM {
 
     private static final String OLLAMA_URL = "http://localhost:11434/api/generate";
-    private static final String MODEL_NAME = "llamaPokerBot";
+    public static final String MODEL_NAME = "llamaPokerBot";
     private static final int LLAMA_ID = GameType.BOT_LLAMA;
 
 

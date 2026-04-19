@@ -5,12 +5,14 @@ import java.util.List;
 
 import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.players.GeminiLLM;
+import com.ucm.server.players.LlamaPokerLLM;
 
 
 public class BotManager {
     
     private static final List<Bot>AVAILABLE_BOTS  = Arrays.asList(
-        new GeminiLLM()
+        new GeminiLLM(),
+        new LlamaPokerLLM()
     );
 
 

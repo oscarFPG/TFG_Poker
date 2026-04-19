@@ -520,7 +520,6 @@ public class InGameWindowController extends GenericController {
 
     private boolean pokerGame(String name, Socket socket) {
 
-		int gameStatusCode;
         PlayerRole role;
 		Card[] playerCards = new Card[2];
 		Card[] tableCardValues = new Card[5];
@@ -537,15 +536,26 @@ public class InGameWindowController extends GenericController {
                         GUI_clearPlayerBets();
                     });
 
-                    // Player role and cards
+                    // Player role
                     System.out.printf("-- New hand --\n");
+                    System.out.printf("Waiting for my rol...\n");
                     role = PokerGame.receivePlayerRole(input);
+                    System.out.printf("Assigned role: %s\n", role.toString());
+                    Platform.runLater(() -> {
+                        // TODO : Draw my role if necessary
+                    });
+
+                    // Player cards
+                    System.out.printf("Waiting for my cards...\n");
                     playerCards[0] = PokerGame.receiveCard(input);
                     playerCards[1] = PokerGame.receiveCard(input);
-                    System.out.printf("Assigned role: %s\n", role.toString());
+                    System.out.printf("Cards: %s %s\n", 
+                        playerCards[0].toString(), playerCards[1].toString()
+                    );
                     Platform.runLater(() -> {
                         GUI_putMyCards(_clientInfo.id, playerCards[0], playerCards[1]);
                     });
+
 
                     // Preflop
                     System.out.printf("-- Preflop --\n");
@@ -575,6 +585,7 @@ public class InGameWindowController extends GenericController {
                         GUI_showCard(tableCard3, tableCardValues[3]);
                     });
 
+
                     // Turn
                     System.out.printf("-- Turn --\n");
                     Platform.runLater(() -> {
@@ -603,44 +614,20 @@ public class InGameWindowController extends GenericController {
                         GUI_putRoundName("SHOWDOWN");
                     });
                     showdown(socket);
-                    
-
-                    int sleep_seconds = 3;
-                    System.out.printf("%d seconds pause to see the winner...\n", sleep_seconds);
-                    Thread.sleep(sleep_seconds * 1000);
-
-                    // Game ends or keeps
-                    gameStatusCode = SocketUtils.receiveInt(input);
-                    endOfGame = (gameStatusCode == GameType.GAME_ENDS);
-                    if(gameStatusCode == GameType.GAME_ENDS)
-                        System.out.printf("Match ended!\n\n");
-                    else if(gameStatusCode == GameType.GAME_KEEPS)
-                        System.out.printf("Match keeps!\n\n");
                 }
                 catch (OnlyOnePlayerLeftException e) {
 
                     System.out.printf("There is only one player left!\n");
                     try {
-
-                        // Get winner/loser state
-                        //receivePlayersUpdatedInfo(socket);
-
-                        final int seconds = 3;
-                        System.out.printf("%d seconds pause to see the winner...\n", seconds);
-                        Thread.sleep(seconds * 1000);
-
-                        // Game ends or keeps
-                        gameStatusCode = SocketUtils.receiveInt(input);
-                        endOfGame = (gameStatusCode == GameType.GAME_ENDS);
-                        if(gameStatusCode == GameType.GAME_ENDS)
-                            System.out.printf("Match ended!\n\n");
-                        else if(gameStatusCode == GameType.GAME_KEEPS)
-                            System.out.printf("Match keeps!\n\n");
-
+                        showdown(socket);
                     }
-                    catch(IOException | InterruptedException ex) {
+                    catch(IOException ex) {
                         System.out.printf("Error receiving the rank after a fold exception: %s", ex.getMessage());
                     }
+                    catch(InterruptedException ex) {
+                        System.out.printf("Game thread interrupted: %s\n", ex.getMessage());
+                    }
+
                 }
                 catch(InterruptedException e) {
                     System.out.printf("Game thread interrupted: %s\n", e.getMessage());
@@ -671,10 +658,12 @@ public class InGameWindowController extends GenericController {
 
         boolean handEndsByFold = false;
 
-		int serverCode = SocketUtils.receiveInt(socket.getInputStream());
-		while(serverCode != GameType.ROUND_ENDS && !handEndsByFold) {
+		int serverCode;
+        do {
 
-			if(serverCode == GameType.TURN_FORCED_SB) {
+            serverCode = SocketUtils.receiveInt(socket.getInputStream());
+
+            if(serverCode == GameType.TURN_FORCED_SB) {
 
 				final int amountSB = SocketUtils.receiveInt(socket.getInputStream());
                 final int onBetMoney = SocketUtils.receiveInt(socket.getInputStream());
@@ -787,48 +776,66 @@ public class InGameWindowController extends GenericController {
                 System.out.printf("Game has been cancelled by the server!\n");
                 throw new CancelGameException();
             }
+            else if(serverCode == GameType.ROUND_ENDS) {
+                System.out.printf("ROUND_ENDS received!\n");
+            }
             else {
 				System.out.printf("Unknown turn code %d\n", serverCode);
 			}
 
-			if(!handEndsByFold)
-				serverCode = SocketUtils.receiveInt(socket.getInputStream());
-		}
+        }
+        while(serverCode != GameType.ROUND_ENDS && !handEndsByFold);
 		System.out.printf("Round has ended!\n\n");
+
 
 		if(handEndsByFold)
 			throw new OnlyOnePlayerLeftException();
     }
 
-    private void showdown(Socket socket) throws IOException {
+    private void showdown(Socket socket) throws IOException, InterruptedException {
 
-        boolean isLast = true;
+        int code;
         do {
 
-            int showdownCode = SocketUtils.receiveInt(socket.getInputStream());
-            int playerID = SocketUtils.receiveInt(socket.getInputStream());
-            String playerName = SocketUtils.receiveString(socket.getInputStream());
-            boolean isFolded = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
-            boolean isWinner = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
-            boolean isEliminated = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
-            int moneyOffBet = SocketUtils.receiveInt(socket.getInputStream());
-            int moneyOnBet = SocketUtils.receiveInt(socket.getInputStream());
+            code = SocketUtils.receiveInt(socket.getInputStream());
+            if(code == GameType.MY_PLAYER_STATUS) {
 
-            if(isWinner)
-                System.out.printf("Player %s is winner! Now it has %d chips of money\n", playerName, moneyOffBet);
-            else if(isEliminated)
-                System.out.printf("Player %s is eliminated from the game! Current money: %d\n", playerName, moneyOffBet);
-            else
-                System.out.printf("Player %s lost the hand but keeps in the game with %d chips of money\n", playerName, moneyOffBet);
+                int myOffBetMoney = SocketUtils.receiveInt(socket.getInputStream());
+                int myOnBetMoney = SocketUtils.receiveInt(socket.getInputStream());
+                boolean iAmFolded = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
+                boolean iAmWinner = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
+                boolean iAmEliminated = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
+            }
+            else if(code == GameType.OTHER_PLAYER_STATUS) {
 
-            Platform.runLater(() -> {
-                GUI_updatePlayerInfo(playerID, null, moneyOnBet, moneyOffBet, isFolded, isWinner, isEliminated, null, true);
-            });
+                int playerID = SocketUtils.receiveInt(socket.getInputStream());
+                boolean isFolded = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
+                boolean isWinner = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
+                boolean isEliminated = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
+                int moneyOffBet = SocketUtils.receiveInt(socket.getInputStream());
+                int moneyOnBet = SocketUtils.receiveInt(socket.getInputStream());
+
+                Platform.runLater(() -> {
+                    GUI_updatePlayerInfo(playerID, null, moneyOnBet, moneyOffBet, isFolded, isWinner, isEliminated, null, true);
+                });
+            }
+            else if(code == GameType.GAME_ENDS) {
+                System.out.printf("Game ends!\n");
+            }
+            else if(code == GameType.GAME_KEEPS) {
+                System.out.printf("Game keeps!\n");
+            }
+            else {
+                System.out.printf("Unknown code %d in showdown!\n", code);
+            }
             
-            isLast = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
         } 
-        while(!isLast);
+        while(code != GameType.GAME_ENDS || code != GameType.GAME_KEEPS);
         
+        int sleep_seconds = 3;
+        System.out.printf("%d seconds pause to see the winner...\n", sleep_seconds);
+        Thread.sleep(sleep_seconds * 1000);
+
     }
     
     private void selectCommand(
@@ -958,8 +965,6 @@ public class InGameWindowController extends GenericController {
     }
 
     private void GUI_showCard(ImageView imageView, Card card) {
-
-        System.out.printf("Received card: %s\n", card.toString());
 
         String path = "images/cards/";
         String cardValue = (card.getNumber() == 1) ? "ace"
