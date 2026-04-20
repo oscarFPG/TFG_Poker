@@ -39,6 +39,7 @@ public class GameType {
     public static final int ERROR_GAME_NOT_JOINED = 504;
     public static final int ERROR_GAME_CANNOT_START = 505;
     public static final int ERROR_GAME_CANCELS = 506;
+     public static final int ERROR_NAME_ALREADY_USED = 507;
 
     /* ---------------- GAME CODES ----------------  */
     // Player roles
@@ -80,6 +81,7 @@ public class GameType {
     public static final int TURN_WAIT = 203;
     public static final int TURN_FOLD = 204;
     public static final int TURN_OTHER_PLAYER = 205;
+    public static final int TURN_BEFORE_PLAY = 206;
 
     // Round, hand and game status
     public static final int GAME_STARTS = 300;

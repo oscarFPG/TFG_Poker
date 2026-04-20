@@ -77,6 +77,9 @@ public class ClientThread implements Runnable {
                     else if(PokerPreGame.checkNameIsTooLong(name)) {
                         SocketUtils.sendInteger(output, GameType.ERROR_NAME_TOO_LONG);
                     }
+                    else if (isNameAlreadyUsed(name)) {
+                        SocketUtils.sendInteger(output, GameType.ERROR_NAME_ALREADY_USED);
+                    }
                     else {
                         SocketUtils.sendInteger(output, GameType.CONFIRMATION_NAME_VALID);
                         _playerName = name;
@@ -289,6 +292,18 @@ public class ClientThread implements Runnable {
             }
         }
 
+    }
+
+    private boolean isNameAlreadyUsed(String name) {
+        synchronized(_roomPlayerList) {
+            for (ClientThread ct : _roomPlayerList) {
+                if(ct._playerName != null && ct._playerName.equalsIgnoreCase(name)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
 

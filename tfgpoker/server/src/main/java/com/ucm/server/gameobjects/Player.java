@@ -302,8 +302,17 @@ public class Player implements IPlayerActions {
         }
     }
 
-    public void notifyOwnState() {
+    public void notifyCurrentTournPlayer(IPlayerInfo other) {
+        
+        try {
+            _playerInfo.notifyCurrentTournPlayer(other);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
+    public void notifyOwnState() {
         try {
             _playerInfo.notifyOwnState(this);
         }

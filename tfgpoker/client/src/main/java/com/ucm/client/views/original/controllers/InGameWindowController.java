@@ -10,6 +10,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.IntStream;
 
+import javax.security.auth.callback.TextInputCallback;
+
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.common.GameType;
@@ -20,7 +22,12 @@ import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.common.gameobjects.Suit;
 import com.ucm.common.SocketUtils;
 
+import javafx.animation.Interpolatable;
+import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -41,12 +48,14 @@ public class InGameWindowController extends GenericController {
     /* Player info */
     @FXML private Label usernamePlaceHolder;
     @FXML private ImageView imgAvatarProfile;
+    @FXML private HBox hboxMenuItems;
 
     /* Hodler + Buttons */
     @FXML private VBox buttonsHolder;
     @FXML private Button btnFold, btnCall, btnRaise;
     @FXML private Button btnRound, btnMinBet, btnHalfBet, btnMaxBet;
     @FXML private Button btnDecreaseMoney, btnIncreaseMoney;
+    @FXML private Button btnMenu;
 
     /* Money buttons, labels and slider */
     @FXML private Label labelMoney;
@@ -139,6 +148,7 @@ public class InGameWindowController extends GenericController {
     private boolean _userCloses = false;
     private int _sliderStep = 0;
     private Thread _gameThread;
+    private boolean _menuOpen = true;
 
     
     @Override
@@ -341,10 +351,9 @@ public class InGameWindowController extends GenericController {
         _listNameLabels.forEach(label -> label.setText("") );
         _listMoneyLabels.forEach(label -> label.setText("") );
         _listPlayerStackPanes.forEach(stack -> stack.setVisible(false));
-
         _listImageCards.forEach(hbox -> hbox.setVisible(false));
         _listHandBet.forEach(hbox -> hbox.setVisible(false));
-        _listEquity.forEach(lb -> lb.setVisible(false));
+        _listEquity.forEach(label -> label.setVisible(false));
     }
 
     private void GUI_initializeCardStyle() { 
@@ -355,10 +364,7 @@ public class InGameWindowController extends GenericController {
     private void GUI_initializeDealerButton() {
         
         Image DealerImage = new Image(getClass().getResource("/images/fichaDealer.png").toExternalForm());
-        _listDealer.forEach(iv -> {
-            iv.setImage(DealerImage);
-            iv.setVisible(false);
-        });
+        _listDealer.forEach(iv -> iv.setImage(DealerImage));
     }
 
     private void GUI_initializeMoneySlider() {   
@@ -518,6 +524,18 @@ public class InGameWindowController extends GenericController {
         sliderMoney.setValue(newValue);
     }
 
+    @FXML
+    private void openMenu() {
+        _menuOpen = !_menuOpen;
+        
+        hboxMenuItems.setVisible(_menuOpen);
+    }
+
+    @FXML
+    private void seeEquity() {
+        
+    }
+
 
     private boolean pokerGame(String name, Socket socket) {
 
@@ -535,6 +553,8 @@ public class InGameWindowController extends GenericController {
                     Platform.runLater(() -> {
                         GUI_clearTableCards();
                         GUI_clearPlayerBets();
+                        GUI_clearDealer();
+                        GUI_clearTurnPlayer();
                     });
 
                     // Player roles
@@ -554,6 +574,7 @@ public class InGameWindowController extends GenericController {
                     );
                     Platform.runLater(() -> {
                         GUI_putMyCards(_clientInfo.id, playerCards[0], playerCards[1]);
+                        GUI_putTurnPlayer(_clientInfo.id);
                     });
 
                     
@@ -672,6 +693,10 @@ public class InGameWindowController extends GenericController {
 
                 Platform.runLater(() -> {
                     GUI_putPlayerBet(_clientInfo.id, onBetMoney, offBetMoney, false);
+                    if(role == PlayerRole.DEALER)  {
+                        GUI_putDealerButton(_clientInfo.id);
+                    }
+                    GUI_putTurnPlayer(_clientInfo.id);
                 });
 
 			}
@@ -684,13 +709,18 @@ public class InGameWindowController extends GenericController {
 
                 Platform.runLater(() -> {
                     GUI_putPlayerBet(_clientInfo.id, onBetMoney, offBetMoney, false);
+                    if(role == PlayerRole.DEALER)  {
+                        GUI_putDealerButton(_clientInfo.id);
+                    }
+                    GUI_putTurnPlayer(_clientInfo.id);
                 });
 			}
 			else if(serverCode == GameType.TURN_WAIT) {
-
+                int seatID = _playerSeatMap.get(_clientInfo.id);
 				System.out.printf("Wait for the other players to play...\n");
                 Platform.runLater(() -> {
                     buttonsHolder.setVisible(false);
+                    _listPlayerStackPanes.get(seatID).getStyleClass().remove("tourn-player-color");
                 });
 
 			}
@@ -718,9 +748,31 @@ public class InGameWindowController extends GenericController {
                     sliderMoney.setMajorTickUnit( sliderStep );
                     sliderMoney.setMin( (double)maxBet );
                     sliderMoney.setMax( (double)(offBetMoney + onBetMoney)  );
+                    
+                    if(role == PlayerRole.DEALER)  {
+                        GUI_putDealerButton(_clientInfo.id);
+                    }
+                    GUI_putTurnPlayer(_clientInfo.id);
                 });
 
                 selectCommand(socket, sb, bb, maxBet, offBetMoney, onBetMoney);
+
+                final int newOffBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
+                final int newOnBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
+                final boolean isFolded = SocketUtils.receiveInt( socket.getInputStream() ) == GameType.TRUE;
+                Platform.runLater(() -> {
+
+                    int seatID = _playerSeatMap.get(_clientInfo.id);
+                    if(isFolded) {
+                        _listHandBet.get( seatID ).setOpacity(0.6);
+                    }
+                    else {
+                        GUI_putPlayerBet(_clientInfo.id, newOnBetMoney, newOffBetMoney);
+                    }
+
+                    buttonsHolder.setVisible(false);
+                    _listPlayerStackPanes.get(seatID).getStyleClass().remove("tourn-player-color");
+                });
 			}
 			else if(serverCode == GameType.HAND_ENDS_BY_FOLD) {
 				handEndsByFold = true;
@@ -747,6 +799,9 @@ public class InGameWindowController extends GenericController {
 
                     buttonsHolder.setVisible(false);
                 });
+            else if(serverCode == GameType.TURN_BEFORE_PLAY) {
+                int currentTurnPlayerId = SocketUtils.receiveInt( socket.getInputStream() );
+                GUI_putTurnPlayer(currentTurnPlayerId);
             }
             else if(serverCode == GameType.TURN_OTHER_PLAYER) {
 
@@ -769,8 +824,17 @@ public class InGameWindowController extends GenericController {
 
                 Platform.runLater(() -> {
                     GUI_putPlayerBet(otherPlayerID, otherPlayerOnBetMoney, otherPlayerOffBetMoney, otherPlayerIsFolded);
+                    
+                    int seatID = _playerSeatMap.get(otherPlayerID);
+                    if(otherPlayerRole == PlayerRole.DEALER)  {
+                        GUI_putDealerButton(otherPlayerID);
+                    }
+                    _listPlayerStackPanes.get(seatID).getStyleClass().remove("tourn-player-color");
                 });
 
+            }
+            else if (serverCode == GameType.EQUITY_UPDATE) {
+                String equity = SocketUtils.receiveString(socket.getInputStream());
             }
             else if(serverCode == GameType.TOTAL_POT) {
 
@@ -816,7 +880,7 @@ public class InGameWindowController extends GenericController {
                 boolean iAmEliminated = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
 
                 Platform.runLater(() -> {
-                    GUI_updatePlayerInfo(_clientInfo.id, myRole, myOnBetMoney, myOffBetMoney, iAmFolded, iAmWinner, iAmEliminated, null, true);
+                    GUI_updatePlayerInfo(_clientInfo.id, myRole, myOnBetMoney, myOffBetMoney, iAmFolded, iAmWinner, iAmEliminated, true);
                 });
             }
             else if(code == GameType.OTHER_PLAYER_STATUS) {
@@ -831,7 +895,7 @@ public class InGameWindowController extends GenericController {
                 int moneyOnBet = SocketUtils.receiveInt(socket.getInputStream());
 
                 Platform.runLater(() -> {
-                    GUI_updatePlayerInfo(playerID, role, moneyOnBet, moneyOffBet, isFolded, isWinner, isEliminated, null, true);
+                    GUI_updatePlayerInfo(playerID, role, moneyOnBet, moneyOffBet, isFolded, isWinner, isEliminated, true);
                 });
             }
             else if(code == GameType.PLAYER_STATUS_END) {
@@ -1007,7 +1071,6 @@ public class InGameWindowController extends GenericController {
         boolean isFolded, 
         boolean isWinner, 
         boolean isEliminated, 
-        String equity, 
         boolean isShowdown
     ) {
 
@@ -1015,7 +1078,6 @@ public class InGameWindowController extends GenericController {
         Label nameLabel = _listNameLabels.get(seatID);
         Label moneyLabel = _listMoneyLabels.get(seatID);
         Label betLabel = _listOnBetMoney.get(seatID);
-        Label equityLabel = _listEquity.get(seatID);
 
 
         if(isShowdown && role == PlayerRole.DEALER) {
@@ -1137,6 +1199,18 @@ public class InGameWindowController extends GenericController {
         }
     }
 
+    private void GUI_putTurnPlayer(int playerID) {
+        GUI_clearTurnPlayer();
+        Integer seatID = _playerSeatMap.get(playerID);
+        if(seatID != null) {
+            _listPlayerStackPanes.get(seatID).getStyleClass().add("tourn-player-color");
+        }
+    }
+
+    private void GUI_putEquityToPlayer(String equity) {
+        _listEquity.get(0).setText(equity);
+    }
+
 
     private void GUI_clearTableCards() {
         tableCard0.setImage(null);
@@ -1151,4 +1225,15 @@ public class InGameWindowController extends GenericController {
         _listHandBet.forEach(bet -> bet.setVisible(false));
     }
 
+    private void GUI_clearDealer() {
+        _listDealer.forEach(iv -> iv.setVisible(false));
+    }
+
+    private void GUI_clearTurnPlayer() {
+        _listPlayerStackPanes.forEach(pane -> pane.getStyleClass().remove("tourn-player-color"));
+    }
+
+    // private void GUI_clearEquity() {
+    //     _listEquity.forEach(label -> label.setVisible(false));
+    // }
 }

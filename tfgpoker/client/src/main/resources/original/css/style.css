@@ -37,6 +37,22 @@
     -fx-alignment: center;
 }
 
+.general-apuesta-button {
+    -fx-background-color:
+        linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100% ),
+        radial-gradient(center 50% 40%, radius 120%,#691179 0%,#661076 25%,#3A0878 60%,#20034F 100% );
+    -fx-background-radius: 10, 9;
+    -fx-background-insets: 0, 2;
+
+    -fx-text-fill: #e5e5e5;
+    -fx-font-family: "Constantia Bold";
+    -fx-font-size: 11px;
+    -fx-font-weight: normal;
+    -fx-effect: none;
+
+    -fx-alignment: center;
+}
+
 /* Evitar cambios de estilo heredados */
 .general-button:hover,
 .general-button:pressed,
@@ -164,6 +180,10 @@
     -fx-alignment: center;
     -fx-font-family: "Constantia";
     -fx-font-weight: 900;
+}
+
+.apueseta-text-size {
+    -fx-font-size: 16px;
 }
 
 .transparent-background{
@@ -617,6 +637,10 @@
 }
 
 #usersOwn{
+    -fx-effect:  dropshadow(gaussian, rgba(240,184,255,0.8), 25, 0.5, 0, 0);
+}
+
+.tourn-player-color {
     -fx-effect:  dropshadow(gaussian, rgba(240,184,255,0.8), 25, 0.5, 0, 0);
 }
 /*ICONOS GENERALES ------------------------------------------------------------------------------------------------------------------------------ */

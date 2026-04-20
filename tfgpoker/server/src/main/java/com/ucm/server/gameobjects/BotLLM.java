@@ -251,6 +251,8 @@ public abstract class BotLLM extends Bot {
     }
 
 
+    @Override public void notifyCurrentTournPlayer (IPlayerInfo player) {}
+
     /**
      * Determines the action to take using the LLM.
      * 

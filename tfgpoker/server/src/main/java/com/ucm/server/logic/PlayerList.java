@@ -1,5 +1,6 @@
 package com.ucm.server.logic;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -245,7 +246,7 @@ public class PlayerList implements Iterable<Node> {
                 continue;
             }
 
-
+            notifyTurnPlayer(playerOnTurn._player);
             Command command = askCommandToPlayer(playerOnTurn, sb, bb, maxBet);
             CommandResult result = command.execute(sb, bb, maxBet);
             notifyPlayerOwnState(playerOnTurn);
@@ -435,7 +436,6 @@ public class PlayerList implements Iterable<Node> {
         return info;
     }
 
-
     private int calculateTotalPot() {
 
         int total = 0;
@@ -571,6 +571,27 @@ public class PlayerList implements Iterable<Node> {
             }
         }
         
+    }
+
+    private void notifyTurnPlayer(Player p) throws CancelGameException {
+        Iterator<Node> it = iterator();
+        while( it.hasNext() ) {
+
+            Node player = it.next();
+            if(player._isDisconnected || player._player == p)
+                continue;
+
+
+            try {
+                player._player.notifyCurrentTournPlayer (p);
+            }
+            catch(Exception e) {
+                
+                player._isDisconnected = true;
+                if( checkIfGameCancel() )
+                    throw new CancelGameException();
+            }
+        }
     }
 
     private void notifyPlayerOwnState(Node player) throws CancelGameException {
