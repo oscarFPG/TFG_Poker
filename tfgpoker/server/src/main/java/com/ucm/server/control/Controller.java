@@ -60,6 +60,7 @@ public class Controller {
                 // Pre-flop (2)
                 log.debug("Pre-flop round");
                 _game.shareOutCardsToAllPlayers();
+                _game.updateEquity();
                 _game.playHand();
 
                 // Flop (3)
@@ -67,16 +68,19 @@ public class Controller {
                 _game.addCardToTable();
                 _game.addCardToTable();
                 _game.addCardToTable();
+                _game.updateEquity();
                 _game.playHand();
 
                 // Turn (4)
                 log.debug("Turn round");
                 _game.addCardToTable();
+                _game.updateEquity();
                 _game.playHand();
 
                 // River (5)
                 log.debug("River round");
                 _game.addCardToTable();
+                _game.updateEquity();
                 _game.playHand();
 
                 // Showdown (6)

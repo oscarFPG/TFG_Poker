@@ -7,6 +7,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -66,19 +67,19 @@
                               <String fx:value="container-gradiant-colors" />
                            </styleClass>
                         </Button>
-                        <Button fx:id="btnEquity" mnemonicParsing="false" onAction="#seeEquity" prefHeight="66.0" prefWidth="62.0">
-                           <graphic>
-                              <ImageView fitHeight="37.0" fitWidth="47.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../../images/seeStatistic.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
+                        <ToggleButton fx:id="btnEquity" mnemonicParsing="false" onAction="#seeEquity" prefHeight="66.0" prefWidth="62.0">
                            <styleClass>
                               <String fx:value="semi-oval-pane" />
                               <String fx:value="container-gradiant-colors" />
                            </styleClass>
-                        </Button>
+                           <graphic>
+                              <ImageView fx:id="imgSeeEquity" fitHeight="37.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../images/notSeeStatistic.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </ToggleButton>
                         <Button mnemonicParsing="false" prefHeight="66.0" prefWidth="62.0">
                            <graphic>
                               <ImageView fitHeight="41.0" fitWidth="52.0" pickOnBounds="true" preserveRatio="true">

@@ -33,6 +33,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -56,6 +57,8 @@ public class InGameWindowController extends GenericController {
     @FXML private Button btnRound, btnMinBet, btnHalfBet, btnMaxBet;
     @FXML private Button btnDecreaseMoney, btnIncreaseMoney;
     @FXML private Button btnMenu;
+    @FXML private ToggleButton btnEquity;
+    @FXML private ImageView imgSeeEquity;
 
     /* Money buttons, labels and slider */
     @FXML private Label labelMoney;
@@ -151,6 +154,8 @@ public class InGameWindowController extends GenericController {
     private boolean _menuOpen = true;
     private boolean _equityVisible = false;
     private String _myEquity = "0%";
+    private final Image equityOn = new Image(getClass().getResource("/images/seeStatistic.png").toExternalForm());
+    private final Image equityOff = new Image(getClass().getResource("/images/notSeeStatistic.png").toExternalForm());
     
     @Override
     protected void onViewShown() {
@@ -354,6 +359,7 @@ public class InGameWindowController extends GenericController {
         _listPlayerStackPanes.forEach(stack -> stack.setVisible(false));
         _listImageCards.forEach(hbox -> hbox.setVisible(false));
         _listHandBet.forEach(hbox -> hbox.setVisible(false));
+        _listHandBet.get(0).setOpacity(1);
         _listEquity.forEach(label -> { label.setVisible(false); label.setText("0%");});
     }
 
@@ -534,9 +540,9 @@ public class InGameWindowController extends GenericController {
 
     @FXML
     private void seeEquity() {
-        _equityVisible = !_equityVisible;
-
-       GUI_putEquityToPlayer();
+        _equityVisible = btnEquity.isSelected();
+        imgSeeEquity.setImage(_equityVisible ? equityOn : equityOff);
+        GUI_putEquityToPlayer();
     }
 
     private boolean pokerGame(String name, Socket socket) {
@@ -685,6 +691,10 @@ public class InGameWindowController extends GenericController {
         do {
 
             serverCode = SocketUtils.receiveInt(socket.getInputStream());
+
+            if(handleEquity(serverCode, socket)) {
+                continue;
+            }
 
             if(serverCode == GameType.TURN_FORCED_SB) {
 
@@ -838,11 +848,6 @@ public class InGameWindowController extends GenericController {
                 });
 
             }
-            else if (serverCode == GameType.EQUITY_UPDATE) {
-                String equity = SocketUtils.receiveString(socket.getInputStream());
-                _myEquity = equity;
-                Platform.runLater(() -> GUI_putEquityToPlayer());
-            }
             else if(serverCode == GameType.TOTAL_POT) {
 
                 final int totalPot = SocketUtils.receiveInt( socket.getInputStream() );
@@ -869,13 +874,18 @@ public class InGameWindowController extends GenericController {
 			throw new OnlyOnePlayerLeftException();
     }
 
-    private boolean showdown(Socket socket) throws IOException, InterruptedException {
+    private boolean showdown(Socket socket) throws IOException, InterruptedException, CancelGameException {
 
         boolean gameEnds = false;
         int code;
         do {
 
             code = SocketUtils.receiveInt(socket.getInputStream());
+
+            if(handleEquity(code, socket)) {
+                continue;
+            }
+
             if(code == GameType.MY_PLAYER_STATUS) {
 
                 String myName = SocketUtils.receiveString(socket.getInputStream());
@@ -1008,12 +1018,17 @@ public class InGameWindowController extends GenericController {
         }
     }
 
-    private void playerStartInfo(Socket socket) throws IOException {
+    private void playerStartInfo(Socket socket) throws IOException, CancelGameException {
 
         int code;
         do {
 
             code = SocketUtils.receiveInt(socket.getInputStream());
+
+            if(handleEquity(code, socket)) {
+                continue;
+            }
+
             if(code == GameType.MY_PLAYER_STATUS) {
 
                 String myName = SocketUtils.receiveString(socket.getInputStream());
@@ -1163,6 +1178,16 @@ public class InGameWindowController extends GenericController {
         imageView.setImage( cardImage );
     }
 
+    private boolean handleEquity(int serverCode, Socket socket) throws IOException, CancelGameException {
+
+        if(serverCode == GameType.EQUITY_UPDATE) {
+            _myEquity = SocketUtils.receiveString(socket.getInputStream());
+            Platform.runLater(this::GUI_putEquityToPlayer);
+            return true;
+        }
+        return false;
+    }
+
     private void GUI_putMyCards(int playerID, Card card1, Card card2) {
         int seatID = _playerSeatMap.get(playerID);
         ImageView leftCard = (ImageView) _listPaintCards.get(seatID * 2);
@@ -1189,6 +1214,7 @@ public class InGameWindowController extends GenericController {
             Label moneyLabel = _listMoneyLabels.get(seatID);
 
             _listHandBet.get(seatID).setVisible(true);
+            _listHandBet.get(seatID).setOpacity(1);
 
             betLabel.setText( String.valueOf(amountOnBet) );
             betLabel.setVisible(true);
@@ -1219,10 +1245,33 @@ public class InGameWindowController extends GenericController {
         if(_equityVisible && _myEquity != null) {
             myEquityLabel.setText(_myEquity);
             myEquityLabel.setVisible(true);
+
+            double equityValue = Double.parseDouble(_myEquity.replace("%","").replace(",", "."))/100;
+            GUI_putColorStyleToEquity(myEquityLabel, equityValue);
         }
         else {
             myEquityLabel.setVisible(false);
         }
+    }
+
+    private void GUI_putColorStyleToEquity(Label equityLabel, double equity) {
+
+        equityLabel.getStyleClass().removeAll(
+          "equity-green",
+          "equity-yellow",
+          "equity-red"  
+        );
+
+        if(equity >= 0.65) {
+            equityLabel.getStyleClass().add("equity-green");
+        }
+        else if(equity >= 0.35) {
+            equityLabel.getStyleClass().add("equity-yellow");
+        }
+        else{
+            equityLabel.getStyleClass().add("equity-red");
+        }
+
     }
 
 
@@ -1247,4 +1296,5 @@ public class InGameWindowController extends GenericController {
     private void GUI_clearTurnPlayer() {
         _listPlayerStackPanes.forEach(pane -> pane.getStyleClass().remove("tourn-player-color"));
     }
+    
 }
