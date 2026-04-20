@@ -1,10 +1,7 @@
 package com.ucm.client.views.original.controllers;
 
-import java.io.IOException;
-import java.net.Socket;
-
-import com.ucm.client.AvatarGenerator;
-import com.ucm.client.ClientInfo;
+import com.ucm.client.utils.AlertManager;
+import com.ucm.client.utils.NotificationManager;
 import com.ucm.common.GameType;
 import com.ucm.common.PokerPreGame;
 import com.ucm.common.SocketUtils;
@@ -74,24 +71,36 @@ public class ProfileSecondWindowController extends GenericController {
             int response = SocketUtils.receiveInt(_clientInfo.socket.getInputStream());
             if(response == GameType.ERROR_NAME_TOO_SHORT) {
                 System.out.printf("Server response: Name is too short!\n");
+                NotificationManager.showError("Name is too short!");
             }
             else if(response == GameType.ERROR_NAME_TOO_LONG) {
+                 showNameAlreadyUsedAlert();
+                 AlertManager.showConfirm(
+    "Nombre ya en uso",
+    "Debes introducir un nombre que no esté registrado",
+    AlertManager.AlertTypeCustom.WARNING
+);
                 System.out.printf("Server response: Name is too long!\n");
+                NotificationManager.showError("Name is too long!");
             }
             else if (response == GameType.ERROR_NAME_ALREADY_USED) {
                 showNameAlreadyUsedAlert();
+                 NotificationManager.showError("Name is already used!");
             }
             else if(response == GameType.CONFIRMATION_NAME_VALID) {
                 System.out.printf("Server response: Name is valid!\n");
+                NotificationManager.showSuccess("Welcome " + _clientInfo.name + "!");
 
                 next();
             }
             else {
                 System.out.printf("Unknown server response : %d\n", response);
+                 NotificationManager.showError("Unknown server response : %d\n" + response);
             }
         }
         catch(Exception e) {
             System.out.printf("Error connecting to the socket: %s\n", e.getMessage());
+            NotificationManager.showError("Error connecting to the socket: %s\n" + e.getMessage());
         }
         
     }
