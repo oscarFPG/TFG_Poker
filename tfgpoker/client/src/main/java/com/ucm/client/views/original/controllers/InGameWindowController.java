@@ -149,7 +149,8 @@ public class InGameWindowController extends GenericController {
     private int _sliderStep = 0;
     private Thread _gameThread;
     private boolean _menuOpen = true;
-
+    private boolean _equityVisible = false;
+    private String _myEquity = "0%";
     
     @Override
     protected void onViewShown() {
@@ -353,7 +354,7 @@ public class InGameWindowController extends GenericController {
         _listPlayerStackPanes.forEach(stack -> stack.setVisible(false));
         _listImageCards.forEach(hbox -> hbox.setVisible(false));
         _listHandBet.forEach(hbox -> hbox.setVisible(false));
-        _listEquity.forEach(label -> label.setVisible(false));
+        _listEquity.forEach(label -> { label.setVisible(false); label.setText("0%");});
     }
 
     private void GUI_initializeCardStyle() { 
@@ -533,9 +534,10 @@ public class InGameWindowController extends GenericController {
 
     @FXML
     private void seeEquity() {
-        
-    }
+        _equityVisible = !_equityVisible;
 
+       GUI_putEquityToPlayer();
+    }
 
     private boolean pokerGame(String name, Socket socket) {
 
@@ -838,6 +840,8 @@ public class InGameWindowController extends GenericController {
             }
             else if (serverCode == GameType.EQUITY_UPDATE) {
                 String equity = SocketUtils.receiveString(socket.getInputStream());
+                _myEquity = equity;
+                Platform.runLater(() -> GUI_putEquityToPlayer());
             }
             else if(serverCode == GameType.TOTAL_POT) {
 
@@ -1185,7 +1189,6 @@ public class InGameWindowController extends GenericController {
             Label moneyLabel = _listMoneyLabels.get(seatID);
 
             _listHandBet.get(seatID).setVisible(true);
-            _listHandBet.get(seatID).setOpacity(1);
 
             betLabel.setText( String.valueOf(amountOnBet) );
             betLabel.setVisible(true);
@@ -1210,8 +1213,16 @@ public class InGameWindowController extends GenericController {
         }
     }
 
-    private void GUI_putEquityToPlayer(String equity) {
-        _listEquity.get(0).setText(equity);
+    private void GUI_putEquityToPlayer() {
+        Label myEquityLabel = _listEquity.get(0);
+        
+        if(_equityVisible && _myEquity != null) {
+            myEquityLabel.setText(_myEquity);
+            myEquityLabel.setVisible(true);
+        }
+        else {
+            myEquityLabel.setVisible(false);
+        }
     }
 
 
@@ -1226,6 +1237,7 @@ public class InGameWindowController extends GenericController {
     private void GUI_clearPlayerBets() {
         _listOnBetMoney.forEach(label -> label.setVisible(false));
         _listHandBet.forEach(bet -> bet.setVisible(false));
+        _listHandBet.get(0).setOpacity(1);
     }
 
     private void GUI_clearDealer() {
@@ -1235,8 +1247,4 @@ public class InGameWindowController extends GenericController {
     private void GUI_clearTurnPlayer() {
         _listPlayerStackPanes.forEach(pane -> pane.getStyleClass().remove("tourn-player-color"));
     }
-
-    // private void GUI_clearEquity() {
-    //     _listEquity.forEach(label -> label.setVisible(false));
-    // }
 }
