@@ -56,6 +56,7 @@ public class HumanPlayer implements IPlayerNotificator {
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOffBet());
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOnBet());
 
+        //_socket.setSoTimeout(maxBet); -> timeout en milisegundos, lanza excepcion cuando se termina el tiempo y NO he recibido nada
         String commandInput = SocketUtils.receiveString( _socket.getInputStream() );
         log.debug("Command received from player {}: {}", player.getPlayerName(), commandInput);
 
@@ -223,6 +224,7 @@ public class HumanPlayer implements IPlayerNotificator {
     @Override
     public void notifyEquity(double equity) throws IOException {
         if(Game.DEBUG_PLAYERS) return;
+
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.EQUITY_UPDATE);
         String equityStr = String.format("%.2f%%", equity * 100);
         SocketUtils.sendString(_socket.getOutputStream(), equityStr);
@@ -230,8 +232,9 @@ public class HumanPlayer implements IPlayerNotificator {
 
 
     @Override
-    public void notifyCurrentTournPlayer(IPlayerInfo player) throws IOException {
+    public void notifyCurrentTurnPlayer(IPlayerInfo player) throws IOException {
         if(Game.DEBUG_PLAYERS) return;
+
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_BEFORE_PLAY);
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getPlayerId());
     }

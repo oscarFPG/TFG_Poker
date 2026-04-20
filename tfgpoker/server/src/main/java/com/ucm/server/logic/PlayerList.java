@@ -583,7 +583,7 @@ public class PlayerList implements Iterable<Node> {
 
 
             try {
-                player._player.notifyCurrentTournPlayer (p);
+                player._player.notifyCurrentTurnPlayer(p);
             }
             catch(Exception e) {
                 

@@ -302,10 +302,10 @@ public class Player implements IPlayerActions {
         }
     }
 
-    public void notifyCurrentTournPlayer(IPlayerInfo other) {
+    public void notifyCurrentTurnPlayer(IPlayerInfo other) {
         
         try {
-            _playerInfo.notifyCurrentTournPlayer(other);
+            _playerInfo.notifyCurrentTurnPlayer(other);
         }
         catch (IOException e) {
             e.printStackTrace();

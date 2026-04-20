@@ -757,6 +757,7 @@ public class InGameWindowController extends GenericController {
 
                 selectCommand(socket, sb, bb, maxBet, offBetMoney, onBetMoney);
 
+                /*
                 final int newOffBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
                 final int newOnBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
                 final boolean isFolded = SocketUtils.receiveInt( socket.getInputStream() ) == GameType.TRUE;
@@ -767,12 +768,13 @@ public class InGameWindowController extends GenericController {
                         _listHandBet.get( seatID ).setOpacity(0.6);
                     }
                     else {
-                        GUI_putPlayerBet(_clientInfo.id, newOnBetMoney, newOffBetMoney);
+                        GUI_putPlayerBet(_clientInfo.id, newOnBetMoney, newOffBetMoney, isFolded);
                     }
 
                     buttonsHolder.setVisible(false);
                     _listPlayerStackPanes.get(seatID).getStyleClass().remove("tourn-player-color");
                 });
+                */
 			}
 			else if(serverCode == GameType.HAND_ENDS_BY_FOLD) {
 				handEndsByFold = true;
@@ -799,6 +801,7 @@ public class InGameWindowController extends GenericController {
 
                     buttonsHolder.setVisible(false);
                 });
+            }
             else if(serverCode == GameType.TURN_BEFORE_PLAY) {
                 int currentTurnPlayerId = SocketUtils.receiveInt( socket.getInputStream() );
                 GUI_putTurnPlayer(currentTurnPlayerId);
@@ -1025,7 +1028,7 @@ public class InGameWindowController extends GenericController {
                 );
 
                 Platform.runLater(() -> {
-                    GUI_updatePlayerInfo(_clientInfo.id, role, myOnBetMoney, myOffBetMoney, iAmFolded, iAmWinner, iAmEliminated, null, false);
+                    GUI_updatePlayerInfo(_clientInfo.id, role, myOnBetMoney, myOffBetMoney, iAmFolded, iAmWinner, iAmEliminated, false);
                 });
             }
             else if(code == GameType.OTHER_PLAYER_STATUS) {
@@ -1048,7 +1051,7 @@ public class InGameWindowController extends GenericController {
                 );
 
                 Platform.runLater(() -> {
-                    GUI_updatePlayerInfo(playerID, playerRole, moneyOnBet, moneyOffBet, isFolded, isWinner, isEliminated, null, false);
+                    GUI_updatePlayerInfo(playerID, playerRole, moneyOnBet, moneyOffBet, isFolded, isWinner, isEliminated, false);
                 });
             }
             else if(code == GameType.PLAYER_STATUS_END) {
