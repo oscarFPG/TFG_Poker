@@ -248,7 +248,7 @@
                                  <children>
                                     <Label fx:id="labelMoney" prefHeight="50.0" prefWidth="70.0">
                                        <styleClass>
-                                          <String fx:value="username-label" />
+                                          <String fx:value="transparent-container-color" />
                                           <String fx:value="bold-general-text-font" />
                                           <String fx:value="apueseta-text-size" />
                                        </styleClass>
@@ -350,7 +350,7 @@
                   </ImageView>
                </children>
             </HBox>
-            <HBox fx:id="hboxImageCards4" layoutX="418.0" layoutY="-54.0" prefHeight="88.0" prefWidth="147.0">
+            <HBox fx:id="hboxImageCards4" layoutX="418.0" layoutY="-66.0" prefHeight="88.0" prefWidth="147.0">
                <children>
                   <ImageView fx:id="imgLeftCard4" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
                      <image>
@@ -364,7 +364,7 @@
                   </ImageView>
                </children>
             </HBox>
-            <HBox fx:id="hboxImageCards5" layoutX="791.0" layoutY="-53.0" prefHeight="94.0" prefWidth="137.0">
+            <HBox fx:id="hboxImageCards5" layoutX="791.0" layoutY="-65.0" prefHeight="94.0" prefWidth="137.0">
                <children>
                   <ImageView fx:id="imgLeftCard5" fitHeight="100.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" rotate="-10.0">
                      <image>
@@ -473,7 +473,7 @@
                   <Point3D />
                </rotationAxis>
             </HBox>
-            <HBox fx:id="hboxHandBet4" alignment="CENTER" layoutX="495.0" layoutY="86.0" prefHeight="40.0" prefWidth="146.0">
+            <HBox fx:id="hboxHandBet4" alignment="CENTER" layoutX="495.0" layoutY="93.0" prefHeight="40.0" prefWidth="146.0">
                <children>
                   <ImageView fitHeight="41.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -513,7 +513,7 @@
                   <Label fx:id="labelOnBetMoney1" styleClass="username-label" text="Label" />
                </children>
             </HBox>
-            <StackPane fx:id="pokerPlayer5" layoutX="720.0" layoutY="-4.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
+            <StackPane fx:id="pokerPlayer5" layoutX="724.0" layoutY="-17.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
                <children>
                   <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                      <styleClass>
@@ -610,7 +610,7 @@
                   </StackPane>
                </children>
             </StackPane>
-            <StackPane fx:id="pokerPlayer4" layoutX="350.0" layoutY="-5.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
+            <StackPane fx:id="pokerPlayer4" layoutX="351.0" layoutY="-17.0" prefHeight="83.0" prefWidth="272.0" scaleX="0.9" scaleY="0.9">
                <children>
                   <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="208.0">
                      <styleClass>
@@ -1477,6 +1477,15 @@
                   <Image url="@../../images/cards/2_of_clubs.png" />
                </image>
             </ImageView>
+            <HBox layoutX="940.0" layoutY="509.0" prefHeight="19.0" prefWidth="147.0" styleClass="transparent-container-color" />
+            <HBox layoutX="1062.0" layoutY="344.0" prefHeight="17.0" prefWidth="135.0" styleClass="transparent-container-color" />
+            <HBox layoutX="990.0" layoutY="192.0" prefHeight="15.0" prefWidth="142.0" styleClass="transparent-container-color" />
+            <HBox layoutX="793.0" layoutY="59.0" prefHeight="27.0" prefWidth="134.0" styleClass="transparent-container-color" />
+            <HBox layoutX="417.0" layoutY="59.0" prefHeight="27.0" prefWidth="130.0" styleClass="transparent-container-color" />
+            <HBox layoutX="182.0" layoutY="183.0" prefHeight="22.0" prefWidth="140.0" styleClass="transparent-container-color" />
+            <HBox layoutX="129.0" layoutY="342.0" prefHeight="20.0" prefWidth="164.0" styleClass="transparent-container-color" />
+            <HBox layoutX="256.0" layoutY="508.0" prefHeight="22.0" prefWidth="160.0" styleClass="transparent-container-color" />
+            <HBox layoutX="589.0" layoutY="593.0" prefHeight="22.0" prefWidth="163.0" styleClass="transparent-container-color" />
          </children>
       </AnchorPane>
    </center>

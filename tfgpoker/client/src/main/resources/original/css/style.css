@@ -382,6 +382,18 @@
    
 }
 
+/**
+ * Estilo genérico para contenedores con fondo medio transparente
+ */
+.transparent-container-color {
+   -fx-background-color: rgba(99, 55, 138, 0.822);
+   -fx-background-radius: 6, 5;
+   -fx-text-fill: #e5e5e5;
+   -fx-alignment: center;
+   -fx-font-family: "Constantia";
+   -fx-font-size: 21px;
+}
+
 .text-ranking{
     -fx-text-fill:  rgba(201, 172, 214, 0.902);
 }
