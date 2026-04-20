@@ -353,7 +353,7 @@ public class InGameWindowController extends GenericController {
         _listPlayerStackPanes.forEach(stack -> stack.setVisible(false));
         _listImageCards.forEach(hbox -> hbox.setVisible(false));
         _listHandBet.forEach(hbox -> hbox.setVisible(false));
-        //_listEquity.forEach(lb -> lb.setVisible(false));
+        _listEquity.forEach(label -> label.setVisible(false));
     }
 
     private void GUI_initializeCardStyle() { 
@@ -530,6 +530,11 @@ public class InGameWindowController extends GenericController {
         hboxMenuItems.setVisible(_menuOpen);
     }
 
+    @FXML
+    private void seeEquity() {
+        
+    }
+
 
     private boolean pokerGame(String name, Socket socket) {
 
@@ -550,7 +555,6 @@ public class InGameWindowController extends GenericController {
                         GUI_clearPlayerBets();
                         GUI_clearDealer();
                         GUI_clearTurnPlayer();
-                        GUI_clearEquity();
                     });
 
                     // Player role and cards
@@ -1100,7 +1104,7 @@ public class InGameWindowController extends GenericController {
         _listPlayerStackPanes.forEach(pane -> pane.getStyleClass().remove("tourn-player-color"));
     }
 
-    private void GUI_clearEquity() {
-        _listEquity.forEach(label -> label.setVisible(false));
-    }
+    // private void GUI_clearEquity() {
+    //     _listEquity.forEach(label -> label.setVisible(false));
+    // }
 }

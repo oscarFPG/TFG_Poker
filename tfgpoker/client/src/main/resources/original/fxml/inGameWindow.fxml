@@ -53,7 +53,7 @@
                <children>
                   <HBox fx:id="hboxMenuItems" maxHeight="-Infinity" prefHeight="82.0" prefWidth="250.0" spacing="5.0">
                      <children>
-                        <Button mnemonicParsing="false" prefHeight="66.0" prefWidth="62.0">
+                        <Button fx:id="btnExitGame" mnemonicParsing="false" prefHeight="66.0" prefWidth="62.0">
                            <graphic>
                               <ImageView fitHeight="48.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -66,7 +66,7 @@
                               <String fx:value="container-gradiant-colors" />
                            </styleClass>
                         </Button>
-                        <Button mnemonicParsing="false" prefHeight="66.0" prefWidth="62.0">
+                        <Button fx:id="btnEquity" mnemonicParsing="false" onAction="#seeEquity" prefHeight="66.0" prefWidth="62.0">
                            <graphic>
                               <ImageView fitHeight="37.0" fitWidth="47.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
