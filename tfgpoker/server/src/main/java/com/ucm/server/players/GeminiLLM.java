@@ -45,6 +45,21 @@ public class GeminiLLM extends BotLLMOnline {
 
     public GeminiLLM() {
         super(GEMINI_ID);
+    }
+
+    /**
+     * Constructs a Gemini-based LLM bot.
+     * 
+     * <p>
+     * If the API key is null, it will be loaded from a configuration file.
+     * </p>
+     * 
+     * @param id     player identifier
+     * @param money  initial stack
+     * @param apiKey Gemini API key (optional)
+     */
+    public GeminiLLM(int id) {
+        super(GEMINI_ID);
 
         gemini = GoogleAiGeminiChatModel.builder()
                 .apiKey(_apiKey)
@@ -88,5 +103,7 @@ public class GeminiLLM extends BotLLMOnline {
     public String getFullDescription() {
         return "This is a LLM powered by Google's Gemini model";
     }
+
+    
 
 }

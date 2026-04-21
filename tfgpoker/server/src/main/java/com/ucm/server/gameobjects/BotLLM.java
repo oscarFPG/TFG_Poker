@@ -7,9 +7,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.ucm.common.GameType;
+import com.ucm.common.SocketUtils;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.interfaces.IPlayerInfo;
+import com.ucm.server.logic.Game;
 
 /**
  * Abstract class that represents a poker bot powered by a Large Language Model (LLM).
@@ -41,12 +43,12 @@ public abstract class BotLLM extends Bot {
     /**
      * Community cards on the table.
      */
-    protected List<Card> table;
+    protected List<Card> table = new ArrayList<>();
 
     /**
      * History of actions in the current hand.
      */
-    protected List<String> actionHistory;
+    protected List<String> actionHistory = new ArrayList<>();
 
     /**
      * Small blind value.
@@ -73,7 +75,6 @@ public abstract class BotLLM extends Bot {
      */
     protected double _equity;
 
-
     protected IPlayerInfo _player;
 
 
@@ -84,10 +85,8 @@ public abstract class BotLLM extends Bot {
      */
     public BotLLM(int botID) {
         super(botID);
-        table = new ArrayList<>();
-        actionHistory = new ArrayList<>();
     }
-
+ 
 
     /**
      * Calls the external LLM with the given prompt.
@@ -244,15 +243,15 @@ public abstract class BotLLM extends Bot {
             case SMALL_BLIND -> "SB";
             case BIG_BLIND -> "BB";
             case UNDER_THE_GUN -> "UTG";
-            case UNDER_THE_GUN_1 -> "UTG+1";
-            case UNDER_THE_GUN_2 -> "UTG+2";
-            case LOJACK -> "LJ";
             case HIJACK -> "HJ";
+            case LOJACK -> "LJ";
             case CUT_OFF -> "CO";
             default -> "UNKNOWN";
         };
     }
 
+
+    @Override public void notifyCurrentTurnPlayer (IPlayerInfo player) {}
 
     /**
      * Determines the action to take using the LLM.
@@ -320,21 +319,16 @@ public abstract class BotLLM extends Bot {
     }
 
     @Override
-    public void notifyOtherPlayerState(IPlayerInfo other) throws IOException {
-
-    }
-
-    @Override
     public void notifyEquity(double equity) throws IOException {
         _equity = equity; 
     }
 
 
-    @Override public void notifyOwnState(IPlayerInfo player) throws IOException {}
-    @Override public void notifyCurrentTurnPlayer(IPlayerInfo player) {}
     @Override public void notifyPlayerRole(PlayerRole role) throws IOException {}
     @Override public void notifyPlayerCard(Card c) throws IOException {}
     @Override public void notifyEndPlayerState() throws IOException {}
+    @Override public void notifyOwnState(IPlayerInfo player) throws IOException {}
+    @Override public void notifyOtherPlayerState(IPlayerInfo other) throws IOException {}
     @Override public void notifyTurnWait() throws IOException {}
     @Override public void notifyTurnPlay() throws IOException {}
     @Override public void notifyRoundEnded() throws IOException {}
