@@ -1,21 +1,16 @@
 package com.ucm.client.views.original.controllers;
 
-import java.io.IOException;
-import java.net.Socket;
-
-import com.ucm.client.AvatarGenerator;
-import com.ucm.client.ClientInfo;
+import com.ucm.client.utils.Messages;
+import com.ucm.client.utils.NotificationManager;
 import com.ucm.common.GameType;
 import com.ucm.common.PokerPreGame;
 import com.ucm.common.SocketUtils;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-
 
 
 public class ProfileSecondWindowController extends GenericController {
@@ -74,37 +69,32 @@ public class ProfileSecondWindowController extends GenericController {
             int response = SocketUtils.receiveInt(_clientInfo.socket.getInputStream());
             if(response == GameType.ERROR_NAME_TOO_SHORT) {
                 System.out.printf("Server response: Name is too short!\n");
+                NotificationManager.showError(Messages.Notifications.ERROR_NAME_TOO_SHORT);
             }
             else if(response == GameType.ERROR_NAME_TOO_LONG) {
                 System.out.printf("Server response: Name is too long!\n");
+                NotificationManager.showError(Messages.Notifications.ERROR_NAME_TOO_LONG);
             }
             else if (response == GameType.ERROR_NAME_ALREADY_USED) {
-                showNameAlreadyUsedAlert();
+                 NotificationManager.showError(Messages.Notifications.ERROR_NAME_ALREADY_USED);
             }
             else if(response == GameType.CONFIRMATION_NAME_VALID) {
                 System.out.printf("Server response: Name is valid!\n");
-
+                NotificationManager.showSuccess(Messages.Notifications.CONFIRMATION_NAME_VALID + _clientInfo.name  + "!" );
                 next();
             }
             else {
                 System.out.printf("Unknown server response : %d\n", response);
+                NotificationManager.showError( Messages.Notifications.UNKNOWN_SERVER_ERROR + response );
             }
         }
         catch(Exception e) {
             System.out.printf("Error connecting to the socket: %s\n", e.getMessage());
+            NotificationManager.showError(Messages.Notifications.ERROR_CONNECTING_TO_SOCKET + e.getMessage());
         }
         
     }
 
-    private void showNameAlreadyUsedAlert() {
-        Alert alert = new Alert (Alert.AlertType.WARNING);
-        alert.setTitle("Name cannot be registrated");
-        alert.setHeaderText("Name already used");
-        alert.setContentText("You must add a name that has not already register");
-        alert.getDialogPane().getStylesheets().add(getClass().getResource("/original/css/style.css").toExternalForm());
-        alert.getDialogPane().getStyleClass().add("custom-alert");
-        alert.showAndWait();
-    }
 
     @FXML
     private void cancel() {
