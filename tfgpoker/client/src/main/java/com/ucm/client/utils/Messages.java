@@ -10,7 +10,7 @@ public final class Messages {
     public static final class Alerts {
 
         public static final String NOT_ENOUGH_PLAYERS_TITLE = "Cannot start game";
-        public static final String NOT_ENOUGH_PLAYERS_MSG = "Not enough players in the table. You must add at least one bot or one player before starting the game";
+        public static final String NOT_ENOUGH_PLAYERS_MSG = "Not enough players in the table. \n You must add at least one bot or one player before starting the game";
     }
 
     // ------------------------- CONFIRM -------------------------------------
