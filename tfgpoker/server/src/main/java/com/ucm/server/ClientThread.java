@@ -18,6 +18,7 @@ import com.ucm.common.PlayerInfo;
 import com.ucm.common.PokerPreGame;
 import com.ucm.common.SocketUtils;
 import com.ucm.server.players.GeminiLLM;
+import com.ucm.server.players.LlamaPokerLLM;
 
 
 public class ClientThread implements Runnable {
@@ -76,6 +77,9 @@ public class ClientThread implements Runnable {
                     else if(PokerPreGame.checkNameIsTooLong(name)) {
                         SocketUtils.sendInteger(output, GameType.ERROR_NAME_TOO_LONG);
                     }
+                    else if (isNameAlreadyUsed(name)) {
+                        SocketUtils.sendInteger(output, GameType.ERROR_NAME_ALREADY_USED);
+                    }
                     else {
                         SocketUtils.sendInteger(output, GameType.CONFIRMATION_NAME_VALID);
                         _playerName = name;
@@ -104,8 +108,8 @@ public class ClientThread implements Runnable {
                         _gameConfig._dinamicBlinds = config._dinamicBlinds;
                         _gameConfig._levelDuration = config._levelDuration;
                         _gameConfig._hikePercentage = config._hikePercentage;
-                        _gameConfig._numBots1 = config._numBots1;
-                        _gameConfig._numBots2 = config._numBots2;
+                        _gameConfig._numBots1 = config._numBots1;   // Numero de instancias de bot gemini
+                        _gameConfig._numBots2 = config._numBots2;   // Numero de instancias de bot llama
                         _gameConfig._numPlayers = config._numPlayers + 1; // + 1 porque cuenta el host
                         _gameConfig._selectedTable = config._selectedTable;
                         _gameConfig._selectedCard = config._selectedCard;
@@ -115,7 +119,11 @@ public class ClientThread implements Runnable {
                         _roomPlayerList.add(this);
 
                         for (int i = 0; i < _gameConfig._numBots1; i++) {
-                            _roomBotsList.add( new BotStruct(_id.getAndIncrement(), GameType.BOT_GEMINI, GeminiLLM.getGenericName()) );
+                           _roomBotsList.add( new BotStruct(_id.getAndIncrement(), GameType.BOT_GEMINI, GeminiLLM.NAME) );
+                        }
+                        for (int i = 0; i < _gameConfig._numBots2; i++) {
+                            int instance = _id.getAndIncrement();
+                           _roomBotsList.add( new BotStruct(instance, GameType.BOT_LLAMA, LlamaPokerLLM.MODEL_NAME + "#" + instance) );
                         }
 
                         SocketUtils.sendInteger(output, GameType.CONFIRMATION_WAITING_GAME);
@@ -127,11 +135,13 @@ public class ClientThread implements Runnable {
                         broadcastPlayerJoined();
 
                         log.debug("Configuration valid!");
-                        log.debug("Room {}: Name=[{}], UserName=[{}], AllowBots=[{}]",
+                        log.debug("Room {}: Name=[{}], UserName=[{}], AllowBots=[{}], Bots Gemini=[{}], Bots Llama=[{}]",
                             _gameConfig._roomId,
                             _gameConfig._roomName,
                             _gameConfig._userName,
-                            _gameConfig._allowBots
+                            _gameConfig._allowBots,
+                            _gameConfig._numBots1,
+                            _gameConfig._numBots2
                         );
                     }
 
@@ -236,9 +246,11 @@ public class ClientThread implements Runnable {
                         SocketUtils.sendInteger(targetSocket.getOutputStream(), roomSize);
                         for (ClientThread ct : _roomPlayerList) {
                             PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(ct._playerID, ct._playerName), targetSocket);
+                            log.debug("Player {} on waiting room", ct._playerName);
                         }
                         for(BotStruct bs : _roomBotsList) {
                             PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(bs.matchId(), bs.botName()), targetSocket);
+                            log.debug("Bot {} on waiting room", bs.botName());
                         }
                         
                     }
@@ -280,6 +292,18 @@ public class ClientThread implements Runnable {
             }
         }
 
+    }
+
+    private boolean isNameAlreadyUsed(String name) {
+        synchronized(_roomPlayerList) {
+            for (ClientThread ct : _roomPlayerList) {
+                if(ct._playerName != null && ct._playerName.equalsIgnoreCase(name)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
 

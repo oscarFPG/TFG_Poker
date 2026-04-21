@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 import com.ucm.server.FakePlayer;
-import com.ucm.server.interfaces.IPokerActions;
 import com.ucm.server.middleclasses.CommandResult;
 
 public class FoldCommandTest {
@@ -19,7 +18,7 @@ public class FoldCommandTest {
 
         final int initialBet = 0;
 
-        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
+        FakePlayer player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "fodl";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);

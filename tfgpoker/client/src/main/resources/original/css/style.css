@@ -37,6 +37,22 @@
     -fx-alignment: center;
 }
 
+.general-apuesta-button {
+    -fx-background-color:
+        linear-gradient(to top, #DC8CFE 0%,  #FFF8FF 50%,   #FFF8FF 50%, #DC8CFE 100% ),
+        radial-gradient(center 50% 40%, radius 120%,#691179 0%,#661076 25%,#3A0878 60%,#20034F 100% );
+    -fx-background-radius: 10, 9;
+    -fx-background-insets: 0, 2;
+
+    -fx-text-fill: #e5e5e5;
+    -fx-font-family: "Constantia Bold";
+    -fx-font-size: 11px;
+    -fx-font-weight: normal;
+    -fx-effect: none;
+
+    -fx-alignment: center;
+}
+
 /* Evitar cambios de estilo heredados */
 .general-button:hover,
 .general-button:pressed,
@@ -136,6 +152,18 @@
    -fx-font-size: 21px;
 }
 
+/**
+ * Estilo para la etiqueta del equity
+ */
+.equity-label {
+    -fx-background-color: #1B0359;
+   -fx-background-radius: 6, 5;
+   -fx-text-fill: #e5e5e5;
+   -fx-alignment: center;
+   -fx-font-family: "Constantia";
+   -fx-font-size: 21px;
+}
+
 .general-text-font {
     -fx-text-fill: #e5e5e5;
     -fx-font-family: "Constantia";
@@ -152,6 +180,10 @@
     -fx-alignment: center;
     -fx-font-family: "Constantia";
     -fx-font-weight: 900;
+}
+
+.apueseta-text-size {
+    -fx-font-size: 16px;
 }
 
 .transparent-background{
@@ -607,6 +639,10 @@
 #usersOwn{
     -fx-effect:  dropshadow(gaussian, rgba(240,184,255,0.8), 25, 0.5, 0, 0);
 }
+
+.tourn-player-color {
+    -fx-effect:  dropshadow(gaussian, rgba(240,184,255,0.8), 25, 0.5, 0, 0);
+}
 /*ICONOS GENERALES ------------------------------------------------------------------------------------------------------------------------------ */
 
 .icon-colors {
@@ -731,6 +767,16 @@
    -fx-border-width: 4; 
 }
 
+.slider-apuesta-colors {
+    -fx-background-color: #1b0359;
+   -fx-border-color: linear-gradient(to top,
+    #DC8CFE 0%,
+    #FFF8FF 50%,
+    #FFF8FF 50%,
+    #DC8CFE 100%);
+   -fx-border-width: 2; 
+}
+
 /*SCROLL BAR --------------------------------------------------------------------------------------------*/
 
 .scroll-bar {
@@ -774,3 +820,144 @@
 .scroll-bar .decrement-arrow {
     -fx-opacity: 0;
 }
+
+
+/*NTOFICATIONS-------------------------------------------------------------------------------------*/
+
+.notification-error {
+    -fx-background-color: rgba(200, 0, 0, 0.549);
+    -fx-background-radius: 10;
+    -fx-padding: 12;
+}
+
+
+.notification-success {
+    -fx-background-color: rgba(0, 180, 0, 0.549);
+    -fx-background-radius: 10;
+    -fx-padding: 12;
+}
+
+
+.notification-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-font-family: "Constantia";
+}
+
+
+.notification-message {
+    -fx-font-size: 16px;
+    -fx-text-fill: white;
+    -fx-font-family: "Constantia";
+
+}
+
+
+.notification-error,
+.notification-success {
+   
+    -fx-min-width: 280px;  
+    -fx-max-width: 360px;
+}
+
+.notification-close {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    
+}
+
+
+/*ALERTS-----------------------------------------------*/
+
+.dialog-pane {
+   -fx-background-color: rgba(59, 31, 109, 0.85);
+    -fx-background-radius: 20;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);
+    -fx-border-color: rgba(255, 255, 255, 0.6); 
+    -fx-border-width: 2;
+}
+
+
+.dialog-pane > .content {
+    -fx-background-color: #3b1f6d;
+   
+    -fx-padding: 10 20 15 20; 
+}
+
+
+.dialog-pane > .button-bar {
+    -fx-background-color: #3b1f6d;
+    -fx-padding: 0 15 15 15;
+    -fx-alignment: CENTER; 
+}
+
+
+.dialog-pane > .header-panel {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+
+.dialog-title {
+    -fx-font-size: 24px; 
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+      -fx-font-family: "Constantia";
+}
+
+.dialog-message {
+    -fx-font-size: 15px;
+    -fx-text-fill: #d8cfff; 
+    -fx-line-spacing: -2; 
+      -fx-font-family: "Constantia";
+}
+
+
+.dialog-icon {
+   
+    -fx-font-size: 120px;
+    -fx-text-fill: #d8cfff;
+    -fx-padding: 0 0 -15 0;
+}
+
+.dialog-confirm {
+  
+    -fx-background-color:  radial-gradient(center 50% 40%, radius 120%,#691179 0%,#661076 25%,#3A0878 60%,#20034F 100% );
+    
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+
+    -fx-border-color: rgba(255, 255, 255, 0.8); 
+    -fx-border-radius: 25;
+    -fx-background-radius: 25; 
+    
+    -fx-padding: 10 30;
+    -fx-border-width: 1.2;
+    -fx-cursor: hand;
+    -fx-font-family: "Constantia";
+}
+
+
+.dialog-cancel {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-border-color: #caa6ff; 
+    -fx-border-radius: 25;
+    -fx-padding: 10 30;
+    -fx-border-width: 1.5;
+    -fx-cursor: hand;
+      -fx-font-family: "Constantia";
+}
+
+
+.dialog-confirm:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 31, 194, 0.5), 10, 0, 0, 0);
+}
+
+.dialog-cancel:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 31, 194, 0.5), 10, 0, 0, 0);
+}
+

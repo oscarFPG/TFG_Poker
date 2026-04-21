@@ -1,5 +1,7 @@
 package com.ucm.server.gameobjects;
 
+import com.ucm.server.interfaces.IPlayerNotificator;
+
 /**
  * Abstract class that represents an automated poker player (bot).
  * 
@@ -24,36 +26,36 @@ package com.ucm.server.gameobjects;
  * @see Player
  * @see BotLLM
  */
-public abstract class Bot extends Player {
-
-    protected int _idBot;
+public abstract class Bot implements IPlayerNotificator {
 
     /**
-     * Default constructor.
+     * Unique identifier for the bot, used to distinguish it from other bots.
      */
-    public Bot() {
-        super();
-    }
-    
+    private int _botID;
+
+
+
     /**
-     * Constructs a bot with an identifier, name and initial money.
-     * 
-     * @param id    player identifier
-     * @param name  bot name
-     * @param money initial stack
+     * Constructs a bot with a given identifier.
+      *
+     * @param botID unique identifier for the bot
      */
-    public Bot(int id, String name, int money) {
-        super(id, name, money);
+    public Bot(final int botID) {
+        _botID = botID;
     }
+
+
+    public int getIdBot() {
+        return _botID;
+    }
+
 
     /**
      * Returns a full description of the bot, including its name and behavior.
      * 
      * @return {@link String} in the format "name : description"
      */
-    public String getFullDescription() {
-        return this.getPlayerName() + " : " + this.getDescription();
-    }
+    public abstract String getFullDescription();
 
     /**
      * Returns a textual description of the bot's behavior or strategy.
@@ -62,61 +64,12 @@ public abstract class Bot extends Player {
      */
     public abstract String getDescription();
     
-    public int getIdBot() {
-        return this._idBot;
-    }
-
-    /**
-     * Determines the action to take during the player's turn.
-     * 
-     * @param sb     small blind amount
-     * @param bb     big blind amount
-     * @param maxBet current maximum bet
-     * @return {@link String} representing the chosen action
-     */
-    public abstract String actionMakePlay(int sb, int bb, int maxBet);
-
-    /** @param amount small blind amount */
-    public abstract void notifySmallBlindBet(final int amount);
-
-    /** @param amount big blind amount */
-    public abstract void notifyBigBlindBet(final int amount);
-
-    /** Notifies that the bot must wait for its turn */
-    public abstract void notifyTurnWait();
-
-    /** Notifies that it is the bot's turn to act */
-    public abstract void notifyTurnPlay();
-
-    /** Notifies that a betting round has ended */
-    public abstract void notifyRoundEnded();
-
-    /** Notifies that a hand has ended */
-    public abstract void notifyHandEnded();
-
-    /** Notifies that the game has ended */
-    public abstract void notifyGameEnded();
-
-    /** Notifies that the game continues */
-    public abstract void notifyGameKeeps();
-
-    /** Notifies that the bot has won the hand */
-    public abstract void notifyHandWinner();
-
-    /** Notifies that the bot has lost the hand */
-    public abstract void notifyHandLoser();
-
-    /** Notifies that the bot has won the game */
-    public abstract void notifyGameWinner();
-
-    /** Notifies that the bot has lost the game */
-    public abstract void notifyGameLoser();
-
-    /** Notifies that the hand ended due to folds */
-    public abstract void notifyHandEndsByFolds();
-
     /** 
      * Creates a specific instance of any kind of bot implementation with and ID and initial money
+     * @param ID player identifier
+     * @param initialMoney initial stack
+     * @return a new instance of a bot ready to play
     */
-    public abstract Bot create(final int ID, final int initialMoney);
+    public abstract Bot create();
+    
 }

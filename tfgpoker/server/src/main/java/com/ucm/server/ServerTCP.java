@@ -34,7 +34,6 @@ public class ServerTCP {
     private static final Logger log = LogManager.getLogger(ServerTCP.class);
 
     private String _serverIP;
-    private int _serverPort;
     private ServerSocket _serverSocket;
     private ExecutorService _executor;
     private AtomicInteger _idGenerator;
@@ -46,7 +45,6 @@ public class ServerTCP {
 
     public ServerTCP(final int port) throws IOException, InterruptedException {
         _serverIP = showServerIP();
-        _serverPort = port;
         _serverSocket = new ServerSocket(port);
         _executor = Executors.newFixedThreadPool(GameType.MAX_PLAYERS);
         _idGenerator = new AtomicInteger(0);
