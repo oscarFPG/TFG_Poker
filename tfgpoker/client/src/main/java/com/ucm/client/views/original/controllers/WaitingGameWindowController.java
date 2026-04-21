@@ -3,11 +3,14 @@ package com.ucm.client.views.original.controllers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import com.ucm.client.utils.Messages;
-import com.ucm.client.utils.NotificationManager;
+import javax.script.Bindings;
+
+import com.ucm.client.AvatarGenerator;
+import com.ucm.client.ClientInfo;
 import com.ucm.common.GameType;
 import com.ucm.common.PlayerInfo;
 import com.ucm.common.PokerPreGame;
@@ -19,6 +22,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 
@@ -123,7 +127,6 @@ public class WaitingGameWindowController extends GenericController {
         }
         catch(IOException e) {
             System.out.printf("Error sending EVENT_GAME_STARTS to server: %s\n", e.getMessage());
-            NotificationManager.showError(Messages.Notifications.ERROR_SENDING_EVENT_GAME_STARTS + e.getMessage());
         }
     }
 
@@ -196,21 +199,12 @@ public class WaitingGameWindowController extends GenericController {
 
             _clientInfo.id = SocketUtils.receiveInt(input);
             System.out.printf("Player ID is %d\n", _clientInfo.id);
-            NotificationManager.showSuccess(Messages.Notifications.PLAYER_ID_IS + _clientInfo.id);
-      
-            
 
             if(_clientInfo.isHost) {
                 System.out.printf("Server response: This client is the host of the game!\n");
-                NotificationManager.showSuccess(Messages.Notifications.PLAYER_IS_HOST);
-      
-            
             }
             else {
                 System.out.printf("Server response: This client is a guest!\n");
-                NotificationManager.showSuccess(Messages.Notifications.PLAYER_IS_GUEST);
-      
-            
 
                 Platform.runLater(() -> {
                     startButton.setVisible(false);
@@ -231,18 +225,13 @@ public class WaitingGameWindowController extends GenericController {
                 }
                 else if(event == GameType.CONFIRMATION_GAME_STARTS) {
                     System.out.printf("Event GAME_STARTS!\n");
-                    NotificationManager.showSuccess(Messages.Notifications.CONFIRMATION_GAME_STARTS);
-      
                     kepWaiting = false;
                 }
                 else if(event == GameType.ERROR_GAME_CANNOT_START) {
                     System.out.printf("Game cannot start! Missing players\n");
-                    NotificationManager.showError(Messages.Notifications.ERROR_MISSING_PLAYERS);
                 }
                 else {
                     System.out.printf("Event %d unknown!\n", event);
-                     NotificationManager.showError(Messages.Notifications.ERROR_UNKNOWN_EVENT);
-               
                 }
             }
             System.out.printf("Game has to start!\n");
@@ -255,8 +244,6 @@ public class WaitingGameWindowController extends GenericController {
         }
         catch(IOException e) {
             System.out.printf("Error: %s\n", e.getMessage());
-            NotificationManager.showError(e.getMessage());
-            
         }
 
         System.out.printf("Finished waiting for players info!\n");
@@ -335,8 +322,6 @@ public class WaitingGameWindowController extends GenericController {
 
         if(myIndex == -1){
             System.out.printf("We are not in the list! Something is wrong...\n");
-            NotificationManager.showError(Messages.Notifications.ERROR_NOT_IN_LIST);
-               
             return;
         }
 

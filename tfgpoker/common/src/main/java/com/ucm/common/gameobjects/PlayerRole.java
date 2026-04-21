@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.ucm.common.GameType;
 
-
 public enum PlayerRole {
 
     UNDER_THE_GUN(GameType.PLAYER_ROLE_UNDER_THE_GUN),
@@ -17,7 +16,6 @@ public enum PlayerRole {
     DEALER(GameType.PLAYER_ROLE_DEALER),
     SMALL_BLIND(GameType.PLAYER_ROLE_SMALL_BLIND),
     BIG_BLIND(GameType.PLAYER_ROLE_BIG_BLIND);
-
 
     int networkCode;
 
@@ -148,5 +146,4 @@ public enum PlayerRole {
     public int getNetworkCode() {
         return networkCode;
     }
-
 }
