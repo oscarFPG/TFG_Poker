@@ -176,6 +176,7 @@ public class InGameWindowController extends GenericController {
         GUI_initializeCardStyle();
         GUI_initializeDealerButton();
         GUI_initializeMoneySlider();
+        GUI_initializeTimers();
         GUI_showWaitingPlayers(_clientInfo.playerPositions);
 
         usernamePlaceHolder.setText( _clientInfo.name );
@@ -399,6 +400,21 @@ public class InGameWindowController extends GenericController {
             else
                 btnRaise.setDisable(false);
         });
+    }
+
+    private void GUI_initializeTimers() {
+
+        _listTimer = new HashMap<>();
+
+        _listTimer.put(0, List.of(rectFirstTimer0, rectSecondTimer0, rectThirdTimer0, rectFourthTimer0, rectFifthTimer0, rectSixthTimer0));
+        _listTimer.put(1, List.of(rectFirstTimer1, rectSecondTimer1, rectThirdTimer1, rectFourthTimer1, rectFifthTimer1, rectSixthTimer1));
+        _listTimer.put(2, List.of(rectFirstTimer2, rectSecondTimer2, rectThirdTimer2, rectFourthTimer2, rectFifthTimer2, rectSixthTimer2));
+        _listTimer.put(3, List.of(rectFirstTimer3, rectSecondTimer3, rectThirdTimer3, rectFourthTimer3, rectFifthTimer3, rectSixthTimer3));
+        _listTimer.put(4, List.of(rectFirstTimer4, rectSecondTimer4, rectThirdTimer4, rectFourthTimer4, rectFifthTimer4, rectSixthTimer4));
+        _listTimer.put(5, List.of(rectFirstTimer5, rectSecondTimer5, rectThirdTimer5, rectFourthTimer5, rectFifthTimer5, rectSixthTimer5));
+        _listTimer.put(6, List.of(rectFirstTimer6, rectSecondTimer6, rectThirdTimer6, rectFourthTimer6, rectFifthTimer6, rectSixthTimer6));
+        _listTimer.put(7, List.of(rectFirstTimer7, rectSecondTimer7, rectThirdTimer7, rectFourthTimer7, rectFifthTimer7, rectSixthTimer7));
+        _listTimer.put(8, List.of(rectFirstTimer8, rectSecondTimer8, rectThirdTimer8, rectFourthTimer8, rectFifthTimer8, rectSixthTimer8));
     }
 
     private void GUI_showWaitingPlayers(final List<PlayerInfo> players) {
@@ -750,6 +766,12 @@ public class InGameWindowController extends GenericController {
 			else if(serverCode == GameType.TURN_PLAY) {
 
 				System.out.printf("It's your turn to play!\n");
+
+                int seatID = _playerSeatMap.get(_clientInfo.id);
+
+                Platform.runLater(() -> {
+                    GUI_resetPlayerTimer(seatID);
+                });
 
 				// Receive round info
 				final int sb = SocketUtils.receiveInt( socket.getInputStream() );
@@ -1285,6 +1307,29 @@ public class InGameWindowController extends GenericController {
 
     }
 
+    private void GUI_putPlayerTimer(int seatID, int secondsLeft) {
+        List<Rectangle> rectangles = _listTimer.get(seatID);
+        if(rectangles == null) return;
+
+        int rectanglesVisible = (int)Math.ceil(secondsLeft/30.0);
+
+        Platform.runLater(()-> {
+            for (int i = 0; i < rectangles.size(); i++) {
+                rectangles.get(i).setVisible(i < rectanglesVisible);
+            }
+        });
+    }
+
+    private void GUI_resetPlayerTimer(int seatID) {
+        List<Rectangle> rectangles = _listTimer.get(seatID);
+        if(rectangles == null) return;
+
+        Platform.runLater(()->{
+            for (Rectangle r : rectangles) {
+                r.setVisible(true);
+            }
+        });
+    }
 
     private void GUI_clearTableCards() {
         tableCard0.setImage(null);
@@ -1306,6 +1351,17 @@ public class InGameWindowController extends GenericController {
 
     private void GUI_clearTurnPlayer() {
         _listPlayerStackPanes.forEach(pane -> pane.getStyleClass().remove("tourn-player-color"));
+    }
+
+    private void GUI_clearTimer(int seatID) {
+        List<Rectangle> rectangles = _listTimer.get(seatID);
+        if(rectangles == null) return;
+
+        Platform.runLater(()->{
+            for (Rectangle r : rectangles) {
+                r.setVisible(false);
+            }
+        });
     }
     
 }

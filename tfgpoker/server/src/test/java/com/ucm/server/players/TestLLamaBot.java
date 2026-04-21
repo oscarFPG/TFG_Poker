@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.common.gameobjects.Suit;
+import com.ucm.server.exceptions.TurnTimeoutException;
 import com.ucm.server.gameobjects.Player;
 
 
@@ -64,7 +65,11 @@ public class TestLLamaBot {
         //bot.notifyPlayerAction(PlayerRole.LOJACK, "check", 0);
         //bot.notifyPlayerAction(PlayerRole.DEALER, "bet", 23);
 
-        System.out.println("SCENARIO 1: " + player.makePlay(1, 1, 100));
+        try {
+            System.out.println("SCENARIO 1: " + player.makePlay(1, 1, 100));
+        } catch (TurnTimeoutException e) {
+            e.printStackTrace();
+        }
         player.notifyRoundEnded();
 
 
@@ -96,7 +101,11 @@ public class TestLLamaBot {
         //bot.notifyPlayerAction(PlayerRole.DEALER, "bet", 13);
         //bot.notifyPlayerAction(PlayerRole.BIG_BLIND, "raise", 41);
 
-        System.out.println("SCENARIO 2: " + player.makePlay(1, 1, 100));
+        try {
+            System.out.println("SCENARIO 2: " + player.makePlay(1, 1, 100));
+        } catch (TurnTimeoutException e) {
+            e.printStackTrace();
+        }
         player.notifyRoundEnded();
 
 
@@ -113,7 +122,11 @@ public class TestLLamaBot {
         //bot.notifyPlayerAction(PlayerRole.BIG_BLIND, "all-in", 100);
         //bot.notifyPlayerAction(PlayerRole.DEALER, "fold", 0);
 
-        System.out.println("SCENARIO 3: " + player.makePlay(1, 1, 100));
+        try {
+            System.out.println("SCENARIO 3: " + player.makePlay(1, 1, 100));
+        } catch (TurnTimeoutException e) {
+            e.printStackTrace();
+        }
         player.notifyRoundEnded();
 
 
@@ -127,7 +140,11 @@ public class TestLLamaBot {
 
         //bot.notifyPlayerAction(PlayerRole.DEALER, "raise", 2.5);
 
-        System.out.println("SCENARIO 4: " + player.makePlay(1, 1, 100));
+        try {
+            System.out.println("SCENARIO 4: " + player.makePlay(1, 1, 100));
+        } catch (TurnTimeoutException e) {
+            e.printStackTrace();
+        }
         player.notifyRoundEnded();
         
     }
