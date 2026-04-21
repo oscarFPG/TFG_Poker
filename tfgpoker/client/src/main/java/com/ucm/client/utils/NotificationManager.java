@@ -20,8 +20,9 @@ import javafx.util.Duration;
 public class NotificationManager extends DialogsManager {
 
     private static final List<Stage> activeNotifications = new ArrayList<>();
-    private static final double MARGIN = 40;
-    private static final double SPACING = 20;
+    private static final double MARGIN = 30;
+    private static final double MARGIN_TOP = 60;
+    private static final double SPACING = 10;
     private static boolean listenersAdded = false;
 
     public static void showError(String msg) {
@@ -118,7 +119,7 @@ public class NotificationManager extends DialogsManager {
     private static void updatePositions() {
         if (stage == null || !stage.isShowing()) return;
 
-        double currentY = stage.getY() + MARGIN;
+        double currentY = stage.getY() + MARGIN_TOP;
 
         List<Stage> copy = new ArrayList<>(activeNotifications);
 

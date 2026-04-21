@@ -231,7 +231,7 @@ public class WaitingGameWindowController extends GenericController {
                 }
                 else if(event == GameType.CONFIRMATION_GAME_STARTS) {
                     System.out.printf("Event GAME_STARTS!\n");
-                    NotificationManager.showSuccess(Messages.Notifications.CONFIRMATION_GAME_STARTS);
+                    //NotificationManager.showSuccess(Messages.Notifications.CONFIRMATION_GAME_STARTS);
       
                     kepWaiting = false;
                 }

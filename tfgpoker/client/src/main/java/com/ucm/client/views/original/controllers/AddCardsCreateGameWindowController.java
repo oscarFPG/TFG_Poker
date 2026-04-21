@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.List;
 
 import com.ucm.client.utils.AlertManager;
-import com.ucm.client.utils.NotificationManager;
 import com.ucm.client.utils.Messages;
+import com.ucm.client.utils.NotificationManager;
 import com.ucm.common.GameType;
 import com.ucm.common.PokerPreGame;
 import com.ucm.common.SocketUtils;
@@ -169,7 +169,7 @@ public class AddCardsCreateGameWindowController extends GenericController {
                     _clientInfo.gameConfig._roomId = SocketUtils.receiveInt(_clientInfo.socket.getInputStream());
 
                     System.out.printf("Server response: All correct! Creating room...\n");
-                    NotificationManager.showSuccess(Messages.Notifications.CONFIRMATION_WAITING_GAME);
+                    //NotificationManager.showSuccess(Messages.Notifications.CONFIRMATION_WAITING_GAME);
 
                     int clientType = SocketUtils.receiveInt(_clientInfo.socket.getInputStream());
                     if(clientType == GameType.CONFIRMATION_HOST_PLAYER) {
