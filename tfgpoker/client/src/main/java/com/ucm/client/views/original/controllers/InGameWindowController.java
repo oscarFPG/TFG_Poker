@@ -607,6 +607,7 @@ public class InGameWindowController extends GenericController {
                     System.out.printf("Waiting for my cards...\n");
                     playerCards[0] = PokerGame.receiveCard(input);
                     playerCards[1] = PokerGame.receiveCard(input);
+                    handleEquity(socket);
                     System.out.printf("Cards: %s %s\n", 
                         playerCards[0].toString(), playerCards[1].toString()
                     );
@@ -625,6 +626,7 @@ public class InGameWindowController extends GenericController {
                     tableCardValues[0] = PokerGame.receiveCard(input);  // First table card
                     tableCardValues[1] = PokerGame.receiveCard(input);  // Second table card
                     tableCardValues[2] = PokerGame.receiveCard(input);  // Third table card
+                    handleEquity(socket);
                     Platform.runLater(() -> {
                         GUI_showCard(tableCard0, tableCardValues[0]);
                         GUI_showCard(tableCard1, tableCardValues[1]);
@@ -640,6 +642,7 @@ public class InGameWindowController extends GenericController {
                     });
                     playRound(playerCards[0], playerCards[1], role, socket);
                     tableCardValues[3] = PokerGame.receiveCard(input);  // Fourth table card
+                    handleEquity(socket);
                     Platform.runLater(() -> {
                         GUI_showCard(tableCard3, tableCardValues[3]);
                     });
@@ -653,6 +656,7 @@ public class InGameWindowController extends GenericController {
                     });
                     playRound(playerCards[0], playerCards[1], role, socket);
                     tableCardValues[4] = PokerGame.receiveCard(input);  // fifth table card
+                    handleEquity(socket);
                     Platform.runLater(() -> {
                         GUI_showCard(tableCard4, tableCardValues[4]);
                     });
@@ -728,11 +732,6 @@ public class InGameWindowController extends GenericController {
         do {
 
             serverCode = SocketUtils.receiveInt(socket.getInputStream());
-
-            if(handleEquity(serverCode, socket)) {
-                continue;
-            }
-
             if(serverCode == GameType.TURN_FORCED_SB) {
 
 				final int amountSB = SocketUtils.receiveInt(socket.getInputStream());
@@ -905,10 +904,10 @@ public class InGameWindowController extends GenericController {
         NotificationManager.showSuccess(Messages.Notifications.CONFIRMATION_ROUND_ENDS);
             
 
-		if(handEndsByFold)
+		if(handEndsByFold) {
             NotificationManager.showError(Messages.Notifications.ERROR_ONLY_ONE_PLAYER_LEFT);
 			throw new OnlyOnePlayerLeftException();
-
+        }
     }
 
     private boolean showdown(Socket socket) throws IOException, InterruptedException, CancelGameException {
@@ -918,11 +917,6 @@ public class InGameWindowController extends GenericController {
         do {
 
             code = SocketUtils.receiveInt(socket.getInputStream());
-
-            if(handleEquity(code, socket)) {
-                continue;
-            }
-
             if(code == GameType.MY_PLAYER_STATUS) {
 
                 String myName = SocketUtils.receiveString(socket.getInputStream());
@@ -1065,11 +1059,6 @@ public class InGameWindowController extends GenericController {
         do {
 
             code = SocketUtils.receiveInt(socket.getInputStream());
-
-            if(handleEquity(code, socket)) {
-                continue;
-            }
-
             if(code == GameType.MY_PLAYER_STATUS) {
 
                 String myName = SocketUtils.receiveString(socket.getInputStream());
@@ -1225,14 +1214,11 @@ public class InGameWindowController extends GenericController {
         imageView.setImage( cardImage );
     }
 
-    private boolean handleEquity(int serverCode, Socket socket) throws IOException, CancelGameException {
+    private void handleEquity(Socket socket) throws IOException {
 
-        if(serverCode == GameType.EQUITY_UPDATE) {
-            _myEquity = SocketUtils.receiveString(socket.getInputStream());
-            Platform.runLater(this::GUI_putEquityToPlayer);
-            return true;
-        }
-        return false;
+        int code = SocketUtils.receiveInt(socket.getInputStream());
+        _myEquity = SocketUtils.receiveString(socket.getInputStream());
+        Platform.runLater(this::GUI_putEquityToPlayer);
     }
 
     private void GUI_putMyCards(int playerID, Card card1, Card card2) {
