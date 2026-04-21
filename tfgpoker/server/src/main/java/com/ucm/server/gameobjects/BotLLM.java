@@ -343,5 +343,6 @@ public abstract class BotLLM extends Bot {
     @Override public void notifyGameKeeps() throws IOException {}
     @Override public void notifyGameWinner() throws IOException {}
     @Override public void notifyGameLoser() throws IOException {}
+    @Override public void notifyTurnTimer(int seconds) throws IOException {}
     
 }

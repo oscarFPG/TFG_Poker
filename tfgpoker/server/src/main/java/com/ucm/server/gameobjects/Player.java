@@ -407,6 +407,17 @@ public class Player implements IPlayerActions {
         }
     }
 
+    public void notifyTurnTimer(int seconds) {
+
+        try {
+            _playerInfo.notifyTurnTimer(seconds);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
     public int putSmallBlindBet(int sb) {
         

@@ -816,6 +816,11 @@ public class InGameWindowController extends GenericController {
 
                 selectCommand(socket, sb, bb, maxBet, offBetMoney, onBetMoney);
 			}
+            else if(serverCode == GameType.TURN_TIMER_UPDATE) {
+                int secondsLeft = SocketUtils.receiveInt(socket.getInputStream());
+                int seatID = _playerSeatMap.get(_clientInfo.id);
+                GUI_putPlayerTimer(seatID, secondsLeft);
+            }
 			else if(serverCode == GameType.HAND_ENDS_BY_FOLD) {
 				handEndsByFold = true;
 			}
@@ -891,6 +896,9 @@ public class InGameWindowController extends GenericController {
             }
             else if(serverCode == GameType.ROUND_ENDS) {
                 System.out.printf("ROUND_ENDS received!\n");
+
+                int seatID = _playerSeatMap.get(_clientInfo.id);
+                GUI_clearTimer(seatID);
             }
             else {
 				System.out.printf("Unknown turn code %d\n", serverCode);

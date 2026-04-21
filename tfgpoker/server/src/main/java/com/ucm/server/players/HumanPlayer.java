@@ -251,5 +251,11 @@ public class HumanPlayer implements IPlayerNotificator {
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_BEFORE_PLAY);
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getPlayerId());
     }
+
+    @Override
+     public void notifyTurnTimer(int seconds) throws IOException {
+        SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_TIMER_UPDATE);
+        SocketUtils.sendInteger(_socket.getOutputStream(), seconds);
+     }
     
 }

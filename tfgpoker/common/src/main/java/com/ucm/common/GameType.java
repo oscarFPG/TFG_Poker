@@ -115,4 +115,7 @@ public class GameType {
 
     //Equity identifier
     public static final int EQUITY_UPDATE = 40000;
+
+    //Turn timer left identifier
+    public static final int TURN_TIMER_UPDATE = 40100;
 }
