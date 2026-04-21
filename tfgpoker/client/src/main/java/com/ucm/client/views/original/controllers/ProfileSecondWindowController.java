@@ -1,6 +1,5 @@
 package com.ucm.client.views.original.controllers;
 
-import com.ucm.client.utils.AlertManager;
 import com.ucm.client.utils.Messages;
 import com.ucm.client.utils.NotificationManager;
 import com.ucm.common.GameType;
@@ -71,9 +70,6 @@ public class ProfileSecondWindowController extends GenericController {
             if(response == GameType.ERROR_NAME_TOO_SHORT) {
                 System.out.printf("Server response: Name is too short!\n");
                 NotificationManager.showError(Messages.Notifications.ERROR_NAME_TOO_SHORT);
-                AlertManager.show("ESTO ES UNA PRUEBA", "nO HAGAS MUCHO CASO, ES UNA PRUEBA", AlertManager.AlertTypeCustom.INFO);
-                AlertManager.showConfirm("ESTO ES UNA PRUEBA", "nO HAGAS MUCHO CASO, ES UNA PRUEBA", AlertManager.AlertTypeCustom.SUCCESS);
-               
             }
             else if(response == GameType.ERROR_NAME_TOO_LONG) {
                 System.out.printf("Server response: Name is too long!\n");

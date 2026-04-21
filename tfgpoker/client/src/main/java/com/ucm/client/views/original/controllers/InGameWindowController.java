@@ -1131,6 +1131,8 @@ public class InGameWindowController extends GenericController {
 
         if(isEliminated) {
             System.out.printf("Player %s has been eliminated from the game!\n", nameLabel.getText());
+             NotificationManager.showSuccess(String.format(Messages.Notifications.CONFIRMATION_PLAYER_ELIMINATED, nameLabel.getText()));
+             
             nameLabel.setText( nameLabel.getText() + " (Eliminated)" );
             _listPlayerStackPanes.get(seatID).setOpacity(0.4);
         }
