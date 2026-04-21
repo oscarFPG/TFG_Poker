@@ -988,3 +988,7 @@
     -fx-effect: dropshadow(three-pass-box, rgba(255, 31, 194, 0.5), 10, 0, 0, 0);
 }
 
+.notification-container {
+    -fx-background-image: none;
+}
+

@@ -196,7 +196,7 @@ public class WaitingGameWindowController extends GenericController {
 
             _clientInfo.id = SocketUtils.receiveInt(input);
             System.out.printf("Player ID is %d\n", _clientInfo.id);
-            NotificationManager.showSuccess(Messages.Notifications.PLAYER_ID_IS + _clientInfo.id);
+           // NotificationManager.showSuccess(Messages.Notifications.PLAYER_ID_IS + _clientInfo.id);
       
             
 

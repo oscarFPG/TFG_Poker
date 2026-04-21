@@ -901,7 +901,7 @@ public class InGameWindowController extends GenericController {
         }
         while(serverCode != GameType.ROUND_ENDS && !handEndsByFold);
 		System.out.printf("Round has ended!\n\n");
-        NotificationManager.showSuccess(Messages.Notifications.CONFIRMATION_ROUND_ENDS);
+        //NotificationManager.showSuccess(Messages.Notifications.CONFIRMATION_ROUND_ENDS);
             
 
 		if(handEndsByFold) {

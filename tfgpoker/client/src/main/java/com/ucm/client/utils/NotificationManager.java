@@ -5,20 +5,24 @@ import java.util.List;
 
 import javafx.animation.PauseTransition;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.stage.Popup;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 public class NotificationManager extends DialogsManager {
-    
-    private static final List<Popup> activeNotifications = new ArrayList<>();
-    private static final double MARGIN = 20;
-    private static final double SPACING = 10;
+
+    private static final List<Stage> activeNotifications = new ArrayList<>();
+    private static final double MARGIN = 40;
+    private static final double SPACING = 20;
+    private static boolean listenersAdded = false;
 
     public static void showError(String msg) {
         show(msg, "Error", "notification-error");
@@ -28,14 +32,11 @@ public class NotificationManager extends DialogsManager {
         show(msg, "Success", "notification-success");
     }
 
-    /**
-     * Cierra todas las notificaciones activas de forma segura.
-     */
     public static void closeAll() {
         runSafe(() -> {
-            List<Popup> copy = new ArrayList<>(activeNotifications);
-            for (Popup p : copy) {
-                p.hide();
+            List<Stage> copy = new ArrayList<>(activeNotifications);
+            for (Stage s : copy) {
+                s.close();
             }
             activeNotifications.clear();
         });
@@ -43,25 +44,20 @@ public class NotificationManager extends DialogsManager {
 
     private static void show(String msg, String titleText, String styleClass) {
         runSafe(() -> {
-            // Límite de 5 notificaciones
-            if (activeNotifications.size() > 5) {
+
+            if (stage == null || !stage.isShowing()) return;
+
+           
+            if (activeNotifications.size() >= 4) {
                 closeNotification(activeNotifications.get(0));
             }
 
-            Popup popup = new Popup();
-            
-            // --- MEJORA AUTOMÁTICA DE CIERRE ---
-            // Vinculamos el ciclo de vida del popup al Stage principal.
-            // Si el stage deja de mostrarse (isShowing = false), cerramos las notificaciones.
-            if (stage != null) {
-                stage.showingProperty().addListener((obs, wasShowing, isShowing) -> {
-                    if (!isShowing) {
-                        closeAll();
-                    }
-                });
-            }
-            // -----------------------------------
+            Stage popup = new Stage();
+            popup.initOwner(stage);
+            popup.initStyle(StageStyle.TRANSPARENT);
+            popup.setAlwaysOnTop(false);
 
+           
             Label title = new Label(titleText);
             title.getStyleClass().add("notification-title");
 
@@ -82,21 +78,26 @@ public class NotificationManager extends DialogsManager {
             VBox root = new VBox(header, message);
             root.setSpacing(4);
             root.setAlignment(Pos.CENTER_LEFT);
-            root.setMinWidth(280); 
+            root.setMinWidth(280);
             root.setMaxWidth(300);
             root.getStyleClass().add(styleClass);
+            root.getStyleClass().add("notification-container");
 
             applyCSS(root);
-            popup.getContent().add(root);
 
+            Scene scene = new Scene(root);
+            scene.setFill(Color.TRANSPARENT);
+
+            popup.setScene(scene);
+
+           
+            popup.show();
             activeNotifications.add(popup);
-            
-            if (stage != null && stage.isShowing()) {
-                popup.show(stage);
-                updatePositions();
-            }
 
-            // Auto-cierre tras 5 segundos
+            addStageListeners();
+            updatePositions();
+
+          
             PauseTransition delay = new PauseTransition(Duration.seconds(5));
             delay.setOnFinished(e -> closeNotification(popup));
             delay.play();
@@ -105,38 +106,57 @@ public class NotificationManager extends DialogsManager {
         });
     }
 
-    private static void closeNotification(Popup popup) {
+    private static void closeNotification(Stage popup) {
         runSafe(() -> {
             if (activeNotifications.remove(popup)) {
-                popup.hide();
-                updatePositions(); 
+                popup.close();
+                updatePositions();
             }
         });
     }
 
     private static void updatePositions() {
-        // Si la ventana principal no es visible, no tiene sentido posicionar
         if (stage == null || !stage.isShowing()) return;
 
-        double titleBarHeight = stage.getHeight() - stage.getScene().getHeight();
-        double currentY = stage.getY() + titleBarHeight + MARGIN;
-        
-        List<Popup> copy = new ArrayList<>(activeNotifications);
+        double currentY = stage.getY() + MARGIN;
 
-        for (Popup p : copy) {
-            if (p == null || !p.isShowing()) continue;
+        List<Stage> copy = new ArrayList<>(activeNotifications);
 
-            Region content = (Region) p.getContent().get(0);
-            
-            // Forzamos el renderizado para obtener dimensiones reales
+        for (Stage s : copy) {
+            if (s == null || !s.isShowing()) continue;
+
+            VBox content = (VBox) s.getScene().getRoot();
+
             content.applyCss();
             content.layout();
 
             double x = stage.getX() + stage.getWidth() - content.getWidth() - MARGIN;
-            p.setX(x);
-            p.setY(currentY);
+
+            s.setX(x);
+            s.setY(currentY);
 
             currentY += content.getHeight() + SPACING;
         }
+    }
+
+   
+    private static void addStageListeners() {
+        if (listenersAdded || stage == null) return;
+        listenersAdded = true;
+
+        stage.xProperty().addListener((obs, o, n) -> updatePositions());
+        stage.yProperty().addListener((obs, o, n) -> updatePositions());
+        stage.widthProperty().addListener((obs, o, n) -> updatePositions());
+        stage.heightProperty().addListener((obs, o, n) -> updatePositions());
+
+        
+        stage.iconifiedProperty().addListener((obs, oldVal, isMinimized) -> {
+            if (isMinimized) closeAll();
+        });
+
+      
+        stage.showingProperty().addListener((obs, wasShowing, isShowing) -> {
+            if (!isShowing) closeAll();
+        });
     }
 }
