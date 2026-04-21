@@ -1,7 +1,9 @@
 package com.ucm.server.players;
 
+
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -11,15 +13,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.json.JSONObject;
-
 import com.ucm.common.GameType;
 import com.ucm.common.gameobjects.Card;
-import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.gameobjects.BotLLM;
-import com.ucm.server.interfaces.IPlayerInfo;
-
 
 
 public class LlamaPokerLLM extends BotLLM {
@@ -77,18 +74,13 @@ public class LlamaPokerLLM extends BotLLM {
 
             while ((line = br.readLine()) != null) {
                 response.append(line);
-            }
-
+            }   
             conn.disconnect();
 
-            
             String raw = response.toString();
-            //System.out.println("RAW JSON:\n" + raw); 
-
             JSONObject obj = new JSONObject(raw);
             String clean = obj.getString("response");
 
-            
             clean = clean.replace("\\u003c", "<")
                             .replace("\\u003e", ">");
 
@@ -103,7 +95,7 @@ public class LlamaPokerLLM extends BotLLM {
 
     @Override
     protected String extractAction(String text) {
-        //System.out.println("TEXT BEFORE FILTER: " + text);
+
         Pattern p = Pattern.compile("<action>(.*?)</action>", Pattern.DOTALL);
         Matcher m = p.matcher(text);
 
@@ -129,12 +121,11 @@ public class LlamaPokerLLM extends BotLLM {
             return "check";
 
         
+        // Raise action
         action = action.replace("bet", "raise");
 
         Pattern p = Pattern.compile("^raise\\s+(\\d+(\\.\\d+)?)$");
         Matcher m = p.matcher(action);
-
-       
         if (m.find()) {
 
             String targetBet = m.group(1);

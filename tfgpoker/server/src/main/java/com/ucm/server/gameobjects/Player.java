@@ -414,6 +414,7 @@ public class Player implements IPlayerActions {
         _offBetMoney -= bet;
 
         try {
+            _lastCommand = "small-blind";
             _playerInfo.notifySmallBlindBet(bet, this);
         }
         catch (IOException e) {
@@ -430,6 +431,7 @@ public class Player implements IPlayerActions {
         _offBetMoney -= bet;
 
         try {
+            _lastCommand = "big-blind";
             _playerInfo.notifyBigBlindBet(bet, this);
         }
         catch (IOException e) {
