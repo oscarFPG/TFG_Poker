@@ -157,11 +157,26 @@
  */
 .equity-label {
     -fx-background-color: #1B0359;
-   -fx-background-radius: 6, 5;
-   -fx-text-fill: #e5e5e5;
-   -fx-alignment: center;
-   -fx-font-family: "Constantia";
-   -fx-font-size: 21px;
+    -fx-background-radius: 6, 5;
+    -fx-text-fill: #e5e5e5;
+    -fx-alignment: center;
+    -fx-font-family: "Constantia";
+    -fx-font-size: 21px;
+}
+
+.equiy-green {
+    -fx-background-color: linear-gradient(#1ee270, #27ae60);
+    -fx-text-fill: #e5e5e5;
+}
+
+.equity-yellow {
+    -fx-background-color: linear-gradient(#f1c40f, #f39c12);
+    -fx-text-fill: #e5e5e5;
+}
+
+.equity-red {
+    -fx-background-color: linear-gradient(#e74c3c, #c0392b);
+    -fx-text-fill: #e5e5e5;
 }
 
 .general-text-font {
@@ -365,6 +380,18 @@
     #DC8CFE 100%);
     -fx-border-width: 2; 
    
+}
+
+/**
+ * Estilo genérico para contenedores con fondo medio transparente
+ */
+.transparent-container-color {
+   -fx-background-color: rgba(99, 55, 138, 0.822);
+   -fx-background-radius: 6, 5;
+   -fx-text-fill: #e5e5e5;
+   -fx-alignment: center;
+   -fx-font-family: "Constantia";
+   -fx-font-size: 21px;
 }
 
 .text-ranking{

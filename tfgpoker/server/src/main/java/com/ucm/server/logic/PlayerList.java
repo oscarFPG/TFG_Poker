@@ -13,6 +13,7 @@ import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.commands.Command;
+import com.ucm.server.exceptions.TurnTimeoutException;
 import com.ucm.server.gameobjects.Player;
 import com.ucm.common.GameType;
 import com.ucm.common.exceptions.CancelGameException;
@@ -247,6 +248,7 @@ public class PlayerList implements Iterable<Node> {
             }
 
             notifyTurnPlayer(playerOnTurn._player);
+
             Command command = askCommandToPlayer(playerOnTurn, sb, bb, maxBet);
             CommandResult result = command.execute(sb, bb, maxBet);
             notifyPlayerOwnState(playerOnTurn);
@@ -302,6 +304,10 @@ public class PlayerList implements Iterable<Node> {
                 command = Command.parseCommand(commandFormatted, player);
                 command = command.validate(maxBet) ? command : null;
             }
+        }
+        catch (TurnTimeoutException e) {
+            log.warn("Player {} TIMEOUT -> auto FOLD", player.getPlayerName());
+            command = Command.parseCommand(new String[] {GameType.FOLD_ACTION_FULL}, player);
         }
         catch (Exception e) {
             log.error("Error happened waiting for player {} : {}", player.getPlayerName(), e.getMessage());

@@ -28,12 +28,14 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 
@@ -51,6 +53,8 @@ public class InGameWindowController extends GenericController {
     @FXML private Button btnRound, btnMinBet, btnHalfBet, btnMaxBet;
     @FXML private Button btnDecreaseMoney, btnIncreaseMoney;
     @FXML private Button btnMenu;
+    @FXML private ToggleButton btnEquity;
+    @FXML private ImageView imgSeeEquity;
 
     /* Money buttons, labels and slider */
     @FXML private Label labelMoney;
@@ -65,65 +69,74 @@ public class InGameWindowController extends GenericController {
     @FXML private StackPane pokerPlayer0;           // Always playing-client seat
     @FXML private Label playerName0, playerMoney0, labelOnBetMoney0;  // Always playing-client seat
     @FXML private Label labelEquity0;
-    @FXML private HBox hboxImageCards0, hboxHandBet0;
+    @FXML private HBox hboxImageCards0, hboxHandBet0, hboxTimer0;
     @FXML private ImageView imgLeftCard0, imgRightCard0, imgAvatarProfile0;
     @FXML private ImageView ImgDealer0;
+    @FXML private Rectangle rectFirstTimer0, rectSecondTimer0, rectThirdTimer0, rectFourthTimer0, rectFifthTimer0, rectSixthTimer0;
 
     @FXML private StackPane pokerPlayer1;
     @FXML private Label playerName1, playerMoney1, labelOnBetMoney1;
     @FXML private Label labelEquity1;
-    @FXML private HBox hboxImageCards1, hboxHandBet1;
+    @FXML private HBox hboxImageCards1, hboxHandBet1, hboxTimer1;
     @FXML private ImageView imgLeftCard1, imgRightCard1, imgAvatarProfile1;
     @FXML private ImageView ImgDealer1;
+    @FXML private Rectangle rectFirstTimer1, rectSecondTimer1, rectThirdTimer1, rectFourthTimer1, rectFifthTimer1, rectSixthTimer1;
 
     @FXML private StackPane pokerPlayer2;
     @FXML private Label playerName2, playerMoney2, labelOnBetMoney2;
     @FXML private Label labelEquity2;
-    @FXML private HBox hboxImageCards2, hboxHandBet2;
+    @FXML private HBox hboxImageCards2, hboxHandBet2, hboxTimer2;
     @FXML private ImageView imgLeftCard2, imgRightCard2, imgAvatarProfile2;
     @FXML private ImageView ImgDealer2;
+    @FXML private Rectangle rectFirstTimer2, rectSecondTimer2, rectThirdTimer2, rectFourthTimer2, rectFifthTimer2, rectSixthTimer2;
 
     @FXML private StackPane pokerPlayer3;
     @FXML private Label playerName3, playerMoney3, labelOnBetMoney3;
     @FXML private Label labelEquity3;
-    @FXML private HBox hboxImageCards3, hboxHandBet3;
+    @FXML private HBox hboxImageCards3, hboxHandBet3, hboxTimer3;
     @FXML private ImageView imgLeftCard3, imgRightCard3, imgAvatarProfile3;
     @FXML private ImageView ImgDealer3;
+    @FXML private Rectangle rectFirstTimer3, rectSecondTimer3, rectThirdTimer3, rectFourthTimer3, rectFifthTimer3, rectSixthTimer3;
 
     @FXML private StackPane pokerPlayer4;
     @FXML private Label playerName4, playerMoney4, labelOnBetMoney4;
     @FXML private Label labelEquity4;
-    @FXML private HBox hboxImageCards4, hboxHandBet4;
+    @FXML private HBox hboxImageCards4, hboxHandBet4, hboxTimer4;
     @FXML private ImageView imgLeftCard4, imgRightCard4, imgAvatarProfile4;
     @FXML private ImageView ImgDealer4;
+    @FXML private Rectangle rectFirstTimer4, rectSecondTimer4, rectThirdTimer4, rectFourthTimer4, rectFifthTimer4, rectSixthTimer4;
 
     @FXML private StackPane pokerPlayer5;
     @FXML private Label playerName5, playerMoney5, labelOnBetMoney5;
     @FXML private Label labelEquity5;
-    @FXML private HBox hboxImageCards5, hboxHandBet5;
+    @FXML private HBox hboxImageCards5, hboxHandBet5, hboxTimer5;
     @FXML private ImageView imgLeftCard5, imgRightCard5, imgAvatarProfile5;
     @FXML private ImageView ImgDealer5;
+    @FXML private Rectangle rectFirstTimer5, rectSecondTimer5, rectThirdTimer5, rectFourthTimer5, rectFifthTimer5, rectSixthTimer5;
 
     @FXML private StackPane pokerPlayer6;
     @FXML private Label playerName6, playerMoney6, labelOnBetMoney6;
     @FXML private Label labelEquity6;
-    @FXML private HBox hboxImageCards6, hboxHandBet6;
+    @FXML private HBox hboxImageCards6, hboxHandBet6, hboxTimer6;
     @FXML private ImageView imgLeftCard6, imgRightCard6, imgAvatarProfile6;
     @FXML private ImageView ImgDealer6;
+    @FXML private Rectangle rectFirstTimer6, rectSecondTimer6, rectThirdTimer6, rectFourthTimer6, rectFifthTimer6, rectSixthTimer6;
 
     @FXML private StackPane pokerPlayer7;
     @FXML private Label playerName7, playerMoney7, labelOnBetMoney7;
     @FXML private Label labelEquity7;
-    @FXML private HBox hboxImageCards7, hboxHandBet7;
+    @FXML private HBox hboxImageCards7, hboxHandBet7, hboxTimer7;
     @FXML private ImageView imgLeftCard7, imgRightCard7, imgAvatarProfile7;
     @FXML private ImageView ImgDealer7;
+    @FXML private Rectangle rectFirstTimer7, rectSecondTimer7, rectThirdTimer7, rectFourthTimer7, rectFifthTimer7, rectSixthTimer7;
 
     @FXML private StackPane pokerPlayer8;
     @FXML private Label playerName8, playerMoney8, labelOnBetMoney8;
     @FXML private Label labelEquity8;
-    @FXML private HBox hboxImageCards8, hboxHandBet8;
+    @FXML private HBox hboxImageCards8, hboxHandBet8, hboxTimer8;
     @FXML private ImageView imgLeftCard8, imgRightCard8, imgAvatarProfile8;
     @FXML private ImageView ImgDealer8;
+    @FXML private Rectangle rectFirstTimer8, rectSecondTimer8, rectThirdTimer8, rectFourthTimer8, rectFifthTimer8, rectSixthTimer8;
     
     /* Member variables to group all players variables */
     private List<StackPane> _listPlayerStackPanes;  // Player stackpanes
@@ -134,6 +147,7 @@ public class InGameWindowController extends GenericController {
     private List<HBox> _listImageCards;     // Player cards
     private List<ImageView> _listPaintCards, _listAvatarProfiles; // Player cards images and avatar
     private List<ImageView> _listDealer;    // Player dealer chip
+    private Map<Integer, List<Rectangle>> _listTimer; // Players timer
     
 
     /* Variables to add logic */
@@ -144,7 +158,10 @@ public class InGameWindowController extends GenericController {
     private int _sliderStep = 0;
     private Thread _gameThread;
     private boolean _menuOpen = true;
-
+    private boolean _equityVisible = false;
+    private String _myEquity = "0%";
+    private final Image equityOn = new Image(getClass().getResource("/images/seeStatistic.png").toExternalForm());
+    private final Image equityOff = new Image(getClass().getResource("/images/notSeeStatistic.png").toExternalForm());
     
     @Override
     protected void onViewShown() {
@@ -154,6 +171,7 @@ public class InGameWindowController extends GenericController {
         GUI_initializeCardStyle();
         GUI_initializeDealerButton();
         GUI_initializeMoneySlider();
+        GUI_initializeTimers();
         GUI_showWaitingPlayers(_clientInfo.playerPositions);
 
         usernamePlaceHolder.setText( _clientInfo.name );
@@ -350,7 +368,8 @@ public class InGameWindowController extends GenericController {
         _listPlayerStackPanes.forEach(stack -> stack.setVisible(false));
         _listImageCards.forEach(hbox -> hbox.setVisible(false));
         _listHandBet.forEach(hbox -> hbox.setVisible(false));
-        _listEquity.forEach(label -> label.setVisible(false));
+        _listHandBet.get(0).setOpacity(1);
+        _listEquity.forEach(label -> { label.setVisible(false); label.setText("0%");});
     }
 
     private void GUI_initializeCardStyle() { 
@@ -378,6 +397,21 @@ public class InGameWindowController extends GenericController {
             else
                 btnRaise.setDisable(false);
         });
+    }
+
+    private void GUI_initializeTimers() {
+
+        _listTimer = new HashMap<>();
+
+        _listTimer.put(0, List.of(rectFirstTimer0, rectSecondTimer0, rectThirdTimer0, rectFourthTimer0, rectFifthTimer0, rectSixthTimer0));
+        _listTimer.put(1, List.of(rectFirstTimer1, rectSecondTimer1, rectThirdTimer1, rectFourthTimer1, rectFifthTimer1, rectSixthTimer1));
+        _listTimer.put(2, List.of(rectFirstTimer2, rectSecondTimer2, rectThirdTimer2, rectFourthTimer2, rectFifthTimer2, rectSixthTimer2));
+        _listTimer.put(3, List.of(rectFirstTimer3, rectSecondTimer3, rectThirdTimer3, rectFourthTimer3, rectFifthTimer3, rectSixthTimer3));
+        _listTimer.put(4, List.of(rectFirstTimer4, rectSecondTimer4, rectThirdTimer4, rectFourthTimer4, rectFifthTimer4, rectSixthTimer4));
+        _listTimer.put(5, List.of(rectFirstTimer5, rectSecondTimer5, rectThirdTimer5, rectFourthTimer5, rectFifthTimer5, rectSixthTimer5));
+        _listTimer.put(6, List.of(rectFirstTimer6, rectSecondTimer6, rectThirdTimer6, rectFourthTimer6, rectFifthTimer6, rectSixthTimer6));
+        _listTimer.put(7, List.of(rectFirstTimer7, rectSecondTimer7, rectThirdTimer7, rectFourthTimer7, rectFifthTimer7, rectSixthTimer7));
+        _listTimer.put(8, List.of(rectFirstTimer8, rectSecondTimer8, rectThirdTimer8, rectFourthTimer8, rectFifthTimer8, rectSixthTimer8));
     }
 
     private void GUI_showWaitingPlayers(final List<PlayerInfo> players) {
@@ -534,9 +568,10 @@ public class InGameWindowController extends GenericController {
 
     @FXML
     private void seeEquity() {
-        
+        _equityVisible = btnEquity.isSelected();
+        imgSeeEquity.setImage(_equityVisible ? equityOn : equityOff);
+        GUI_putEquityToPlayer();
     }
-
 
     private boolean pokerGame(String name, Socket socket) {
 
@@ -694,6 +729,10 @@ public class InGameWindowController extends GenericController {
 
             serverCode = SocketUtils.receiveInt(socket.getInputStream());
 
+            if(handleEquity(serverCode, socket)) {
+                continue;
+            }
+
             if(serverCode == GameType.TURN_FORCED_SB) {
 
 				final int amountSB = SocketUtils.receiveInt(socket.getInputStream());
@@ -742,6 +781,12 @@ public class InGameWindowController extends GenericController {
 				System.out.printf("It's your turn to play!\n");
                // NotificationManager.showSuccess(Messages.Notifications.TURN_PLAY);
             
+
+                int seatID = _playerSeatMap.get(_clientInfo.id);
+
+                Platform.runLater(() -> {
+                    GUI_resetPlayerTimer(seatID);
+                });
 
 				// Receive round info
 				final int sb = SocketUtils.receiveInt( socket.getInputStream() );
@@ -832,9 +877,6 @@ public class InGameWindowController extends GenericController {
                 });
 
             }
-            else if (serverCode == GameType.EQUITY_UPDATE) {
-                String equity = SocketUtils.receiveString(socket.getInputStream());
-            }
             else if(serverCode == GameType.TOTAL_POT) {
 
                 final int totalPot = SocketUtils.receiveInt( socket.getInputStream() );
@@ -869,13 +911,18 @@ public class InGameWindowController extends GenericController {
 
     }
 
-    private boolean showdown(Socket socket) throws IOException, InterruptedException {
+    private boolean showdown(Socket socket) throws IOException, InterruptedException, CancelGameException {
 
         boolean gameEnds = false;
         int code;
         do {
 
             code = SocketUtils.receiveInt(socket.getInputStream());
+
+            if(handleEquity(code, socket)) {
+                continue;
+            }
+
             if(code == GameType.MY_PLAYER_STATUS) {
 
                 String myName = SocketUtils.receiveString(socket.getInputStream());
@@ -1012,12 +1059,17 @@ public class InGameWindowController extends GenericController {
         }
     }
 
-    private void playerStartInfo(Socket socket) throws IOException {
+    private void playerStartInfo(Socket socket) throws IOException, CancelGameException {
 
         int code;
         do {
 
             code = SocketUtils.receiveInt(socket.getInputStream());
+
+            if(handleEquity(code, socket)) {
+                continue;
+            }
+
             if(code == GameType.MY_PLAYER_STATUS) {
 
                 String myName = SocketUtils.receiveString(socket.getInputStream());
@@ -1173,6 +1225,16 @@ public class InGameWindowController extends GenericController {
         imageView.setImage( cardImage );
     }
 
+    private boolean handleEquity(int serverCode, Socket socket) throws IOException, CancelGameException {
+
+        if(serverCode == GameType.EQUITY_UPDATE) {
+            _myEquity = SocketUtils.receiveString(socket.getInputStream());
+            Platform.runLater(this::GUI_putEquityToPlayer);
+            return true;
+        }
+        return false;
+    }
+
     private void GUI_putMyCards(int playerID, Card card1, Card card2) {
         int seatID = _playerSeatMap.get(playerID);
         ImageView leftCard = (ImageView) _listPaintCards.get(seatID * 2);
@@ -1224,10 +1286,64 @@ public class InGameWindowController extends GenericController {
         }
     }
 
-    private void GUI_putEquityToPlayer(String equity) {
-        _listEquity.get(0).setText(equity);
+    private void GUI_putEquityToPlayer() {
+        Label myEquityLabel = _listEquity.get(0);
+        
+        if(_equityVisible && _myEquity != null) {
+            myEquityLabel.setText(_myEquity);
+            myEquityLabel.setVisible(true);
+
+            double equityValue = Double.parseDouble(_myEquity.replace("%","").replace(",", "."))/100;
+            GUI_putColorStyleToEquity(myEquityLabel, equityValue);
+        }
+        else {
+            myEquityLabel.setVisible(false);
+        }
     }
 
+    private void GUI_putColorStyleToEquity(Label equityLabel, double equity) {
+
+        equityLabel.getStyleClass().removeAll(
+          "equity-green",
+          "equity-yellow",
+          "equity-red"  
+        );
+
+        if(equity >= 0.65) {
+            equityLabel.getStyleClass().add("equity-green");
+        }
+        else if(equity >= 0.35) {
+            equityLabel.getStyleClass().add("equity-yellow");
+        }
+        else{
+            equityLabel.getStyleClass().add("equity-red");
+        }
+
+    }
+
+    private void GUI_putPlayerTimer(int seatID, int secondsLeft) {
+        List<Rectangle> rectangles = _listTimer.get(seatID);
+        if(rectangles == null) return;
+
+        int rectanglesVisible = (int)Math.ceil(secondsLeft/30.0);
+
+        Platform.runLater(()-> {
+            for (int i = 0; i < rectangles.size(); i++) {
+                rectangles.get(i).setVisible(i < rectanglesVisible);
+            }
+        });
+    }
+
+    private void GUI_resetPlayerTimer(int seatID) {
+        List<Rectangle> rectangles = _listTimer.get(seatID);
+        if(rectangles == null) return;
+
+        Platform.runLater(()->{
+            for (Rectangle r : rectangles) {
+                r.setVisible(true);
+            }
+        });
+    }
 
     private void GUI_clearTableCards() {
         tableCard0.setImage(null);
@@ -1240,6 +1356,7 @@ public class InGameWindowController extends GenericController {
     private void GUI_clearPlayerBets() {
         _listOnBetMoney.forEach(label -> label.setVisible(false));
         _listHandBet.forEach(bet -> bet.setVisible(false));
+        _listHandBet.get(0).setOpacity(1);
     }
 
     private void GUI_clearDealer() {
@@ -1250,7 +1367,15 @@ public class InGameWindowController extends GenericController {
         _listPlayerStackPanes.forEach(pane -> pane.getStyleClass().remove("tourn-player-color"));
     }
 
-    // private void GUI_clearEquity() {
-    //     _listEquity.forEach(label -> label.setVisible(false));
-    // }
+    private void GUI_clearTimer(int seatID) {
+        List<Rectangle> rectangles = _listTimer.get(seatID);
+        if(rectangles == null) return;
+
+        Platform.runLater(()->{
+            for (Rectangle r : rectangles) {
+                r.setVisible(false);
+            }
+        });
+    }
+    
 }

@@ -76,6 +76,12 @@ public class Timer {
         _scheduler.shutdownNow();
     }
 
+    public int getSecondsLeft() {
+        int elapsed = _seconds.get();
+        int left = _max - elapsed;
+        return Math.max(left, 0);
+    }
+
     
     public int getSegundos() { return _seconds.get(); }
     public boolean isRunning() { return _isRunning.get(); }
