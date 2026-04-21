@@ -152,7 +152,7 @@ public class InGameWindowController extends GenericController {
     private List<HBox> _listImageCards;     // Player cards
     private List<ImageView> _listPaintCards, _listAvatarProfiles; // Player cards images and avatar
     private List<ImageView> _listDealer;    // Player dealer chip
-    private Map<HBox, List<Rectangle>> _listTimer; // Players timer
+    private Map<Integer, List<Rectangle>> _listTimer; // Players timer
     
 
     /* Variables to add logic */
