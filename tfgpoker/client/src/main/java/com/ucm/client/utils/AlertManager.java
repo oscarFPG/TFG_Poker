@@ -1,6 +1,7 @@
 package com.ucm.client.utils;
 
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
@@ -10,116 +11,102 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import javafx.scene.paint.Color;
 import javafx.stage.StageStyle;
 
-public class AlertManager {
+public class AlertManager extends DialogsManager {
+    
+    private static boolean isAlertShowing = false;
 
-    private static Stage stage;
+    public enum AlertTypeCustom { ERROR, WARNING, SUCCESS, INFO }
 
-    public enum AlertTypeCustom {
-        ERROR, WARNING, SUCCESS, INFO
+    public static void show(String title, String message, AlertTypeCustom type) {
+        if (isAlertShowing) return;
+        runSafe(() -> executeAlert(title, message, type, false));
     }
 
-    public static void init(Stage s) {
-        stage = s;
+    public static boolean showConfirm(String title, String message, AlertTypeCustom type) {
+        if (isAlertShowing) return false;
+
+        if (javafx.application.Platform.isFxApplicationThread()) {
+            return executeAlert(title, message, type, true);
+        } else {
+            CompletableFuture<Boolean> future = new CompletableFuture<>();
+            runSafe(() -> future.complete(executeAlert(title, message, type, true)));
+            try { 
+                return future.get(); 
+            } catch (Exception e) { 
+                return false; 
+            }
+        }
     }
 
-    public static void show(String titleText, String messageText, AlertTypeCustom type) {
-        showInternal(titleText, messageText, type, false);
+    private static boolean executeAlert(String title, String msg, AlertTypeCustom type, boolean withCancel) {
+        isAlertShowing = true;
+        try {
+            Alert alert = new Alert(Alert.AlertType.NONE);
+            alert.initOwner(stage);
+            alert.initStyle(StageStyle.TRANSPARENT);
+
+            DialogPane pane = alert.getDialogPane();
+            pane.sceneProperty().addListener((obs, old, n) -> { if(n != null) n.setFill(Color.TRANSPARENT); });
+            
+            pane.setHeader(null);
+            pane.setGraphic(null);
+            pane.setContent(buildVisualContent(title, msg, type));
+
+            setupButtons(pane, withCancel);
+            applyCSS(pane);
+
+            Optional<ButtonType> result = alert.showAndWait();
+            return result.isPresent() && result.get().getButtonData() == ButtonBar.ButtonData.OK_DONE;
+        } finally {
+            isAlertShowing = false;
+        }
     }
 
-    public static boolean showConfirm(String titleText, String messageText, AlertTypeCustom type) {
-        return showInternal(titleText, messageText, type, true);
-    }
-
-    private static boolean showInternal(String titleText, String messageText, AlertTypeCustom type, boolean withCancel) {
-
-      
-        Alert alert = new Alert(Alert.AlertType.NONE);
-        alert.initOwner(stage);
-        
-      
-       alert.initStyle(StageStyle.TRANSPARENT); 
-
-       
-
-        DialogPane pane = alert.getDialogPane();
-
-      
-        pane.setHeader(null);
-        pane.setGraphic(null);
-        pane.setHeaderText(null); 
-
-      
-        Label icon = new Label();
+    private static VBox buildVisualContent(String titleText, String messageText, AlertTypeCustom type) {
+        Label icon = new Label(getIconEmoji(type));
         icon.getStyleClass().add("dialog-icon");
 
-        switch (type) {
-            case ERROR -> icon.setText("❌");
-            case WARNING -> icon.setText("⚠");
-            case SUCCESS -> icon.setText("✔");
-            case INFO -> icon.setText("ℹ");
-        }
-
-      
         Label title = new Label(titleText);
         title.getStyleClass().add("dialog-title");
-        title.setAlignment(Pos.CENTER); 
-        title.setWrapText(true); 
+        title.setWrapText(true);
+        title.setAlignment(Pos.CENTER);
 
-       
         Label message = new Label(messageText);
-        message.setWrapText(true);
         message.getStyleClass().add("dialog-message");
-        message.setAlignment(Pos.CENTER); 
+        message.setWrapText(true);
+        message.setAlignment(Pos.CENTER);
 
-   
-        VBox textBox = new VBox(title, message);
-        textBox.setSpacing(0); 
-        textBox.setAlignment(Pos.CENTER);
-
-    
-        VBox content = new VBox(icon, textBox);
-        content.setSpacing(-10); 
+        VBox content = new VBox(icon, title, message);
+        content.setSpacing(10);
         content.setAlignment(Pos.CENTER);
-        content.setMaxWidth(380); 
+        content.setMinWidth(280);
+        return content;
+    }
 
-        pane.setContent(content);
-
-     
-        ButtonType okBtn = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
-        ButtonType cancelBtn = null;
-
+    private static void setupButtons(DialogPane pane, boolean withCancel) {
+        ButtonType okBtn = new ButtonType("Acept", ButtonBar.ButtonData.OK_DONE);
         if (withCancel) {
-            cancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+            ButtonType cancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
             pane.getButtonTypes().setAll(cancelBtn, okBtn);
+            ((Button) pane.lookupButton(cancelBtn)).getStyleClass().add("dialog-cancel");
         } else {
             pane.getButtonTypes().setAll(okBtn);
         }
-
-      
-        String cssPath = AlertManager.class.getResource("/original/css/style.css").toExternalForm();
-        if (cssPath != null) {
-             pane.getStylesheets().add(cssPath);
-        } else {
-            System.err.println("❌ No se pudo cargar el archivo CSS de alertas.");
-        }
-
-       
-        Button ok = (Button) pane.lookupButton(okBtn);
-        ok.getStyleClass().add("dialog-confirm");
+        ((Button) pane.lookupButton(okBtn)).getStyleClass().add("dialog-confirm");
         
-       
         ButtonBar buttonBar = (ButtonBar) pane.lookup(".button-bar");
-        buttonBar.setButtonOrder(ButtonBar.BUTTON_ORDER_NONE); 
-        
-        if (withCancel && cancelBtn != null) {
-            Button cancel = (Button) pane.lookupButton(cancelBtn);
-            cancel.getStyleClass().add("dialog-cancel");
-        }
+        if (buttonBar != null) buttonBar.setButtonOrder(ButtonBar.BUTTON_ORDER_NONE);
+    }
 
-        Optional<ButtonType> result = alert.showAndWait();
-        return result.isPresent() && result.get() == okBtn;
+     private static String getIconEmoji(AlertTypeCustom type) {
+        return switch (type) {
+            case ERROR -> "❌";
+            case WARNING -> "⚠";
+            case SUCCESS -> "✔";
+            case INFO -> "ℹ";
+        };
     }
 }

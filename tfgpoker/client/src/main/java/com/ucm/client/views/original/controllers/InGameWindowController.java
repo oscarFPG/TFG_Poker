@@ -10,24 +10,19 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.IntStream;
 
-import javax.security.auth.callback.TextInputCallback;
-
-import com.ucm.common.exceptions.CancelGameException;
-import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
+import com.ucm.client.utils.Messages;
+import com.ucm.client.utils.NotificationManager;
 import com.ucm.common.GameType;
 import com.ucm.common.PlayerInfo;
 import com.ucm.common.PokerGame;
+import com.ucm.common.SocketUtils;
+import com.ucm.common.exceptions.CancelGameException;
+import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.common.gameobjects.Suit;
-import com.ucm.common.SocketUtils;
 
-import javafx.animation.Interpolatable;
-import javafx.animation.Interpolator;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
 import javafx.animation.PauseTransition;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -35,11 +30,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.util.Duration;
-import javafx.scene.layout.HBox;
 import javafx.scene.shape.Circle;
+import javafx.util.Duration;
 
 
 public class InGameWindowController extends GenericController {
@@ -168,7 +163,6 @@ public class InGameWindowController extends GenericController {
         _stage.setOnCloseRequest(event -> {
 
             try {
-
                 _userCloses = true;
                 if(_clientInfo.socket != null && !_clientInfo.socket.isClosed())
                     _clientInfo.socket.close();
@@ -178,6 +172,7 @@ public class InGameWindowController extends GenericController {
             }
             catch (IOException e) {
                 System.out.printf("Error closing socket: %s\n", e.getMessage());
+                NotificationManager.showError(Messages.Notifications.ERROR_CLOSING_SOCKET + e.getMessage());
             }
         });
 
@@ -186,6 +181,8 @@ public class InGameWindowController extends GenericController {
             boolean ok = pokerGame(_clientInfo.name, _clientInfo.socket);
             if(ok) {
                 System.out.printf("All OK! Game finished!\n");
+                NotificationManager.showSuccess(Messages.Notifications.CONFIRMATION_GAME_FINISHED);
+                
                 /*
                 Platform.runLater(() -> {
 
@@ -392,6 +389,7 @@ public class InGameWindowController extends GenericController {
 
         if(myIndex == -1){
             System.out.printf("We are not in the list! Something is wrong...\n");
+            NotificationManager.showError(Messages.Notifications.ERROR_NOT_IN_LIST);
             return;
         }
 
@@ -473,10 +471,12 @@ public class InGameWindowController extends GenericController {
         if(_swapCallToCheck) {
             System.out.printf("CHECK BUTTON\n");
             _commandQueue.offer(GameType.CHECK_ACTION_FULL);
+            //NotificationManager.showSuccess(Messages.Notifications.CHECK_ACTION_FULL);
         }
         else {
             System.out.printf("CALL BUTTON\n");
             _commandQueue.offer(GameType.CALL_ACTION_FULL);
+             //NotificationManager.showSuccess(Messages.Notifications.CALL_ACTION_FULL);
         }
     }
 
@@ -489,6 +489,7 @@ public class InGameWindowController extends GenericController {
 
         int amount = Integer.parseInt( labelMoney.getText() );
         _commandQueue.offer( String.format("%s %d", GameType.RAISE_ACTION_FULL, amount) );
+       // NotificationManager.showSuccess(Messages.Notifications.RAISE_ACTION_FULL + amount);
     }
 
     @FXML
@@ -563,6 +564,8 @@ public class InGameWindowController extends GenericController {
                     System.out.printf("Assigned role: %s\n", role.toString());
                     playerStartInfo(socket);
                     System.out.printf("Waiting for the game to start...\n");
+                    NotificationManager.showSuccess(Messages.Notifications.WAITING_GAME_START);
+                    
 
                     
                     // Player cards
@@ -639,19 +642,24 @@ public class InGameWindowController extends GenericController {
                 catch (OnlyOnePlayerLeftException e) {
 
                     System.out.printf("There is only one player left!\n");
+                    NotificationManager.showError(Messages.Notifications.ERROR_ONLY_ONE_PLAYER_LEFT);
+                    
                     try {
                         endOfGame = showdown(socket);
                     }
                     catch(IOException ex) {
                         System.out.printf("Error receiving the rank after a fold exception: %s", ex.getMessage());
+                        NotificationManager.showError(Messages.Notifications.ERROR_RECEIVING_RANK + ex.getMessage());
                     }
                     catch(InterruptedException ex) {
                         System.out.printf("Game thread interrupted: %s\n", ex.getMessage());
+                        NotificationManager.showError(Messages.Notifications.ERROR_THREAD_INTERRUPTED + ex.getMessage());
                     }
 
                 }
                 catch(InterruptedException e) {
                     System.out.printf("Game thread interrupted: %s\n", e.getMessage());
+                    NotificationManager.showError(Messages.Notifications.ERROR_THREAD_INTERRUPTED + e.getMessage());
                 }
 
             }
@@ -663,11 +671,13 @@ public class InGameWindowController extends GenericController {
             }
             else {
                 System.out.printf("Error on client socket: %s\n", e.getMessage());
+                NotificationManager.showError(Messages.Notifications.ERROR_CLIENT_SOCKET + e.getMessage());
                 return false;
             }
         }
         catch(CancelGameException e) {
             System.out.printf("Game cancelled by server: %s\n", e.getMessage());
+            NotificationManager.showError(Messages.Notifications.ERROR_GAME_CANCELED_BY_SERVER + e.getMessage());
             return false;
         }
 
@@ -690,6 +700,8 @@ public class InGameWindowController extends GenericController {
                 final int onBetMoney = SocketUtils.receiveInt(socket.getInputStream());
                 final int offBetMoney = SocketUtils.receiveInt(socket.getInputStream());
 				System.out.printf("Forced play as the small blind with %d chips\n", amountSB);
+                //NotificationManager.showSuccess(Messages.Notifications.TURN_FORCED_SB + amountSB);
+            
 
                 Platform.runLater(() -> {
                     GUI_putPlayerBet(_clientInfo.id, onBetMoney, offBetMoney, false);
@@ -706,7 +718,8 @@ public class InGameWindowController extends GenericController {
                 final int onBetMoney = SocketUtils.receiveInt(socket.getInputStream());
                 final int offBetMoney = SocketUtils.receiveInt(socket.getInputStream());
 				System.out.printf("Forced play as the big blind with %d chips\n", amountBB);
-
+                //NotificationManager.showSuccess(Messages.Notifications.TURN_FORCED_BB + amountBB);
+            
                 Platform.runLater(() -> {
                     GUI_putPlayerBet(_clientInfo.id, onBetMoney, offBetMoney, false);
                     if(role == PlayerRole.DEALER)  {
@@ -727,6 +740,8 @@ public class InGameWindowController extends GenericController {
 			else if(serverCode == GameType.TURN_PLAY) {
 
 				System.out.printf("It's your turn to play!\n");
+               // NotificationManager.showSuccess(Messages.Notifications.TURN_PLAY);
+            
 
 				// Receive round info
 				final int sb = SocketUtils.receiveInt( socket.getInputStream() );
@@ -848,6 +863,8 @@ public class InGameWindowController extends GenericController {
             }
             else if(serverCode == GameType.ERROR_GAME_CANCELS) {
                 System.out.printf("Game has been cancelled by the server!\n");
+                NotificationManager.showError(Messages.Notifications.ERROR_GAME_CANCELED_BY_SERVER);
+            
                 throw new CancelGameException();
             }
             else if(serverCode == GameType.ROUND_ENDS) {
@@ -855,14 +872,20 @@ public class InGameWindowController extends GenericController {
             }
             else {
 				System.out.printf("Unknown turn code %d\n", serverCode);
+                NotificationManager.showError(Messages.Notifications.ERROR_UNKNOWN_TURN_CODE + serverCode) ;
+			
 			}
 
         }
         while(serverCode != GameType.ROUND_ENDS && !handEndsByFold);
 		System.out.printf("Round has ended!\n\n");
+        NotificationManager.showSuccess(Messages.Notifications.CONFIRMATION_ROUND_ENDS);
+            
 
 		if(handEndsByFold)
+            NotificationManager.showError(Messages.Notifications.ERROR_ONLY_ONE_PLAYER_LEFT);
 			throw new OnlyOnePlayerLeftException();
+
     }
 
     private boolean showdown(Socket socket) throws IOException, InterruptedException {
@@ -914,6 +937,7 @@ public class InGameWindowController extends GenericController {
             }
             else {
                 System.out.printf("Unknown code %d in showdown!\n", code);
+                NotificationManager.showError(String.format(Messages.Notifications.ERROR_UNKNOWN_CODE_SHOWDOWN, code));
             }
             
         } 
@@ -990,6 +1014,7 @@ public class InGameWindowController extends GenericController {
                 }
                 else {
                     System.out.printf("Command %s not valid! Try again\n", command);
+                    NotificationManager.showError(String.format(Messages.Notifications.ERROR_COMMAND_NOT_VALID, command));
                     valid = false;
                 }
             }
@@ -1001,6 +1026,8 @@ public class InGameWindowController extends GenericController {
         }
         catch(IOException e) {
             System.out.printf("Error sending the command: %s\n", e.getMessage());
+            NotificationManager.showError(Messages.Notifications.ERROR_SENDING_COMMAND + e.getMessage());
+                    
         }
     }
 
@@ -1059,6 +1086,8 @@ public class InGameWindowController extends GenericController {
             }
             else {
                 System.out.printf("Unknown code %d!\n", code);
+                NotificationManager.showError(Messages.Notifications.ERROR_UNKNOWN_CODE + code);
+             
             }
             
         } 
@@ -1089,6 +1118,8 @@ public class InGameWindowController extends GenericController {
 
         if(isShowdown && isWinner) {
             System.out.printf("Player %s is the winner of the hand!\n", nameLabel.getText());
+            NotificationManager.showSuccess(String.format(Messages.Notifications.CONFIRMATION_WINNER_GAME, nameLabel.getText()));
+             
             PauseTransition transition = new PauseTransition( Duration.seconds(3) );
 
             nameLabel.setText( nameLabel.getText() + " (Winner!)" );

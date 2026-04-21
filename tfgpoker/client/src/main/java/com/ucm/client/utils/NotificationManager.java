@@ -1,94 +1,142 @@
 package com.ucm.client.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javafx.animation.PauseTransition;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 
-public class NotificationManager {
-
-    private static Stage stage;
-
-    public static void init(Stage s) {
-        stage = s;
-    }
+public class NotificationManager extends DialogsManager {
+    
+    private static final List<Popup> activeNotifications = new ArrayList<>();
+    private static final double MARGIN = 20;
+    private static final double SPACING = 10;
 
     public static void showError(String msg) {
-        show(msg, false);
+        show(msg, "Error", "notification-error");
     }
 
     public static void showSuccess(String msg) {
-        show(msg, true);
+        show(msg, "Success", "notification-success");
     }
 
-    private static void show(String msg, boolean success) {
+    /**
+     * Cierra todas las notificaciones activas de forma segura.
+     */
+    public static void closeAll() {
+        runSafe(() -> {
+            List<Popup> copy = new ArrayList<>(activeNotifications);
+            for (Popup p : copy) {
+                p.hide();
+            }
+            activeNotifications.clear();
+        });
+    }
 
-        Popup popup = new Popup();
+    private static void show(String msg, String titleText, String styleClass) {
+        runSafe(() -> {
+            // Límite de 5 notificaciones
+            if (activeNotifications.size() > 5) {
+                closeNotification(activeNotifications.get(0));
+            }
 
-        Label title = new Label(success ? "Success" : "Error");
-        title.getStyleClass().addAll("notification-title");
+            Popup popup = new Popup();
+            
+            // --- MEJORA AUTOMÁTICA DE CIERRE ---
+            // Vinculamos el ciclo de vida del popup al Stage principal.
+            // Si el stage deja de mostrarse (isShowing = false), cerramos las notificaciones.
+            if (stage != null) {
+                stage.showingProperty().addListener((obs, wasShowing, isShowing) -> {
+                    if (!isShowing) {
+                        closeAll();
+                    }
+                });
+            }
+            // -----------------------------------
 
-      
-        Label message = new Label(msg);
-        message.getStyleClass().add("notification-message");
-        message.setWrapText(true);
-        message.setMaxWidth(260);
+            Label title = new Label(titleText);
+            title.getStyleClass().add("notification-title");
 
-      
-        Button closeBtn = new Button("✕");
-        closeBtn.getStyleClass().add("notification-close");
+            Label message = new Label(msg);
+            message.getStyleClass().add("notification-message");
+            message.setWrapText(true);
+            message.setMaxWidth(260);
 
-      
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
-        HBox header = new HBox(title, spacer, closeBtn);
-        header.setAlignment(Pos.CENTER_LEFT);
+            Button closeBtn = new Button("✕");
+            closeBtn.getStyleClass().add("notification-close");
 
-       
-        VBox root = new VBox(header, message);
-        root.setSpacing(4);
-        root.setAlignment(Pos.CENTER_LEFT);
-        root.setMaxWidth(300);
+            Region spacer = new Region();
+            HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        root.getStyleClass().add(success ? "notification-success" : "notification-error");
+            HBox header = new HBox(title, spacer, closeBtn);
+            header.setAlignment(Pos.CENTER_LEFT);
 
-       
-        root.getStylesheets().add(
-            NotificationManager.class.getResource("/original/css/style.css").toExternalForm()
-        );
+            VBox root = new VBox(header, message);
+            root.setSpacing(4);
+            root.setAlignment(Pos.CENTER_LEFT);
+            root.setMinWidth(280); 
+            root.setMaxWidth(300);
+            root.getStyleClass().add(styleClass);
 
-        popup.getContent().add(root);
+            applyCSS(root);
+            popup.getContent().add(root);
 
-        popup.show(stage);
+            activeNotifications.add(popup);
+            
+            if (stage != null && stage.isShowing()) {
+                popup.show(stage);
+                updatePositions();
+            }
 
-       
-        root.applyCss();
-        root.layout();
+            // Auto-cierre tras 5 segundos
+            PauseTransition delay = new PauseTransition(Duration.seconds(5));
+            delay.setOnFinished(e -> closeNotification(popup));
+            delay.play();
 
-        double width = root.getWidth();
+            closeBtn.setOnAction(e -> closeNotification(popup));
+        });
+    }
 
-      
-        double margin = 30;
+    private static void closeNotification(Popup popup) {
+        runSafe(() -> {
+            if (activeNotifications.remove(popup)) {
+                popup.hide();
+                updatePositions(); 
+            }
+        });
+    }
+
+    private static void updatePositions() {
+        // Si la ventana principal no es visible, no tiene sentido posicionar
+        if (stage == null || !stage.isShowing()) return;
+
         double titleBarHeight = stage.getHeight() - stage.getScene().getHeight();
+        double currentY = stage.getY() + titleBarHeight + MARGIN;
+        
+        List<Popup> copy = new ArrayList<>(activeNotifications);
 
-        double x = stage.getX() + stage.getWidth() - width - margin;
-        double y = stage.getY() + titleBarHeight + margin;
+        for (Popup p : copy) {
+            if (p == null || !p.isShowing()) continue;
 
-        popup.setX(x);
-        popup.setY(y);
+            Region content = (Region) p.getContent().get(0);
+            
+            // Forzamos el renderizado para obtener dimensiones reales
+            content.applyCss();
+            content.layout();
 
-     
-        PauseTransition delay = new PauseTransition(Duration.seconds(5));
-        delay.setOnFinished(e -> popup.hide());
-        delay.play();
+            double x = stage.getX() + stage.getWidth() - content.getWidth() - MARGIN;
+            p.setX(x);
+            p.setY(currentY);
 
-       
-        closeBtn.setOnAction(e -> popup.hide());
+            currentY += content.getHeight() + SPACING;
+        }
     }
 }

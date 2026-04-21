@@ -1,8 +1,7 @@
 
 package com.ucm.client;
 
-import com.ucm.client.utils.AlertManager;
-import com.ucm.client.utils.NotificationManager;
+import com.ucm.client.utils.DialogsManager;
 import com.ucm.client.views.original.controllers.MainController;
 
 import javafx.application.Application;
@@ -17,8 +16,7 @@ public class MainApp extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
        MainController mainController = new MainController(primaryStage);
-       NotificationManager.init(primaryStage);
-       AlertManager.init(primaryStage);
+       DialogsManager.init(primaryStage);
        mainController.start();
     }
 
