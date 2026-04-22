@@ -7,7 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 import com.ucm.client.utils.Messages;
@@ -160,8 +163,14 @@ public class InGameWindowController extends GenericController {
     private boolean _menuOpen = true;
     private boolean _equityVisible = false;
     private String _myEquity = "0%";
+    private ScheduledExecutorService _visualTimer;
+    private int _visualSecondsLeft;
+
     private final Image equityOn = new Image(getClass().getResource("/images/seeStatistic.png").toExternalForm());
     private final Image equityOff = new Image(getClass().getResource("/images/notSeeStatistic.png").toExternalForm());
+    private static final int TURN_TIME_TOTAL = 180;
+    private static final int BLOCK_TIME = 30;
+    private static final int TOTAL_BLOCKS = 6;
     
     @Override
     protected void onViewShown() {
@@ -412,6 +421,12 @@ public class InGameWindowController extends GenericController {
         _listTimer.put(6, List.of(rectFirstTimer6, rectSecondTimer6, rectThirdTimer6, rectFourthTimer6, rectFifthTimer6, rectSixthTimer6));
         _listTimer.put(7, List.of(rectFirstTimer7, rectSecondTimer7, rectThirdTimer7, rectFourthTimer7, rectFifthTimer7, rectSixthTimer7));
         _listTimer.put(8, List.of(rectFirstTimer8, rectSecondTimer8, rectThirdTimer8, rectFourthTimer8, rectFifthTimer8, rectSixthTimer8));
+
+        for(List<Rectangle> rectangles : _listTimer.values()) {
+            for(Rectangle r : rectangles) {
+                r.setVisible(false);
+            }
+        }
     }
 
     private void GUI_showWaitingPlayers(final List<PlayerInfo> players) {
@@ -779,14 +794,7 @@ public class InGameWindowController extends GenericController {
 
 				System.out.printf("It's your turn to play!\n");
                // NotificationManager.showSuccess(Messages.Notifications.TURN_PLAY);
-            
-
-                int seatID = _playerSeatMap.get(_clientInfo.id);
-
-                Platform.runLater(() -> {
-                    GUI_resetPlayerTimer(seatID);
-                });
-
+                
 				// Receive round info
 				final int sb = SocketUtils.receiveInt( socket.getInputStream() );
 				final int bb = SocketUtils.receiveInt( socket.getInputStream() );
@@ -798,6 +806,8 @@ public class InGameWindowController extends GenericController {
                     sb, bb, maxBet, 
                     onBetMoney, offBetMoney
                 );
+
+                GUI_startVisualTimer(_clientInfo.id);
 
                 // Do not allow to bet less than the current max bet
                 Platform.runLater(() -> {
@@ -816,11 +826,6 @@ public class InGameWindowController extends GenericController {
 
                 selectCommand(socket, sb, bb, maxBet, offBetMoney, onBetMoney);
 			}
-            else if(serverCode == GameType.TURN_TIMER_UPDATE) {
-                int secondsLeft = SocketUtils.receiveInt(socket.getInputStream());
-                int seatID = _playerSeatMap.get(_clientInfo.id);
-                GUI_putPlayerTimer(seatID, secondsLeft);
-            }
 			else if(serverCode == GameType.HAND_ENDS_BY_FOLD) {
 				handEndsByFold = true;
 			}
@@ -1319,11 +1324,13 @@ public class InGameWindowController extends GenericController {
         List<Rectangle> rectangles = _listTimer.get(seatID);
         if(rectangles == null) return;
 
-        int rectanglesVisible = (int)Math.ceil(secondsLeft/30.0);
+        int elapsed = TURN_TIME_TOTAL - secondsLeft;
+        int blocksConsumed = elapsed / BLOCK_TIME;
+        int visibleBlocks = Math.max(TOTAL_BLOCKS - blocksConsumed, 0);
 
         Platform.runLater(()-> {
             for (int i = 0; i < rectangles.size(); i++) {
-                rectangles.get(i).setVisible(i < rectanglesVisible);
+                rectangles.get(i).setVisible(i < visibleBlocks);
             }
         });
     }
@@ -1337,6 +1344,34 @@ public class InGameWindowController extends GenericController {
                 r.setVisible(true);
             }
         });
+    }
+
+    private void GUI_startVisualTimer(int playerID) {
+        Integer seatID = _playerSeatMap.get(playerID);
+
+        GUI_stopVisualTimer();
+
+        _visualSecondsLeft = TURN_TIME_TOTAL;
+        GUI_putPlayerTimer(seatID, _visualSecondsLeft);
+
+        _visualTimer = Executors.newSingleThreadScheduledExecutor();
+        _visualTimer.scheduleAtFixedRate(()-> {
+
+            _visualSecondsLeft--;
+            GUI_putPlayerTimer(seatID, _visualSecondsLeft);
+
+            if(_visualSecondsLeft <= 0) {
+                GUI_stopVisualTimer();
+            }
+
+        }, 1, 1, TimeUnit.SECONDS);
+    }
+
+    private void GUI_stopVisualTimer() {
+        if(_visualTimer != null){
+            _visualTimer.shutdownNow();
+            _visualTimer = null;
+        }
     }
 
     private void GUI_clearTableCards() {

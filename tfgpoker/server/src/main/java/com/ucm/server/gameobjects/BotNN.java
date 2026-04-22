@@ -227,13 +227,4 @@ public class BotNN implements IPlayerNotificator {
         throw new UnsupportedOperationException("Unimplemented method 'notifyEquity'");
     }
 
-
-    @Override
-    public void notifyTurnTimer(int seconds) throws IOException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyTurnTimer'");
-    }
-
-    
-
 }

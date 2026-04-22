@@ -151,11 +151,4 @@ public interface IPlayerNotificator {
      */
     public void notifyEquity(double equity) throws IOException;
 
-    /**
-     * Notifies the player how much time he has to make a play
-     * @param seconds
-     * @throws IOException
-    */
-    public void notifyTurnTimer(int seconds) throws IOException;
-
 }

@@ -293,28 +293,11 @@ public class PlayerList implements Iterable<Node> {
         Player player = node._player;
         Command command = null;
 
-        Timer turnTimer = new Timer(180);
-
-        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-
         try {
 
             node._player.notifyTurnPlay();
 
             log.debug("It's is {} turn to play", player.getPlayerName());
-
-            turnTimer.start();
-
-            scheduler.scheduleAtFixedRate(() -> {
-                try {
-                    int secondsLeft = turnTimer.getSecondsLeft();
-                    player.notifyTurnTimer(secondsLeft);
-                }
-                catch (Exception e) {
-
-                }
-
-            }, 0, 1, TimeUnit.SECONDS);
             
             while (command == null) {
          
@@ -339,11 +322,6 @@ public class PlayerList implements Iterable<Node> {
                 throw new CancelGameException();
             else
                 command = Command.parseCommand(new String[] {GameType.FOLD_ACTION_FULL}, player);
-        }
-
-        finally {
-            scheduler.shutdownNow();
-            turnTimer.stop();
         }
 
         return command;
