@@ -190,16 +190,14 @@ public class Player implements IPlayerActions {
 
     /* Player methods */
     public String makePlay(int sb, int bb, int maxBet) throws TurnTimeoutException {
-        
-        String action = null;
+
         try {
-            action = _playerInfo.notifyMakePlay(sb, bb, maxBet, this);
+           return _playerInfo.notifyMakePlay(sb, bb, maxBet, this);
         }
         catch (IOException e) {
-            e.printStackTrace();
+           throw new TurnTimeoutException();
         }
-        
-        return action;
+
     }
 
     public int placeOnBetMoney() {
