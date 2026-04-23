@@ -589,48 +589,70 @@ public class InGameWindowController extends GenericController {
 
     private boolean pokerGame(String name, Socket socket) {
 
-        PlayerRole role = null;
-        boolean endOfGame = false;
+        PlayerRole role;
 		Card[] playerCards = new Card[2];
 		Card[] tableCardValues = new Card[5];
         try {
 
             InputStream input = socket.getInputStream();
-            
+            boolean endOfGame = false;
             while(!endOfGame) {
 
                 int serverCode = SocketUtils.receiveInt(input);
 
-                switch (serverCode) {
-                    case GameType.ROUND_PREFLOP:
+                try {
+                    if(serverCode == GameType.ROUND_PREFLOP) {
 
                         Platform.runLater(() -> {
                             GUI_clearTableCards();
                             GUI_clearPlayerBets();
                             GUI_clearDealer();
                             GUI_clearTurnPlayer();
-                            // Preflop
-                            System.out.printf("-- Preflop --\n");
+                        });
+
+                        // Preflop
+                        System.out.printf("-- Preflop --\n");
+                        Platform.runLater(() -> {
                             GUI_putRoundName("PREFLOP");
-                    });
-                        break;
-                    case GameType.ROUND_FLOP:
+                        });
+                        tableCardValues[0] = PokerGame.receiveCard(input);  // First table card
+                        tableCardValues[1] = PokerGame.receiveCard(input);  // Second table card
+                        tableCardValues[2] = PokerGame.receiveCard(input);  // Third table card
+                        handleEquity(socket);
+                        Platform.runLater(() -> {
+                            GUI_showCard(tableCard0, tableCardValues[0]);
+                            GUI_showCard(tableCard1, tableCardValues[1]);
+                            GUI_showCard(tableCard2, tableCardValues[2]);
+                        });
+                    }
+
+                    else if(serverCode == GameType.ROUND_FLOP) {
                         // Flop
                         System.out.printf("-- Flop --\n");
                         Platform.runLater(() -> {
                             GUI_putRoundName("FLOP");
                             GUI_clearPlayerBets();
                         });
-                        break;
-                    case GameType.ROUND_TURN:
+                        tableCardValues[3] = PokerGame.receiveCard(input);  // Fourth table card
+                        handleEquity(socket);
+                        Platform.runLater(() -> {
+                            GUI_showCard(tableCard3, tableCardValues[3]);
+                        });
+                    }
+                    else if(serverCode == GameType.ROUND_TURN) {
                         // Turn
                         System.out.printf("-- Turn --\n");
                         Platform.runLater(() -> {
                             GUI_putRoundName("TURN");
                             GUI_clearPlayerBets();
                         });
-                        break;
-                    case GameType.ROUND_RIVER:
+                        tableCardValues[4] = PokerGame.receiveCard(input);  // fifth table card
+                        handleEquity(socket);
+                        Platform.runLater(() -> {
+                            GUI_showCard(tableCard4, tableCardValues[4]);
+                        });
+                    }
+                    else if(serverCode == GameType.ROUND_RIVER) {
                         // River
                         System.out.printf("-- River --\n");
                         Platform.runLater(() -> {
@@ -638,15 +660,16 @@ public class InGameWindowController extends GenericController {
                             GUI_clearPlayerBets();
                         });
                         
-                        break;
-                    case GameType.ROUND_SHOWDOWN:
+                    }
+                    else if(serverCode == GameType.ROUND_SHOWDOWN){
                         // Showdown
                         System.out.printf("-- Showdown --\n");
                         Platform.runLater(() -> {
                             GUI_putRoundName("SHOWDOWN");
                         });
-                        break;
-                    case GameType.PLAYER_ROLE:
+                        endOfGame = showdown(socket);
+                    }
+                    else if(serverCode == GameType.PLAYER_ROLE) {
                         // Player roles
                         System.out.printf("-- New hand --\n");
                         role = PokerGame.receivePlayerRole(input);
@@ -654,8 +677,8 @@ public class InGameWindowController extends GenericController {
                         playerStartInfo(socket);
                         System.out.printf("Waiting for the game to start...\n");
                         NotificationManager.showSuccess(Messages.Notifications.WAITING_GAME_START);
-                        break;
-                    case GameType.PLAYERS_CARDS:
+                    }
+                    else if(serverCode == GameType.PLAYERS_CARDS){
                         // Player cards
                         System.out.printf("Waiting for my cards...\n");
                         playerCards[0] = PokerGame.receiveCard(input);
@@ -668,59 +691,38 @@ public class InGameWindowController extends GenericController {
                             GUI_putMyCards(_clientInfo.id, playerCards[0], playerCards[1]);
                             GUI_putTurnPlayer(_clientInfo.id);
                         });
-                        break;
-                    case GameType.TABLE_CARDS:
-                        Card tableCard = PokerGame.receiveCard(input);
-                        handleEquity(socket);
-                        Platform.runLater(()->
-                            GUI_showNextTableCard(tableCard)
-                        );
-                        break;
-                    case GameType.PLAY_HAND:
-                        playRound(null, null, role, socket);
-                    break;
-                    case GameType.GAME_ENDS:
-                        endOfGame = true;
-                        break;
-                    case GameType.GAME_KEEPS:
-                    break;
-                    default:
-                        System.err.println("Unhandled GameType:" + serverCode);
-                        break;
+                    }
+                    else if(serverCode == GameType.TABLE_CARDS) {
+
+                    }
+                    else {
+                        playRound(null, null, null, socket);
+                    }
                 }
-            }
-            return true;
-        }
-        catch (OnlyOnePlayerLeftException e) {
+                catch (OnlyOnePlayerLeftException e) {
 
-            System.out.printf("There is only one player left!\n");
-            NotificationManager.showError(Messages.Notifications.ERROR_ONLY_ONE_PLAYER_LEFT);
-            
-            try {
-                endOfGame = showdown(socket);
-                return !endOfGame;
-            }
-            catch(IOException ex) {
-                System.out.printf("Error receiving the rank after a fold exception: %s", ex.getMessage());
-                NotificationManager.showError(Messages.Notifications.ERROR_RECEIVING_RANK + ex.getMessage());
-                return false;
-            }
-            catch(InterruptedException ex) {
-                System.out.printf("Game thread interrupted: %s\n", ex.getMessage());
-                NotificationManager.showError(Messages.Notifications.ERROR_THREAD_INTERRUPTED + ex.getMessage());
-                return false;
-            }
-            catch(CancelGameException ex) {
-                System.out.printf("Game cancelled by server: %s\n", e.getMessage());
-                NotificationManager.showError(Messages.Notifications.ERROR_GAME_CANCELED_BY_SERVER + e.getMessage());
-                return false;
-        }
+                    System.out.printf("There is only one player left!\n");
+                    NotificationManager.showError(Messages.Notifications.ERROR_ONLY_ONE_PLAYER_LEFT);
+                    
+                    try {
+                        endOfGame = showdown(socket);
+                    }
+                    catch(IOException ex) {
+                        System.out.printf("Error receiving the rank after a fold exception: %s", ex.getMessage());
+                        NotificationManager.showError(Messages.Notifications.ERROR_RECEIVING_RANK + ex.getMessage());
+                    }
+                    catch(InterruptedException ex) {
+                        System.out.printf("Game thread interrupted: %s\n", ex.getMessage());
+                        NotificationManager.showError(Messages.Notifications.ERROR_THREAD_INTERRUPTED + ex.getMessage());
+                    }
 
-        }
-        catch(InterruptedException e) {
-            System.out.printf("Game thread interrupted: %s\n", e.getMessage());
-            NotificationManager.showError(Messages.Notifications.ERROR_THREAD_INTERRUPTED + e.getMessage());
-            return true;
+                }
+                catch(InterruptedException e) {
+                    System.out.printf("Game thread interrupted: %s\n", e.getMessage());
+                    NotificationManager.showError(Messages.Notifications.ERROR_THREAD_INTERRUPTED + e.getMessage());
+                }
+
+            }
         }
         catch(IOException e) {
 
@@ -738,6 +740,8 @@ public class InGameWindowController extends GenericController {
             NotificationManager.showError(Messages.Notifications.ERROR_GAME_CANCELED_BY_SERVER + e.getMessage());
             return false;
         }
+
+        return true;
     }
 
     private void playRound(Card card1, Card card2, PlayerRole role, Socket socket) 
@@ -1350,23 +1354,6 @@ public class InGameWindowController extends GenericController {
                 r.setVisible(true);
             }
         });
-    }
-
-    private void GUI_showNextTableCard(Card card) {
-        ImageView[] tableCards = {
-            tableCard0,
-            tableCard1,
-            tableCard2,
-            tableCard3,
-            tableCard4
-        };
-
-        for (ImageView tableCarView : tableCards) {
-            if(tableCarView.getImage() == null) {
-                GUI_showCard(tableCarView, card);
-                return;
-            }
-        }
     }
 
     private void GUI_startVisualTimer(int playerID) {
