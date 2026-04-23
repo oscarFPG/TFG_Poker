@@ -2,6 +2,8 @@ package com.ucm.server.gameobjects;
 
 import java.io.IOException;
 
+import javax.management.RuntimeErrorException;
+
 import com.ucm.common.GameType;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
@@ -194,10 +196,12 @@ public class Player implements IPlayerActions {
         try {
            return _playerInfo.notifyMakePlay(sb, bb, maxBet, this);
         }
-        catch (IOException e) {
-           throw new TurnTimeoutException();
+        catch (TurnTimeoutException e) {
+           throw e;
         }
-
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public int placeOnBetMoney() {
