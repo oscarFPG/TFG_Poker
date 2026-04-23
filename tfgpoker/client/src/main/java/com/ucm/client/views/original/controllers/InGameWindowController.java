@@ -10,7 +10,10 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 import com.ucm.client.utils.Messages;
@@ -163,14 +166,18 @@ public class InGameWindowController extends GenericController {
     private boolean _menuOpen = true;
     private boolean _equityVisible = false;
     private String _myEquity = "0%";
-    private ScheduledExecutorService _visualTimer;
     private int _visualSecondsLeft;
 
     private final Image equityOn = new Image(getClass().getResource("/images/seeStatistic.png").toExternalForm());
     private final Image equityOff = new Image(getClass().getResource("/images/notSeeStatistic.png").toExternalForm());
+    
     private static final int TURN_TIME_TOTAL = 180;
     private static final int BLOCK_TIME = 30;
     private static final int TOTAL_BLOCKS = 6;
+    private ScheduledFuture<?> _task;
+    private final ScheduledExecutorService _scheduler = Executors.newSingleThreadScheduledExecutor();
+    private final AtomicInteger _seconds = new AtomicInteger(0);
+    private final AtomicBoolean _isRunning = new AtomicBoolean(false);
     
     @Override
     protected void onViewShown() {
@@ -191,6 +198,9 @@ public class InGameWindowController extends GenericController {
 
             try {
                 _userCloses = true;
+
+                GUI_shutdownVisualTimer();
+
                 if(_clientInfo.socket != null && !_clientInfo.socket.isClosed())
                     _clientInfo.socket.close();
 
@@ -825,6 +835,9 @@ public class InGameWindowController extends GenericController {
                 });
 
                 selectCommand(socket, sb, bb, maxBet, offBetMoney, onBetMoney);
+
+                GUI_stopVisualTimer();
+                GUI_clearTimer(_playerSeatMap.get(_clientInfo.id));
 			}
 			else if(serverCode == GameType.HAND_ENDS_BY_FOLD) {
 				handEndsByFold = true;
@@ -896,12 +909,18 @@ public class InGameWindowController extends GenericController {
             else if(serverCode == GameType.ERROR_GAME_CANCELS) {
                 System.out.printf("Game has been cancelled by the server!\n");
                 NotificationManager.showError(Messages.Notifications.ERROR_GAME_CANCELED_BY_SERVER);
+
+                GUI_stopVisualTimer();
+
+                int seatID = _playerSeatMap.get(_clientInfo.id);
+                GUI_clearTimer(seatID);
             
                 throw new CancelGameException();
             }
             else if(serverCode == GameType.ROUND_ENDS) {
                 System.out.printf("ROUND_ENDS received!\n");
 
+                GUI_stopVisualTimer();
                 int seatID = _playerSeatMap.get(_clientInfo.id);
                 GUI_clearTimer(seatID);
             }
@@ -918,6 +937,7 @@ public class InGameWindowController extends GenericController {
             
 
 		if(handEndsByFold) {
+            GUI_stopVisualTimer();
             NotificationManager.showError(Messages.Notifications.ERROR_ONLY_ONE_PLAYER_LEFT);
 			throw new OnlyOnePlayerLeftException();
         }
@@ -1346,16 +1366,20 @@ public class InGameWindowController extends GenericController {
         });
     }
 
-    private void GUI_startVisualTimer(int playerID) {
+    private synchronized void GUI_startVisualTimer(int playerID) {
         Integer seatID = _playerSeatMap.get(playerID);
 
-        GUI_stopVisualTimer();
+        System.out.printf("Timer start!\n\n");
+
+        if (_isRunning.get())
+            return;
+
+        _isRunning.set(true);
 
         _visualSecondsLeft = TURN_TIME_TOTAL;
         GUI_putPlayerTimer(seatID, _visualSecondsLeft);
 
-        _visualTimer = Executors.newSingleThreadScheduledExecutor();
-        _visualTimer.scheduleAtFixedRate(()-> {
+        _task = _scheduler.scheduleAtFixedRate(()-> {
 
             _visualSecondsLeft--;
             GUI_putPlayerTimer(seatID, _visualSecondsLeft);
@@ -1367,11 +1391,17 @@ public class InGameWindowController extends GenericController {
         }, 1, 1, TimeUnit.SECONDS);
     }
 
-    private void GUI_stopVisualTimer() {
-        if(_visualTimer != null){
-            _visualTimer.shutdownNow();
-            _visualTimer = null;
-        }
+    private synchronized void GUI_stopVisualTimer() {
+        if (!_isRunning.get())
+            return;
+
+        _task.cancel(false);
+        _isRunning.set(false);
+        System.out.printf("Timer has cancel with %d seconds!\n\n", _visualSecondsLeft);
+    }
+
+    private synchronized void GUI_shutdownVisualTimer() {
+        _scheduler.shutdownNow();
     }
 
     private void GUI_clearTableCards() {
@@ -1385,7 +1415,9 @@ public class InGameWindowController extends GenericController {
     private void GUI_clearPlayerBets() {
         _listOnBetMoney.forEach(label -> label.setVisible(false));
         _listHandBet.forEach(bet -> bet.setVisible(false));
-        _listHandBet.get(0).setOpacity(1);
+        _listHandBet.forEach(bet -> { bet.setVisible(false);  bet.setOpacity(1.0);});
+        _listPlayerStackPanes.forEach(pane -> pane.setOpacity(1.0));
+        _listImageCards.forEach(img -> img.setOpacity(1.0));
     }
 
     private void GUI_clearDealer() {

@@ -312,6 +312,7 @@ public class PlayerList implements Iterable<Node> {
         }
         catch (TurnTimeoutException e) {
             log.warn("Player {} TIMEOUT -> auto FOLD", player.getPlayerName());
+            System.out.printf("Timer has ended, player {} make FOLD!\n\n", player.getPlayerName());
             command = Command.parseCommand(new String[] {GameType.FOLD_ACTION_FULL}, player);
         }
         catch (Exception e) {
