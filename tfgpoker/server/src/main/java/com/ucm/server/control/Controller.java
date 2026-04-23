@@ -1,7 +1,6 @@
 package com.ucm.server.control;
 
 
-import com.ucm.common.GameType;
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.server.logic.Game;
@@ -56,46 +55,36 @@ public class Controller {
             try {
 
                 // Player roles
-                _game.notifyPlayerRoles();
                 _game.assignRolesToAllPlayers();
 
                 // Pre-flop (2)
                 log.debug("Pre-flop round");
-                _game.notifyRound(GameType.ROUND_PREFLOP);
                 _game.shareOutCardsToAllPlayers();
                 _game.updateEquity();
-                _game.notifyPlayHand();
                 _game.playHand();
 
                 // Flop (3)
                 log.debug("Flop round");
-                _game.notifyRound(GameType.ROUND_FLOP);
                 _game.addCardToTable();
                 _game.addCardToTable();
                 _game.addCardToTable();
                 _game.updateEquity();
-                _game.notifyPlayHand();
                 _game.playHand();
 
                 // Turn (4)
                 log.debug("Turn round");
-                _game.notifyRound(GameType.ROUND_TURN);
                 _game.addCardToTable();
                 _game.updateEquity();
-                _game.notifyPlayHand();
                 _game.playHand();
 
                 // River (5)
                 log.debug("River round");
-                _game.notifyRound(GameType.ROUND_RIVER);
                 _game.addCardToTable();
                 _game.updateEquity();
-                _game.notifyPlayHand();
                 _game.playHand();
 
                 // Showdown (6)
                 log.debug("Showdown round");
-                _game.notifyRound(GameType.ROUND_SHOWDOWN);
                 _game.giveRewardToWinner();
             }
             catch (OnlyOnePlayerLeftException e) {

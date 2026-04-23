@@ -409,25 +409,6 @@ public class Player implements IPlayerActions {
         }
     }
 
-    public void notifyGameEvent(int code) {
-        try {
-            _playerInfo.notifyRound(code);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void notifyRound(int roundCode){
-
-        try {
-            _playerInfo.notifyRound(roundCode);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public int putSmallBlindBet(int sb) {
         
         int bet = Math.min(sb, _offBetMoney);

@@ -803,36 +803,6 @@ public class PlayerList implements Iterable<Node> {
 
     }
 
-    public void notifyGameEvent(int code) throws CancelGameException {
-        for(Node node: this) {
-            if(!node._isDisconnected) {
-                try {
-                    node._player.notifyGameEvent(code);
-                }
-                catch (Exception e) {
-                    node._isDisconnected = true;
-                    if(checkIfGameCancel())
-                        throw new CancelGameException();
-                }
-            }
-        }
-    }
-
-    public void notifyRound(int roundCode) throws CancelGameException {
-            for(Node node: this) {
-                if(!node._isDisconnected) {
-                    try {
-                        node._player.notifyRound(roundCode);
-                    }
-                    catch (Exception e) {
-                        node._isDisconnected = true;
-                        if(checkIfGameCancel())
-                            throw new CancelGameException();
-                    }
-                }
-            }
-    }
-
 
     private boolean checkIfGameCancel() {
 

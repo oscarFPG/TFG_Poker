@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 import com.ucm.common.BotStruct;
 import com.ucm.common.ClientStruct;
 import com.ucm.common.GameConfig;
-import com.ucm.common.GameType;
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.common.gameobjects.Card;
@@ -96,7 +95,6 @@ public class Game {
         for (int i = 0; i < _playerList.size(); i++) {
             Card randomCard1 = _deck.takeRandomCard();
             Card randomCard2 = _deck.takeRandomCard();
-            _playerList.notifyGameEvent(GameType.PLAYERS_CARDS);
             _playerList.shareOutCardsToSomePlayer(randomCard1, randomCard2);
         }
     }
@@ -111,7 +109,6 @@ public class Game {
         _tableCards[_tableCardsCounter] = c;
         _tableCardsCounter++;
 
-        _playerList.notifyGameEvent(GameType.TABLE_CARDS);
         _playerList.sendTableCardToAllPlayers(c);
 
         StringBuilder sb = new StringBuilder();
@@ -240,18 +237,6 @@ public class Game {
             EquityCalculator.calculateEquity(players, _tableCards, _deck);
 
         _playerList.notifyEquityToPlayers(equity);
-    }
-
-    public void notifyPlayerRoles() throws CancelGameException {
-        _playerList.notifyGameEvent(GameType.PLAYER_ROLE);
-    }
-
-    public void notifyRound(int roundCode) throws CancelGameException {
-        _playerList.notifyRound(roundCode);
-    }
-
-    public void notifyPlayHand() throws CancelGameException{
-        _playerList.notifyGameEvent(GameType.PLAY_HAND);
     }
 
 }

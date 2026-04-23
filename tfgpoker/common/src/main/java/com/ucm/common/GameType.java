@@ -52,7 +52,6 @@ public class GameType {
     public static final int PLAYER_ROLE_DEALER = 86;
     public static final int PLAYER_ROLE_SMALL_BLIND = 87;
     public static final int PLAYER_ROLE_BIG_BLIND = 88;
-    public static final int PLAYER_ROLE = 89;
 
     // Card suits
     public static final int HEARTS = 90;
@@ -84,13 +83,6 @@ public class GameType {
     public static final int TURN_OTHER_PLAYER = 205;
     public static final int TURN_BEFORE_PLAY = 206;
 
-    //Rounds
-    public static final int ROUND_PREFLOP = 250;
-    public static final int ROUND_FLOP = 251;
-    public static final int ROUND_TURN = 252;
-    public static final int ROUND_RIVER = 253;
-    public static final int ROUND_SHOWDOWN = 254;
-
     // Round, hand and game status
     public static final int GAME_STARTS = 300;
     public static final int GAME_KEEPS = 303;
@@ -104,9 +96,6 @@ public class GameType {
     public static final int PLAYER_WINS_GAME = 330;
     public static final int PLAYER_LOSES_GAME = 331;
     public static final int TOTAL_POT = 332;
-    public static final int TABLE_CARDS = 333;
-    public static final int PLAY_HAND = 334;
-    public static final int PLAYERS_CARDS = 335;
 
     // Player actions
     public static final String FOLD_ACTION_FULL = "fold";

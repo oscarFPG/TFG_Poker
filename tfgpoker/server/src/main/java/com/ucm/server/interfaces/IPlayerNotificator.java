@@ -151,18 +151,4 @@ public interface IPlayerNotificator {
      */
     public void notifyEquity(double equity) throws IOException;
 
-    /**
-     * Notifies the player about an event that has to come
-     * @param code
-     * @throws IOException
-     */
-    public void notifyGameEvent(int code) throws IOException;
-
-    /**
-     * Notifies the player the round that they are playing
-     * @param roundCode
-     * @throws IOException
-     */
-    public void notifyRound(int roundCode) throws IOException;
-
 }
