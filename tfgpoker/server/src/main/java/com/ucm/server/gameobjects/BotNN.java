@@ -227,4 +227,18 @@ public class BotNN implements IPlayerNotificator {
         throw new UnsupportedOperationException("Unimplemented method 'notifyEquity'");
     }
 
+
+    @Override
+    public void notifyRound(int roundCode) throws IOException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'notifyRound'");
+    }
+
+
+    @Override
+    public void notifyGameEvent(int code) throws IOException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'notifyGameEvent'");
+    }
+
 }

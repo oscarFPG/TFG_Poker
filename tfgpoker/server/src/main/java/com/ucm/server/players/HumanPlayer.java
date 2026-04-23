@@ -251,4 +251,18 @@ public class HumanPlayer implements IPlayerNotificator {
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_BEFORE_PLAY);
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getPlayerId());
     }
+
+    @Override
+    public void notifyGameEvent(int code) throws IOException {
+        if(Game.DEBUG_PLAYERS) return;
+
+        SocketUtils.sendInteger(_socket.getOutputStream(), code);
+    }
+
+    @Override
+    public void notifyRound(int rounCode) throws IOException {
+        if(Game.DEBUG_PLAYERS) return;
+
+        SocketUtils.sendInteger(_socket.getOutputStream(), rounCode);
+    }
 }

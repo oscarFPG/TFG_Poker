@@ -377,7 +377,6 @@ public class InGameWindowController extends GenericController {
         _listPlayerStackPanes.forEach(stack -> stack.setVisible(false));
         _listImageCards.forEach(hbox -> hbox.setVisible(false));
         _listHandBet.forEach(hbox -> hbox.setVisible(false));
-        _listHandBet.get(0).setOpacity(1);
         _listEquity.forEach(label -> { label.setVisible(false); label.setText("0%");});
     }
 
@@ -599,99 +598,106 @@ public class InGameWindowController extends GenericController {
             boolean endOfGame = false;
             while(!endOfGame) {
 
+                int serverCode = SocketUtils.receiveInt(input);
+
                 try {
+                    if(serverCode == GameType.ROUND_PREFLOP) {
 
-                    Platform.runLater(() -> {
-                        GUI_clearTableCards();
-                        GUI_clearPlayerBets();
-                        GUI_clearDealer();
-                        GUI_clearTurnPlayer();
-                    });
+                        Platform.runLater(() -> {
+                            GUI_clearTableCards();
+                            GUI_clearPlayerBets();
+                            GUI_clearDealer();
+                            GUI_clearTurnPlayer();
+                        });
 
-                    // Player roles
-                    System.out.printf("-- New hand --\n");
-                    role = PokerGame.receivePlayerRole(input);
-                    System.out.printf("Assigned role: %s\n", role.toString());
-                    playerStartInfo(socket);
-                    System.out.printf("Waiting for the game to start...\n");
-                    NotificationManager.showSuccess(Messages.Notifications.WAITING_GAME_START);
-                    
+                        // Preflop
+                        System.out.printf("-- Preflop --\n");
+                        Platform.runLater(() -> {
+                            GUI_putRoundName("PREFLOP");
+                        });
+                        tableCardValues[0] = PokerGame.receiveCard(input);  // First table card
+                        tableCardValues[1] = PokerGame.receiveCard(input);  // Second table card
+                        tableCardValues[2] = PokerGame.receiveCard(input);  // Third table card
+                        handleEquity(socket);
+                        Platform.runLater(() -> {
+                            GUI_showCard(tableCard0, tableCardValues[0]);
+                            GUI_showCard(tableCard1, tableCardValues[1]);
+                            GUI_showCard(tableCard2, tableCardValues[2]);
+                        });
+                    }
 
-                    
-                    // Player cards
-                    System.out.printf("Waiting for my cards...\n");
-                    playerCards[0] = PokerGame.receiveCard(input);
-                    playerCards[1] = PokerGame.receiveCard(input);
-                    handleEquity(socket);
-                    System.out.printf("Cards: %s %s\n", 
-                        playerCards[0].toString(), playerCards[1].toString()
-                    );
-                    Platform.runLater(() -> {
-                        GUI_putMyCards(_clientInfo.id, playerCards[0], playerCards[1]);
-                        GUI_putTurnPlayer(_clientInfo.id);
-                    });
+                    else if(serverCode == GameType.ROUND_FLOP) {
+                        // Flop
+                        System.out.printf("-- Flop --\n");
+                        Platform.runLater(() -> {
+                            GUI_putRoundName("FLOP");
+                            GUI_clearPlayerBets();
+                        });
+                        tableCardValues[3] = PokerGame.receiveCard(input);  // Fourth table card
+                        handleEquity(socket);
+                        Platform.runLater(() -> {
+                            GUI_showCard(tableCard3, tableCardValues[3]);
+                        });
+                    }
+                    else if(serverCode == GameType.ROUND_TURN) {
+                        // Turn
+                        System.out.printf("-- Turn --\n");
+                        Platform.runLater(() -> {
+                            GUI_putRoundName("TURN");
+                            GUI_clearPlayerBets();
+                        });
+                        tableCardValues[4] = PokerGame.receiveCard(input);  // fifth table card
+                        handleEquity(socket);
+                        Platform.runLater(() -> {
+                            GUI_showCard(tableCard4, tableCardValues[4]);
+                        });
+                    }
+                    else if(serverCode == GameType.ROUND_RIVER) {
+                        // River
+                        System.out.printf("-- River --\n");
+                        Platform.runLater(() -> {
+                            GUI_putRoundName("RIVER");
+                            GUI_clearPlayerBets();
+                        });
+                        
+                    }
+                    else if(serverCode == GameType.ROUND_SHOWDOWN){
+                        // Showdown
+                        System.out.printf("-- Showdown --\n");
+                        Platform.runLater(() -> {
+                            GUI_putRoundName("SHOWDOWN");
+                        });
+                        endOfGame = showdown(socket);
+                    }
+                    else if(serverCode == GameType.PLAYER_ROLE) {
+                        // Player roles
+                        System.out.printf("-- New hand --\n");
+                        role = PokerGame.receivePlayerRole(input);
+                        System.out.printf("Assigned role: %s\n", role.toString());
+                        playerStartInfo(socket);
+                        System.out.printf("Waiting for the game to start...\n");
+                        NotificationManager.showSuccess(Messages.Notifications.WAITING_GAME_START);
+                    }
+                    else if(serverCode == GameType.PLAYERS_CARDS){
+                        // Player cards
+                        System.out.printf("Waiting for my cards...\n");
+                        playerCards[0] = PokerGame.receiveCard(input);
+                        playerCards[1] = PokerGame.receiveCard(input);
+                        handleEquity(socket);
+                        System.out.printf("Cards: %s %s\n", 
+                            playerCards[0].toString(), playerCards[1].toString()
+                        );
+                        Platform.runLater(() -> {
+                            GUI_putMyCards(_clientInfo.id, playerCards[0], playerCards[1]);
+                            GUI_putTurnPlayer(_clientInfo.id);
+                        });
+                    }
+                    else if(serverCode == GameType.TABLE_CARDS) {
 
-                    
-                    // Preflop
-                    System.out.printf("-- Preflop --\n");
-                    Platform.runLater(() -> {
-                        GUI_putRoundName("PREFLOP");
-                    });
-                    playRound(playerCards[0], playerCards[1], role, socket);
-                    tableCardValues[0] = PokerGame.receiveCard(input);  // First table card
-                    tableCardValues[1] = PokerGame.receiveCard(input);  // Second table card
-                    tableCardValues[2] = PokerGame.receiveCard(input);  // Third table card
-                    handleEquity(socket);
-                    Platform.runLater(() -> {
-                        GUI_showCard(tableCard0, tableCardValues[0]);
-                        GUI_showCard(tableCard1, tableCardValues[1]);
-                        GUI_showCard(tableCard2, tableCardValues[2]);
-                    });
-
-                    
-                    // Flop
-                    System.out.printf("-- Flop --\n");
-                    Platform.runLater(() -> {
-                        GUI_putRoundName("FLOP");
-                        GUI_clearPlayerBets();
-                    });
-                    playRound(playerCards[0], playerCards[1], role, socket);
-                    tableCardValues[3] = PokerGame.receiveCard(input);  // Fourth table card
-                    handleEquity(socket);
-                    Platform.runLater(() -> {
-                        GUI_showCard(tableCard3, tableCardValues[3]);
-                    });
-
-
-                    // Turn
-                    System.out.printf("-- Turn --\n");
-                    Platform.runLater(() -> {
-                        GUI_putRoundName("TURN");
-                        GUI_clearPlayerBets();
-                    });
-                    playRound(playerCards[0], playerCards[1], role, socket);
-                    tableCardValues[4] = PokerGame.receiveCard(input);  // fifth table card
-                    handleEquity(socket);
-                    Platform.runLater(() -> {
-                        GUI_showCard(tableCard4, tableCardValues[4]);
-                    });
-
-
-                    // River
-                    System.out.printf("-- River --\n");
-                    Platform.runLater(() -> {
-                        GUI_putRoundName("RIVER");
-                        GUI_clearPlayerBets();
-                    });
-                    playRound(playerCards[0], playerCards[1], role, socket);
-
-
-                    // Showdown
-                    System.out.printf("-- Showdown --\n");
-                    Platform.runLater(() -> {
-                        GUI_putRoundName("SHOWDOWN");
-                    });
-                    endOfGame = showdown(socket);
+                    }
+                    else {
+                        playRound(null, null, null, socket);
+                    }
                 }
                 catch (OnlyOnePlayerLeftException e) {
 
@@ -825,6 +831,9 @@ public class InGameWindowController extends GenericController {
                 });
 
                 selectCommand(socket, sb, bb, maxBet, offBetMoney, onBetMoney);
+                
+                GUI_stopVisualTimer();
+                GUI_clearTimer(_clientInfo.id);
 			}
 			else if(serverCode == GameType.HAND_ENDS_BY_FOLD) {
 				handEndsByFold = true;
@@ -847,6 +856,7 @@ public class InGameWindowController extends GenericController {
                     }
                     else {
                         GUI_putPlayerBet(_clientInfo.id, myOnBetMoney, myOffBetMoney, iAmFolded);
+                        _listHandBet.get( seatID ).setOpacity(1.0);
                     }
 
                     buttonsHolder.setVisible(false);
@@ -901,9 +911,9 @@ public class InGameWindowController extends GenericController {
             }
             else if(serverCode == GameType.ROUND_ENDS) {
                 System.out.printf("ROUND_ENDS received!\n");
-
-                int seatID = _playerSeatMap.get(_clientInfo.id);
-                GUI_clearTimer(seatID);
+                
+                GUI_stopVisualTimer();
+                GUI_clearTimer(_clientInfo.id);
             }
             else {
 				System.out.printf("Unknown turn code %d\n", serverCode);
@@ -1260,7 +1270,7 @@ public class InGameWindowController extends GenericController {
             Label moneyLabel = _listMoneyLabels.get(seatID);
 
             _listHandBet.get(seatID).setVisible(true);
-            _listHandBet.get(seatID).setOpacity(1);
+            _listHandBet.get(seatID).setOpacity(1.0);
 
             betLabel.setText( String.valueOf(amountOnBet) );
             betLabel.setVisible(true);
@@ -1384,8 +1394,9 @@ public class InGameWindowController extends GenericController {
 
     private void GUI_clearPlayerBets() {
         _listOnBetMoney.forEach(label -> label.setVisible(false));
-        _listHandBet.forEach(bet -> bet.setVisible(false));
-        _listHandBet.get(0).setOpacity(1);
+        _listHandBet.forEach(bet -> { bet.setVisible(false);  bet.setOpacity(1.0);});
+        _listPlayerStackPanes.forEach(pane -> pane.setOpacity(1.0));
+        _listImageCards.forEach(img -> img.setOpacity(1.0));
     }
 
     private void GUI_clearDealer() {
@@ -1396,7 +1407,8 @@ public class InGameWindowController extends GenericController {
         _listPlayerStackPanes.forEach(pane -> pane.getStyleClass().remove("tourn-player-color"));
     }
 
-    private void GUI_clearTimer(int seatID) {
+    private void GUI_clearTimer(int playerID) {
+        int seatID = _playerSeatMap.get(_clientInfo.id);
         List<Rectangle> rectangles = _listTimer.get(seatID);
         if(rectangles == null) return;
 
