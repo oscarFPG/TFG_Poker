@@ -171,13 +171,13 @@ public class InGameWindowController extends GenericController {
     private final Image equityOn = new Image(getClass().getResource("/images/seeStatistic.png").toExternalForm());
     private final Image equityOff = new Image(getClass().getResource("/images/notSeeStatistic.png").toExternalForm());
     
-    private static final int TURN_TIME_TOTAL = 180;
-    private static final int BLOCK_TIME = 30;
+    private static final int TURN_TIME_TOTAL = 60;
+    private static final int BLOCK_TIME = 10;
     private static final int TOTAL_BLOCKS = 6;
     private ScheduledFuture<?> _task;
     private final ScheduledExecutorService _scheduler = Executors.newSingleThreadScheduledExecutor();
-    private final AtomicInteger _seconds = new AtomicInteger(0);
     private final AtomicBoolean _isRunning = new AtomicBoolean(false);
+    private Integer _timerPlayerId = null;
     
     @Override
     protected void onViewShown() {
@@ -838,8 +838,13 @@ public class InGameWindowController extends GenericController {
 
                 GUI_stopVisualTimer();
                 GUI_clearTimer(_playerSeatMap.get(_clientInfo.id));
+                Platform.runLater(() -> {
+                    buttonsHolder.setVisible(false);
+                });
 			}
 			else if(serverCode == GameType.HAND_ENDS_BY_FOLD) {
+
+                GUI_stopVisualTimer();
 				handEndsByFold = true;
 			}
             else if(serverCode == GameType.MY_PLAYER_STATUS) {
@@ -914,15 +919,15 @@ public class InGameWindowController extends GenericController {
 
                 int seatID = _playerSeatMap.get(_clientInfo.id);
                 GUI_clearTimer(seatID);
-            
+
                 throw new CancelGameException();
             }
             else if(serverCode == GameType.ROUND_ENDS) {
                 System.out.printf("ROUND_ENDS received!\n");
 
                 GUI_stopVisualTimer();
-                int seatID = _playerSeatMap.get(_clientInfo.id);
-                GUI_clearTimer(seatID);
+                GUI_clearTimer( _playerSeatMap.get(_clientInfo.id));
+                
             }
             else {
 				System.out.printf("Unknown turn code %d\n", serverCode);
@@ -939,6 +944,7 @@ public class InGameWindowController extends GenericController {
 		if(handEndsByFold) {
             GUI_stopVisualTimer();
             NotificationManager.showError(Messages.Notifications.ERROR_ONLY_ONE_PLAYER_LEFT);
+            buttonsHolder.setVisible(false);
 			throw new OnlyOnePlayerLeftException();
         }
     }
@@ -1374,9 +1380,14 @@ public class InGameWindowController extends GenericController {
         if (_isRunning.get())
             return;
 
+        GUI_stopVisualTimer();
+        GUI_clearTimer(seatID);
+
+        _timerPlayerId = playerID;
         _isRunning.set(true);
 
         _visualSecondsLeft = TURN_TIME_TOTAL;
+        GUI_resetPlayerTimer(seatID);
         GUI_putPlayerTimer(seatID, _visualSecondsLeft);
 
         _task = _scheduler.scheduleAtFixedRate(()-> {
@@ -1385,7 +1396,7 @@ public class InGameWindowController extends GenericController {
             GUI_putPlayerTimer(seatID, _visualSecondsLeft);
 
             if(_visualSecondsLeft <= 0) {
-                GUI_stopVisualTimer();
+                _commandQueue.offer(GameType.FOLD_ACTION_FULL);
             }
 
         }, 1, 1, TimeUnit.SECONDS);
@@ -1396,6 +1407,15 @@ public class InGameWindowController extends GenericController {
             return;
 
         _task.cancel(false);
+
+        if(_timerPlayerId != null) {
+            Integer seatID = _playerSeatMap.get(_timerPlayerId);
+            if(seatID != null) {
+                GUI_clearTimer(seatID);
+            }
+        }
+
+        _timerPlayerId = null;
         _isRunning.set(false);
         System.out.printf("Timer has cancel with %d seconds!\n\n", _visualSecondsLeft);
     }
