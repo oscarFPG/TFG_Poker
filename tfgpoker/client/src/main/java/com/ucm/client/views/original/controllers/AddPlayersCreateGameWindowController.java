@@ -4,6 +4,7 @@ import com.ucm.client.ClientInfo;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
@@ -32,6 +33,9 @@ public class AddPlayersCreateGameWindowController extends GenericController  {
 
     @FXML
     private Spinner<Integer> spinnerAddPlayers;
+    
+    @FXML
+    private ComboBox<String> comboTurnTimerPlayer;
 
     @Override
     protected void onViewShown() {

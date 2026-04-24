@@ -3,6 +3,7 @@
 <?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.image.Image?>
@@ -13,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.AddPlayersCreateGameWindowController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.AddPlayersCreateGameWindowController">
    <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0">
          <top>
@@ -70,7 +71,7 @@
                   </HBox>
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <VBox alignment="CENTER" minHeight="-Infinity" prefHeight="319.0" prefWidth="300.0" spacing="4.0" styleClass="rounded-description-label">
+                        <VBox alignment="CENTER" minHeight="-Infinity" prefHeight="360.0" prefWidth="450.0" spacing="2.0" styleClass="rounded-description-label">
                            <children>
                               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
                                  <children>
@@ -78,7 +79,7 @@
                                     <Label fx:id="labelRemainingPlayers" prefHeight="25.0" prefWidth="39.0" styleClass="username-label" />
                                  </children>
                                  <VBox.margin>
-                                    <Insets top="10.0" />
+                                    <Insets />
                                  </VBox.margin>
                               </HBox>
                               <ImageView fitHeight="195.0" fitWidth="203.0" pickOnBounds="true" preserveRatio="true">
@@ -92,6 +93,17 @@
                                  </VBox.margin>
                                  <children>
                                     <Spinner fx:id="spinnerAddPlayers" prefHeight="34.0" prefWidth="201.0" styleClass="container-colors" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+                                 <children>
+                                    <Label styleClass="general-text-font" text="Timer to make a play (min)" />
+                                    <ComboBox fx:id="comboTurnTimerPlayer" prefWidth="150.0">
+                                       <styleClass>
+                                          <String fx:value="general-text-font" />
+                                          <String fx:value="container-colors" />
+                                       </styleClass>
+                                    </ComboBox>
                                  </children>
                               </HBox>
                            </children>
