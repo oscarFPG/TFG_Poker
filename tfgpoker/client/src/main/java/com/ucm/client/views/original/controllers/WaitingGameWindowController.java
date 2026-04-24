@@ -203,15 +203,11 @@ public class WaitingGameWindowController extends GenericController {
             if(_clientInfo.isHost) {
                 System.out.printf("Server response: This client is the host of the game!\n");
                 NotificationManager.showSuccess(Messages.Notifications.PLAYER_IS_HOST);
-      
-            
             }
             else {
                 System.out.printf("Server response: This client is a guest!\n");
                 NotificationManager.showSuccess(Messages.Notifications.PLAYER_IS_GUEST);
-      
-            
-
+                
                 Platform.runLater(() -> {
                     startButton.setVisible(false);
                 });

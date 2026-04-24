@@ -42,6 +42,7 @@ public class AddPlayersCreateGameWindowController extends GenericController  {
         btnStartAddPlayers.setDisable(true);
         initializeSpinnner();
         initializeRemainingPlayers();
+        initializeTurnTimerPlayer();
     }
 
     private void initializeSpinnner() {
@@ -62,6 +63,19 @@ public class AddPlayersCreateGameWindowController extends GenericController  {
         labelRemainingPlayers.setText(String.valueOf(remainingPlayers));
     }
 
+    private void initializeTurnTimerPlayer() {
+        comboTurnTimerPlayer.getItems().addAll(
+            "60",
+            "180",
+            "360",
+            "720"
+        );
+        String restoreTurnTimerPlayer = _clientInfo.gameConfig._turnTimerPlayer;
+        if(restoreTurnTimerPlayer != null && !comboTurnTimerPlayer.isDisable()) {
+            comboTurnTimerPlayer.setValue(restoreTurnTimerPlayer);
+        }
+    }
+
     private int getMaxRemainingPlayers() {
         int totalBots = _clientInfo.gameConfig._numBots1 + _clientInfo.gameConfig._numBots2;
         return MAX_NUM_PLAYERS - totalBots;
@@ -69,6 +83,13 @@ public class AddPlayersCreateGameWindowController extends GenericController  {
 
     private void saveAddPlayers() {
         _clientInfo.gameConfig._numPlayers = spinnerAddPlayers.getValue();
+        String timerTurn = comboTurnTimerPlayer.getValue();
+
+        if(timerTurn == null || timerTurn.isEmpty()) {
+            timerTurn = _clientInfo.gameConfig._turnTimerPlayer;
+        }
+
+        _clientInfo.gameConfig._turnTimerPlayer = timerTurn;
 
     }
 

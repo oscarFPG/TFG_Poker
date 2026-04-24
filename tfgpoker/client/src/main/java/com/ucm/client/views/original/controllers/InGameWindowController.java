@@ -219,39 +219,10 @@ public class InGameWindowController extends GenericController {
             if(ok) {
                 System.out.printf("All OK! Game finished!\n");
                 NotificationManager.showSuccess(Messages.Notifications.CONFIRMATION_GAME_FINISHED);
-                
-                /*
-                Platform.runLater(() -> {
 
-                    
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Game finished");
-                    alert.setHeaderText("The game has finished successfully!");
-                    alert.setContentText("You will return to the main menu");
-                    alert.getDialogPane().getStylesheets().add(getClass().getResource("/original/css/style.css").toExternalForm());
-                    alert.getDialogPane().getStyleClass().add("custom-alert");
-                    alert.showAndWait();
-
-                    next();
-                    
-                });
-                */
             }
             else {
-                /*
-                Platform.runLater(() -> {
-
-                    Alert alert = new Alert(Alert.AlertType.WARNING);
-                    alert.setTitle("Game was cancelled");
-                    alert.setHeaderText("All players disconnected");
-                    alert.setContentText("You will return to the main menu");
-                    alert.getDialogPane().getStylesheets().add(getClass().getResource("/original/css/style.css").toExternalForm());
-                    alert.getDialogPane().getStyleClass().add("custom-alert");
-                    alert.showAndWait();
-
-                    next();
-                });
-                */
+                // TODO : Avisar de juego terminado
             }
             
         });
@@ -804,7 +775,7 @@ public class InGameWindowController extends GenericController {
 			else if(serverCode == GameType.TURN_PLAY) {
 
 				System.out.printf("It's your turn to play!\n");
-               // NotificationManager.showSuccess(Messages.Notifications.TURN_PLAY);
+                // NotificationManager.showSuccess(Messages.Notifications.TURN_PLAY);
                 
 				// Receive round info
 				final int sb = SocketUtils.receiveInt( socket.getInputStream() );
@@ -819,6 +790,7 @@ public class InGameWindowController extends GenericController {
                 );
 
                 _commandQueue.clear();
+
                 // Do not allow to bet less than the current max bet
                 Platform.runLater(() -> {
                     buttonsHolder.setVisible(true);
@@ -832,7 +804,6 @@ public class InGameWindowController extends GenericController {
                     if(role == PlayerRole.DEALER)  {
                         GUI_putDealerButton(_clientInfo.id);
                     }
-                    
                 });
 
                 selectCommand(socket, sb, bb, maxBet, offBetMoney, onBetMoney);
@@ -1366,11 +1337,13 @@ public class InGameWindowController extends GenericController {
     }
 
     private void GUI_putPlayerTimer(int seatID, int secondsLeft) {
+        
         List<Rectangle> rectangles = _listTimer.get(seatID);
-        if(rectangles == null) return;
+        if(rectangles == null)
+            return;
+        
 
         final int blocksRemaining = Math.max(0, Math.min(TOTAL_BLOCKS, (int) Math.ceil(secondsLeft / (double) BLOCK_TIME)));
-
         Platform.runLater(()-> {
             for (int i = 0; i < rectangles.size(); i++) {
                 rectangles.get(i).setVisible(i < blocksRemaining);

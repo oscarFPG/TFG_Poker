@@ -97,7 +97,7 @@
                               </HBox>
                               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
                                  <children>
-                                    <Label styleClass="general-text-font" text="Timer to make a play (min)" />
+                                    <Label styleClass="general-text-font" text="Max. playtime (seconds)" />
                                     <ComboBox fx:id="comboTurnTimerPlayer" prefWidth="150.0">
                                        <styleClass>
                                           <String fx:value="general-text-font" />

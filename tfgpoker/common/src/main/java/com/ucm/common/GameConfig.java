@@ -10,6 +10,7 @@ public class GameConfig {
     private static final String DEFAULT_HIKE_PERCENTAGE = "25";
     private static final int DEFAULT_NUM_BOTS = 0;
     private static final int DEFAULT_NUM_PLAYERS = 8;
+    private static final String DEFAULT_TURN_TIMER = "60";
     /**
      * Variables para crear partida: Home
     */
@@ -39,6 +40,11 @@ public class GameConfig {
      * Variables para crear partida: Add tables
     */
     public String _selectedCard = null;
+
+    /**
+     * Variable para determinar el tiempo de jugada de cada jugador
+    */
+    public String _turnTimerPlayer = DEFAULT_TURN_TIMER;
 
     public GameConfig() {}
 
