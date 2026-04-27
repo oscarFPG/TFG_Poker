@@ -36,7 +36,6 @@ public class GeminiLLM extends BotLLMOnline {
     private static final int GEMINI_ID = GameType.BOT_GEMINI;
     public static final String NAME = "Gemini LLM";
 
-
     /**
      * Chat model instance used to interact with Gemini.
      */
