@@ -170,8 +170,8 @@ public class InGameWindowController extends GenericController {
     private final Image equityOn = new Image(getClass().getResource("/images/seeStatistic.png").toExternalForm());
     private final Image equityOff = new Image(getClass().getResource("/images/notSeeStatistic.png").toExternalForm());
     
-    private static final int TURN_TIME_TOTAL = 60;
-    private static final int BLOCK_TIME = 10;
+    private int _turnTimerTotal; 
+    private int _blockTime;
     private static final int TOTAL_BLOCKS = 6;
     private ScheduledFuture<?> _task;
     private final ScheduledExecutorService _scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -189,6 +189,7 @@ public class InGameWindowController extends GenericController {
         GUI_initializeMoneySlider();
         GUI_initializeTimers();
         GUI_showWaitingPlayers(_clientInfo.playerPositions);
+        GUI_initializeTurnTimer();
 
         usernamePlaceHolder.setText( _clientInfo.name );
         imgAvatarProfile.setImage( _clientInfo.getAvatar(_clientInfo.name,64) );
@@ -408,6 +409,11 @@ public class InGameWindowController extends GenericController {
                 r.setVisible(false);
             }
         }
+    }
+
+    private void GUI_initializeTurnTimer() {
+        _turnTimerTotal = Integer.parseInt(_clientInfo.gameConfig._turnTimerPlayer);
+        _blockTime = _turnTimerTotal / TOTAL_BLOCKS;
     }
 
     private void GUI_showWaitingPlayers(final List<PlayerInfo> players) {
@@ -1014,7 +1020,7 @@ public class InGameWindowController extends GenericController {
                     });
                 }
 
-                String command = _commandQueue.poll(TURN_TIME_TOTAL, TimeUnit.SECONDS);
+                String command = _commandQueue.poll(_turnTimerTotal, TimeUnit.SECONDS);
 
                 if(command == null) {
                     System.out.printf("No local command received before timeout.");
@@ -1343,7 +1349,7 @@ public class InGameWindowController extends GenericController {
             return;
         
 
-        final int blocksRemaining = Math.max(0, Math.min(TOTAL_BLOCKS, (int) Math.ceil(secondsLeft / (double) BLOCK_TIME)));
+        final int blocksRemaining = Math.max(0, Math.min(TOTAL_BLOCKS, (int) Math.ceil(secondsLeft / (double) _blockTime)));
         Platform.runLater(()-> {
             for (int i = 0; i < rectangles.size(); i++) {
                 rectangles.get(i).setVisible(i < blocksRemaining);
@@ -1369,7 +1375,7 @@ public class InGameWindowController extends GenericController {
         Integer seatID = _playerSeatMap.get(playerID);
         _timerPlayerId = playerID;
 
-        _turnEndTime = System.currentTimeMillis() + TURN_TIME_TOTAL * 1000L;
+        _turnEndTime = System.currentTimeMillis() + _turnTimerTotal * 1000L;
 
         System.out.printf("Timer start for playerId=%d (%s client)\n", playerID, playerID == _clientInfo.id ? "local turn" : "remote turn");
 
