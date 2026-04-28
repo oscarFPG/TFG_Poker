@@ -179,6 +179,7 @@ public class InGameWindowController extends GenericController {
     private Integer _timerPlayerId = null;
     private long _turnEndTime;
     
+    
     @Override
     protected void onViewShown() {
 
@@ -220,10 +221,12 @@ public class InGameWindowController extends GenericController {
             if(ok) {
                 System.out.printf("All OK! Game finished!\n");
                 NotificationManager.showSuccess(Messages.Notifications.CONFIRMATION_GAME_FINISHED);
-
             }
             else {
-                // TODO : Avisar de juego terminado
+                NotificationManager.showError(Messages.Notifications.ERROR_GAME_CANCELED_BY_SERVER);
+                Platform.runLater(() -> {
+                    next();
+                });
             }
             
         });
@@ -575,6 +578,7 @@ public class InGameWindowController extends GenericController {
         GUI_putEquityToPlayer();
     }
 
+
     private boolean pokerGame(String name, Socket socket) {
 
         PlayerRole role;
@@ -717,8 +721,8 @@ public class InGameWindowController extends GenericController {
             }
         }
         catch(CancelGameException e) {
+
             System.out.printf("Game cancelled by server: %s\n", e.getMessage());
-            NotificationManager.showError(Messages.Notifications.ERROR_GAME_CANCELED_BY_SERVER + e.getMessage());
             return false;
         }
 
@@ -769,6 +773,7 @@ public class InGameWindowController extends GenericController {
                 });
 			}
 			else if(serverCode == GameType.TURN_WAIT) {
+
                 int seatID = _playerSeatMap.get(_clientInfo.id);
 				System.out.printf("Wait for the other players to play...\n");
                 Platform.runLater(() -> {
@@ -820,6 +825,7 @@ public class InGameWindowController extends GenericController {
                 });
 			}
 			else if(serverCode == GameType.HAND_ENDS_BY_FOLD) {
+
                 Platform.runLater(() -> {
                     buttonsHolder.setVisible(false);
                     GUI_stopVisualTimer();
@@ -850,6 +856,7 @@ public class InGameWindowController extends GenericController {
                 });
             }
             else if(serverCode == GameType.TURN_BEFORE_PLAY) {
+
                 int currentTurnPlayerId = SocketUtils.receiveInt( socket.getInputStream() );
                 GUI_putTurnPlayer(currentTurnPlayerId);
 
@@ -898,9 +905,8 @@ public class InGameWindowController extends GenericController {
                 });
             }
             else if(serverCode == GameType.ERROR_GAME_CANCELS) {
-                System.out.printf("Game has been cancelled by the server!\n");
-                NotificationManager.showError(Messages.Notifications.ERROR_GAME_CANCELED_BY_SERVER);
 
+                System.out.printf("Game has been cancelled by the server!\n");
                 Platform.runLater(() -> {
                     buttonsHolder.setVisible(false);
                     GUI_stopVisualTimer();
@@ -909,6 +915,7 @@ public class InGameWindowController extends GenericController {
                 throw new CancelGameException();
             }
             else if(serverCode == GameType.ROUND_ENDS) {
+
                 System.out.printf("ROUND_ENDS received!\n");
 
                 Platform.runLater(() -> {
@@ -917,9 +924,9 @@ public class InGameWindowController extends GenericController {
                 });
             }
             else {
+
 				System.out.printf("Unknown turn code %d\n", serverCode);
                 NotificationManager.showError(Messages.Notifications.ERROR_UNKNOWN_TURN_CODE + serverCode) ;
-			
 			}
 
         }
@@ -930,7 +937,9 @@ public class InGameWindowController extends GenericController {
 
 		if(handEndsByFold) {
             NotificationManager.showError(Messages.Notifications.ERROR_ONLY_ONE_PLAYER_LEFT);
-            Platform.runLater(() -> buttonsHolder.setVisible(false));
+            Platform.runLater(() -> {
+                buttonsHolder.setVisible(false);
+            });
 			throw new OnlyOnePlayerLeftException();
         }
     }

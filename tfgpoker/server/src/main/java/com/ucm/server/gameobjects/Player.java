@@ -194,7 +194,7 @@ public class Player implements IPlayerActions {
     public String makePlay(int sb, int bb, int maxBet) throws IOException, TurnTimeoutException {
 
         String action = _playerInfo.notifyMakePlay(sb, bb, maxBet, this);
-        return _playerInfo.notifyMakePlay(sb, bb, maxBet, this);
+        return action;
     }
 
     public int placeOnBetMoney() {

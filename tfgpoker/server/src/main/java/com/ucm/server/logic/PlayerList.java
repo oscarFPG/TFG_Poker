@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -317,7 +314,7 @@ public class PlayerList implements Iterable<Node> {
         }
         catch (TurnTimeoutException e) {
             log.warn("Player {} TIMEOUT -> auto FOLD", player.getPlayerName());
-            
+
             System.out.printf("Timer has ended, player {} make FOLD!\n\n", player.getPlayerName());
             command = Command.parseCommand(new String[] {GameType.FOLD_ACTION_FULL}, player);
         }
@@ -392,7 +389,7 @@ public class PlayerList implements Iterable<Node> {
     public boolean checkEndOfGame() {
 
         int playersNotEliminated = _playerCounter;
-        boolean gameEnds = false;
+
         Iterator<Node> it = iterator();
         while( it.hasNext() ) {
 
