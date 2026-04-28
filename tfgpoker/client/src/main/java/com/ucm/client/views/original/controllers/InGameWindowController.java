@@ -807,10 +807,12 @@ public class InGameWindowController extends GenericController {
                     buttonsHolder.setVisible(true);
                     GUI_putTurnPlayer(_clientInfo.id);
                     GUI_startVisualTimer(_clientInfo.id);
+
                     int sliderStep = Math.clamp(offBetMoney / 100, 1, offBetMoney);
                     sliderMoney.setMajorTickUnit( sliderStep );
                     sliderMoney.setMin( (double)maxBet );
-                    sliderMoney.setMax( (double)(offBetMoney + onBetMoney)  );
+                    sliderMoney.setMax( (double)(offBetMoney + onBetMoney) );
+                    sliderMoney.setValue( sliderMoney.getMin() );
                     
                     if(role == PlayerRole.DEALER)  {
                         GUI_putDealerButton(_clientInfo.id);

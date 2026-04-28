@@ -226,6 +226,7 @@ public class PlayerList implements Iterable<Node> {
         Node pivotPlayer = calculatePivotPlayer(playersRemaining, isPreflop, playerOnTurn);
         int maxBet = (isPreflop) ? bb : 0;
         int currentBet = maxBet;
+        int minRaise = (isPreflop) ? bb - sb : 0;
         int totalPot = 0;
 
         // In case only one player can play -> Cannot play alone
@@ -274,14 +275,16 @@ public class PlayerList implements Iterable<Node> {
             }
 
             currentBet = result.folds() ? 0 : result.bet();
-            maxBet = Integer.max(maxBet, currentBet);
-            
+            minRaise = Math.max(minRaise, result.bet() - maxBet);
+            maxBet = Math.max(maxBet, currentBet);
+
             pivotPlayer = result.raises() ? playerOnTurn : pivotPlayer;
             playerOnTurn = getNextPlayerActive(playerOnTurn);
 
             log.debug("Total pot is {}", totalPot);
             log.debug("Current bet is {}", currentBet);
             log.debug("Maximum bet is {}", maxBet);
+            log.debug("Minimum raise is {}", minRaise);
         }
         while( pivotPlayer != playerOnTurn && playersRemaining != 0);
 
