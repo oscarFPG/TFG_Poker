@@ -17,4 +17,8 @@ public class Node {
         _isDisconnected = false;
     }
 
+    public boolean equals(Node other) {
+        return _player == other._player;
+    }
+
 }

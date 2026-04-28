@@ -1,5 +1,6 @@
 package com.ucm.server.players;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
@@ -21,7 +22,7 @@ public class TestGeminiBot {
     // ---------------------- TEST 1: PREFLOP ----------------------
 
     //@Test
-    public void testPreflopDecision() {
+    public void testPreflopDecision() throws IOException {
 
         GeminiLLM geminiLLM = new GeminiLLM();
         Player player = new Player(0, "Gemini", 1000, geminiLLM);
@@ -42,7 +43,7 @@ public class TestGeminiBot {
     // ---------------------- TEST 2: FLOP ----------------------
 
     //@Test
-    public void testFlopDecision() {
+    public void testFlopDecision() throws IOException {
 
         GeminiLLM geminiLLM = new GeminiLLM();
         Player player = new Player(0, "Gemini", 1000, geminiLLM);
@@ -67,7 +68,7 @@ public class TestGeminiBot {
     // ---------------------- TEST 3: LOW EQUITY ----------------------
 
     //@Test
-    public void testLowEquity() {
+    public void testLowEquity() throws IOException {
 
         GeminiLLM geminiLLM = new GeminiLLM();
         Player player = new Player(0, "Gemini", 1000, geminiLLM);

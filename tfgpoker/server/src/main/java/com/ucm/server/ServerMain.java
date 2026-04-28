@@ -42,10 +42,10 @@ public class ServerMain {
 
             List<ClientStruct> players = new ArrayList<>(
                 List.of(
-                    new ClientStruct("PL1", null), 
-                    new ClientStruct("PL2", null),
-                    new ClientStruct("PL3", null)
-                ) 
+                    ClientStruct.createGuestPlayer("PL1", null),
+                    ClientStruct.createGuestPlayer("PL2", null),
+                    ClientStruct.createGuestPlayer("PL3", null)
+                )
             );
             List<BotStruct> bots = new ArrayList<>();
             GameConfig config = new GameConfig();

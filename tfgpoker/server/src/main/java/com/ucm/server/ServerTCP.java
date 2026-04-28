@@ -97,6 +97,7 @@ public class ServerTCP {
 
             log.debug("Game cancelled by server: {}", e.getMessage());
             for(ClientStruct cs : players) {
+
                 try {
                     SocketUtils.sendInteger(cs.socket().getOutputStream(), GameType.ERROR_GAME_CANCELS);
                 }
@@ -117,7 +118,13 @@ public class ServerTCP {
 
         List<ClientStruct> players = new ArrayList<>();
         for(ClientThread ct : _roomPlayers) {
-            players.add( new ClientStruct(ct.getPlayerName(), ct.getPlayerSocket()) );
+            
+            if( ct.getIsHost() ) {
+                players.add( ClientStruct.createHostPlayer(ct.getPlayerName(), ct.getPlayerSocket()) );
+            }
+            else {
+                players.add( ClientStruct.createGuestPlayer(ct.getPlayerName(), ct.getPlayerSocket()) );
+            }
         }
 
         return players;
@@ -151,7 +158,6 @@ public class ServerTCP {
     private void cleanUp(final List<ClientStruct> players) {
 
         log.debug("Cleaning up server resources...");
-
         for(ClientStruct cs : players) {
             try {
                 if (cs.socket().isConnected() || !cs.socket().isClosed()) {

@@ -309,5 +309,6 @@ public class ClientThread implements Runnable {
 
     public Socket getPlayerSocket() { return _socket; }
     public String getPlayerName() { return _playerName; }
+    public boolean getIsHost() { return _isHost; }
 
 }

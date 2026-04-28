@@ -34,7 +34,7 @@ public class PlayerList implements Iterable<Node> {
 
     private int _totalPot;
     private PotManager _potManager;
-
+    private Node _host;
 
     public PlayerList(int n) {
         _first = null;
@@ -44,6 +44,7 @@ public class PlayerList implements Iterable<Node> {
 
         _totalPot = 0;
         _potManager = new PotManager(n);
+        _host = null;
     }
 
     
@@ -73,6 +74,10 @@ public class PlayerList implements Iterable<Node> {
         ++_playerCounter;
 
         log.debug("Player {} added!", p.getPlayerName());
+    }
+
+    public void assignHost(Player p) {
+        _host = new Node(null, p,null);
     }
 
 
@@ -303,7 +308,7 @@ public class PlayerList implements Iterable<Node> {
                 command = command.validate(maxBet) ? command : null;
             }
         }
-        catch (Exception e) {
+        catch (IOException e) {
             log.error("Error happened waiting for player {} : {}", player.getPlayerName(), e.getMessage());
 
             node._isDisconnected = true;
@@ -557,7 +562,7 @@ public class PlayerList implements Iterable<Node> {
         while( it.hasNext() ) {
 
             Node player = it.next();
-            if(player == playerOnTurn)
+            if( player.equals(playerOnTurn) )
                 continue;
 
             try {
@@ -574,6 +579,7 @@ public class PlayerList implements Iterable<Node> {
     }
 
     private void notifyTurnPlayer(Player p) throws CancelGameException {
+
         Iterator<Node> it = iterator();
         while( it.hasNext() ) {
 
@@ -732,7 +738,7 @@ public class PlayerList implements Iterable<Node> {
                 while( it.hasNext() ) {
 
                     Node player = it.next();
-                    if(player == receiverPlayer)
+                    if( player.equals(receiverPlayer) )
                         continue;
                 
                     try {
@@ -794,6 +800,10 @@ public class PlayerList implements Iterable<Node> {
 
 
     private boolean checkIfGameCancel() {
+
+        if(_host._isDisconnected)
+            return true;
+
 
         int connectedPlayers = 0;
         Iterator<Node> it = iterator();

@@ -201,8 +201,13 @@ public class Game {
 
         int id = 0;
         for(ClientStruct cs : players) {
+
             HumanPlayer hp = new HumanPlayer(cs.socket());
-            _playerList.addPlayer( new Player(id, cs.name(), config._initialMoney, hp) );
+            Player p = new Player(id, cs.name(), config._initialMoney, hp);
+            _playerList.addPlayer( p );
+            if( cs.isHost() )
+                _playerList.assignHost(p);
+
             ++id;
         }
 
