@@ -12,9 +12,11 @@ import com.ucm.common.PokerGame;
 import com.ucm.common.SocketUtils;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
+import com.ucm.server.exceptions.TurnTimeoutException;
 import com.ucm.server.interfaces.IPlayerInfo;
 import com.ucm.server.interfaces.IPlayerNotificator;
 import com.ucm.server.logic.Game;
+import com.ucm.server.logic.Timer;
 
 
 public class HumanPlayer implements IPlayerNotificator {
@@ -56,11 +58,22 @@ public class HumanPlayer implements IPlayerNotificator {
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOffBet());
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOnBet());
 
-        //_socket.setSoTimeout(maxBet); -> timeout en milisegundos, lanza excepcion cuando se termina el tiempo y NO he recibido nada
-        String commandInput = SocketUtils.receiveString( _socket.getInputStream() );
-        log.debug("Command received from player {}: {}", player.getPlayerName(), commandInput);
+        _socket.setSoTimeout(60_000);
 
-        return commandInput;
+        try {
+            String commandInput = SocketUtils.receiveString( _socket.getInputStream() );
+            log.debug("Command received from player {}: {}", player.getPlayerName(), commandInput);
+
+            return commandInput;
+        }
+        catch(java.net.SocketTimeoutException e) {
+            log.warn("Player {} turn timeout", player.getPlayerName());
+            throw new TurnTimeoutException();
+        }
+        finally {
+            _socket.setSoTimeout(0);
+        }
+        
     }
 
     @Override
@@ -238,5 +251,4 @@ public class HumanPlayer implements IPlayerNotificator {
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_BEFORE_PLAY);
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getPlayerId());
     }
-    
 }

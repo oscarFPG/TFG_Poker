@@ -227,6 +227,4 @@ public class BotNN implements IPlayerNotificator {
         throw new UnsupportedOperationException("Unimplemented method 'notifyEquity'");
     }
 
-    
-
 }

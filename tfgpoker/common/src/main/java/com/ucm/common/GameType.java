@@ -54,10 +54,10 @@ public class GameType {
     public static final int PLAYER_ROLE_BIG_BLIND = 88;
 
     // Card suits
-    public static final int HEARTS = 100;
-    public static final int DIAMONDS = 101;
-    public static final int CLUBS = 102;
-    public static final int SPADES = 103;
+    public static final int HEARTS = 90;
+    public static final int DIAMONDS = 91;
+    public static final int CLUBS = 92;
+    public static final int SPADES = 93;
 
     // Card numbers
     public static final int NUMBER_ACE = 110;
@@ -115,4 +115,7 @@ public class GameType {
 
     //Equity identifier
     public static final int EQUITY_UPDATE = 40000;
+
+    //Turn timer left identifier
+    public static final int TURN_TIMER_UPDATE = 40100;
 }

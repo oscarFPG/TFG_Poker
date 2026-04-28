@@ -7,39 +7,42 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
-import javax.security.auth.callback.TextInputCallback;
-
-import com.ucm.common.exceptions.CancelGameException;
-import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
+import com.ucm.client.utils.Messages;
+import com.ucm.client.utils.NotificationManager;
 import com.ucm.common.GameType;
 import com.ucm.common.PlayerInfo;
 import com.ucm.common.PokerGame;
+import com.ucm.common.SocketUtils;
+import com.ucm.common.exceptions.CancelGameException;
+import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.common.gameobjects.Suit;
-import com.ucm.common.SocketUtils;
 
-import javafx.animation.Interpolatable;
-import javafx.animation.Interpolator;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
 import javafx.animation.PauseTransition;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.util.Duration;
-import javafx.scene.layout.HBox;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 
 
 public class InGameWindowController extends GenericController {
@@ -56,6 +59,8 @@ public class InGameWindowController extends GenericController {
     @FXML private Button btnRound, btnMinBet, btnHalfBet, btnMaxBet;
     @FXML private Button btnDecreaseMoney, btnIncreaseMoney;
     @FXML private Button btnMenu;
+    @FXML private ToggleButton btnEquity;
+    @FXML private ImageView imgSeeEquity;
 
     /* Money buttons, labels and slider */
     @FXML private Label labelMoney;
@@ -70,65 +75,74 @@ public class InGameWindowController extends GenericController {
     @FXML private StackPane pokerPlayer0;           // Always playing-client seat
     @FXML private Label playerName0, playerMoney0, labelOnBetMoney0;  // Always playing-client seat
     @FXML private Label labelEquity0;
-    @FXML private HBox hboxImageCards0, hboxHandBet0;
+    @FXML private HBox hboxImageCards0, hboxHandBet0, hboxTimer0;
     @FXML private ImageView imgLeftCard0, imgRightCard0, imgAvatarProfile0;
     @FXML private ImageView ImgDealer0;
+    @FXML private Rectangle rectFirstTimer0, rectSecondTimer0, rectThirdTimer0, rectFourthTimer0, rectFifthTimer0, rectSixthTimer0;
 
     @FXML private StackPane pokerPlayer1;
     @FXML private Label playerName1, playerMoney1, labelOnBetMoney1;
     @FXML private Label labelEquity1;
-    @FXML private HBox hboxImageCards1, hboxHandBet1;
+    @FXML private HBox hboxImageCards1, hboxHandBet1, hboxTimer1;
     @FXML private ImageView imgLeftCard1, imgRightCard1, imgAvatarProfile1;
     @FXML private ImageView ImgDealer1;
+    @FXML private Rectangle rectFirstTimer1, rectSecondTimer1, rectThirdTimer1, rectFourthTimer1, rectFifthTimer1, rectSixthTimer1;
 
     @FXML private StackPane pokerPlayer2;
     @FXML private Label playerName2, playerMoney2, labelOnBetMoney2;
     @FXML private Label labelEquity2;
-    @FXML private HBox hboxImageCards2, hboxHandBet2;
+    @FXML private HBox hboxImageCards2, hboxHandBet2, hboxTimer2;
     @FXML private ImageView imgLeftCard2, imgRightCard2, imgAvatarProfile2;
     @FXML private ImageView ImgDealer2;
+    @FXML private Rectangle rectFirstTimer2, rectSecondTimer2, rectThirdTimer2, rectFourthTimer2, rectFifthTimer2, rectSixthTimer2;
 
     @FXML private StackPane pokerPlayer3;
     @FXML private Label playerName3, playerMoney3, labelOnBetMoney3;
     @FXML private Label labelEquity3;
-    @FXML private HBox hboxImageCards3, hboxHandBet3;
+    @FXML private HBox hboxImageCards3, hboxHandBet3, hboxTimer3;
     @FXML private ImageView imgLeftCard3, imgRightCard3, imgAvatarProfile3;
     @FXML private ImageView ImgDealer3;
+    @FXML private Rectangle rectFirstTimer3, rectSecondTimer3, rectThirdTimer3, rectFourthTimer3, rectFifthTimer3, rectSixthTimer3;
 
     @FXML private StackPane pokerPlayer4;
     @FXML private Label playerName4, playerMoney4, labelOnBetMoney4;
     @FXML private Label labelEquity4;
-    @FXML private HBox hboxImageCards4, hboxHandBet4;
+    @FXML private HBox hboxImageCards4, hboxHandBet4, hboxTimer4;
     @FXML private ImageView imgLeftCard4, imgRightCard4, imgAvatarProfile4;
     @FXML private ImageView ImgDealer4;
+    @FXML private Rectangle rectFirstTimer4, rectSecondTimer4, rectThirdTimer4, rectFourthTimer4, rectFifthTimer4, rectSixthTimer4;
 
     @FXML private StackPane pokerPlayer5;
     @FXML private Label playerName5, playerMoney5, labelOnBetMoney5;
     @FXML private Label labelEquity5;
-    @FXML private HBox hboxImageCards5, hboxHandBet5;
+    @FXML private HBox hboxImageCards5, hboxHandBet5, hboxTimer5;
     @FXML private ImageView imgLeftCard5, imgRightCard5, imgAvatarProfile5;
     @FXML private ImageView ImgDealer5;
+    @FXML private Rectangle rectFirstTimer5, rectSecondTimer5, rectThirdTimer5, rectFourthTimer5, rectFifthTimer5, rectSixthTimer5;
 
     @FXML private StackPane pokerPlayer6;
     @FXML private Label playerName6, playerMoney6, labelOnBetMoney6;
     @FXML private Label labelEquity6;
-    @FXML private HBox hboxImageCards6, hboxHandBet6;
+    @FXML private HBox hboxImageCards6, hboxHandBet6, hboxTimer6;
     @FXML private ImageView imgLeftCard6, imgRightCard6, imgAvatarProfile6;
     @FXML private ImageView ImgDealer6;
+    @FXML private Rectangle rectFirstTimer6, rectSecondTimer6, rectThirdTimer6, rectFourthTimer6, rectFifthTimer6, rectSixthTimer6;
 
     @FXML private StackPane pokerPlayer7;
     @FXML private Label playerName7, playerMoney7, labelOnBetMoney7;
     @FXML private Label labelEquity7;
-    @FXML private HBox hboxImageCards7, hboxHandBet7;
+    @FXML private HBox hboxImageCards7, hboxHandBet7, hboxTimer7;
     @FXML private ImageView imgLeftCard7, imgRightCard7, imgAvatarProfile7;
     @FXML private ImageView ImgDealer7;
+    @FXML private Rectangle rectFirstTimer7, rectSecondTimer7, rectThirdTimer7, rectFourthTimer7, rectFifthTimer7, rectSixthTimer7;
 
     @FXML private StackPane pokerPlayer8;
     @FXML private Label playerName8, playerMoney8, labelOnBetMoney8;
     @FXML private Label labelEquity8;
-    @FXML private HBox hboxImageCards8, hboxHandBet8;
+    @FXML private HBox hboxImageCards8, hboxHandBet8, hboxTimer8;
     @FXML private ImageView imgLeftCard8, imgRightCard8, imgAvatarProfile8;
     @FXML private ImageView ImgDealer8;
+    @FXML private Rectangle rectFirstTimer8, rectSecondTimer8, rectThirdTimer8, rectFourthTimer8, rectFifthTimer8, rectSixthTimer8;
     
     /* Member variables to group all players variables */
     private List<StackPane> _listPlayerStackPanes;  // Player stackpanes
@@ -139,6 +153,7 @@ public class InGameWindowController extends GenericController {
     private List<HBox> _listImageCards;     // Player cards
     private List<ImageView> _listPaintCards, _listAvatarProfiles; // Player cards images and avatar
     private List<ImageView> _listDealer;    // Player dealer chip
+    private Map<Integer, List<Rectangle>> _listTimer; // Players timer
     
 
     /* Variables to add logic */
@@ -149,7 +164,20 @@ public class InGameWindowController extends GenericController {
     private int _sliderStep = 0;
     private Thread _gameThread;
     private boolean _menuOpen = true;
+    private boolean _equityVisible = false;
+    private String _myEquity = "0%";
 
+    private final Image equityOn = new Image(getClass().getResource("/images/seeStatistic.png").toExternalForm());
+    private final Image equityOff = new Image(getClass().getResource("/images/notSeeStatistic.png").toExternalForm());
+    
+    private int _turnTimerTotal; 
+    private int _blockTime;
+    private static final int TOTAL_BLOCKS = 6;
+    private ScheduledFuture<?> _task;
+    private final ScheduledExecutorService _scheduler = Executors.newSingleThreadScheduledExecutor();
+
+    private Integer _timerPlayerId = null;
+    private long _turnEndTime;
     
     @Override
     protected void onViewShown() {
@@ -159,7 +187,9 @@ public class InGameWindowController extends GenericController {
         GUI_initializeCardStyle();
         GUI_initializeDealerButton();
         GUI_initializeMoneySlider();
+        GUI_initializeTimers();
         GUI_showWaitingPlayers(_clientInfo.playerPositions);
+        GUI_initializeTurnTimer();
 
         usernamePlaceHolder.setText( _clientInfo.name );
         imgAvatarProfile.setImage( _clientInfo.getAvatar(_clientInfo.name,64) );
@@ -168,8 +198,10 @@ public class InGameWindowController extends GenericController {
         _stage.setOnCloseRequest(event -> {
 
             try {
-
                 _userCloses = true;
+
+                GUI_shutdownVisualTimer();
+
                 if(_clientInfo.socket != null && !_clientInfo.socket.isClosed())
                     _clientInfo.socket.close();
 
@@ -178,6 +210,7 @@ public class InGameWindowController extends GenericController {
             }
             catch (IOException e) {
                 System.out.printf("Error closing socket: %s\n", e.getMessage());
+                NotificationManager.showError(Messages.Notifications.ERROR_CLOSING_SOCKET + e.getMessage());
             }
         });
 
@@ -186,38 +219,11 @@ public class InGameWindowController extends GenericController {
             boolean ok = pokerGame(_clientInfo.name, _clientInfo.socket);
             if(ok) {
                 System.out.printf("All OK! Game finished!\n");
-                /*
-                Platform.runLater(() -> {
+                NotificationManager.showSuccess(Messages.Notifications.CONFIRMATION_GAME_FINISHED);
 
-                    
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Game finished");
-                    alert.setHeaderText("The game has finished successfully!");
-                    alert.setContentText("You will return to the main menu");
-                    alert.getDialogPane().getStylesheets().add(getClass().getResource("/original/css/style.css").toExternalForm());
-                    alert.getDialogPane().getStyleClass().add("custom-alert");
-                    alert.showAndWait();
-
-                    next();
-                    
-                });
-                */
             }
             else {
-                /*
-                Platform.runLater(() -> {
-
-                    Alert alert = new Alert(Alert.AlertType.WARNING);
-                    alert.setTitle("Game was cancelled");
-                    alert.setHeaderText("All players disconnected");
-                    alert.setContentText("You will return to the main menu");
-                    alert.getDialogPane().getStylesheets().add(getClass().getResource("/original/css/style.css").toExternalForm());
-                    alert.getDialogPane().getStyleClass().add("custom-alert");
-                    alert.showAndWait();
-
-                    next();
-                });
-                */
+                // TODO : Avisar de juego terminado
             }
             
         });
@@ -353,7 +359,8 @@ public class InGameWindowController extends GenericController {
         _listPlayerStackPanes.forEach(stack -> stack.setVisible(false));
         _listImageCards.forEach(hbox -> hbox.setVisible(false));
         _listHandBet.forEach(hbox -> hbox.setVisible(false));
-        _listEquity.forEach(label -> label.setVisible(false));
+        _listHandBet.get(0).setOpacity(1);
+        _listEquity.forEach(label -> { label.setVisible(false); label.setText("0%");});
     }
 
     private void GUI_initializeCardStyle() { 
@@ -383,6 +390,32 @@ public class InGameWindowController extends GenericController {
         });
     }
 
+    private void GUI_initializeTimers() {
+
+        _listTimer = new HashMap<>();
+
+        _listTimer.put(0, List.of(rectFirstTimer0, rectSecondTimer0, rectThirdTimer0, rectFourthTimer0, rectFifthTimer0, rectSixthTimer0));
+        _listTimer.put(1, List.of(rectFirstTimer1, rectSecondTimer1, rectThirdTimer1, rectFourthTimer1, rectFifthTimer1, rectSixthTimer1));
+        _listTimer.put(2, List.of(rectFirstTimer2, rectSecondTimer2, rectThirdTimer2, rectFourthTimer2, rectFifthTimer2, rectSixthTimer2));
+        _listTimer.put(3, List.of(rectFirstTimer3, rectSecondTimer3, rectThirdTimer3, rectFourthTimer3, rectFifthTimer3, rectSixthTimer3));
+        _listTimer.put(4, List.of(rectFirstTimer4, rectSecondTimer4, rectThirdTimer4, rectFourthTimer4, rectFifthTimer4, rectSixthTimer4));
+        _listTimer.put(5, List.of(rectFirstTimer5, rectSecondTimer5, rectThirdTimer5, rectFourthTimer5, rectFifthTimer5, rectSixthTimer5));
+        _listTimer.put(6, List.of(rectFirstTimer6, rectSecondTimer6, rectThirdTimer6, rectFourthTimer6, rectFifthTimer6, rectSixthTimer6));
+        _listTimer.put(7, List.of(rectFirstTimer7, rectSecondTimer7, rectThirdTimer7, rectFourthTimer7, rectFifthTimer7, rectSixthTimer7));
+        _listTimer.put(8, List.of(rectFirstTimer8, rectSecondTimer8, rectThirdTimer8, rectFourthTimer8, rectFifthTimer8, rectSixthTimer8));
+
+        for(List<Rectangle> rectangles : _listTimer.values()) {
+            for(Rectangle r : rectangles) {
+                r.setVisible(false);
+            }
+        }
+    }
+
+    private void GUI_initializeTurnTimer() {
+        _turnTimerTotal = Integer.parseInt(_clientInfo.gameConfig._turnTimerPlayer);
+        _blockTime = _turnTimerTotal / TOTAL_BLOCKS;
+    }
+
     private void GUI_showWaitingPlayers(final List<PlayerInfo> players) {
 
         int myIndex = IntStream.range(0, players.size())
@@ -392,6 +425,7 @@ public class InGameWindowController extends GenericController {
 
         if(myIndex == -1){
             System.out.printf("We are not in the list! Something is wrong...\n");
+            NotificationManager.showError(Messages.Notifications.ERROR_NOT_IN_LIST);
             return;
         }
 
@@ -473,10 +507,12 @@ public class InGameWindowController extends GenericController {
         if(_swapCallToCheck) {
             System.out.printf("CHECK BUTTON\n");
             _commandQueue.offer(GameType.CHECK_ACTION_FULL);
+            //NotificationManager.showSuccess(Messages.Notifications.CHECK_ACTION_FULL);
         }
         else {
             System.out.printf("CALL BUTTON\n");
             _commandQueue.offer(GameType.CALL_ACTION_FULL);
+             //NotificationManager.showSuccess(Messages.Notifications.CALL_ACTION_FULL);
         }
     }
 
@@ -489,6 +525,7 @@ public class InGameWindowController extends GenericController {
 
         int amount = Integer.parseInt( labelMoney.getText() );
         _commandQueue.offer( String.format("%s %d", GameType.RAISE_ACTION_FULL, amount) );
+       // NotificationManager.showSuccess(Messages.Notifications.RAISE_ACTION_FULL + amount);
     }
 
     @FXML
@@ -533,9 +570,10 @@ public class InGameWindowController extends GenericController {
 
     @FXML
     private void seeEquity() {
-        
+        _equityVisible = btnEquity.isSelected();
+        imgSeeEquity.setImage(_equityVisible ? equityOn : equityOff);
+        GUI_putEquityToPlayer();
     }
-
 
     private boolean pokerGame(String name, Socket socket) {
 
@@ -563,12 +601,15 @@ public class InGameWindowController extends GenericController {
                     System.out.printf("Assigned role: %s\n", role.toString());
                     playerStartInfo(socket);
                     System.out.printf("Waiting for the game to start...\n");
+                    NotificationManager.showSuccess(Messages.Notifications.WAITING_GAME_START);
+                    
 
                     
                     // Player cards
                     System.out.printf("Waiting for my cards...\n");
                     playerCards[0] = PokerGame.receiveCard(input);
                     playerCards[1] = PokerGame.receiveCard(input);
+                    handleEquity(socket);
                     System.out.printf("Cards: %s %s\n", 
                         playerCards[0].toString(), playerCards[1].toString()
                     );
@@ -587,6 +628,7 @@ public class InGameWindowController extends GenericController {
                     tableCardValues[0] = PokerGame.receiveCard(input);  // First table card
                     tableCardValues[1] = PokerGame.receiveCard(input);  // Second table card
                     tableCardValues[2] = PokerGame.receiveCard(input);  // Third table card
+                    handleEquity(socket);
                     Platform.runLater(() -> {
                         GUI_showCard(tableCard0, tableCardValues[0]);
                         GUI_showCard(tableCard1, tableCardValues[1]);
@@ -602,6 +644,7 @@ public class InGameWindowController extends GenericController {
                     });
                     playRound(playerCards[0], playerCards[1], role, socket);
                     tableCardValues[3] = PokerGame.receiveCard(input);  // Fourth table card
+                    handleEquity(socket);
                     Platform.runLater(() -> {
                         GUI_showCard(tableCard3, tableCardValues[3]);
                     });
@@ -615,6 +658,7 @@ public class InGameWindowController extends GenericController {
                     });
                     playRound(playerCards[0], playerCards[1], role, socket);
                     tableCardValues[4] = PokerGame.receiveCard(input);  // fifth table card
+                    handleEquity(socket);
                     Platform.runLater(() -> {
                         GUI_showCard(tableCard4, tableCardValues[4]);
                     });
@@ -639,19 +683,24 @@ public class InGameWindowController extends GenericController {
                 catch (OnlyOnePlayerLeftException e) {
 
                     System.out.printf("There is only one player left!\n");
+                    NotificationManager.showError(Messages.Notifications.ERROR_ONLY_ONE_PLAYER_LEFT);
+                    
                     try {
                         endOfGame = showdown(socket);
                     }
                     catch(IOException ex) {
                         System.out.printf("Error receiving the rank after a fold exception: %s", ex.getMessage());
+                        NotificationManager.showError(Messages.Notifications.ERROR_RECEIVING_RANK + ex.getMessage());
                     }
                     catch(InterruptedException ex) {
                         System.out.printf("Game thread interrupted: %s\n", ex.getMessage());
+                        NotificationManager.showError(Messages.Notifications.ERROR_THREAD_INTERRUPTED + ex.getMessage());
                     }
 
                 }
                 catch(InterruptedException e) {
                     System.out.printf("Game thread interrupted: %s\n", e.getMessage());
+                    NotificationManager.showError(Messages.Notifications.ERROR_THREAD_INTERRUPTED + e.getMessage());
                 }
 
             }
@@ -663,11 +712,13 @@ public class InGameWindowController extends GenericController {
             }
             else {
                 System.out.printf("Error on client socket: %s\n", e.getMessage());
+                NotificationManager.showError(Messages.Notifications.ERROR_CLIENT_SOCKET + e.getMessage());
                 return false;
             }
         }
         catch(CancelGameException e) {
             System.out.printf("Game cancelled by server: %s\n", e.getMessage());
+            NotificationManager.showError(Messages.Notifications.ERROR_GAME_CANCELED_BY_SERVER + e.getMessage());
             return false;
         }
 
@@ -683,13 +734,14 @@ public class InGameWindowController extends GenericController {
         do {
 
             serverCode = SocketUtils.receiveInt(socket.getInputStream());
-
             if(serverCode == GameType.TURN_FORCED_SB) {
 
 				final int amountSB = SocketUtils.receiveInt(socket.getInputStream());
                 final int onBetMoney = SocketUtils.receiveInt(socket.getInputStream());
                 final int offBetMoney = SocketUtils.receiveInt(socket.getInputStream());
 				System.out.printf("Forced play as the small blind with %d chips\n", amountSB);
+                //NotificationManager.showSuccess(Messages.Notifications.TURN_FORCED_SB + amountSB);
+            
 
                 Platform.runLater(() -> {
                     GUI_putPlayerBet(_clientInfo.id, onBetMoney, offBetMoney, false);
@@ -706,7 +758,8 @@ public class InGameWindowController extends GenericController {
                 final int onBetMoney = SocketUtils.receiveInt(socket.getInputStream());
                 final int offBetMoney = SocketUtils.receiveInt(socket.getInputStream());
 				System.out.printf("Forced play as the big blind with %d chips\n", amountBB);
-
+                //NotificationManager.showSuccess(Messages.Notifications.TURN_FORCED_BB + amountBB);
+            
                 Platform.runLater(() -> {
                     GUI_putPlayerBet(_clientInfo.id, onBetMoney, offBetMoney, false);
                     if(role == PlayerRole.DEALER)  {
@@ -721,13 +774,15 @@ public class InGameWindowController extends GenericController {
                 Platform.runLater(() -> {
                     buttonsHolder.setVisible(false);
                     _listPlayerStackPanes.get(seatID).getStyleClass().remove("tourn-player-color");
+                    GUI_stopVisualTimer();
                 });
 
 			}
 			else if(serverCode == GameType.TURN_PLAY) {
 
 				System.out.printf("It's your turn to play!\n");
-
+                // NotificationManager.showSuccess(Messages.Notifications.TURN_PLAY);
+                
 				// Receive round info
 				final int sb = SocketUtils.receiveInt( socket.getInputStream() );
 				final int bb = SocketUtils.receiveInt( socket.getInputStream() );
@@ -740,10 +795,13 @@ public class InGameWindowController extends GenericController {
                     onBetMoney, offBetMoney
                 );
 
+                _commandQueue.clear();
+
                 // Do not allow to bet less than the current max bet
                 Platform.runLater(() -> {
                     buttonsHolder.setVisible(true);
-
+                    GUI_putTurnPlayer(_clientInfo.id);
+                    GUI_startVisualTimer(_clientInfo.id);
                     int sliderStep = Math.clamp(offBetMoney / 100, 1, offBetMoney);
                     sliderMoney.setMajorTickUnit( sliderStep );
                     sliderMoney.setMin( (double)maxBet );
@@ -752,12 +810,20 @@ public class InGameWindowController extends GenericController {
                     if(role == PlayerRole.DEALER)  {
                         GUI_putDealerButton(_clientInfo.id);
                     }
-                    GUI_putTurnPlayer(_clientInfo.id);
                 });
 
                 selectCommand(socket, sb, bb, maxBet, offBetMoney, onBetMoney);
+
+                Platform.runLater(() -> {
+                    buttonsHolder.setVisible(false);
+                    GUI_stopVisualTimer();
+                });
 			}
 			else if(serverCode == GameType.HAND_ENDS_BY_FOLD) {
+                Platform.runLater(() -> {
+                    buttonsHolder.setVisible(false);
+                    GUI_stopVisualTimer();
+                });
 				handEndsByFold = true;
 			}
             else if(serverCode == GameType.MY_PLAYER_STATUS) {
@@ -786,6 +852,11 @@ public class InGameWindowController extends GenericController {
             else if(serverCode == GameType.TURN_BEFORE_PLAY) {
                 int currentTurnPlayerId = SocketUtils.receiveInt( socket.getInputStream() );
                 GUI_putTurnPlayer(currentTurnPlayerId);
+
+                Platform.runLater(() -> {
+                    buttonsHolder.setVisible(false);
+                    GUI_stopVisualTimer();
+                });
             }
             else if(serverCode == GameType.TURN_OTHER_PLAYER) {
 
@@ -807,6 +878,8 @@ public class InGameWindowController extends GenericController {
                 );
 
                 Platform.runLater(() -> {
+                    GUI_stopVisualTimer();
+
                     GUI_putPlayerBet(otherPlayerID, otherPlayerOnBetMoney, otherPlayerOffBetMoney, otherPlayerIsFolded);
                     
                     int seatID = _playerSeatMap.get(otherPlayerID);
@@ -817,9 +890,6 @@ public class InGameWindowController extends GenericController {
                 });
 
             }
-            else if (serverCode == GameType.EQUITY_UPDATE) {
-                String equity = SocketUtils.receiveString(socket.getInputStream());
-            }
             else if(serverCode == GameType.TOTAL_POT) {
 
                 final int totalPot = SocketUtils.receiveInt( socket.getInputStream() );
@@ -829,24 +899,43 @@ public class InGameWindowController extends GenericController {
             }
             else if(serverCode == GameType.ERROR_GAME_CANCELS) {
                 System.out.printf("Game has been cancelled by the server!\n");
+                NotificationManager.showError(Messages.Notifications.ERROR_GAME_CANCELED_BY_SERVER);
+
+                Platform.runLater(() -> {
+                    buttonsHolder.setVisible(false);
+                    GUI_stopVisualTimer();
+                });
+
                 throw new CancelGameException();
             }
             else if(serverCode == GameType.ROUND_ENDS) {
                 System.out.printf("ROUND_ENDS received!\n");
+
+                Platform.runLater(() -> {
+                    buttonsHolder.setVisible(false);
+                    GUI_stopVisualTimer();
+                });
             }
             else {
 				System.out.printf("Unknown turn code %d\n", serverCode);
+                NotificationManager.showError(Messages.Notifications.ERROR_UNKNOWN_TURN_CODE + serverCode) ;
+			
 			}
 
         }
         while(serverCode != GameType.ROUND_ENDS && !handEndsByFold);
 		System.out.printf("Round has ended!\n\n");
+        //NotificationManager.showSuccess(Messages.Notifications.CONFIRMATION_ROUND_ENDS);
+            
 
-		if(handEndsByFold)
+		if(handEndsByFold) {
+            NotificationManager.showError(Messages.Notifications.ERROR_ONLY_ONE_PLAYER_LEFT);
+            Platform.runLater(() -> buttonsHolder.setVisible(false));
 			throw new OnlyOnePlayerLeftException();
+        }
     }
 
-    private boolean showdown(Socket socket) throws IOException, InterruptedException {
+    private boolean showdown(Socket socket) throws IOException, InterruptedException, CancelGameException {
 
         boolean gameEnds = false;
         int code;
@@ -895,6 +984,7 @@ public class InGameWindowController extends GenericController {
             }
             else {
                 System.out.printf("Unknown code %d in showdown!\n", code);
+                NotificationManager.showError(String.format(Messages.Notifications.ERROR_UNKNOWN_CODE_SHOWDOWN, code));
             }
             
         } 
@@ -930,7 +1020,17 @@ public class InGameWindowController extends GenericController {
                     });
                 }
 
-                String command = _commandQueue.take();
+                String command = _commandQueue.poll(_turnTimerTotal, TimeUnit.SECONDS);
+
+                if(command == null) {
+                    System.out.printf("No local command received before timeout.");
+                    Platform.runLater(() -> {
+                        buttonsHolder.setVisible(false);
+                        GUI_stopVisualTimer();
+                    });
+                    return;
+                }
+
                 String baseCommand = command.split(" ")[0];
 
                 System.out.printf("Full command received: %s\n", command);
@@ -971,6 +1071,7 @@ public class InGameWindowController extends GenericController {
                 }
                 else {
                     System.out.printf("Command %s not valid! Try again\n", command);
+                    NotificationManager.showError(String.format(Messages.Notifications.ERROR_COMMAND_NOT_VALID, command));
                     valid = false;
                 }
             }
@@ -982,10 +1083,12 @@ public class InGameWindowController extends GenericController {
         }
         catch(IOException e) {
             System.out.printf("Error sending the command: %s\n", e.getMessage());
+            NotificationManager.showError(Messages.Notifications.ERROR_SENDING_COMMAND + e.getMessage());
+                    
         }
     }
 
-    private void playerStartInfo(Socket socket) throws IOException {
+    private void playerStartInfo(Socket socket) throws IOException, CancelGameException {
 
         int code;
         do {
@@ -1040,6 +1143,8 @@ public class InGameWindowController extends GenericController {
             }
             else {
                 System.out.printf("Unknown code %d!\n", code);
+                NotificationManager.showError(Messages.Notifications.ERROR_UNKNOWN_CODE + code);
+             
             }
             
         } 
@@ -1070,6 +1175,8 @@ public class InGameWindowController extends GenericController {
 
         if(isShowdown && isWinner) {
             System.out.printf("Player %s is the winner of the hand!\n", nameLabel.getText());
+            NotificationManager.showSuccess(String.format(Messages.Notifications.CONFIRMATION_WINNER_GAME, nameLabel.getText()));
+             
             PauseTransition transition = new PauseTransition( Duration.seconds(3) );
 
             nameLabel.setText( nameLabel.getText() + " (Winner!)" );
@@ -1081,6 +1188,8 @@ public class InGameWindowController extends GenericController {
 
         if(isEliminated) {
             System.out.printf("Player %s has been eliminated from the game!\n", nameLabel.getText());
+             NotificationManager.showSuccess(String.format(Messages.Notifications.CONFIRMATION_PLAYER_ELIMINATED, nameLabel.getText()));
+             
             nameLabel.setText( nameLabel.getText() + " (Eliminated)" );
             _listPlayerStackPanes.get(seatID).setOpacity(0.4);
         }
@@ -1140,6 +1249,13 @@ public class InGameWindowController extends GenericController {
         imageView.setImage( cardImage );
     }
 
+    private void handleEquity(Socket socket) throws IOException {
+
+        int code = SocketUtils.receiveInt(socket.getInputStream());
+        _myEquity = SocketUtils.receiveString(socket.getInputStream());
+        Platform.runLater(this::GUI_putEquityToPlayer);
+    }
+
     private void GUI_putMyCards(int playerID, Card card1, Card card2) {
         int seatID = _playerSeatMap.get(playerID);
         ImageView leftCard = (ImageView) _listPaintCards.get(seatID * 2);
@@ -1191,10 +1307,115 @@ public class InGameWindowController extends GenericController {
         }
     }
 
-    private void GUI_putEquityToPlayer(String equity) {
-        _listEquity.get(0).setText(equity);
+    private void GUI_putEquityToPlayer() {
+        Label myEquityLabel = _listEquity.get(0);
+        
+        if(_equityVisible && _myEquity != null) {
+            myEquityLabel.setText(_myEquity);
+            myEquityLabel.setVisible(true);
+
+            double equityValue = Double.parseDouble(_myEquity.replace("%","").replace(",", "."))/100;
+            GUI_putColorStyleToEquity(myEquityLabel, equityValue);
+        }
+        else {
+            myEquityLabel.setVisible(false);
+        }
     }
 
+    private void GUI_putColorStyleToEquity(Label equityLabel, double equity) {
+
+        equityLabel.getStyleClass().removeAll(
+          "equity-green",
+          "equity-yellow",
+          "equity-red"  
+        );
+
+        if(equity >= 0.65) {
+            equityLabel.getStyleClass().add("equity-green");
+        }
+        else if(equity >= 0.35) {
+            equityLabel.getStyleClass().add("equity-yellow");
+        }
+        else{
+            equityLabel.getStyleClass().add("equity-red");
+        }
+
+    }
+
+    private void GUI_putPlayerTimer(int seatID, int secondsLeft) {
+        
+        List<Rectangle> rectangles = _listTimer.get(seatID);
+        if(rectangles == null)
+            return;
+        
+
+        final int blocksRemaining = Math.max(0, Math.min(TOTAL_BLOCKS, (int) Math.ceil(secondsLeft / (double) _blockTime)));
+        Platform.runLater(()-> {
+            for (int i = 0; i < rectangles.size(); i++) {
+                rectangles.get(i).setVisible(i < blocksRemaining);
+            }
+        });
+    }
+
+    private void GUI_resetPlayerTimer(int seatID) {
+        List<Rectangle> rectangles = _listTimer.get(seatID);
+        if(rectangles == null) return;
+
+        Platform.runLater(()->{
+            for (Rectangle r : rectangles) {
+                r.setVisible(true);
+            }
+        });
+    }
+
+    private synchronized void GUI_startVisualTimer(int playerID) {
+
+        GUI_stopVisualTimer();
+
+        Integer seatID = _playerSeatMap.get(playerID);
+        _timerPlayerId = playerID;
+
+        _turnEndTime = System.currentTimeMillis() + _turnTimerTotal * 1000L;
+
+        System.out.printf("Timer start for playerId=%d (%s client)\n", playerID, playerID == _clientInfo.id ? "local turn" : "remote turn");
+
+        GUI_resetPlayerTimer(seatID);
+
+        _task = _scheduler.scheduleAtFixedRate(()-> {
+
+            long now = System.currentTimeMillis();
+            long millisLeft = _turnEndTime - now;
+            int secondsLeft = (int) Math.ceil(Math.max(millisLeft, 0) / 1000.0);
+
+            GUI_putPlayerTimer(seatID, secondsLeft);
+
+            if(millisLeft < 0) {
+                GUI_stopVisualTimer();
+            }
+
+        }, 0, 200, TimeUnit.MILLISECONDS);
+    }
+
+    private synchronized void GUI_stopVisualTimer() {
+        
+        if(_task != null && !_task.isCancelled()) {
+            _task.cancel(true);
+            _task = null;
+        }
+
+        if(_timerPlayerId != null) {
+            Integer seatID = _playerSeatMap.get(_timerPlayerId);
+            System.out.printf("Timer stop for playerId=%d\n", _timerPlayerId);
+            if(seatID != null) {
+                GUI_clearTimer(seatID);
+            }
+        }
+        _timerPlayerId = null;
+    }
+
+    private synchronized void GUI_shutdownVisualTimer() {
+        _scheduler.shutdownNow();
+    }
 
     private void GUI_clearTableCards() {
         tableCard0.setImage(null);
@@ -1207,6 +1428,9 @@ public class InGameWindowController extends GenericController {
     private void GUI_clearPlayerBets() {
         _listOnBetMoney.forEach(label -> label.setVisible(false));
         _listHandBet.forEach(bet -> bet.setVisible(false));
+        _listHandBet.forEach(bet -> { bet.setVisible(false);  bet.setOpacity(1.0);});
+        _listPlayerStackPanes.forEach(pane -> pane.setOpacity(1.0));
+        _listImageCards.forEach(img -> img.setOpacity(1.0));
     }
 
     private void GUI_clearDealer() {
@@ -1217,7 +1441,15 @@ public class InGameWindowController extends GenericController {
         _listPlayerStackPanes.forEach(pane -> pane.getStyleClass().remove("tourn-player-color"));
     }
 
-    // private void GUI_clearEquity() {
-    //     _listEquity.forEach(label -> label.setVisible(false));
-    // }
+    private void GUI_clearTimer(int seatID) {
+        List<Rectangle> rectangles = _listTimer.get(seatID);
+        if(rectangles == null) return;
+
+        Platform.runLater(()->{
+            for (Rectangle r : rectangles) {
+                r.setVisible(false);
+            }
+        });
+    }
+    
 }

@@ -97,8 +97,6 @@ public class Game {
             Card randomCard2 = _deck.takeRandomCard();
             _playerList.shareOutCardsToSomePlayer(randomCard1, randomCard2);
         }
-
-        //updateEquity();
     }
 
     public void addCardToTable() throws CancelGameException {
@@ -121,8 +119,6 @@ public class Game {
                 sb.append(_tableCards[i].toString()).append(" ");
         }
         log.debug("Table cards: {}", sb.toString());
-
-        //updateEquity();
     }
 
     public void playHand() throws OnlyOnePlayerLeftException, CancelGameException {
@@ -236,7 +232,7 @@ public class Game {
         _tableCardsCounter = 0;
     }
 
-    private void updateEquity() {
+    public void updateEquity() throws CancelGameException{
 
         List<HandInfo> players = _playerList.getPlayerHandsInfo();
 
@@ -245,7 +241,7 @@ public class Game {
         Map<Integer, Double> equity =
             EquityCalculator.calculateEquity(players, _tableCards, _deck);
 
-        //_playerList.notifyEquityToPlayers(equity);
+        _playerList.notifyEquityToPlayers(equity);
     }
 
 }

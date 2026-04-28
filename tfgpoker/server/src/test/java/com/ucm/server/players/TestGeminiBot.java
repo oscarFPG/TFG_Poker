@@ -14,6 +14,7 @@ import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.common.gameobjects.Suit;
 import com.ucm.server.ServerMain;
+import com.ucm.server.exceptions.TurnTimeoutException;
 import com.ucm.server.gameobjects.Player;
 
 public class TestGeminiBot {
@@ -33,11 +34,18 @@ public class TestGeminiBot {
 
         player.notifyEquity(0.65);
 
-        String action = player.makePlay(5, 10, 10);
+        String action;
+        try {
+            action = player.makePlay(5, 10, 10);
+            
+            System.out.println("Preflop action: " + action);
 
-        System.out.println("Preflop action: " + action);
+            assertValidAction(action);
+        } catch (TurnTimeoutException e) {
+            e.printStackTrace();
+        }
 
-        assertValidAction(action);
+
     }
 
     // ---------------------- TEST 2: FLOP ----------------------
@@ -58,11 +66,18 @@ public class TestGeminiBot {
 
         player.notifyEquity(0.85);
 
-        String action = player.makePlay(5, 10, 20);
+        String action;
+        try {
+            action = player.makePlay(5, 10, 20);
 
-        System.out.println("Flop action: " + action);
+            System.out.println("Flop action: " + action);
 
-        assertValidAction(action);
+            assertValidAction(action);
+        } catch (TurnTimeoutException e) {
+            e.printStackTrace();
+        }
+
+        
     }
 
     // ---------------------- TEST 3: LOW EQUITY ----------------------
@@ -83,11 +98,18 @@ public class TestGeminiBot {
 
         player.notifyEquity(0.05);
 
-        String action = player.makePlay(5, 10, 20);
+        String action;
+        try {
+            action = player.makePlay(5, 10, 20);
 
-        System.out.println("Low equity action: " + action);
+            System.out.println("Low equity action: " + action);
 
-        assertValidAction(action);
+            assertValidAction(action);
+        } catch (TurnTimeoutException e) {
+            e.printStackTrace();
+        }
+
+        
     }
 
   

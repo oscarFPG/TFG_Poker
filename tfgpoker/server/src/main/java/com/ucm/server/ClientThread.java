@@ -108,6 +108,7 @@ public class ClientThread implements Runnable {
                         _gameConfig._dinamicBlinds = config._dinamicBlinds;
                         _gameConfig._levelDuration = config._levelDuration;
                         _gameConfig._hikePercentage = config._hikePercentage;
+                        _gameConfig._turnTimerPlayer = config._turnTimerPlayer;
                         _gameConfig._numBots1 = config._numBots1;   // Numero de instancias de bot gemini
                         _gameConfig._numBots2 = config._numBots2;   // Numero de instancias de bot llama
                         _gameConfig._numPlayers = config._numPlayers + 1; // + 1 porque cuenta el host

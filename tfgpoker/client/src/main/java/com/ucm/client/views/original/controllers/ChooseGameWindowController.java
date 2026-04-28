@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import com.ucm.client.utils.AlertManager;
+import com.ucm.client.utils.NotificationManager;
+import com.ucm.client.utils.Messages;
+
 import com.ucm.client.ClientInfo;
 import com.ucm.common.GameType;
 import com.ucm.common.PokerPreGame;
@@ -49,20 +53,24 @@ public class ChooseGameWindowController extends GenericController {
                 }
                 else {
                     System.out.printf("Server response: clientType unknown %d\n", clientType);
+                    NotificationManager.showError(Messages.Notifications.ERROR_CLIENT_TYPE + clientType);
                 }
 
                 chooseJoinGame();
             }
             else if(response == GameType.ERROR_GAME_NOT_JOINED) {
                 System.out.printf("Server response: Client cannot join!\n");
+                NotificationManager.showError(Messages.Notifications.ERROR_GAME_NOT_JOINED);
+
             }
 
         }
         catch (IOException e) {
-            System.out.printf("Error receiving response from server: %s\n", e.getMessage());    
+            System.out.printf("Error receiving response from server: %s\n", e.getMessage());   
+            NotificationManager.showError(Messages.Notifications.ERROR_RECEIVING_RESPONSE_SERVER + e.getMessage());
         }
-    }
 
+    }
     @FXML
     public void returnMainWindow() {
         back();
