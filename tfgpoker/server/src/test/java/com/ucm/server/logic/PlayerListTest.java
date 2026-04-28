@@ -84,10 +84,12 @@ public class PlayerListTest {
         assertEquals(PlayerRole.BIG_BLIND, player2.getRole());
 
         playerList.passTurn();
+        playerList.assignRolesToAllPlayers();
         assertEquals(PlayerRole.BIG_BLIND, player1.getRole());
         assertEquals(PlayerRole.SMALL_BLIND, player2.getRole());
 
         playerList.passTurn();
+        playerList.assignRolesToAllPlayers();
         assertEquals(PlayerRole.SMALL_BLIND, player1.getRole());
         assertEquals(PlayerRole.BIG_BLIND, player2.getRole());
     }
@@ -119,6 +121,7 @@ public class PlayerListTest {
                 roleIndex = (roleIndex + 1) % numPlayers;       // Treat as an circular array
             }
             playerList.passTurn();
+            playerList.assignRolesToAllPlayers();
 
         }
 

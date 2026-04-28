@@ -739,6 +739,7 @@ public class PlayerList implements Iterable<Node> {
                     receiverPlayer._player.notifyOwnState();
                 }
                 catch(Exception e) {
+
                     receiverPlayer._isDisconnected = true;
                     if( checkIfGameCancel() )
                         throw new CancelGameException();
@@ -755,6 +756,7 @@ public class PlayerList implements Iterable<Node> {
                         receiverPlayer._player.notifyOtherPlayerState(player._player);
                     }
                     catch(Exception e) {
+                        
                         receiverPlayer._isDisconnected = true;
                         if( checkIfGameCancel() )
                             throw new CancelGameException();
