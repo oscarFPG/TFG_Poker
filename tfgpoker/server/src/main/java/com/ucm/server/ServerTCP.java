@@ -23,11 +23,11 @@ import com.ucm.common.ClientStruct;
 import com.ucm.common.GameConfig;
 import com.ucm.common.GameType;
 import com.ucm.common.SocketUtils;
-import com.ucm.common.Spectator;
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.server.control.Controller;
 import com.ucm.server.exceptions.EvaluatorException;
 import com.ucm.server.logic.Game;
+import com.ucm.server.middleclasses.Spectator;
 
 
 public class ServerTCP {
@@ -89,7 +89,7 @@ public class ServerTCP {
         log.debug("--- Poker game ---");
 
         try {
-            Game game = new Game(players, bots, config);
+            Game game = new Game(players, bots, spectator, config);
             Controller controller = new Controller(game);
             controller.run();
         }
@@ -161,7 +161,6 @@ public class ServerTCP {
         return serverIP;
     }
 
-    
     private void cleanUp(final List<ClientStruct> players) {
 
         log.debug("Cleaning up server resources...");

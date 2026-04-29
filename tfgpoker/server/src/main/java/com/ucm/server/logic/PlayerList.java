@@ -21,6 +21,7 @@ import com.ucm.server.middleclasses.CommandResult;
 import com.ucm.server.middleclasses.HandInfo;
 import com.ucm.server.middleclasses.PlayerEvaluation;
 import com.ucm.server.middleclasses.PotDistribution;
+import com.ucm.server.middleclasses.Spectator;
 import com.ucm.server.managers.PotManager;
 
 
@@ -36,7 +37,7 @@ public class PlayerList implements Iterable<Node> {
     private int _totalPot;
     private PotManager _potManager;
     private Node _host;
-    private Node _spectator;
+    private Spectator _spectator;
 
 
     public PlayerList(int n) {
@@ -80,8 +81,8 @@ public class PlayerList implements Iterable<Node> {
         log.debug("Player {} added!", p.getPlayerName());
     }
 
-    public void addSpectator(Player p) {
-        _spectator = new Node(null, p, null);
+    public void addSpectator(Spectator p) {
+        _spectator = p;
     }
 
     public void assignHost(Player p) {
@@ -104,7 +105,7 @@ public class PlayerList implements Iterable<Node> {
             try {
                 current._player.receiveRole(PlayerRole.SMALL_BLIND);
                 if(_spectator != null)
-                    _spectator._player.notifyOtherPlayerState(current._player);
+                    _spectator.notifyOtherPlayerState(current._player);
 
                 log.debug("Player {} receives role {}", current._player.getPlayerName(), PlayerRole.SMALL_BLIND.name());
             }
@@ -117,7 +118,7 @@ public class PlayerList implements Iterable<Node> {
             try {
                 current._player.receiveRole(PlayerRole.BIG_BLIND);
                 if(_spectator != null)
-                    _spectator._player.notifyOtherPlayerState(current._player);
+                    _spectator.notifyOtherPlayerState(current._player);
 
                 log.debug("Player {} receives role {}", current._player.getPlayerName(), PlayerRole.BIG_BLIND.name());
             }
@@ -139,7 +140,7 @@ public class PlayerList implements Iterable<Node> {
                         currentRole = roles.removeFirst();
                         player._player.receiveRole(currentRole);
                         if(_spectator != null)
-                            _spectator._player.notifyOtherPlayerState(player._player);
+                            _spectator.notifyOtherPlayerState(player._player);
 
                         log.debug("Player {} receives role {}", player._player.getPlayerName(), currentRole.name());
                     }
@@ -195,6 +196,8 @@ public class PlayerList implements Iterable<Node> {
 
             pNode._player.putSmallBlindBet(sb);
             notifyOtherPlayerActionToAllPlayers(pNode._player);
+            if(_spectator != null)
+                _spectator.notifyOtherPlayerState(pNode._player);
 
             log.debug(
                 "Player {} puts {}$ as SMALL_BLIND. Now it has {}$", 
@@ -214,7 +217,9 @@ public class PlayerList implements Iterable<Node> {
 
             pNode._player.putBigBlindBet(bb);
             notifyOtherPlayerActionToAllPlayers(pNode._player);
-            
+            if(_spectator != null)
+                _spectator.notifyOtherPlayerState(pNode._player);
+
             log.debug(
                 "Player {} puts {}$ as BIG_BLIND. Now it has {}$", 
                 pNode._player.getPlayerName(), pNode._player.getMoneyOnBet(), pNode._player.getMoneyOffBet()
@@ -443,6 +448,9 @@ public class PlayerList implements Iterable<Node> {
                 }
             }
         }
+
+        if(_spectator != null)
+            _spectator.notifyTableCard(card);
 
     }
 

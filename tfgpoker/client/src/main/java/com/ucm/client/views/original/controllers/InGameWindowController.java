@@ -217,16 +217,22 @@ public class InGameWindowController extends GenericController {
 
         _gameThread = new Thread(() -> {
 
-            boolean ok = pokerGame(_clientInfo.name, _clientInfo.socket);
-            if(ok) {
-                System.out.printf("All OK! Game finished!\n");
-                NotificationManager.showSuccess(Messages.Notifications.CONFIRMATION_GAME_FINISHED);
+            if(_clientInfo.isHost && _clientInfo.gameConfig._joinedAsSpectator) {
+                spectateGame(_clientInfo.socket);
             }
             else {
-                NotificationManager.showError(Messages.Notifications.ERROR_GAME_CANCELED_BY_SERVER);
-                Platform.runLater(() -> {
-                    next();
-                });
+
+                boolean ok = pokerGame(_clientInfo.name, _clientInfo.socket);
+                if(ok) {
+                    System.out.printf("All OK! Game finished!\n");
+                    NotificationManager.showSuccess(Messages.Notifications.CONFIRMATION_GAME_FINISHED);
+                }
+                else {
+                    NotificationManager.showError(Messages.Notifications.ERROR_GAME_CANCELED_BY_SERVER);
+                    Platform.runLater(() -> {
+                        next();
+                    });
+                }
             }
             
         });
@@ -426,15 +432,36 @@ public class InGameWindowController extends GenericController {
                         .findFirst()
                         .orElse(-1);
 
-        if(myIndex == -1){
-            System.out.printf("We are not in the list! Something is wrong...\n");
-            NotificationManager.showError(Messages.Notifications.ERROR_NOT_IN_LIST);
+        _playerSeatMap = new HashMap<>(players.size());
+        if(myIndex == -1) {
+         
+            int seatIndex = 0;
+            for(int i = players.size() - 1; 0 <= i; i--) {
+
+                PlayerInfo p = players.get(i);
+                _playerSeatMap.put(p.id, seatIndex);
+
+                Label nameLabel = _listNameLabels.get(seatIndex);
+                Label moneyLabel = _listMoneyLabels.get(seatIndex);
+                StackPane playerStackPane = _listPlayerStackPanes.get(seatIndex);
+                HBox cardsHBox = _listImageCards.get(seatIndex);
+                HBox onBetHBox = _listHandBet.get(seatIndex);
+
+                nameLabel.setText(p.name);
+                moneyLabel.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
+                playerStackPane.setVisible(true);
+                cardsHBox.setVisible(true);
+                onBetHBox.setVisible(true);
+                GUI_getAvatarPosition(seatIndex, p.name);
+
+                seatIndex++;
+            }
+
             return;
         }
 
-        _playerSeatMap = new HashMap<>(players.size());
+        
         _playerSeatMap.put(myIndex, 0);
-
         GUI_getAvatarPosition(0, _clientInfo.name);
         playerName0.setText( _clientInfo.name );
         playerMoney0.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
@@ -578,6 +605,46 @@ public class InGameWindowController extends GenericController {
         GUI_putEquityToPlayer();
     }
 
+
+    private void spectateGame(Socket socket) {
+
+        int serverCode;
+        try {
+            
+            do {
+
+                serverCode = SocketUtils.receiveInt(socket.getInputStream());
+                if(serverCode == GameType.OTHER_PLAYER_STATUS) {
+
+                    int playerID = SocketUtils.receiveInt(socket.getInputStream());
+                    String player = SocketUtils.receiveString(socket.getInputStream());
+                    PlayerRole role = PokerGame.receivePlayerRole( socket.getInputStream() );
+                    boolean isFolded = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
+                    boolean isWinner = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
+                    boolean isEliminated = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
+                    int moneyOffBet = SocketUtils.receiveInt(socket.getInputStream());
+                    int moneyOnBet = SocketUtils.receiveInt(socket.getInputStream());
+
+                    Platform.runLater(() -> {
+                        GUI_updatePlayerInfo(playerID, role, moneyOnBet, moneyOffBet, isFolded, isWinner, isEliminated, true);
+                    });
+                }
+                else if(serverCode == GameType.TABLE_CARD) {
+
+                    Card card = PokerGame.receiveCard(socket.getInputStream());
+                    System.out.printf("Table card: %s", card.toLetterString());
+                }
+                else {
+                    System.out.printf("Server response %d unknown\n", serverCode);
+                }
+            }
+            while(serverCode != GameType.GAME_ENDS);
+
+        }
+        catch (IOException e) {
+            System.out.printf("Error spectating game: %s\n", e.getMessage());
+        }
+    }
 
     private boolean pokerGame(String name, Socket socket) {
 

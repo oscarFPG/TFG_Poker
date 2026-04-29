@@ -93,6 +93,7 @@ public class GameType {
     public static final int OTHER_PLAYER_STATUS = 312;
     public static final int PLAYER_STATUS_END = 313;
     public static final int NEW_ROUND = 314;
+    public static final int TABLE_CARD = 315;
     public static final int PLAYER_WINS_GAME = 330;
     public static final int PLAYER_LOSES_GAME = 331;
     public static final int TOTAL_POT = 332;

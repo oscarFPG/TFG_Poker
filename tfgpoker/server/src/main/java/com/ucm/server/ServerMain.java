@@ -10,11 +10,11 @@ import org.apache.logging.log4j.Logger;
 import com.ucm.server.control.Controller;
 import com.ucm.server.exceptions.EvaluatorException;
 import com.ucm.server.logic.Game;
+import com.ucm.server.middleclasses.Spectator;
 import com.ucm.common.BotStruct;
 import com.ucm.common.ClientStruct;
 import com.ucm.common.GameConfig;
 import com.ucm.common.GameType;
-import com.ucm.common.Spectator;
 import com.ucm.common.exceptions.CancelGameException;
 
 
@@ -52,7 +52,7 @@ public class ServerMain {
             GameConfig config = new GameConfig();
             config.reset();
 
-            Game game = new Game(players, bots, config);
+            Game game = new Game(players, bots, null, config);
             Controller controller = new Controller(game);
             controller.run();
             return; 

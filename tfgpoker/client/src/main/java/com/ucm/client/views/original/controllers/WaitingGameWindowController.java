@@ -250,13 +250,14 @@ public class WaitingGameWindowController extends GenericController {
                     NotificationManager.showError(Messages.Notifications.ERROR_MISSING_PLAYERS);
                 }
                 else {
-                    System.out.printf("Event %d unknown!\n", event);
+                    System.out.printf("Waiting phase: event %d unknown!\n", event);
                     NotificationManager.showError(Messages.Notifications.ERROR_UNKNOWN_EVENT);
                 }
             }
             System.out.printf("Game has to start!\n");
 
-            SocketUtils.sendInteger(output, GameType.CONFIRMATION_PLAYER_STARTS);
+            if(_clientInfo.isHost && _clientInfo.gameConfig._joinedAsSpectator)
+                SocketUtils.sendInteger(output, GameType.CONFIRMATION_PLAYER_STARTS);
 
             Platform.runLater(() -> {
                 next();
@@ -340,7 +341,7 @@ public class WaitingGameWindowController extends GenericController {
         int myIndex = IntStream.range(0, players.size())
                         .filter(i -> players.get(i).id == myID)
                         .findFirst()
-                        .orElse(players.size());
+                        .orElse(-1);
 
         if(myID == -1) {
          
@@ -412,6 +413,7 @@ public class WaitingGameWindowController extends GenericController {
         for(PlayerInfo cl : players) {
             System.out.printf("Player [%d]%s in waiting room\n", cl.id, cl.name);
         }
+        System.out.printf("\n");
     }
 
 }

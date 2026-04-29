@@ -17,7 +17,7 @@ import com.ucm.common.GameType;
 import com.ucm.common.PlayerInfo;
 import com.ucm.common.PokerPreGame;
 import com.ucm.common.SocketUtils;
-import com.ucm.common.Spectator;
+import com.ucm.server.middleclasses.Spectator;
 import com.ucm.server.players.GeminiLLM;
 import com.ucm.server.players.LlamaPokerLLM;
 
@@ -57,6 +57,7 @@ public class ClientThread implements Runnable {
         _gameConfig = config;
     }
 
+    
     @Override
     public void run() {
         
@@ -123,8 +124,8 @@ public class ClientThread implements Runnable {
                         _isHost = true;
                         if(_gameConfig._joinedAsSpectator) {
                             _playerID = -1;
-                            _spectator.name = _playerName;
-                            _spectator.socket = _socket;
+                            _spectator._name = _playerName;
+                            _spectator._socket = _socket;
                         }
                         else {
                             _playerID = _id.getAndIncrement();
@@ -165,7 +166,7 @@ public class ClientThread implements Runnable {
                     
                     int playersCounter = _roomPlayerList.size() + _roomBotsList.size();
 
-                    if(_spectator.socket != null || 0 < playersCounter) {
+                    if(_spectator._socket != null || 0 < playersCounter) {
 
                         SocketUtils.sendInteger(output, GameType.CONFIRMATION_WAITING_GAME);
                         PokerPreGame.sendGameConfigToJoinedPlayer(_gameConfig, output);
@@ -197,6 +198,9 @@ public class ClientThread implements Runnable {
                     synchronized(_roomPlayerList) {
 
                         if(2 <= _roomPlayerList.size() + _roomBotsList.size()) {
+
+                            if(_spectator != null)
+                                SocketUtils.sendInteger(output, GameType.CONFIRMATION_GAME_STARTS);
 
                             for(ClientThread ct : _roomPlayerList) {
                                 SocketUtils.sendInteger(ct._socket.getOutputStream(), GameType.CONFIRMATION_GAME_STARTS);
@@ -258,14 +262,14 @@ public class ClientThread implements Runnable {
 
                     if(_spectator != null) {
 
-                        SocketUtils.sendInteger(_spectator.socket.getOutputStream(), GameType.EVENT_PLAYER_JOINED);
-                        SocketUtils.sendInteger(_spectator.socket.getOutputStream(), roomSize);
+                        SocketUtils.sendInteger(_spectator._socket.getOutputStream(), GameType.EVENT_PLAYER_JOINED);
+                        SocketUtils.sendInteger(_spectator._socket.getOutputStream(), roomSize);
                         for (ClientThread ct : _roomPlayerList) {
-                            PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(ct._playerID, ct._playerName), _spectator.socket);
+                            PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(ct._playerID, ct._playerName), _spectator._socket);
                             log.debug("Player {} on waiting room", ct._playerName);
                         }
                         for(BotStruct bs : _roomBotsList) {
-                            PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(bs.matchId(), bs.botName()), _spectator.socket);
+                            PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(bs.matchId(), bs.botName()), _spectator._socket);
                             log.debug("Bot {} on waiting room", bs.botName());
                         }
                     }

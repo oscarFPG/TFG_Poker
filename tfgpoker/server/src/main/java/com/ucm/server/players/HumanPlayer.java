@@ -195,6 +195,7 @@ public class HumanPlayer implements IPlayerNotificator {
     @Override
     public void notifyGameLoser() throws IOException {
         if(Game.DEBUG_PLAYERS) return;
+        
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.PLAYER_LOSES_GAME);
     }
 
