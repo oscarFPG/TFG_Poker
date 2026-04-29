@@ -36,6 +36,8 @@ public class PlayerList implements Iterable<Node> {
     private int _totalPot;
     private PotManager _potManager;
     private Node _host;
+    private Node _spectator;
+
 
     public PlayerList(int n) {
         _first = null;
@@ -46,6 +48,7 @@ public class PlayerList implements Iterable<Node> {
         _totalPot = 0;
         _potManager = new PotManager(n);
         _host = null;
+        _spectator = null;
     }
 
     
@@ -77,6 +80,10 @@ public class PlayerList implements Iterable<Node> {
         log.debug("Player {} added!", p.getPlayerName());
     }
 
+    public void addSpectator(Player p) {
+        _spectator = new Node(null, p, null);
+    }
+
     public void assignHost(Player p) {
         _host = new Node(null, p,null);
     }
@@ -96,6 +103,9 @@ public class PlayerList implements Iterable<Node> {
             Node current = _first;
             try {
                 current._player.receiveRole(PlayerRole.SMALL_BLIND);
+                if(_spectator != null)
+                    _spectator._player.notifyOtherPlayerState(current._player);
+
                 log.debug("Player {} receives role {}", current._player.getPlayerName(), PlayerRole.SMALL_BLIND.name());
             }
             catch (Exception e) {
@@ -106,6 +116,9 @@ public class PlayerList implements Iterable<Node> {
             
             try {
                 current._player.receiveRole(PlayerRole.BIG_BLIND);
+                if(_spectator != null)
+                    _spectator._player.notifyOtherPlayerState(current._player);
+
                 log.debug("Player {} receives role {}", current._player.getPlayerName(), PlayerRole.BIG_BLIND.name());
             }
             catch (Exception e) {
@@ -125,10 +138,14 @@ public class PlayerList implements Iterable<Node> {
                     try {
                         currentRole = roles.removeFirst();
                         player._player.receiveRole(currentRole);
+                        if(_spectator != null)
+                            _spectator._player.notifyOtherPlayerState(player._player);
+
                         log.debug("Player {} receives role {}", player._player.getPlayerName(), currentRole.name());
                     }
                     catch (Exception e) {
-                        if(checkIfGameCancel())
+
+                        if( checkIfGameCancel() )
                             throw new CancelGameException();
                     }
                 }
@@ -178,6 +195,7 @@ public class PlayerList implements Iterable<Node> {
 
             pNode._player.putSmallBlindBet(sb);
             notifyOtherPlayerActionToAllPlayers(pNode._player);
+
             log.debug(
                 "Player {} puts {}$ as SMALL_BLIND. Now it has {}$", 
                 pNode._player.getPlayerName(), pNode._player.getMoneyOnBet(), pNode._player.getMoneyOffBet()
@@ -196,6 +214,7 @@ public class PlayerList implements Iterable<Node> {
 
             pNode._player.putBigBlindBet(bb);
             notifyOtherPlayerActionToAllPlayers(pNode._player);
+            
             log.debug(
                 "Player {} puts {}$ as BIG_BLIND. Now it has {}$", 
                 pNode._player.getPlayerName(), pNode._player.getMoneyOnBet(), pNode._player.getMoneyOffBet()

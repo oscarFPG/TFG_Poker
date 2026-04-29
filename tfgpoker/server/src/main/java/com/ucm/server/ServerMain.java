@@ -14,6 +14,7 @@ import com.ucm.common.BotStruct;
 import com.ucm.common.ClientStruct;
 import com.ucm.common.GameConfig;
 import com.ucm.common.GameType;
+import com.ucm.common.Spectator;
 import com.ucm.common.exceptions.CancelGameException;
 
 
@@ -66,11 +67,12 @@ public class ServerMain {
 
                 List<ClientStruct> players = server.getRoomPlayers();
                 List<BotStruct> bots = server.getRoomBots();
+                Spectator spectator = server.getSpectator();
                 GameConfig config = server.getGameConfigDeepCopy();
                 log.debug("Pregame ended!");
 
                 log.debug("Poker game starting!");
-                server.startGame(players, bots, config);
+                server.startGame(players, bots, spectator, config);
                 log.debug("Poker game finished!");
             }
             catch(IOException | InterruptedException e) {

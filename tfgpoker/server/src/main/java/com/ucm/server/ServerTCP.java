@@ -23,6 +23,7 @@ import com.ucm.common.ClientStruct;
 import com.ucm.common.GameConfig;
 import com.ucm.common.GameType;
 import com.ucm.common.SocketUtils;
+import com.ucm.common.Spectator;
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.server.control.Controller;
 import com.ucm.server.exceptions.EvaluatorException;
@@ -40,17 +41,19 @@ public class ServerTCP {
 
     private List<ClientThread> _roomPlayers;
     private List<BotStruct> _roomBots;
+    private Spectator _spectator;
     private GameConfig _gameConfig;
 
 
     public ServerTCP(final int port) throws IOException, InterruptedException {
         _serverIP = showServerIP();
         _serverSocket = new ServerSocket(port);
-        _executor = Executors.newFixedThreadPool(GameType.MAX_PLAYERS);
+        _executor = Executors.newFixedThreadPool(GameType.MAX_PLAYERS + 1); // Full poker game(9 players) + 1 spectator
         _idGenerator = new AtomicInteger(0);
 
         _roomPlayers = Collections.synchronizedList( new ArrayList<>() );
         _roomBots = Collections.synchronizedList( new ArrayList<>() );
+        _spectator = new Spectator(null, null);
         _gameConfig = new GameConfig();
 
         log.debug("Server public IP: {}", _serverIP);
@@ -67,7 +70,7 @@ public class ServerTCP {
                 Socket socket = _serverSocket.accept();
                 ClientThread connectedClient = new ClientThread(
                     socket, _serverSocket, _idGenerator,    // Server properties
-                    _roomPlayers, _roomBots,    // Players and bot list
+                    _roomPlayers, _roomBots, _spectator,    // Player list, bot list and spectator(optional)
                     _gameConfig     // Game configuration
                 );
                _executor.execute( connectedClient );
@@ -81,7 +84,7 @@ public class ServerTCP {
         log.debug("Terminating pregame phase...");
     }
 
-    public void startGame(final List<ClientStruct> players, final List<BotStruct> bots, final GameConfig config) {
+    public void startGame(final List<ClientStruct> players, final List<BotStruct> bots, final Spectator spectator, final GameConfig config) {
 
         log.debug("--- Poker game ---");
 
@@ -132,6 +135,10 @@ public class ServerTCP {
 
     public List<BotStruct> getRoomBots () {
         return new ArrayList<>(_roomBots);
+    }
+
+    public Spectator getSpectator() {
+        return _spectator;
     }
 
     public GameConfig getGameConfigDeepCopy() {

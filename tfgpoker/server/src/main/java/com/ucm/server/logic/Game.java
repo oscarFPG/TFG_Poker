@@ -200,9 +200,20 @@ public class Game {
 
             HumanPlayer hp = new HumanPlayer(cs.socket());
             Player p = new Player(id, cs.name(), config._initialMoney, hp);
-            _playerList.addPlayer( p );
-            if( cs.isHost() )
+            
+            if( cs.isHost() ) {
                 _playerList.assignHost(p);
+
+                if(config._joinedAsSpectator) {
+                    _playerList.addSpectator(p);    // Host can be joined as a spectator
+                    log.debug("Player {} joins as a spectator!", cs.name());
+                }
+                else
+                    _playerList.addPlayer( p );     // Host can be joined as an active player
+            }
+            else {
+                _playerList.addPlayer( p );
+            }
 
             ++id;
         }
@@ -232,15 +243,14 @@ public class Game {
         _tableCardsCounter = 0;
     }
 
-    public void updateEquity() throws CancelGameException{
+    public void updateEquity() throws CancelGameException {
 
         List<HandInfo> players = _playerList.getPlayerHandsInfo();
+        if (players.size() <= 1)
+            return; 
 
-        if (players.size() <= 1) return; 
 
-        Map<Integer, Double> equity =
-            EquityCalculator.calculateEquity(players, _tableCards, _deck);
-
+        Map<Integer, Double> equity = EquityCalculator.calculateEquity(players, _tableCards, _deck);
         _playerList.notifyEquityToPlayers(equity);
     }
 
