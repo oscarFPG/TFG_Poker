@@ -144,14 +144,13 @@ public class WaitingGameWindowController extends GenericController {
     
         _stage.setOnCloseRequest(event -> {
 
-            System.out.printf("Intentando cerrar!\n");
             try {
                 _clientInfo.socket.close();
+                System.out.printf("Connection closed by user before closing the window!\n"); 
             }
             catch (IOException e) {
-                System.out.printf("Cerrando sockets!\n");    
+                System.out.printf("Minor error closing client socket!\n");    
             }
-            System.out.printf("Cerrado ¿?\n");
         });
 
     }
@@ -254,10 +253,8 @@ public class WaitingGameWindowController extends GenericController {
                     NotificationManager.showError(Messages.Notifications.ERROR_UNKNOWN_EVENT);
                 }
             }
-            System.out.printf("Game has to start!\n");
-
-            if(_clientInfo.isHost && _clientInfo.gameConfig._joinedAsSpectator)
-                SocketUtils.sendInteger(output, GameType.CONFIRMATION_PLAYER_STARTS);
+            System.out.printf("Game ready to start!\n");
+            SocketUtils.sendInteger(output, GameType.CONFIRMATION_PLAYER_STARTS);
 
             Platform.runLater(() -> {
                 next();

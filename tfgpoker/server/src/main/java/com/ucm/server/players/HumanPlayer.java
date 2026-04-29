@@ -2,13 +2,13 @@ package com.ucm.server.players;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.Scanner;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ucm.common.GameType;
-import com.ucm.common.PokerGame;
 import com.ucm.common.SocketUtils;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
@@ -16,7 +16,6 @@ import com.ucm.server.exceptions.TurnTimeoutException;
 import com.ucm.server.interfaces.IPlayerInfo;
 import com.ucm.server.interfaces.IPlayerNotificator;
 import com.ucm.server.logic.Game;
-import com.ucm.server.logic.Timer;
 
 
 public class HumanPlayer implements IPlayerNotificator {
@@ -60,13 +59,12 @@ public class HumanPlayer implements IPlayerNotificator {
 
         _socket.setSoTimeout(60_000);
 
+        String commandInput = null;
         try {
-            String commandInput = SocketUtils.receiveString( _socket.getInputStream() );
+            commandInput = SocketUtils.receiveString( _socket.getInputStream() );
             log.debug("Command received from player {}: {}", player.getPlayerName(), commandInput);
-
-            return commandInput;
         }
-        catch(java.net.SocketTimeoutException e) {
+        catch(SocketTimeoutException e) {
             log.warn("Player {} turn timeout", player.getPlayerName());
             throw new TurnTimeoutException();
         }
@@ -74,6 +72,7 @@ public class HumanPlayer implements IPlayerNotificator {
             _socket.setSoTimeout(0);
         }
         
+        return commandInput;
     }
 
     @Override
@@ -244,7 +243,6 @@ public class HumanPlayer implements IPlayerNotificator {
         SocketUtils.sendString(_socket.getOutputStream(), equityStr);
     }
 
-
     @Override
     public void notifyCurrentTurnPlayer(IPlayerInfo player) throws IOException {
         if(Game.DEBUG_PLAYERS) return;
@@ -252,4 +250,5 @@ public class HumanPlayer implements IPlayerNotificator {
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_BEFORE_PLAY);
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getPlayerId());
     }
+
 }

@@ -69,7 +69,10 @@ public class ClientThread implements Runnable {
             while (clientWaitingGame) {
                 
                 int request = SocketUtils.receiveInt(input);
-                log.debug("Received request: {}", request);
+                if(_playerName == null)
+                    log.debug("Received request: {}", request);
+                else
+                    log.debug("Received request by {}: {}", _playerName, request);
 
                 switch (request) {
                 case GameType.PETITION_PLAYER_NAME:
