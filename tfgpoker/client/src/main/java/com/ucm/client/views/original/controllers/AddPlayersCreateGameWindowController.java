@@ -77,7 +77,7 @@ public class AddPlayersCreateGameWindowController extends GenericController  {
     }
 
     private int getMaxRemainingPlayers() {
-        int totalBots = _clientInfo.gameConfig._numBots1 + _clientInfo.gameConfig._numBots2;
+        int totalBots = _clientInfo.gameConfig._botsByType.values().stream().mapToInt(Integer::intValue).sum();
         return MAX_NUM_PLAYERS - totalBots;
     }
 

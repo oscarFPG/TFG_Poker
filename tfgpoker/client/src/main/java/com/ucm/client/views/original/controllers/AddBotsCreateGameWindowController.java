@@ -1,13 +1,18 @@
 package com.ucm.client.views.original.controllers;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.ucm.client.ClientInfo;
+import com.ucm.common.BotDescriptor;
+import com.ucm.common.BotRegistry;
 import com.ucm.common.GameType;
 import com.ucm.common.SocketUtils;
 
 import javafx.animation.RotateTransition;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
@@ -24,11 +29,7 @@ public class AddBotsCreateGameWindowController extends GenericController {
 
     private static final int MAX_NUM_BOTS = 8;
 
-    SpinnerValueFactory.IntegerSpinnerValueFactory valueFactoryBot1;
-
-    SpinnerValueFactory.IntegerSpinnerValueFactory valueFactoryBot2;
-
-    SpinnerValueFactory.IntegerSpinnerValueFactory valueFactoryBot3;
+    private final List<BotCardController> botCards = new ArrayList<>();
 
     @FXML
     private Button btnBackChooseGame;
@@ -42,160 +43,52 @@ public class AddBotsCreateGameWindowController extends GenericController {
     @FXML
     private Button btnStartAddBots;
 
-    
     @FXML
-    private Spinner<Integer> spinnerBot2;
-    @FXML
-    private StackPane cardInfoBot2;
-    @FXML
-    private VBox cardFrontBot2;
-    @FXML
-    private StackPane cardBackBot2;
-    private boolean isFlippedBot2 = false;
-
+    private javafx.scene.layout.HBox botsContainer;
 
     @Override
     protected void onViewShown() {
         
         btnStartAddBots.setDisable(true);
-        initializeSpinners();
+
+        botsContainer.getChildren().clear();
+        botCards.clear();
+
         boolean allowBots = _clientInfo.gameConfig._allowBots;
-        spinnerBot1.setDisable(!allowBots);
-        spinnerBot2.setDisable(!allowBots);
-        cardBackBot1.setVisible(false);
-        cardBackBot2.setVisible(false);
-        if(!allowBots) {
-            valueFactoryBot1.setValue(0);
-            valueFactoryBot2.setValue(0);
+
+        for(BotDescriptor bot: BotRegistry.getAvailableBots()) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/botCard.fxml"));
+
+                StackPane card = loader.load();
+                BotCardController controller = loader.getController();
+                controller.setup(bot, MAX_NUM_BOTS, allowBots);
+                int previousValue= _clientInfo.gameConfig.getBotCount(bot.botId());
+                controller.setInitialValue(previousValue);
+                controller.setOnValueChanged(this::updateSpinners);
+
+                botCards.add(controller);
+                botsContainer.getChildren().add(card);
+            }
+            catch(IOException e) {
+                e.printStackTrace();
+            }
+
+            updateSpinners();
         }
-    }
-
-    private void initializeSpinners() {
-        valueFactoryBot1 = new SpinnerValueFactory.IntegerSpinnerValueFactory(MIN_NUM_BOTS, MAX_NUM_BOTS, _clientInfo.gameConfig._numBots1);
-        valueFactoryBot2 = new SpinnerValueFactory.IntegerSpinnerValueFactory(MIN_NUM_BOTS, MAX_NUM_BOTS, _clientInfo.gameConfig._numBots2);
-        spinnerBot1.setValueFactory(valueFactoryBot1);
-        spinnerBot2.setValueFactory(valueFactoryBot2);
-        spinnerBot1.valueProperty().addListener((obs, oldValue, newValue) -> onSpinnerChanged());
-        spinnerBot2.valueProperty().addListener((obs, oldValue, newValue) -> onSpinnerChanged());
-        updateSpinners();
-    }
-
-    private void onSpinnerChanged() {
-        updateSpinners();
     }
 
     private void updateSpinners() {
-        int bot1 = spinnerBot1.getValue();
-        int bot2 = spinnerBot2.getValue();
-        int totalBots = bot1 + bot2;
-        int remainingBots = MAX_NUM_BOTS - totalBots;
-        valueFactoryBot1.setMax(bot1 + remainingBots);
-        valueFactoryBot2.setMax(bot2 + remainingBots);
-    }
-
-    @FXML
-    private void flipCardBot1() {
-
-        if (!isFlippedBot1) {
-
-            RotateTransition first = new RotateTransition(Duration.millis(350), cardFrontBot1);
-            first.setFromAngle(0);
-            first.setToAngle(90);
-            first.setAxis(Rotate.Y_AXIS);
-            first.setInterpolator(javafx.animation.Interpolator.EASE_IN);
-
-            RotateTransition second = new RotateTransition(Duration.millis(200), cardBackBot1);
-            second.setFromAngle(-90);
-            second.setToAngle(0);
-            second.setAxis(Rotate.Y_AXIS);
-            first.setInterpolator(javafx.animation.Interpolator.EASE_OUT);
-
-            first.setOnFinished(e -> {
-                cardFrontBot1.setVisible(false);
-                cardBackBot1.setVisible(true);
-                second.play();
-            });
-
-            first.play();
-
-        } else {
-
-            RotateTransition first = new RotateTransition(Duration.millis(350), cardBackBot1);
-            first.setFromAngle(0);
-            first.setToAngle(90);
-            first.setAxis(Rotate.Y_AXIS);
-            first.setInterpolator(javafx.animation.Interpolator.EASE_IN);
-
-            RotateTransition second = new RotateTransition(Duration.millis(200), cardFrontBot1);
-            second.setFromAngle(-90);
-            second.setToAngle(0);
-            second.setAxis(Rotate.Y_AXIS);
-            first.setInterpolator(javafx.animation.Interpolator.EASE_OUT);
-
-            first.setOnFinished(e -> {
-                cardBackBot1.setVisible(false);
-                cardFrontBot1.setVisible(true);
-                second.play();
-            });
-
-            first.play();
+        int totalBots = botCards.stream().mapToInt(BotCardController::getValue).sum();
+        int remaining = MAX_NUM_BOTS - totalBots;
+        for(BotCardController card : botCards) {
+            Spinner<Integer> spinner = card.getSpinner();
+            int current = spinner.getValue();
+            SpinnerValueFactory.IntegerSpinnerValueFactory vf = (SpinnerValueFactory.IntegerSpinnerValueFactory) spinner.getValueFactory();
+            vf.setMax(current + remaining);
         }
-
-        isFlippedBot1 = !isFlippedBot1;
     }
-
-    @FXML
-    private void flipCardBot2() {
-
-        if (!isFlippedBot2) {
-
-            RotateTransition first = new RotateTransition(Duration.millis(350), cardFrontBot2);
-            first.setFromAngle(0);
-            first.setToAngle(90);
-            first.setAxis(Rotate.Y_AXIS);
-            first.setInterpolator(javafx.animation.Interpolator.EASE_IN);
-
-            RotateTransition second = new RotateTransition(Duration.millis(200), cardBackBot2);
-            second.setFromAngle(-90);
-            second.setToAngle(0);
-            second.setAxis(Rotate.Y_AXIS);
-            first.setInterpolator(javafx.animation.Interpolator.EASE_OUT);
-
-            first.setOnFinished(e -> {
-                cardFrontBot2.setVisible(false);
-                cardBackBot2.setVisible(true);
-                second.play();
-            });
-
-            first.play();
-
-        } else {
-
-            RotateTransition first = new RotateTransition(Duration.millis(350), cardBackBot2);
-            first.setFromAngle(0);
-            first.setToAngle(90);
-            first.setAxis(Rotate.Y_AXIS);
-            first.setInterpolator(javafx.animation.Interpolator.EASE_IN);
-
-            RotateTransition second = new RotateTransition(Duration.millis(200), cardFrontBot2);
-            second.setFromAngle(-90);
-            second.setToAngle(0);
-            second.setAxis(Rotate.Y_AXIS);
-            first.setInterpolator(javafx.animation.Interpolator.EASE_OUT);
-
-            first.setOnFinished(e -> {
-                cardBackBot2.setVisible(false);
-                cardFrontBot2.setVisible(true);
-                second.play();
-            });
-
-            first.play();
-        }
-
-        isFlippedBot2 = !isFlippedBot2;
-    }
-
-
+ 
     @FXML
     public void returnChooseGame() {
         backWindow();
@@ -212,8 +105,11 @@ public class AddBotsCreateGameWindowController extends GenericController {
     }
 
     private void saveAddBotsConfig() {
-        _clientInfo.gameConfig._numBots1 = spinnerBot1.getValue();
-        _clientInfo.gameConfig._numBots2 = spinnerBot2.getValue();
+        _clientInfo.gameConfig._botsByType.clear();
+
+        for(BotCardController card : botCards) {
+            _clientInfo.gameConfig.setBotCount(card.getBotId(), card.getValue());
+        }
     }
 
     @Override

@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.ucm.common.BotRegistry;
 import com.ucm.common.BotStruct;
 import com.ucm.common.GameConfig;
 import com.ucm.common.GameType;
@@ -109,8 +110,8 @@ public class ClientThread implements Runnable {
                         _gameConfig._levelDuration = config._levelDuration;
                         _gameConfig._hikePercentage = config._hikePercentage;
                         _gameConfig._turnTimerPlayer = config._turnTimerPlayer;
-                        _gameConfig._numBots1 = config._numBots1;   // Numero de instancias de bot gemini
-                        _gameConfig._numBots2 = config._numBots2;   // Numero de instancias de bot llama
+                        _gameConfig._botsByType.clear();
+                        _gameConfig._botsByType.putAll(config._botsByType);
                         _gameConfig._numPlayers = config._numPlayers + 1; // + 1 porque cuenta el host
                         _gameConfig._selectedTable = config._selectedTable;
                         _gameConfig._selectedCard = config._selectedCard;
@@ -119,12 +120,16 @@ public class ClientThread implements Runnable {
                         _playerID = _id.getAndIncrement();
                         _roomPlayerList.add(this);
 
-                        for (int i = 0; i < _gameConfig._numBots1; i++) {
-                           _roomBotsList.add( new BotStruct(_id.getAndIncrement(), GameType.BOT_GEMINI, GeminiLLM.NAME) );
-                        }
-                        for (int i = 0; i < _gameConfig._numBots2; i++) {
-                            int instance = _id.getAndIncrement();
-                           _roomBotsList.add( new BotStruct(instance, GameType.BOT_LLAMA, LlamaPokerLLM.MODEL_NAME + "#" + instance) );
+                        for( var entry : _gameConfig._botsByType.entrySet()) {
+                            int botId = entry.getKey();
+                            int amount = entry.getValue();
+
+                            for(int i = 0; i < amount; i++) {
+                                int botIdentifier = _id.getAndIncrement();
+                                String botName = BotRegistry.getBotName(botId, botIdentifier);
+
+                                _roomBotsList.add(new BotStruct(botIdentifier, botId, botName));
+                            }
                         }
 
                         SocketUtils.sendInteger(output, GameType.CONFIRMATION_WAITING_GAME);
@@ -135,14 +140,21 @@ public class ClientThread implements Runnable {
                         showPlayersInRoom();
                         broadcastPlayerJoined();
 
+                        StringBuilder botsInfo = new StringBuilder();
+                        _gameConfig._botsByType.forEach((id, count) ->
+                            botsInfo.append("[botId=")
+                                .append(id)
+                                .append(", count=")
+                                .append(count)
+                                .append("] ")
+                        );
                         log.debug("Configuration valid!");
-                        log.debug("Room {}: Name=[{}], UserName=[{}], AllowBots=[{}], Bots Gemini=[{}], Bots Llama=[{}]",
+                        log.debug("Room {}: Name=[{}], UserName=[{}], AllowBots=[{}], Bots configured: {}",
                             _gameConfig._roomId,
                             _gameConfig._roomName,
                             _gameConfig._userName,
                             _gameConfig._allowBots,
-                            _gameConfig._numBots1,
-                            _gameConfig._numBots2
+                            botsInfo.length() == 0 ? "none" : botsInfo.toString()
                         );
                     }
 

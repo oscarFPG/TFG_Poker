@@ -1,5 +1,8 @@
 package com.ucm.common;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class GameConfig {
     
     private static final int DEFAULT_INITIAL_MONEY = 100;
@@ -26,8 +29,7 @@ public class GameConfig {
     /**
      * Variables para crear partida: Add bots
     */
-    public int _numBots1 = DEFAULT_NUM_BOTS;
-    public int _numBots2 = DEFAULT_NUM_BOTS;
+    public Map<Integer, Integer> _botsByType = new HashMap<>();
     /**
      * Variables para crear partida: Add players
     */
@@ -58,8 +60,7 @@ public class GameConfig {
         _blindsValue = (other._blindsValue != null) ? String.copyValueOf(other._blindsValue.toCharArray()) : null;
         _levelDuration = (other._levelDuration != null) ? String.copyValueOf(other._levelDuration.toCharArray()) : null;
         _hikePercentage = (other._hikePercentage != null) ? String.copyValueOf(other._hikePercentage.toCharArray()) : null;
-        _numBots1 = other._numBots1;
-        _numBots2 = other._numBots2;
+        _botsByType = new HashMap<>(other._botsByType);
         _numPlayers = other._numPlayers;
         _selectedTable = (other._selectedTable != null) ? String.copyValueOf(other._selectedTable.toCharArray()) : null;
         _selectedCard = (other._selectedCard != null) ? String.copyValueOf(other._selectedCard.toCharArray()) : null;
@@ -77,15 +78,31 @@ public class GameConfig {
         _dinamicBlinds = DEFAULT_DINAMIC_VALUE;
         _levelDuration = DEFAULT_LEVEL_DURATION;
         _hikePercentage = DEFAULT_HIKE_PERCENTAGE;
-        _numBots1 = DEFAULT_NUM_BOTS;
-        _numBots2 = DEFAULT_NUM_BOTS;
+        _botsByType.clear();
         _numPlayers = DEFAULT_NUM_PLAYERS;
         _selectedTable = null;
         _selectedCard = null;
     }
 
+    public void setBotCount(int botId, int count) {
+        if(count <= 0) {
+            _botsByType.remove(botId);
+        }
+        else {
+            _botsByType.put(botId, count);
+        }
+    }
+
+    public int getBotCount(int botId) {
+        return _botsByType.getOrDefault(botId, 0);
+    }
+
+    private int getTotalBots() {
+        return _botsByType.values().stream().mapToInt(Integer::intValue).sum();
+    }
+
     public int getTotalPlayers() {
-        return _numPlayers + _numBots1 + _numBots2;
+        return _numPlayers + getTotalBots();
     }
 
 }

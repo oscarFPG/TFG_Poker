@@ -5,7 +5,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class PokerPreGame {
@@ -49,8 +51,13 @@ public class PokerPreGame {
         SocketUtils.sendString(out, config._levelDuration);
         SocketUtils.sendString(out, config._hikePercentage);
         SocketUtils.sendString(out, config._turnTimerPlayer);
-        SocketUtils.sendInteger(out, config._numBots1);
-        SocketUtils.sendInteger(out, config._numBots2);
+
+        SocketUtils.sendInteger(out, config._botsByType.size());
+        for(var entry : config._botsByType.entrySet()) {
+            SocketUtils.sendInteger(out, entry.getKey());
+            SocketUtils.sendInteger(out, entry.getValue());
+        }
+
         SocketUtils.sendInteger(out, config._numPlayers);
         SocketUtils.sendString(out, config._selectedTable);
         SocketUtils.sendString(out, config._selectedCard);
@@ -67,8 +74,15 @@ public class PokerPreGame {
         String levelDuration = SocketUtils.receiveString(input);
         String hikePercentage = SocketUtils.receiveString(input);
         String turnTimer = SocketUtils.receiveString(input);
-        int numBots1 = SocketUtils.receiveInt(input);
-        int numBots2 = SocketUtils.receiveInt(input);
+
+        int botTypes = SocketUtils.receiveInt(input);
+        Map<Integer, Integer> botsByType = new HashMap<>();
+        for(int i = 0; i < botTypes; i++) {
+            int botId = SocketUtils.receiveInt(input);
+            int count = SocketUtils.receiveInt(input);
+            botsByType.put(botId, count);
+        }
+        
         int numPlayers = SocketUtils.receiveInt(input);
         String selectedTable = SocketUtils.receiveString(input);
         String selectedCard = SocketUtils.receiveString(input);
@@ -84,8 +98,7 @@ public class PokerPreGame {
         config._levelDuration = levelDuration;
         config._hikePercentage = hikePercentage;
         config._turnTimerPlayer = turnTimer;
-        config._numBots1 = numBots1;
-        config._numBots2 = numBots2;
+        config._botsByType.putAll(botsByType);
         config._numPlayers = numPlayers;
         config._selectedTable = selectedTable;
         config._selectedCard = selectedCard;
@@ -106,8 +119,13 @@ public class PokerPreGame {
         SocketUtils.sendInteger(out, dinamicBlinds);
         SocketUtils.sendString(out, config._levelDuration);
         SocketUtils.sendString(out, config._hikePercentage);
-        SocketUtils.sendInteger(out, config._numBots1);
-        SocketUtils.sendInteger(out, config._numBots2);
+
+        SocketUtils.sendInteger(out, config._botsByType.size());
+        for(var entry : config._botsByType.entrySet()) {
+            SocketUtils.sendInteger(out, entry.getKey());
+            SocketUtils.sendInteger(out, entry.getValue());
+        }
+
         SocketUtils.sendInteger(out, config._numPlayers);
         SocketUtils.sendString(out, config._selectedTable);
         SocketUtils.sendString(out, config._selectedCard);
@@ -124,8 +142,15 @@ public class PokerPreGame {
         boolean dinamicBlinds = (SocketUtils.receiveInt(input) == GameType.TRUE) ? true : false;
         String levelDuration = SocketUtils.receiveString(input);
         String hikePercentage = SocketUtils.receiveString(input);
-        int numBots1 = SocketUtils.receiveInt(input);
-        int numBots2 = SocketUtils.receiveInt(input);
+
+        int botTypes = SocketUtils.receiveInt(input);
+        Map<Integer, Integer> botsByType = new HashMap<>();
+        for(int i = 0; i < botTypes; i++) {
+            int botId = SocketUtils.receiveInt(input);
+            int count = SocketUtils.receiveInt(input);
+            botsByType.put(botId, count);
+        }
+
         int numPlayers = SocketUtils.receiveInt(input);
         String selectedTable = SocketUtils.receiveString(input);
         String selectedCard = SocketUtils.receiveString(input);
@@ -141,8 +166,7 @@ public class PokerPreGame {
         config._dinamicBlinds = dinamicBlinds;
         config._levelDuration = levelDuration;
         config._hikePercentage = hikePercentage;
-        config._numBots1 = numBots1;
-        config._numBots2 = numBots2;
+        config._botsByType.putAll(botsByType);
         config._numPlayers = numPlayers;
         config._selectedTable = selectedTable;
         config._selectedCard = selectedCard;
