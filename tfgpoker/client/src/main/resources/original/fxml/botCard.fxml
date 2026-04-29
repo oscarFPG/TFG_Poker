@@ -1,0 +1,52 @@
+<StackPane fx:id="cardInfoBot1" prefHeight="283.0" prefWidth="200.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.BotCardController">
+    <children>
+        <StackPane fx:id="cardBackBot1">
+            <children>
+            <Text fill="#e5e5e5" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="general-text-font" textAlignment="CENTER" wrappingWidth="172.0" fx:id="textBotDescription"/>
+            </children>
+            <styleClass>
+            <String fx:value="semi-oval-pane" />
+            <String fx:value="container-colors" />
+            <String fx:value="border-neon-effect" />
+            </styleClass>
+        </StackPane>
+            <VBox fx:id="cardFrontBot1" alignment="CENTER" prefHeight="268.0" prefWidth="200.0" spacing="2.0" styleClass="rounded-description-label" StackPane.alignment="CENTER">
+                <children>
+                    <Label alignment="CENTER" styleClass="super-bold-general-text-font" textAlignment="CENTER" fx:id="labelBotName">
+                <VBox.margin>
+                    <Insets top="4.0" />
+                </VBox.margin>
+            </Label>
+                    <ImageView fitHeight="184.0" fitWidth="176.0" pickOnBounds="true" preserveRatio="true" fx:id="imgBot">
+                    </ImageView>
+                    <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                <VBox.margin>
+                    <Insets bottom="5.0" />
+                </VBox.margin>
+                <children>
+                    <Spinner fx:id="spinnerBot1" styleClass="container-colors" />
+                </children>
+                    </HBox>
+                </children>
+            </VBox>
+        <Button id="cardInfoIcon" fx:id="cardInfoIconBot1" alignment="CENTER" mnemonicParsing="false" onAction="#flipCardBot1" prefWidth="48.0" textAlignment="CENTER" StackPane.alignment="TOP_RIGHT">
+            <graphic>
+            <ImageView fitHeight="35.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+                <image>
+                    <Image url="@../../images/iconoInformacionTarjetasModo.png" />
+                </image>
+            </ImageView>
+            </graphic>
+            <opaqueInsets>
+            <Insets />
+            </opaqueInsets>
+            <StackPane.margin>
+            <Insets right="-5.0" top="-5.0" />
+            </StackPane.margin>
+            <styleClass>
+            <String fx:value="icon-colors" />
+            <String fx:value="round-icon" />
+            </styleClass>
+        </Button>
+    </children>
+</StackPane>

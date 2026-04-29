@@ -42,20 +42,9 @@ public class AddBotsCreateGameWindowController extends GenericController {
     @FXML
     private Button btnStartAddBots;
 
-    @FXML
-    private Spinner<Integer> spinnerBot1;
-
+    
     @FXML
     private Spinner<Integer> spinnerBot2;
-
-    @FXML
-    private StackPane cardInfoBot1;
-    @FXML
-    private VBox cardFrontBot1;
-    @FXML
-    private StackPane cardBackBot1;
-    private boolean isFlippedBot1 = false;
-
     @FXML
     private StackPane cardInfoBot2;
     @FXML
