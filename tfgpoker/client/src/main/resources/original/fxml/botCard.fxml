@@ -7,18 +7,17 @@
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<StackPane fx:id="cardInfoBot" prefHeight="283.0" prefWidth="200.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.BotCardController">
+<StackPane fx:id="cardInfoBot" prefHeight="283.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.BotCardController">
     <children>
         <StackPane fx:id="cardBackBot">
             <children>
-            <Text fill="#e5e5e5" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="general-text-font" textAlignment="CENTER" wrappingWidth="172.0" fx:id="textBotDescription"/>
+            <Text fx:id="textBotDescription" fill="#e5e5e5" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="general-text-font" textAlignment="CENTER" wrappingWidth="172.0" />
             </children>
             <styleClass>
             <String fx:value="semi-oval-pane" />
@@ -28,12 +27,15 @@
         </StackPane>
             <VBox fx:id="cardFrontBot" alignment="CENTER" prefHeight="268.0" prefWidth="200.0" spacing="2.0" styleClass="rounded-description-label" StackPane.alignment="CENTER">
                 <children>
-                    <Label alignment="CENTER" styleClass="super-bold-general-text-font" textAlignment="CENTER" fx:id="labelBotName">
+                    <Label fx:id="labelBotName" alignment="CENTER_LEFT" prefHeight="15.0" prefWidth="178.0" styleClass="super-bold-general-text-font" wrapText="true">
                 <VBox.margin>
-                    <Insets top="4.0" />
+                    <Insets right="10.0" top="4.0" />
                 </VBox.margin>
+               <font>
+                  <Font size="10.0" />
+               </font>
             </Label>
-                    <ImageView fitHeight="184.0" fitWidth="176.0" pickOnBounds="true" preserveRatio="true" fx:id="imgBot">
+                    <ImageView fx:id="imgBot" fitHeight="184.0" fitWidth="176.0" pickOnBounds="true" preserveRatio="true">
                     </ImageView>
                     <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                 <VBox.margin>
@@ -45,9 +47,9 @@
                     </HBox>
                 </children>
             </VBox>
-        <Button id="cardInfoIcon" fx:id="cardInfoIconBot1" alignment="CENTER" mnemonicParsing="false" onAction="#flipCardBot" prefWidth="48.0" textAlignment="CENTER" StackPane.alignment="TOP_RIGHT">
+        <Button id="cardInfoIcon" fx:id="cardInfoIconBot1" alignment="CENTER" mnemonicParsing="false" onAction="#flipCardBot" prefHeight="22.0" prefWidth="22.0" textAlignment="CENTER" StackPane.alignment="TOP_RIGHT">
             <graphic>
-            <ImageView fitHeight="35.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="25.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                 <image>
                     <Image url="@../../images/iconoInformacionTarjetasModo.png" />
                 </image>

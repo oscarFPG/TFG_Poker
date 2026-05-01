@@ -48,7 +48,7 @@ public class BotCardController {
         imgBot.setImage(new Image(getClass().getResource(bot.iconPath()).toExternalForm()));
 
         spinnerBot.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(MIN_NUM_BOTS, maxBots, 0));
-        spinnerBot.setVisible(!allowBots);
+        spinnerBot.setDisable(!allowBots);
         spinnerBot.valueProperty().addListener((obs, oldVal, newVal) -> {
             if(onValueChanged != null) onValueChanged.run();
         });

@@ -206,6 +206,10 @@
     -fx-control-inner-background: transparent;
 }
 
+.transparent-background .viewport {
+    -fx-background-color: transparent;
+}
+
 /**
  * Estilo para los títulos de cada escena del juego
  */

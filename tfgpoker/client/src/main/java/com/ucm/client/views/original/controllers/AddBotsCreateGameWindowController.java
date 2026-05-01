@@ -17,6 +17,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.transform.Rotate;
@@ -44,10 +45,14 @@ public class AddBotsCreateGameWindowController extends GenericController {
     private Button btnStartAddBots;
 
     @FXML
-    private javafx.scene.layout.HBox botsContainer;
+    private FlowPane botsContainer;
 
     @Override
     protected void onViewShown() {
+
+        System.out.println(
+            "Available bots: " + BotRegistry.getAvailableBots().size()
+        );
         
         btnStartAddBots.setDisable(true);
 
@@ -58,7 +63,8 @@ public class AddBotsCreateGameWindowController extends GenericController {
 
         for(BotDescriptor bot: BotRegistry.getAvailableBots()) {
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/botCard.fxml"));
+                
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/original/fxml/botCard.fxml"));
 
                 StackPane card = loader.load();
                 BotCardController controller = loader.getController();

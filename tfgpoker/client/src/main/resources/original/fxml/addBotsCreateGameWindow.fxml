@@ -4,17 +4,15 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Spinner?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" styleClass="root" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.AddBotsCreateGameWindowController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" styleClass="root" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.AddBotsCreateGameWindowController">
          <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0">
          <top>
@@ -68,11 +66,17 @@
                         <Insets top="-20.0" />
                      </VBox.margin>
                   </HBox>
-                        <HBox alignment="CENTER" prefHeight="150.0" prefWidth="200.0" spacing="30.0" fx:id="botsContainer">
-                           <VBox.margin>
-                              <Insets />
-                           </VBox.margin>
-                        </HBox>
+                  <ScrollPane fitToWidth="false" hbarPolicy="NEVER" styleClass="transparent-background" vbarPolicy="AS_NEEDED">
+                     <content>
+                        <FlowPane fx:id="botsContainer" alignment="CENTER" columnHalignment="CENTER" hgap="30.0" prefWrapLength="895.0" styleClass="transparent-background" vgap="30.0">
+                           <padding>
+                              <Insets top="5.0" />
+                           </padding></FlowPane>
+                     </content>
+                     <VBox.margin>
+                        <Insets left="5.0" right="5.0" />
+                     </VBox.margin>
+                  </ScrollPane>
                      </children>
                   </VBox>
          </center>
