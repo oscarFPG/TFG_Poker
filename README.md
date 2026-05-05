@@ -20,6 +20,9 @@ https://huggingface.co/YiPz/llama3-8b-pokerbench-sft
 # Memoria
 https://docs.google.com/document/d/17gitDoBetkTzmvoT2JAn79Ssiv_-TdHw/edit?usp=sharing&ouid=115274461183780907670&rtpof=true&sd=true
 
+Carpeta TFG
+https://drive.google.com/drive/folders/1gdmCRiwNo7nF5eN1FPsKJODaJ_gIdlel?usp=drive_link
+
 # Integrantes
 - Óscar Fabian Pineda German
 - Carla Toapanta Taipe
