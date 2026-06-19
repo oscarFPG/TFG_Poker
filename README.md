@@ -20,6 +20,7 @@ https://huggingface.co/YiPz/llama3-8b-pokerbench-sft
 # Memoria
 Memoria Version 1
 https://docs.google.com/document/d/1hPFwvcHTQgucEkQK-0uTQ0Gnrr-E6CcT/edit?usp=sharing&ouid=100471133406238296310&rtpof=true&sd=true
+
 Plantilla
 https://docs.google.com/document/d/17gitDoBetkTzmvoT2JAn79Ssiv_-TdHw/edit?usp=sharing&ouid=115274461183780907670&rtpof=true&sd=true
 
