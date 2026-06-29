@@ -1,156 +1,146 @@
 package com.ucm.server.gameobjects;
 
 /**
- * Enumeration that represents different playing styles for a poker bot.
- * 
+ * Defines the playing style (personality) of a poker bot.
+ *
  * <p>
- * Each style defines a specific strategy profile, including:
- * </p>
- * <ul>
- * <li>A textual description of the behavior</li>
- * <li>A raise sizing strategy based on the pot</li>
- * <li>A folding threshold based on hand equity</li>
- * </ul>
- * 
- * <p>
- * These styles are used to simulate different types of opponents,
- * ranging from conservative players to highly aggressive ones.
+ * A playing style does not impose hard-coded poker rules. Instead, it provides
+ * strategic guidance that is injected into the prompt sent to the LLM, allowing
+ * the model to adapt its reasoning and decisions naturally while remaining
+ * consistent with the selected personality.
  * </p>
  */
 public enum BotStyle {
 
     /**
-     * Tight playing style.
-     * 
-     * <p>
-     * Focuses on strong hands and avoids marginal situations.
-     * Typically folds often and plays only premium holdings.
-     * </p>
+     * Balanced default style.
      */
-    TIGHT {
+    DEFAULT {
         @Override
-        public String getDescription() {
-            return "Plays very selectively, focusing only on strong hands and avoiding marginal situations.";
-        }
+        public String getPromptDescription() {
+            return """
+                You are an experienced and rational No-Limit Texas Hold'em player.
 
-        @Override
-        public double getRaiseSizing(double pot) {
-            return pot * 0.5;
-        }
-
-        @Override
-        public boolean shouldFoldLowEquity(double equity) {
-            return equity < 0.15;
+                Characteristics:
+                - Play a fundamentally sound strategy.
+                - Balance aggression and caution depending on the situation.
+                - Value bet strong hands.
+                - Bluff only when profitable.
+                - Respect pot odds, implied odds and hand equity.
+                - Avoid unnecessary risks.
+                - Make decisions that maximize expected value (EV).
+                """;
         }
     },
 
     /**
-     * Passive playing style.
-     * 
-     * <p>
-     * Prefers calling and checking rather than raising.
-     * Only becomes aggressive with very strong hands.
-     * </p>
+     * Tight Passive (TP)
      */
-    PASSIVE {
+    TIGHT_PASSIVE {
         @Override
-        public String getDescription() {
-            return "Prefers calling and checking, avoiding aggressive plays unless very strong.";
-        }
+        public String getPromptDescription() {
+            return """
+                You are a Tight Passive (TP) No-Limit Texas Hold'em player.
 
-        @Override
-        public double getRaiseSizing(double pot) {
-            return pot * 0.4;
-        }
-
-        @Override
-        public boolean shouldFoldLowEquity(double equity) {
-            return equity < 0.10;
+                Characteristics:
+                - Play only premium and strong starting hands.
+                - Avoid unnecessary risks.
+                - Rarely bluff.
+                - Prefer checking and calling over betting.
+                - Fold marginal hands when facing aggression.
+                - Be patient and disciplined.
+                - Prefer survival over taking unnecessary risks.
+                """;
         }
     },
 
     /**
-     * Aggressive playing style.
-     * 
-     * <p>
-     * Frequently applies pressure by raising with a wide range of hands.
-     * Aims to force opponents into difficult decisions.
-     * </p>
+     * Tight Aggressive (TAG)
      */
-    AGGRESSIVE {
+    TIGHT_AGGRESSIVE {
         @Override
-        public String getDescription() {
-            return "Applies pressure frequently, raising with a wide range of hands.";
-        }
+        public String getPromptDescription() {
+            return """
+                You are a Tight Aggressive (TAG) No-Limit Texas Hold'em player.
 
-        @Override
-        public double getRaiseSizing(double pot) {
-            return pot * 0.75;
-        }
-
-        @Override
-        public boolean shouldFoldLowEquity(double equity) {
-            return equity < 0.05;
+                Characteristics:
+                - Play a selective range of starting hands.
+                - Enter pots aggressively.
+                - Raise instead of limping.
+                - Value bet strong hands.
+                - Bluff occasionally in profitable spots.
+                - Apply pressure with strong holdings.
+                - Be disciplined and consistent.
+                """;
         }
     },
 
     /**
-     * Maniac playing style.
-     * 
-     * <p>
-     * Extremely aggressive strategy that frequently bluffs and overbets.
-     * Rarely folds, regardless of hand strength.
-     * </p>
+     * Loose Passive (LP)
+     */
+    LOOSE_PASSIVE {
+        @Override
+        public String getPromptDescription() {
+            return """
+                You are a Loose Passive (LP) No-Limit Texas Hold'em player.
+
+                Characteristics:
+                - Play many starting hands.
+                - Like seeing flops.
+                - Prefer calling over raising.
+                - Bluff very rarely.
+                - Avoid large confrontations without strong hands.
+                - Continue with speculative hands more often than average.
+                """;
+        }
+    },
+
+    /**
+     * Loose Aggressive (LAG)
+     */
+    LOOSE_AGGRESSIVE {
+        @Override
+        public String getPromptDescription() {
+            return """
+                You are a Loose Aggressive (LAG) No-Limit Texas Hold'em player.
+
+                Characteristics:
+                - Play a wide range of starting hands.
+                - Frequently raise and re-raise.
+                - Bluff and semi-bluff often.
+                - Apply constant pressure.
+                - Force opponents into difficult decisions.
+                - Take calculated risks to accumulate chips.
+                """;
+        }
+    },
+
+    /**
+     * Maniac
      */
     MANIAC {
         @Override
-        public String getDescription() {
-            return "Plays extremely aggressively, often bluffing and applying maximum pressure.";
-        }
+        public String getPromptDescription() {
+            return """
+                You are a Maniac No-Limit Texas Hold'em player.
 
-        @Override
-        public double getRaiseSizing(double pot) {
-            return pot * 1.2;
-        }
-
-        @Override
-        public boolean shouldFoldLowEquity(double equity) {
-            return false; 
+                Characteristics:
+                - Play almost every starting hand.
+                - Be extremely aggressive.
+                - Frequently raise, re-raise and overbet.
+                - Bluff much more often than the average player.
+                - Apply relentless pressure.
+                - Force opponents to make difficult decisions constantly.
+                - Be unpredictable.
+                - However, always choose legal poker actions and never intentionally make irrational decisions.
+                """;
         }
     };
 
     /**
-     * Returns a textual description of the playing style.
-     * 
-     * @return {@link String} describing the strategy
+     * Returns the prompt fragment describing this playing style.
+     *
+     * @return style description to inject into the LLM prompt
      */
-    public abstract String getDescription();
-
-    /**
-     * Computes the raise sizing based on the current pot.
-     * 
-     * @param pot current pot size
-     * @return amount to raise
-     */
-    public abstract double getRaiseSizing(double pot);
-
-    /**
-     * Determines whether the bot should fold based on its equity.
-     * 
-     * @param equity probability of winning the hand
-     * @return true if the bot should fold, false otherwise
-     */
-    public abstract boolean shouldFoldLowEquity(double equity);
-
-    /**
-     * Adjusts a raise size to the player's stack.
-     * This prevents betting more money than available.
-     * 
-     * @param size  proposed bet size
-     * @param stack player's remaining stack
-     * @return adjusted bet size (capped by stack)
-     */
-    public double adjustSizingToStack(double size, double stack) {
-        return Math.min(size, stack);
-    }
+    public abstract String getPromptDescription();
 }

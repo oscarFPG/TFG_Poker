@@ -74,8 +74,21 @@ public abstract class BotLLM extends Bot {
     protected double _equity;
 
 
+        /**
+     * Playing style used by this bot.
+     * By default, bots use a balanced playing style.
+     */
+    protected BotStyle _style = BotStyle.DEFAULT;
+
     protected IPlayerInfo _player;
 
+    public BotStyle getStyle() {
+        return _style;
+    }
+
+    public void setPlayingStyle(BotStyle style) {
+        _style = (style == null) ? BotStyle.DEFAULT : style;
+    }
 
     /**
      * Default constructor.
@@ -87,6 +100,7 @@ public abstract class BotLLM extends Bot {
         table = new ArrayList<>();
         actionHistory = new ArrayList<>();
     }
+
 
 
     /**
@@ -116,6 +130,10 @@ public abstract class BotLLM extends Bot {
     protected String buildPrompt(int sb, int bb, int maxBet) {
         return String.format("""
             You are an expert No Limit Texas Hold'em player.
+
+           Play optimally according to your assigned playing style.
+
+            %s
 
             This is a 9-handed table.
             Only the players mentioned in the action history are still in the hand.
@@ -148,6 +166,7 @@ public abstract class BotLLM extends Bot {
             <action>check</action>
             <action>raise AMOUNT</action>
             """,
+                 _style.getPromptDescription(),
                 mapRole( _player.getRole() ),
                 formatCards( List.of(_player.getPlayerCards()) ),
                 table.isEmpty() ? "[]" : formatCards(table),
