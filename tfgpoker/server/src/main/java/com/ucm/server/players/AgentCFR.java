@@ -122,10 +122,14 @@ public class AgentCFR extends BotNN {
                 selectedAction = (maxBet == 0) ? GameType.CHECK_ACTION_FULL : GameType.CALL_ACTION_FULL;
             }
             else if(action == RAISE_IDX) {  // Always doubles the maximum bet if it is possible
-                
-                int targetBet = (0 < maxBet) ? 2 * maxBet : 2 * bb;
-                if(targetBet <= player.getMoneyOffBet() + player.getMoneyOnBet()) {
-                    found = true;
+                found = true;
+
+                // If there is no bet on the table -> 10% of the total money
+                int targetBet = 2 * maxBet;
+                if(targetBet == 0) {    // Caused because maxBet is zero
+                    selectedAction = GameType.CHECK_ACTION_FULL;
+                }
+                else if(targetBet <= player.getMoneyOffBet() + player.getMoneyOnBet()) {
                     selectedAction = GameType.RAISE_ACTION_FULL + " " + targetBet;
                 }
             }
