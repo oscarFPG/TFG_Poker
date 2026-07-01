@@ -18,6 +18,7 @@ import com.ucm.common.PlayerInfo;
 import com.ucm.common.PokerPreGame;
 import com.ucm.common.SocketUtils;
 import com.ucm.server.middleclasses.Spectator;
+import com.ucm.server.players.AgentCFR;
 import com.ucm.server.players.GeminiLLM;
 import com.ucm.server.players.LlamaPokerLLM;
 
@@ -118,13 +119,13 @@ public class ClientThread implements Runnable {
                         _gameConfig._turnTimerPlayer = config._turnTimerPlayer;
                         _gameConfig._numBots1 = config._numBots1;   // Numero de instancias de bot gemini
                         _gameConfig._numBots2 = config._numBots2;   // Numero de instancias de bot llama
-                        _gameConfig._numPlayers = config._numPlayers + 1; // + 1 porque cuenta el host
+                        _gameConfig._numPlayers = config._numPlayers + 1; // +1 porque cuenta el host
                         _gameConfig._selectedTable = config._selectedTable;
                         _gameConfig._selectedCard = config._selectedCard;
                         _gameConfig._joinedAsSpectator = config._joinedAsSpectator;
-
-
                         _isHost = true;
+
+                        // Si el host es espectador no lo incluimos en la lista de jugadores pero si en el socket de espectador
                         if(_gameConfig._joinedAsSpectator) {
                             _playerID = -1;
                             _spectator._name = _playerName;
@@ -135,21 +136,38 @@ public class ClientThread implements Runnable {
                             _roomPlayerList.add(this);
                         }
 
+                        
+                        boolean test_NN = true;
+                        if(test_NN) {
 
-                        for (int i = 0; i < _gameConfig._numBots1; i++) {
-                           _roomBotsList.add( new BotStruct(_id.getAndIncrement(), GameType.BOT_GEMINI, GeminiLLM.NAME) );
+                            // TEST -> usar bots Gemini como redes neuronales
+                            for (int i = 0; i < _gameConfig._numBots1; i++) {
+                                _roomBotsList.add( new BotStruct(_id.getAndIncrement(), GameType.BOT_NN_MODEL_1, AgentCFR.CFR_NAME) );
+                            }
                         }
-                        for (int i = 0; i < _gameConfig._numBots2; i++) {
-                            int instance = _id.getAndIncrement();
-                           _roomBotsList.add( new BotStruct(instance, GameType.BOT_LLAMA, LlamaPokerLLM.MODEL_NAME + "#" + instance) );
+                        else {
+
+                            // Incluir instancias de los bots seleccionados, si hay
+                            for (int i = 0; i < _gameConfig._numBots1; i++) {
+                                _roomBotsList.add( new BotStruct(_id.getAndIncrement(), GameType.BOT_GEMINI, GeminiLLM.NAME) );
+                            }
+                            for (int i = 0; i < _gameConfig._numBots2; i++) {
+                                int instance = _id.getAndIncrement();
+                                _roomBotsList.add( new BotStruct(instance, GameType.BOT_LLAMA, LlamaPokerLLM.MODEL_NAME + "#" + instance) );
+                            }
                         }
 
+                        // Avisar a todos los jugadores de la correcta creacion de la partida, ID de sala y su ID de jugador
+                        // Tambien avisamos al jugador necesario de que es el host
                         SocketUtils.sendInteger(output, GameType.CONFIRMATION_WAITING_GAME);
                         SocketUtils.sendInteger(output, _gameConfig._roomId);
                         SocketUtils.sendInteger(output, GameType.CONFIRMATION_HOST_PLAYER);
                         SocketUtils.sendInteger(output, _playerID);
 
+                        // DEBUG -> Mostrar jugadores
                         showPlayersInRoom();
+
+                        // Avisar a todos los jugadores de la lista de jugadores unidos
                         broadcastPlayerJoined();
 
                         log.debug("Configuration valid!");
@@ -202,7 +220,7 @@ public class ClientThread implements Runnable {
 
                         if(2 <= _roomPlayerList.size() + _roomBotsList.size()) {
 
-                            if(_spectator != null)
+                            if(_spectator._socket != null)
                                 SocketUtils.sendInteger(output, GameType.CONFIRMATION_GAME_STARTS);
 
                             for(ClientThread ct : _roomPlayerList) {
@@ -263,7 +281,7 @@ public class ClientThread implements Runnable {
                         return;
 
 
-                    if(_spectator != null) {
+                    if(_spectator._socket != null) {
 
                         SocketUtils.sendInteger(_spectator._socket.getOutputStream(), GameType.EVENT_PLAYER_JOINED);
                         SocketUtils.sendInteger(_spectator._socket.getOutputStream(), roomSize);

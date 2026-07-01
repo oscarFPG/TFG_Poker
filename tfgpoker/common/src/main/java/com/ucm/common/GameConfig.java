@@ -48,9 +48,9 @@ public class GameConfig {
     public String _turnTimerPlayer = DEFAULT_TURN_TIMER;
 
     /**
-     * 
+     * Indicated if there is an spectator or not
      */
-    public boolean _joinedAsSpectator = true;
+    public boolean _joinedAsSpectator = false;
 
 
 

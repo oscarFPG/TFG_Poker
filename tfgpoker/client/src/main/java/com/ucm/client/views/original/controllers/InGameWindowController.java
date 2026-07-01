@@ -12,8 +12,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 import com.ucm.client.utils.Messages;
@@ -53,7 +51,7 @@ public class InGameWindowController extends GenericController {
     @FXML private ImageView imgAvatarProfile;
     @FXML private HBox hboxMenuItems;
 
-    /* Hodler + Buttons */
+    /* Holder + Buttons */
     @FXML private VBox buttonsHolder;
     @FXML private Button btnFold, btnCall, btnRaise;
     @FXML private Button btnRound, btnMinBet, btnHalfBet, btnMaxBet;
@@ -1083,6 +1081,7 @@ public class InGameWindowController extends GenericController {
             else if(serverCode == GameType.TOTAL_POT) {
 
                 final int totalPot = SocketUtils.receiveInt( socket.getInputStream() );
+                System.out.printf("Total pot now is %d$\n", totalPot);
                 Platform.runLater(() -> {
                     labelTotalPot.setText( String.valueOf(totalPot) );
                 });
@@ -1225,9 +1224,7 @@ public class InGameWindowController extends GenericController {
                 }
 
                 String baseCommand = command.split(" ")[0];
-
                 System.out.printf("Full command received: %s\n", command);
-                System.out.printf("Base command extracted: %s\n", baseCommand);
 
                 valid = true;
                 if (baseCommand.equalsIgnoreCase("raise") || baseCommand.equalsIgnoreCase("r")) {
@@ -1335,7 +1332,7 @@ public class InGameWindowController extends GenericController {
                 System.out.printf("Exiting player status update loop!\n");
             }
             else {
-                System.out.printf("Unknown code %d!\n", code);
+                System.out.printf("ERROR! Code received: %d!\n", code);
                 NotificationManager.showError(Messages.Notifications.ERROR_UNKNOWN_CODE + code);
              
             }

@@ -38,45 +38,7 @@ import com.ucm.server.interfaces.IPlayerInfo;
  */
 public abstract class BotLLM extends Bot {
 
-    /**
-     * Community cards on the table.
-     */
-    protected List<Card> table;
-
-    /**
-     * History of actions in the current hand.
-     */
-    protected List<String> actionHistory;
-
-    /**
-     * Small blind value.
-     */
-    protected int _smallBlind;
-
-    /**
-     * Big blind value.
-     */
-    protected int _bigBlind;
-
-    /**
-     * Max bet in the current hand
-     */
-    protected int _maxBet;
-
-    /**
-     * Total pot in the table
-     */
-    protected int _totalPot;
-
-    /**
-     * Estimated probability of winning the hand.
-     */
-    protected double _equity;
-
-
-    protected IPlayerInfo _player;
-
-
+    
     /**
      * Default constructor.
      * 
@@ -84,8 +46,6 @@ public abstract class BotLLM extends Bot {
      */
     public BotLLM(int botID) {
         super(botID);
-        table = new ArrayList<>();
-        actionHistory = new ArrayList<>();
     }
 
 
@@ -113,7 +73,7 @@ public abstract class BotLLM extends Bot {
      * 
      * @return {@link String} prompt ready to be sent to the model
      */
-    protected String buildPrompt(int sb, int bb, int maxBet) {
+    protected String buildPrompt(int sb, int bb, int maxBet, IPlayerInfo player) {
         return String.format("""
             You are an expert No Limit Texas Hold'em player.
 
@@ -148,10 +108,10 @@ public abstract class BotLLM extends Bot {
             <action>check</action>
             <action>raise AMOUNT</action>
             """,
-                mapRole( _player.getRole() ),
-                formatCards( List.of(_player.getPlayerCards()) ),
+                mapRole( player.getRole() ),
+                formatCards( List.of(player.getPlayerCards()) ),
                 table.isEmpty() ? "[]" : formatCards(table),
-                _player.getMoneyOffBet(),
+                player.getMoneyOffBet(),
                 _totalPot,
                 _smallBlind / 2.0,
                 _bigBlind,
@@ -183,7 +143,7 @@ public abstract class BotLLM extends Bot {
      * @param action raw extracted action
      * @return valid poker action
      */
-    protected String sanitize(String action) {
+    protected String sanitize(String action, IPlayerInfo player) {
 
         action = action.toLowerCase().trim();
         if (action.contains("fold")) return "fold";
@@ -223,36 +183,6 @@ public abstract class BotLLM extends Bot {
         return "[" + String.join(", ", result) + "]";
     }
 
-    /**
-     * Returns the formatted action history.
-     * 
-     * @return {@link String} with all actions or "None" if empty
-     */
-    protected String getHistory() {
-        return actionHistory.isEmpty() ? "None" : String.join(", ", actionHistory);
-    }
-
-    /**
-     * Maps a {@link PlayerRole} to a standard poker position string.
-     * 
-     * @param role player role
-     * @return position string (BTN, SB, BB, UTG, etc.)
-     */
-    protected String mapRole(PlayerRole role) {
-        return switch (role) {
-            case DEALER -> "BTN";
-            case SMALL_BLIND -> "SB";
-            case BIG_BLIND -> "BB";
-            case UNDER_THE_GUN -> "UTG";
-            case UNDER_THE_GUN_1 -> "UTG+1";
-            case UNDER_THE_GUN_2 -> "UTG+2";
-            case LOJACK -> "LJ";
-            case HIJACK -> "HJ";
-            case CUT_OFF -> "CO";
-            default -> "UNKNOWN";
-        };
-    }
-
 
     /**
      * Determines the action to take using the LLM.
@@ -277,71 +207,13 @@ public abstract class BotLLM extends Bot {
         _smallBlind = sb;
         _bigBlind = bb;
         _maxBet = maxBet;
-        _player = player;
 
-        String prompt = buildPrompt(sb, bb, maxBet);
+        String prompt = buildPrompt(sb, bb, maxBet, player);
         String response = callModel(prompt);
         String action = extractAction(response);
-        String sanitized = sanitize(action);
+        String sanitized = sanitize(action, player);
 
         return sanitized;
     }
-
-    @Override
-    public void notifySmallBlindBet(int amount, IPlayerInfo player) throws IOException {
-        _smallBlind = amount;
-    }
-
-    @Override
-    public void notifyBigBlindBet(int amount, IPlayerInfo player) throws IOException {
-        _bigBlind = amount;
-    }
-
-    @Override
-    public void notifyTableCard(Card c) throws IOException {
-        table.add(c);
-    }
-
-    @Override
-    public void notifyTotalPot(int total) throws IOException {
-        _totalPot = total;
-    }
-
-    @Override
-    public void notifyOtherPlayerAction(IPlayerInfo other) throws IOException {
-        
-        String action = other.getLastCommand();
-        if(action.equals(GameType.RAISE_ACTION_FULL) || action.equals(GameType.ALL_IN_ACTION_FULL)) {
-            actionHistory.add( mapRole(other.getRole()) + " " + action + " " + other.getMoneyOnBet() );
-        }
-        else {
-            actionHistory.add( mapRole(other.getRole()) + " " + action );
-        }
-    }
-
-    @Override
-    public void notifyOtherPlayerState(IPlayerInfo other) throws IOException {
-
-    }
-
-    @Override
-    public void notifyEquity(double equity) throws IOException {
-        _equity = equity; 
-    }
-
-
-    @Override public void notifyOwnState(IPlayerInfo player) throws IOException {}
-    @Override public void notifyCurrentTurnPlayer(IPlayerInfo player) {}
-    @Override public void notifyPlayerRole(PlayerRole role) throws IOException {}
-    @Override public void notifyPlayerCard(Card c) throws IOException {}
-    @Override public void notifyEndPlayerState() throws IOException {}
-    @Override public void notifyTurnWait() throws IOException {}
-    @Override public void notifyTurnPlay() throws IOException {}
-    @Override public void notifyRoundEnded() throws IOException {}
-    @Override public void notifyHandEndsByFolds() throws IOException {}
-    @Override public void notifyGameEnded() throws IOException {}
-    @Override public void notifyGameKeeps() throws IOException {}
-    @Override public void notifyGameWinner() throws IOException {}
-    @Override public void notifyGameLoser() throws IOException {}
     
 }

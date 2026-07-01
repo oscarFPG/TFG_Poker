@@ -229,7 +229,7 @@ public class Game {
             }
         }
     
-        if(spectator != null) {
+        if(spectator._socket != null) {
             _playerList.addSpectator(spectator);
         }
     }

@@ -27,7 +27,7 @@ public class QwenPokerLLM extends BotLLM {
 
 
     @Override
-    protected String buildPrompt(int sb, int bb, int maxBet) {
+    protected String buildPrompt(int sb, int bb, int maxBet, IPlayerInfo player) {
 
         return """
 
@@ -45,10 +45,10 @@ public class QwenPokerLLM extends BotLLM {
         <action>fold/call/raise X/all-in</action>
         """
         .formatted(
-            mapRole( _player.getRole() ), 
-            List.of(_player.getPlayerCards()), 
+            mapRole(player.getRole()), 
+            List.of(player.getPlayerCards()), 
             table, 
-            _player.getMoneyOffBet(), 
+            player.getMoneyOffBet(), 
             sb, 
             bb, 
             maxBet
@@ -100,7 +100,7 @@ public class QwenPokerLLM extends BotLLM {
     }
 
     @Override
-    protected String sanitize(String action) {
+    protected String sanitize(String action, IPlayerInfo player) {
 
         action = action.toLowerCase();
 

@@ -377,15 +377,20 @@ public class PlayerList implements Iterable<Node> {
 
     public void passTurn() throws CancelGameException {
 
+        // Restart previous bets from players
         resetPlayers();
 
+        // Rotate first and last players -> Waiting to assing roles to them
         Node newLast = !_first._player.isEliminated() ? _first : getNextNotEliminatedPlayer(_first);
         Node newFirst = getNextNotEliminatedPlayer(newLast);
-
         _first = newFirst;
         _last = newLast;
         
+        // Restart every pot made by players
         _potManager.restartPots();
+
+        // Restart round status
+        _totalPot = 0;
     }
 
     public void calculatePrizeDistribution(final List<PlayerEvaluation> players) throws CancelGameException {
@@ -465,9 +470,7 @@ public class PlayerList implements Iterable<Node> {
             Node player = it.next();
             if(player._player.getMoneyOnBet() == 0 && player._player.getMoneyOffBet() == 0)
                 player._player.eliminate();
-
         }
-
     }
 
     public List<HandInfo> getPlayerHandsInfo() {

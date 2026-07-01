@@ -90,7 +90,6 @@ public class AddPlayersCreateGameWindowController extends GenericController  {
         }
 
         _clientInfo.gameConfig._turnTimerPlayer = timerTurn;
-
     }
 
     @FXML
