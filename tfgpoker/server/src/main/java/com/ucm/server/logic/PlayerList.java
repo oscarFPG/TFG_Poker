@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,6 +21,7 @@ import com.ucm.server.middleclasses.CommandResult;
 import com.ucm.server.middleclasses.HandInfo;
 import com.ucm.server.middleclasses.PlayerEvaluation;
 import com.ucm.server.middleclasses.PotDistribution;
+import com.ucm.server.middleclasses.Spectator;
 import com.ucm.server.managers.PotManager;
 
 
@@ -38,6 +36,8 @@ public class PlayerList implements Iterable<Node> {
 
     private int _totalPot;
     private PotManager _potManager;
+    private Node _host;
+    private Spectator _spectator;
 
 
     public PlayerList(int n) {
@@ -48,6 +48,8 @@ public class PlayerList implements Iterable<Node> {
 
         _totalPot = 0;
         _potManager = new PotManager(n);
+        _host = null;
+        _spectator = null;
     }
 
     
@@ -79,6 +81,14 @@ public class PlayerList implements Iterable<Node> {
         log.debug("Player {} added!", p.getPlayerName());
     }
 
+    public void addSpectator(Spectator p) {
+        _spectator = p;
+    }
+
+    public void assignHost(Player p) {
+        _host = new Node(null, p,null);
+    }
+
 
     public void assignRolesToAllPlayers() throws CancelGameException {
 
@@ -94,6 +104,9 @@ public class PlayerList implements Iterable<Node> {
             Node current = _first;
             try {
                 current._player.receiveRole(PlayerRole.SMALL_BLIND);
+                if(_spectator != null)
+                    _spectator.notifyOtherPlayerState(current._player);
+
                 log.debug("Player {} receives role {}", current._player.getPlayerName(), PlayerRole.SMALL_BLIND.name());
             }
             catch (Exception e) {
@@ -104,6 +117,9 @@ public class PlayerList implements Iterable<Node> {
             
             try {
                 current._player.receiveRole(PlayerRole.BIG_BLIND);
+                if(_spectator != null)
+                    _spectator.notifyOtherPlayerState(current._player);
+
                 log.debug("Player {} receives role {}", current._player.getPlayerName(), PlayerRole.BIG_BLIND.name());
             }
             catch (Exception e) {
@@ -123,10 +139,14 @@ public class PlayerList implements Iterable<Node> {
                     try {
                         currentRole = roles.removeFirst();
                         player._player.receiveRole(currentRole);
+                        if(_spectator != null)
+                            _spectator.notifyOtherPlayerState(player._player);
+
                         log.debug("Player {} receives role {}", player._player.getPlayerName(), currentRole.name());
                     }
                     catch (Exception e) {
-                        if(checkIfGameCancel())
+
+                        if( checkIfGameCancel() )
                             throw new CancelGameException();
                     }
                 }
@@ -176,6 +196,9 @@ public class PlayerList implements Iterable<Node> {
 
             pNode._player.putSmallBlindBet(sb);
             notifyOtherPlayerActionToAllPlayers(pNode._player);
+            if(_spectator != null)
+                _spectator.notifyOtherPlayerState(pNode._player);
+
             log.debug(
                 "Player {} puts {}$ as SMALL_BLIND. Now it has {}$", 
                 pNode._player.getPlayerName(), pNode._player.getMoneyOnBet(), pNode._player.getMoneyOffBet()
@@ -194,6 +217,9 @@ public class PlayerList implements Iterable<Node> {
 
             pNode._player.putBigBlindBet(bb);
             notifyOtherPlayerActionToAllPlayers(pNode._player);
+            if(_spectator != null)
+                _spectator.notifyOtherPlayerState(pNode._player);
+
             log.debug(
                 "Player {} puts {}$ as BIG_BLIND. Now it has {}$", 
                 pNode._player.getPlayerName(), pNode._player.getMoneyOnBet(), pNode._player.getMoneyOffBet()
@@ -208,6 +234,8 @@ public class PlayerList implements Iterable<Node> {
         
         int totalPot = calculateTotalPot();
         notifyTotalPotToAllPlayers(totalPot);
+        if(_spectator != null)
+            _spectator.notifyTotalPot(totalPot);
     }
 
     public void playHand(final int sb, final int bb, final boolean isPreflop) throws OnlyOnePlayerLeftException, CancelGameException {
@@ -224,6 +252,7 @@ public class PlayerList implements Iterable<Node> {
         Node pivotPlayer = calculatePivotPlayer(playersRemaining, isPreflop, playerOnTurn);
         int maxBet = (isPreflop) ? bb : 0;
         int currentBet = maxBet;
+        int minRaise = (isPreflop) ? bb - sb : 0;
         int totalPot = 0;
 
         // In case only one player can play -> Cannot play alone
@@ -250,13 +279,14 @@ public class PlayerList implements Iterable<Node> {
                 continue;
             }
 
+            // Execute player on turn action and notify all about the player state
             notifyTurnPlayer(playerOnTurn._player);
-
             Command command = askCommandToPlayer(playerOnTurn, sb, bb, maxBet);
             CommandResult result = command.execute(sb, bb, maxBet);
             notifyPlayerOwnState(playerOnTurn);
             notifyOtherPlayerActionToAllPlayers(playerOnTurn._player);
-
+            
+            // Update and notify about the current total pot
             totalPot = calculateTotalPot() + _totalPot;
             notifyTotalPotToAllPlayers(totalPot);
 
@@ -272,14 +302,16 @@ public class PlayerList implements Iterable<Node> {
             }
 
             currentBet = result.folds() ? 0 : result.bet();
-            maxBet = Integer.max(maxBet, currentBet);
-            
+            minRaise = Math.max(minRaise, result.bet() - maxBet);
+            maxBet = Math.max(maxBet, currentBet);
+
             pivotPlayer = result.raises() ? playerOnTurn : pivotPlayer;
             playerOnTurn = getNextPlayerActive(playerOnTurn);
 
             log.debug("Total pot is {}", totalPot);
             log.debug("Current bet is {}", currentBet);
             log.debug("Maximum bet is {}", maxBet);
+            log.debug("Minimum raise is {}", minRaise);
         }
         while( pivotPlayer != playerOnTurn && playersRemaining != 0);
 
@@ -312,10 +344,11 @@ public class PlayerList implements Iterable<Node> {
         }
         catch (TurnTimeoutException e) {
             log.warn("Player {} TIMEOUT -> auto FOLD", player.getPlayerName());
+
             System.out.printf("Timer has ended, player {} make FOLD!\n\n", player.getPlayerName());
             command = Command.parseCommand(new String[] {GameType.FOLD_ACTION_FULL}, player);
         }
-        catch (Exception e) {
+        catch (IOException e) {
             log.error("Error happened waiting for player {} : {}", player.getPlayerName(), e.getMessage());
 
             node._isDisconnected = true;
@@ -344,15 +377,20 @@ public class PlayerList implements Iterable<Node> {
 
     public void passTurn() throws CancelGameException {
 
+        // Restart previous bets from players
         resetPlayers();
 
+        // Rotate first and last players -> Waiting to assing roles to them
         Node newLast = !_first._player.isEliminated() ? _first : getNextNotEliminatedPlayer(_first);
         Node newFirst = getNextNotEliminatedPlayer(newLast);
-
         _first = newFirst;
         _last = newLast;
         
+        // Restart every pot made by players
         _potManager.restartPots();
+
+        // Restart round status
+        _totalPot = 0;
     }
 
     public void calculatePrizeDistribution(final List<PlayerEvaluation> players) throws CancelGameException {
@@ -386,7 +424,7 @@ public class PlayerList implements Iterable<Node> {
     public boolean checkEndOfGame() {
 
         int playersNotEliminated = _playerCounter;
-        boolean gameEnds = false;
+
         Iterator<Node> it = iterator();
         while( it.hasNext() ) {
 
@@ -419,6 +457,9 @@ public class PlayerList implements Iterable<Node> {
             }
         }
 
+        if(_spectator != null)
+            _spectator.notifyTableCard(card);
+
     }
 
     public void manageEliminatedPlayers() {
@@ -429,9 +470,7 @@ public class PlayerList implements Iterable<Node> {
             Node player = it.next();
             if(player._player.getMoneyOnBet() == 0 && player._player.getMoneyOffBet() == 0)
                 player._player.eliminate();
-
         }
-
     }
 
     public List<HandInfo> getPlayerHandsInfo() {
@@ -569,7 +608,7 @@ public class PlayerList implements Iterable<Node> {
         while( it.hasNext() ) {
 
             Node player = it.next();
-            if(player == playerOnTurn)
+            if( player.equals(playerOnTurn) )
                 continue;
 
             try {
@@ -586,6 +625,7 @@ public class PlayerList implements Iterable<Node> {
     }
 
     private void notifyTurnPlayer(Player p) throws CancelGameException {
+
         Iterator<Node> it = iterator();
         while( it.hasNext() ) {
 
@@ -604,6 +644,9 @@ public class PlayerList implements Iterable<Node> {
                     throw new CancelGameException();
             }
         }
+
+        if(_spectator != null)
+            _spectator.notifyTurnPlayer(p);
     }
 
     private void notifyPlayerOwnState(Node player) throws CancelGameException {
@@ -640,6 +683,8 @@ public class PlayerList implements Iterable<Node> {
             }
         }
 
+        if(_spectator != null)
+            _spectator.notifyOtherPlayerAction(p);
     }
 
     private void notifyTotalPotToAllPlayers(final int totalPot) throws CancelGameException {
@@ -659,6 +704,8 @@ public class PlayerList implements Iterable<Node> {
             }
         }
 
+        if(_spectator != null)
+            _spectator.notifyTotalPot(totalPot);
     }
 
     private void notifyHandEndsByFold() throws CancelGameException {
@@ -678,6 +725,8 @@ public class PlayerList implements Iterable<Node> {
             }
         }
 
+        if(_spectator != null)
+            _spectator.notifyHandEndsByFolds();
     }
 
     private void notifyRoundEnded() throws CancelGameException {
@@ -697,6 +746,8 @@ public class PlayerList implements Iterable<Node> {
             }
         }
 
+        if(_spectator != null)
+            _spectator.notifyRoundEnded();
     }
 
     public void notifyGameEnds(final boolean gameEnds) throws CancelGameException {
@@ -721,6 +772,12 @@ public class PlayerList implements Iterable<Node> {
             }
         }
 
+        if(_spectator != null) {
+            if(gameEnds)
+                _spectator.notifyGameEnded();
+            else
+                _spectator.notifyGameKeeps();
+        }
     }
 
     private void notifyPlayerStateToAllPlayers() throws CancelGameException {
@@ -735,6 +792,7 @@ public class PlayerList implements Iterable<Node> {
                     receiverPlayer._player.notifyOwnState();
                 }
                 catch(Exception e) {
+
                     receiverPlayer._isDisconnected = true;
                     if( checkIfGameCancel() )
                         throw new CancelGameException();
@@ -744,13 +802,14 @@ public class PlayerList implements Iterable<Node> {
                 while( it.hasNext() ) {
 
                     Node player = it.next();
-                    if(player == receiverPlayer)
+                    if( player.equals(receiverPlayer) )
                         continue;
                 
                     try {
                         receiverPlayer._player.notifyOtherPlayerState(player._player);
                     }
                     catch(Exception e) {
+                        
                         receiverPlayer._isDisconnected = true;
                         if( checkIfGameCancel() )
                             throw new CancelGameException();
@@ -806,6 +865,10 @@ public class PlayerList implements Iterable<Node> {
 
 
     private boolean checkIfGameCancel() {
+
+        if(_host != null && _host._isDisconnected)
+            return true; 
+
 
         int connectedPlayers = 0;
         Iterator<Node> it = iterator();

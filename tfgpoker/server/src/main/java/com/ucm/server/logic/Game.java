@@ -21,8 +21,10 @@ import com.ucm.server.gameobjects.Player;
 import com.ucm.server.managers.BotManager;
 import com.ucm.server.middleclasses.HandInfo;
 import com.ucm.server.middleclasses.PlayerEvaluation;
+import com.ucm.server.middleclasses.Spectator;
 import com.ucm.server.players.HumanPlayer;
 import com.ucm.server.statistics.EquityCalculator;
+
 
 
 public class Game {
@@ -52,7 +54,12 @@ public class Game {
     private boolean _firstHand = true;
     
 
-    public Game(final List<ClientStruct> players, final List<BotStruct> bots, final GameConfig config) throws EvaluatorException {
+    public Game(
+        List<ClientStruct> players, 
+        List<BotStruct> bots, 
+        Spectator spectator, 
+        GameConfig config
+    ) throws EvaluatorException {
 
         _gameConfig = config;
 
@@ -64,7 +71,7 @@ public class Game {
         _currentBB = _initialBigBlind;
 
         _playerList = new PlayerList(config.getTotalPlayers());
-        addAllPlayersInitial(players, bots, config);
+        addAllPlayersInitial(players, bots, spectator, config);
 
         _deck = new Deck();
         _tableCards = new Card[MAX_CARDS_IN_TABLE];
@@ -193,12 +200,18 @@ public class Game {
         log.debug("Blinds increased to {}/{}", _currentSB, _currentBB);
     }
 
-    private void addAllPlayersInitial(final List<ClientStruct> players, final List<BotStruct> bots, final GameConfig config) {
+    private void addAllPlayersInitial(List<ClientStruct> players, List<BotStruct> bots, Spectator spectator, GameConfig config) {
 
         int id = 0;
         for(ClientStruct cs : players) {
+
             HumanPlayer hp = new HumanPlayer(cs.socket());
-            _playerList.addPlayer( new Player(id, cs.name(), config._initialMoney, hp) );
+            Player p = new Player(id, cs.name(), config._initialMoney, hp);
+            
+            if( cs.isHost() )
+                _playerList.assignHost(p);
+
+            _playerList.addPlayer( p );
             ++id;
         }
 
@@ -215,6 +228,10 @@ public class Game {
                 log.error("Bot with ID {} could not be found! Ignoring request", bs.botId());
             }
         }
+    
+        if(spectator._socket != null) {
+            _playerList.addSpectator(spectator);
+        }
     }
 
     private void retrieveCardsFromTable() {
@@ -227,15 +244,14 @@ public class Game {
         _tableCardsCounter = 0;
     }
 
-    public void updateEquity() throws CancelGameException{
+    public void updateEquity() throws CancelGameException {
 
         List<HandInfo> players = _playerList.getPlayerHandsInfo();
+        if (players.size() <= 1)
+            return; 
 
-        if (players.size() <= 1) return; 
 
-        Map<Integer, Double> equity =
-            EquityCalculator.calculateEquity(players, _tableCards, _deck);
-
+        Map<Integer, Double> equity = EquityCalculator.calculateEquity(players, _tableCards, _deck);
         _playerList.notifyEquityToPlayers(equity);
     }
 

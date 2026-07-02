@@ -184,8 +184,8 @@ public class PokerPreGame {
     public static List<PlayerInfo> receivePlayerListWaiting(InputStream input, OutputStream output) throws IOException {
 
         List<PlayerInfo> playerPositions = new ArrayList<>();
+        
         int numPlayers = SocketUtils.receiveInt(input);
-
         for(int i = 0; i < numPlayers; i++) {
             PlayerInfo p = PokerPreGame.receivePlayerInRoomInfo(input, output);
             playerPositions.add( p );

@@ -17,6 +17,7 @@ import com.ucm.common.GameType;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.gameobjects.BotLLM;
+import com.ucm.server.interfaces.IPlayerInfo;
 
 
 public class LlamaPokerLLM extends BotLLM {
@@ -107,7 +108,7 @@ public class LlamaPokerLLM extends BotLLM {
     }
 
     @Override
-    protected String sanitize(String action) {
+    protected String sanitize(String action, IPlayerInfo player) {
 
         action = action.toLowerCase().trim();
 
@@ -134,8 +135,8 @@ public class LlamaPokerLLM extends BotLLM {
                 return "call";
             }
             else if(targetBetInt < _maxBet 
-                || targetBetInt == _player.getMoneyOffBet() + _player.getMoneyOnBet()
-                || targetBetInt > _player.getMoneyOffBet() + _player.getMoneyOnBet()) {
+                || targetBetInt == player.getMoneyOffBet() + player.getMoneyOnBet()
+                || targetBetInt > player.getMoneyOffBet() + player.getMoneyOnBet()) {
                 return "call";
             }
             else
@@ -152,7 +153,7 @@ public class LlamaPokerLLM extends BotLLM {
 
     // VA MAS LENTO PERO ACIERTA MAS
     @Override
-    protected String buildPrompt(int sb, int bb, int maxBet) {
+    protected String buildPrompt(int sb, int bb, int maxBet, IPlayerInfo player) {
 
         StringBuilder strBuilder = new StringBuilder();
 
@@ -166,9 +167,9 @@ public class LlamaPokerLLM extends BotLLM {
 
         strBuilder.append("The player positions involved in this game are UTG, HJ, CO, BTN, SB, BB.\n");
         strBuilder.append("In this hand, your position is ")
-          .append(mapRole( _player.getRole() ))
+          .append(mapRole( player.getRole() ))
           .append(", and your holding is ")
-          .append(formatCardsVerbose( List.of(_player.getPlayerCards()) ))
+          .append(formatCardsVerbose( List.of(player.getPlayerCards()) ))
           .append(".\n");
 
         strBuilder.append("Before the flop, ")
@@ -204,7 +205,7 @@ public class LlamaPokerLLM extends BotLLM {
         strBuilder.append("To remind you, the current pot size is ")
           .append(_totalPot)
           .append(" chips, and your holding is ")
-          .append( formatCardsVerbose(List.of(_player.getPlayerCards())) )
+          .append( formatCardsVerbose(List.of(player.getPlayerCards())) )
           .append(".\n\n");
 
         strBuilder.append("Decide on an action based on the strength of your hand on this board, your position, and actions before you. ");
@@ -215,7 +216,7 @@ public class LlamaPokerLLM extends BotLLM {
     }
 
     // VA MAS RAPIDO PERO ACIERTA CON MENOS FRECUENCIA 
-    private String reducedPrompt(int sb, int bb, int maxBet) {
+    private String reducedPrompt(int sb, int bb, int maxBet, IPlayerInfo player) {
 
         StringBuilder strBuilder = new StringBuilder();
 
@@ -223,14 +224,14 @@ public class LlamaPokerLLM extends BotLLM {
 
         strBuilder.append("Here is a game summary:\n\n");
 
-        strBuilder.append("Position: ").append(mapRole( _player.getRole() )).append("\n");
-        strBuilder.append("Hand: ").append(formatCardsVerbose( List.of(_player.getPlayerCards()) )).append("\n");
+        strBuilder.append("Position: ").append(mapRole( player.getRole() )).append("\n");
+        strBuilder.append("Hand: ").append(formatCardsVerbose( List.of(player.getPlayerCards()) )).append("\n");
 
         if (!table.isEmpty()) {
             strBuilder.append("Board: ").append(formatCardsVerbose(table)).append("\n");
         }
 
-        strBuilder.append("Stack: ").append( _player.getMoneyOffBet() ).append("\n");
+        strBuilder.append("Stack: ").append( player.getMoneyOffBet() ).append("\n");
         strBuilder.append("Pot: ").append(_totalPot).append("\n");
         strBuilder.append("Blinds: ").append(sb / 2.0).append("/").append(bb).append("\n\n");
 

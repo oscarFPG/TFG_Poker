@@ -1,9 +1,14 @@
 package com.ucm.server.players;
 
 
+import java.io.IOException;
+
 import com.ucm.common.GameType;
+import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.gameobjects.BotLLMOnline;
+import com.ucm.server.interfaces.IPlayerInfo;
 
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
@@ -75,6 +80,11 @@ public class GeminiLLM extends BotLLMOnline {
     }
 
     @Override
+    public String getFullDescription() {
+        return "This is a LLM powered by Google's Gemini model";
+    }
+
+    @Override
     protected String getCredentialKey() {
         return "GEMINI_API_KEY";
     }
@@ -84,9 +94,4 @@ public class GeminiLLM extends BotLLMOnline {
 		return new GeminiLLM();
 	}
     
-    @Override
-    public String getFullDescription() {
-        return "This is a LLM powered by Google's Gemini model";
-    }
-
 }

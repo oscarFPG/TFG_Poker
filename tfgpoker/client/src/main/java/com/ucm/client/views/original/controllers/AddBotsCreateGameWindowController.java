@@ -1,22 +1,16 @@
 package com.ucm.client.views.original.controllers;
 
-import java.io.IOException;
-
-import com.ucm.client.ClientInfo;
-import com.ucm.common.GameType;
-import com.ucm.common.SocketUtils;
 
 import javafx.animation.RotateTransition;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
-import javafx.util.converter.IntegerStringConverter;
+
 
 public class AddBotsCreateGameWindowController extends GenericController {
     
@@ -68,9 +62,11 @@ public class AddBotsCreateGameWindowController extends GenericController {
     @Override
     protected void onViewShown() {
         
+        boolean allowBots = _clientInfo.gameConfig._allowBots;
+        
         btnStartAddBots.setDisable(true);
         initializeSpinners();
-        boolean allowBots = _clientInfo.gameConfig._allowBots;
+        
         spinnerBot1.setDisable(!allowBots);
         spinnerBot2.setDisable(!allowBots);
         cardBackBot1.setVisible(false);
@@ -129,7 +125,8 @@ public class AddBotsCreateGameWindowController extends GenericController {
 
             first.play();
 
-        } else {
+        }
+        else {
 
             RotateTransition first = new RotateTransition(Duration.millis(350), cardBackBot1);
             first.setFromAngle(0);
@@ -180,7 +177,8 @@ public class AddBotsCreateGameWindowController extends GenericController {
 
             first.play();
 
-        } else {
+        }
+        else {
 
             RotateTransition first = new RotateTransition(Duration.millis(350), cardBackBot2);
             first.setFromAngle(0);
