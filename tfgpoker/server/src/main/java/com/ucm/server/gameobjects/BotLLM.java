@@ -38,7 +38,58 @@ import com.ucm.server.interfaces.IPlayerInfo;
  */
 public abstract class BotLLM extends Bot {
 
-    
+    /**
+     * Community cards on the table.
+     */
+    protected List<Card> table;
+
+    /**
+     * History of actions in the current hand.
+     */
+    protected List<String> actionHistory;
+
+    /**
+     * Small blind value.
+     */
+    protected int _smallBlind;
+
+    /**
+     * Big blind value.
+     */
+    protected int _bigBlind;
+
+    /**
+     * Max bet in the current hand
+     */
+    protected int _maxBet;
+
+    /**
+     * Total pot in the table
+     */
+    protected int _totalPot;
+
+    /**
+     * Estimated probability of winning the hand.
+     */
+    protected double _equity;
+
+
+        /**
+     * Playing style used by this bot.
+     * By default, bots use a balanced playing style.
+     */
+    protected BotStyle _style = BotStyle.DEFAULT;
+
+    protected IPlayerInfo _player;
+
+    public BotStyle getStyle() {
+        return _style;
+    }
+
+    public void setPlayingStyle(BotStyle style) {
+        _style = (style == null) ? BotStyle.DEFAULT : style;
+    }
+
     /**
      * Default constructor.
      * 
@@ -47,6 +98,7 @@ public abstract class BotLLM extends Bot {
     public BotLLM(int botID) {
         super(botID);
     }
+
 
 
     /**
@@ -76,6 +128,10 @@ public abstract class BotLLM extends Bot {
     protected String buildPrompt(int sb, int bb, int maxBet, IPlayerInfo player) {
         return String.format("""
             You are an expert No Limit Texas Hold'em player.
+
+           Play optimally according to your assigned playing style.
+
+            %s
 
             This is a 9-handed table.
             Only the players mentioned in the action history are still in the hand.
