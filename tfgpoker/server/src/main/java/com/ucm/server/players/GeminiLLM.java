@@ -1,11 +1,14 @@
 package com.ucm.server.players;
 
+
 import java.io.IOException;
 
 import com.ucm.common.GameType;
+import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.gameobjects.BotLLMOnline;
-import com.ucm.server.interfaces.IPokerPlayer;
+import com.ucm.server.interfaces.IPlayerInfo;
 
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
@@ -35,6 +38,10 @@ import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
  */
 public class GeminiLLM extends BotLLMOnline {
 
+    private static final int GEMINI_ID = GameType.BOT_GEMINI;
+    public static final String NAME = "Gemini LLM";
+
+
     /**
      * Chat model instance used to interact with Gemini.
      */
@@ -42,29 +49,14 @@ public class GeminiLLM extends BotLLMOnline {
 
 
     public GeminiLLM() {
-        _idBot = GameType.BOT_GEMINI;
-    }
-
-    /**
-     * Constructs a Gemini-based LLM bot.
-     * 
-     * <p>
-     * If the API key is null, it will be loaded from a configuration file.
-     * </p>
-     * 
-     * @param id     player identifier
-     * @param money  initial stack
-     * @param apiKey Gemini API key (optional)
-     */
-    public GeminiLLM(int id, int money) {
-        super(id, "GeminiLLM", money);
-        _idBot = GameType.BOT_GEMINI;
+        super(GEMINI_ID);
 
         gemini = GoogleAiGeminiChatModel.builder()
                 .apiKey(_apiKey)
                 .modelName("gemini-2.5-flash")
                 .build();
     }
+
 
     /**
      * Sends the prompt to the Gemini model and returns its response.
@@ -88,13 +80,9 @@ public class GeminiLLM extends BotLLMOnline {
     }
 
     @Override
-    public void notifyOtherPlayerAction(IPokerPlayer p) {}
-
-    @Override
-    public void notifyPlayerState(final IPokerPlayer player, boolean last) throws IOException {}
-
-    @Override
-    public void notifyTotalPot(int total) throws IOException {}
+    public String getFullDescription() {
+        return "This is a LLM powered by Google's Gemini model";
+    }
 
     @Override
     protected String getCredentialKey() {
@@ -102,12 +90,8 @@ public class GeminiLLM extends BotLLMOnline {
     }
 
 	@Override
-	public Bot create(int ID, int initialMoney) {
-		return new GeminiLLM(ID, initialMoney);
+	public Bot create() {
+		return new GeminiLLM();
 	}
     
-    public static String getGenericName() {
-        return "Gemini LLM";
-    }
-
 }

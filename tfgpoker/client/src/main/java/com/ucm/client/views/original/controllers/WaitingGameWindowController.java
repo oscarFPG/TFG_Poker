@@ -3,14 +3,11 @@ package com.ucm.client.views.original.controllers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import javax.script.Bindings;
-
-import com.ucm.client.AvatarGenerator;
-import com.ucm.client.ClientInfo;
+import com.ucm.client.utils.Messages;
+import com.ucm.client.utils.NotificationManager;
 import com.ucm.common.GameType;
 import com.ucm.common.PlayerInfo;
 import com.ucm.common.PokerPreGame;
@@ -22,7 +19,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 
@@ -127,6 +123,7 @@ public class WaitingGameWindowController extends GenericController {
         }
         catch(IOException e) {
             System.out.printf("Error sending EVENT_GAME_STARTS to server: %s\n", e.getMessage());
+            NotificationManager.showError(Messages.Notifications.ERROR_SENDING_EVENT_GAME_STARTS + e.getMessage());
         }
     }
 
@@ -134,12 +131,9 @@ public class WaitingGameWindowController extends GenericController {
     protected void onViewShown() {
 
         clearAllLabels();
-        imgTableInGame.setImage(new Image(getClass().getResource(_clientInfo.gameConfig._selectedTable).toExternalForm()));
-        playerName0.setText( _clientInfo.name );
-        playerMoney0.setText( String.valueOf( _clientInfo.gameConfig._initialMoney ) );
-        pokerPlayer0.setOpacity( 1 );
-        initializeAvatarProfiles ();
-        getAvatarPosition(0,  _clientInfo.name );
+        initializeAvatarProfiles();
+        imgTableInGame.setImage( new Image(getClass().getResource(_clientInfo.gameConfig._selectedTable).toExternalForm()) );
+        
         roomNamePlaceholder.setText( _clientInfo.gameConfig._roomName );
         roomIdPlaceholder.setText( String.valueOf( _clientInfo.gameConfig._roomId ) );
 
@@ -150,14 +144,13 @@ public class WaitingGameWindowController extends GenericController {
     
         _stage.setOnCloseRequest(event -> {
 
-            System.out.printf("Intentando cerrar!\n");
             try {
                 _clientInfo.socket.close();
+                System.out.printf("Connection closed by user before closing the window!\n"); 
             }
             catch (IOException e) {
-                System.out.printf("Cerrando sockets!\n");    
+                System.out.printf("Minor error closing client socket!\n");    
             }
-            System.out.printf("Cerrado ¿?\n");
         });
 
     }
@@ -197,16 +190,41 @@ public class WaitingGameWindowController extends GenericController {
             InputStream input = _clientInfo.socket.getInputStream();
             OutputStream output = _clientInfo.socket.getOutputStream();
 
-            _clientInfo.id = SocketUtils.receiveInt(input);
-            System.out.printf("Player ID is %d\n", _clientInfo.id);
-
             if(_clientInfo.isHost) {
+
+                _clientInfo.id = SocketUtils.receiveInt(input);
+                System.out.printf("Player host ID is %d\n", _clientInfo.id);
+
+                if(_clientInfo.gameConfig._joinedAsSpectator) {
+                    // TODO : Mostrar como espectador
+                    System.out.printf("Player host is specting!\n");
+                }
+                else {
+                    System.out.printf("Player host is playing!\n");
+                    Platform.runLater(() -> {
+                        playerName0.setText(_clientInfo.name);
+                        playerMoney0.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
+                        pokerPlayer0.setOpacity(1);
+                        getAvatarPosition(0, _clientInfo.name);
+                    });
+                }
+
                 System.out.printf("Server response: This client is the host of the game!\n");
+                NotificationManager.showSuccess(Messages.Notifications.PLAYER_IS_HOST);
             }
             else {
-                System.out.printf("Server response: This client is a guest!\n");
 
+                _clientInfo.id = SocketUtils.receiveInt(input);
+                System.out.printf("Player guest ID is %d\n", _clientInfo.id);
+
+                System.out.printf("Server response: This client is a guest!\n");
+                NotificationManager.showSuccess(Messages.Notifications.PLAYER_IS_GUEST);
+                
                 Platform.runLater(() -> {
+                    playerName0.setText(_clientInfo.name);
+                    playerMoney0.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
+                    pokerPlayer0.setOpacity(1);
+                    getAvatarPosition(0, _clientInfo.name);
                     startButton.setVisible(false);
                 });
             }
@@ -220,8 +238,7 @@ public class WaitingGameWindowController extends GenericController {
                     _clientInfo.playerPositions = PokerPreGame.receivePlayerListWaiting(input, output);
                     Platform.runLater(() ->
                         showPlayers(_clientInfo.playerPositions)
-                    );
-                    
+                    );    
                 }
                 else if(event == GameType.CONFIRMATION_GAME_STARTS) {
                     System.out.printf("Event GAME_STARTS!\n");
@@ -229,13 +246,14 @@ public class WaitingGameWindowController extends GenericController {
                 }
                 else if(event == GameType.ERROR_GAME_CANNOT_START) {
                     System.out.printf("Game cannot start! Missing players\n");
+                    NotificationManager.showError(Messages.Notifications.ERROR_MISSING_PLAYERS);
                 }
                 else {
-                    System.out.printf("Event %d unknown!\n", event);
+                    System.out.printf("Waiting phase: event %d unknown!\n", event);
+                    NotificationManager.showError(Messages.Notifications.ERROR_UNKNOWN_EVENT);
                 }
             }
-            System.out.printf("Game has to start!\n");
-
+            System.out.printf("Game ready to start!\n");
             SocketUtils.sendInteger(output, GameType.CONFIRMATION_PLAYER_STARTS);
 
             Platform.runLater(() -> {
@@ -244,6 +262,7 @@ public class WaitingGameWindowController extends GenericController {
         }
         catch(IOException e) {
             System.out.printf("Error: %s\n", e.getMessage());
+            NotificationManager.showError(e.getMessage());
         }
 
         System.out.printf("Finished waiting for players info!\n");
@@ -294,7 +313,8 @@ public class WaitingGameWindowController extends GenericController {
         }
     }
 
-    private void getAvatarPosition (final int position, String name) {
+    private void getAvatarPosition(final int position, String name) {
+
         ImageView avatarImage = _listaAvatarProfiles.get(position);
         Image avatar = _clientInfo.getAvatar(name, 80);
 
@@ -320,8 +340,28 @@ public class WaitingGameWindowController extends GenericController {
                         .findFirst()
                         .orElse(-1);
 
-        if(myIndex == -1){
-            System.out.printf("We are not in the list! Something is wrong...\n");
+        if(myID == -1) {
+         
+            int seatIndex = 0;
+            for(int i = players.size() - 1; 0 <= i; i--) {
+
+                PlayerInfo p = players.get(i);
+
+                Label nameLabel = getNameLabelByPosition(seatIndex);
+                Label moneyLabel = getMoneyLabelByPosition(seatIndex);
+                StackPane playerStackPane = getPlayerStackPaneByPosition(seatIndex);
+                final int pos = seatIndex;
+
+                Platform.runLater(() -> {
+                    nameLabel.setText(p.name);
+                    moneyLabel.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
+                    playerStackPane.setOpacity(1);
+                    getAvatarPosition(pos, p.name);
+                });
+
+                seatIndex++;
+            }
+
             return;
         }
 
@@ -344,7 +384,6 @@ public class WaitingGameWindowController extends GenericController {
             });
 
             ++beforePosition;
-
         }
 
         // Show players ahead of me(in the list) : position 8, 7, 6, ...
@@ -371,6 +410,7 @@ public class WaitingGameWindowController extends GenericController {
         for(PlayerInfo cl : players) {
             System.out.printf("Player [%d]%s in waiting room\n", cl.id, cl.name);
         }
+        System.out.printf("\n");
     }
 
 }

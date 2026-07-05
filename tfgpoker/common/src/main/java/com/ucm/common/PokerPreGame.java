@@ -48,6 +48,7 @@ public class PokerPreGame {
         SocketUtils.sendInteger(out, dinamicBlinds);
         SocketUtils.sendString(out, config._levelDuration);
         SocketUtils.sendString(out, config._hikePercentage);
+        SocketUtils.sendString(out, config._turnTimerPlayer);
         SocketUtils.sendInteger(out, config._numBots1);
         SocketUtils.sendInteger(out, config._numBots2);
         SocketUtils.sendInteger(out, config._numPlayers);
@@ -65,6 +66,7 @@ public class PokerPreGame {
         boolean dinamicBlinds = (SocketUtils.receiveInt(input) == GameType.TRUE) ? true : false;
         String levelDuration = SocketUtils.receiveString(input);
         String hikePercentage = SocketUtils.receiveString(input);
+        String turnTimer = SocketUtils.receiveString(input);
         int numBots1 = SocketUtils.receiveInt(input);
         int numBots2 = SocketUtils.receiveInt(input);
         int numPlayers = SocketUtils.receiveInt(input);
@@ -81,6 +83,7 @@ public class PokerPreGame {
         config._dinamicBlinds = dinamicBlinds;
         config._levelDuration = levelDuration;
         config._hikePercentage = hikePercentage;
+        config._turnTimerPlayer = turnTimer;
         config._numBots1 = numBots1;
         config._numBots2 = numBots2;
         config._numPlayers = numPlayers;
@@ -181,8 +184,8 @@ public class PokerPreGame {
     public static List<PlayerInfo> receivePlayerListWaiting(InputStream input, OutputStream output) throws IOException {
 
         List<PlayerInfo> playerPositions = new ArrayList<>();
+        
         int numPlayers = SocketUtils.receiveInt(input);
-
         for(int i = 0; i < numPlayers; i++) {
             PlayerInfo p = PokerPreGame.receivePlayerInRoomInfo(input, output);
             playerPositions.add( p );

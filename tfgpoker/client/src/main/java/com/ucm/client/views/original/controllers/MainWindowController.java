@@ -1,17 +1,16 @@
 package com.ucm.client.views.original.controllers;
 
-import com.ucm.client.AvatarGenerator;
-import com.ucm.client.ClientInfo;
+import com.ucm.client.utils.AlertManager;
+import com.ucm.client.utils.Messages;
+import com.ucm.client.utils.NotificationManager;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.RotateTransition;
 import javafx.animation.Timeline;
-import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
@@ -133,6 +132,24 @@ public class MainWindowController extends GenericController {
             informationLabel.setVisible(false);
             acordeonInformation.setVisible(false);
             paragraphLabelStack.setVisible(false);
+            // 2. Mostrar Alerta de salida
+            // Suponiendo que showConfirm devuelve boolean (true si pulsó OK/YES)
+            boolean confirmed = AlertManager.showConfirm(
+                Messages.Confirm.EXIT_TITLE, 
+                Messages.Confirm.EXIT_MSG, 
+                AlertManager.AlertTypeCustom.WARNING
+            );
+
+            if (confirmed) {
+                // Cerramos notificaciones, ventana y matamos procesos
+                NotificationManager.closeAll();
+                _stage.close();
+                System.exit(0); 
+            } else {
+                // Si cancela, devolvemos el menú al estado anterior (Introduction)
+                // para que el botón de exit no se quede seleccionado
+                group1.selectToggle(introductionIcon);
+            }
         }
     }
 
@@ -221,6 +238,5 @@ public class MainWindowController extends GenericController {
         playerNamePlaceholder.setText(_clientInfo.name);
     }
 
-   
 
 }

@@ -3,10 +3,8 @@ package com.ucm.server.commands;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
-import com.ucm.server.interfaces.IPokerActions;
+import com.ucm.server.interfaces.IPlayerActions;
 import com.ucm.server.middleclasses.CommandResult;
 
 
@@ -21,9 +19,7 @@ import com.ucm.server.middleclasses.CommandResult;
  */
 public abstract class Command {
 
-    private static final Logger log = LogManager.getLogger(Command.class);
-
-    protected IPokerActions _player;
+    protected IPlayerActions _player;
     protected int _playersOffBetMoney;
     protected int _playersOnBetMoney;
 
@@ -51,7 +47,7 @@ public abstract class Command {
      * @param onBetMoney the amount of money that the player has already bet in the
      *                   current hand.
      */
-    public Command(IPokerActions p) {
+    public Command(IPlayerActions p) {
         _player = p;
         _playersOffBetMoney = p.getMoneyOffBet();
         _playersOnBetMoney = p.getMoneyOnBet();
@@ -68,7 +64,7 @@ public abstract class Command {
      * @param p player that is making the command
      * @return the command identified by the input, null if the input does not match any command
      */
-    public static Command parseCommand(final String[] input, IPokerActions p) {
+    public static Command parseCommand(final String[] input, IPlayerActions p) {
 
         for (Command command : AVAILABLE_COMMANDS) {
             if (command.matchCommand(input[0])) {
@@ -108,7 +104,7 @@ public abstract class Command {
     }
 
 
-    protected abstract Command createCommand(final String[] commandFormat, final IPokerActions player);
+    protected abstract Command createCommand(final String[] commandFormat, final IPlayerActions player);
 
     /**
      * Checks if the command can be executed correctly based on the context

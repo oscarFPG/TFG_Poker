@@ -39,6 +39,7 @@ public class GameType {
     public static final int ERROR_GAME_NOT_JOINED = 504;
     public static final int ERROR_GAME_CANNOT_START = 505;
     public static final int ERROR_GAME_CANCELS = 506;
+     public static final int ERROR_NAME_ALREADY_USED = 507;
 
     /* ---------------- GAME CODES ----------------  */
     // Player roles
@@ -53,10 +54,10 @@ public class GameType {
     public static final int PLAYER_ROLE_BIG_BLIND = 88;
 
     // Card suits
-    public static final int HEARTS = 100;
-    public static final int DIAMONDS = 101;
-    public static final int CLUBS = 102;
-    public static final int SPADES = 103;
+    public static final int HEARTS = 90;
+    public static final int DIAMONDS = 91;
+    public static final int CLUBS = 92;
+    public static final int SPADES = 93;
 
     // Card numbers
     public static final int NUMBER_ACE = 110;
@@ -80,22 +81,22 @@ public class GameType {
     public static final int TURN_WAIT = 203;
     public static final int TURN_FOLD = 204;
     public static final int TURN_OTHER_PLAYER = 205;
-    public static final int MY_TURN_ACTION = 206;
+    public static final int TURN_BEFORE_PLAY = 206;
 
     // Round, hand and game status
     public static final int GAME_STARTS = 300;
-    public static final int ROUND_STARTS = 301;
-    public static final int HAND_STARTS = 302;
     public static final int GAME_KEEPS = 303;
     public static final int GAME_ENDS = 304;
     public static final int ROUND_ENDS = 305;
-    public static final int HAND_ENDS = 306;
     public static final int HAND_ENDS_BY_FOLD = 310;
-    public static final int PLAYER_WINS_HAND = 320;
-    public static final int PLAYER_LOSES_HAND = 321;
+    public static final int MY_PLAYER_STATUS = 311;
+    public static final int OTHER_PLAYER_STATUS = 312;
+    public static final int PLAYER_STATUS_END = 313;
+    public static final int NEW_ROUND = 314;
+    public static final int TABLE_CARD = 315;
     public static final int PLAYER_WINS_GAME = 330;
     public static final int PLAYER_LOSES_GAME = 331;
-    public static final int TOTAL_POT = 331;
+    public static final int TOTAL_POT = 332;
 
     // Player actions
     public static final String FOLD_ACTION_FULL = "fold";
@@ -112,7 +113,11 @@ public class GameType {
     // Bots identifier
     public static final int BOT_GEMINI = 10000;
     public static final int BOT_LLAMA = 10001;
+    public static final int BOT_NN_MODEL_1 = 10002;
 
     //Equity identifier
     public static final int EQUITY_UPDATE = 40000;
+
+    //Turn timer left identifier
+    public static final int TURN_TIMER_UPDATE = 40100;
 }

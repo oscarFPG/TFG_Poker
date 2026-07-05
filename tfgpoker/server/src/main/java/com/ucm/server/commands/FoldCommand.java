@@ -2,7 +2,7 @@ package com.ucm.server.commands;
 
 
 import com.ucm.common.GameType;
-import com.ucm.server.interfaces.IPokerActions;
+import com.ucm.server.interfaces.IPlayerActions;
 import com.ucm.server.middleclasses.CommandResult;
 
 
@@ -18,13 +18,13 @@ public class FoldCommand extends Command {
      * Constructor method that creates a FoldCommand.
      * @param p the player that is making the fold play.
      */
-    public FoldCommand(IPokerActions p) {
+    public FoldCommand(IPlayerActions p) {
         super(p);
     }
 
 
     @Override
-	protected Command createCommand(final String[] commandFormat, final IPokerActions player){
+	protected Command createCommand(final String[] commandFormat, final IPlayerActions player){
         return new FoldCommand(player);
 	}
 

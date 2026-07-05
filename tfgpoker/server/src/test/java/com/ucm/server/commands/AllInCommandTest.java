@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 import com.ucm.server.FakePlayer;
-import com.ucm.server.interfaces.IPokerActions;
 import com.ucm.server.middleclasses.CommandResult;
 
 
@@ -21,7 +20,7 @@ public class AllInCommandTest {
 
         final int initialBet = 0;
 
-        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
+        FakePlayer player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "alIin";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
@@ -36,7 +35,7 @@ public class AllInCommandTest {
         int maxBet = 0;
 
 
-        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
+        FakePlayer player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "all-in";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
@@ -56,7 +55,7 @@ public class AllInCommandTest {
         final int initialBet = 200;
         int maxBet = 0;
 
-        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
+        FakePlayer player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "all-in";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
@@ -76,7 +75,7 @@ public class AllInCommandTest {
         final int initialBet = 0;
         int maxBet = 20;
 
-        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
+        FakePlayer player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "all-in";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
@@ -96,7 +95,7 @@ public class AllInCommandTest {
         final int initialBet = 200;
         int maxBet = 20;
 
-        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
+        FakePlayer player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "all-in";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
@@ -116,7 +115,7 @@ public class AllInCommandTest {
         final int initialBet = 0;
         int maxBet = INITIAL_MONEY;
 
-        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
+        FakePlayer player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "all-in";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
@@ -136,7 +135,7 @@ public class AllInCommandTest {
         final int initialBet = 100;
         int maxBet = INITIAL_MONEY;
 
-        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
+        FakePlayer player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "all-in";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);

@@ -4,11 +4,7 @@ package com.ucm.server.control;
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.server.logic.Game;
-import com.ucm.server.logic.Timer;
-import com.ucm.common.BotStruct;
-import com.ucm.common.ClientStruct;
 
-import org.apache.logging.log4j.ThreadContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,12 +18,9 @@ public class Controller {
      */
     private Game _game;
 
-    private Timer _timer;
-
 
     public Controller(Game game) {
         _game = game;
-        _timer = game.getGameTimerConfiguration();
     }
 
     /**
@@ -56,20 +49,18 @@ public class Controller {
         //ThreadContext.put("match", "0");
         //ThreadContext.put("hand", String.valueOf(handCounter));
 
-        _game.assignRolesToAllPlayers();
         while (!endOfGame) {
 
             log.debug("Starting hand {}", handCounter);
             try {
-                
-                if(_timer != null && !_timer.isRunning()) {
-                    _game.increaseBlinds();
-                    _timer.restart();
-                }
+
+                // Player roles
+                _game.assignRolesToAllPlayers();
 
                 // Pre-flop (2)
                 log.debug("Pre-flop round");
                 _game.shareOutCardsToAllPlayers();
+                _game.updateEquity();
                 _game.playHand();
 
                 // Flop (3)
@@ -77,16 +68,19 @@ public class Controller {
                 _game.addCardToTable();
                 _game.addCardToTable();
                 _game.addCardToTable();
+                _game.updateEquity();
                 _game.playHand();
 
                 // Turn (4)
                 log.debug("Turn round");
                 _game.addCardToTable();
+                _game.updateEquity();
                 _game.playHand();
 
                 // River (5)
                 log.debug("River round");
                 _game.addCardToTable();
+                _game.updateEquity();
                 _game.playHand();
 
                 // Showdown (6)

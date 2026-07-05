@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import org.junit.jupiter.api.Test;
 
 import com.ucm.server.FakePlayer;
-import com.ucm.server.interfaces.IPokerActions;
 import com.ucm.server.middleclasses.CommandResult;
 
 
@@ -21,7 +20,7 @@ public class CallCommandTest {
 
         final int initialBet = 0;
 
-        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
+        FakePlayer player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "Cad";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
@@ -34,7 +33,7 @@ public class CallCommandTest {
 
         final int initialBet = 0;
 
-        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
+        FakePlayer player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = " c";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
@@ -47,7 +46,7 @@ public class CallCommandTest {
 
         final int initialBet = 0;
 
-        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
+        FakePlayer player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "CalL";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
@@ -61,7 +60,7 @@ public class CallCommandTest {
         final int initialBet = 0;
         int maxBet = 200;
 
-        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
+        FakePlayer player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "call";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
@@ -81,7 +80,7 @@ public class CallCommandTest {
         final int initialBet = 100;
         int maxBet = 200;
 
-        IPokerActions player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
+        FakePlayer player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
         String input = "call";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);

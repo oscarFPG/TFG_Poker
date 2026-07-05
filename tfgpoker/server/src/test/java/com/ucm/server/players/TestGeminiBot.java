@@ -1,5 +1,6 @@
 package com.ucm.server.players;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
@@ -13,91 +14,102 @@ import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.common.gameobjects.Suit;
 import com.ucm.server.ServerMain;
+import com.ucm.server.exceptions.TurnTimeoutException;
+import com.ucm.server.gameobjects.Player;
 
 public class TestGeminiBot {
 
-    private static String apiKey;
-
-    @BeforeAll
-    static void loadApiKey() throws Exception {
-        InputStream input = ServerMain.class
-                .getClassLoader()
-                .getResourceAsStream("credentials.json");
-
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, String> json = mapper.readValue(input, Map.class);
-        apiKey = json.get("GEMINI_API_KEY");
-    }
 
     // ---------------------- TEST 1: PREFLOP ----------------------
 
     //@Test
-    public void testPreflopDecision() {
+    public void testPreflopDecision() throws IOException {
 
-        GeminiLLM bot = new GeminiLLM(0, 1000);
+        GeminiLLM geminiLLM = new GeminiLLM();
+        Player player = new Player(0, "Gemini", 1000, geminiLLM);
 
-        bot.notifyPlayerRole(PlayerRole.DEALER);
-        bot.notifyPlayerCard(new Card(1, Suit.HEARTS)); // Ah
-        bot.notifyPlayerCard(new Card(13,Suit.DIAMONDS)); // Kd
+        player.receiveRole(PlayerRole.DEALER);
+        player.receiveCard(new Card(1, Suit.HEARTS)); // Ah
+        player.receiveCard(new Card(13,Suit.DIAMONDS)); // Kd
 
-        bot.notifyEquity(0.65);
+        player.notifyEquity(0.65);
 
-        String action = bot.actionMakePlay(5, 10, 10);
+        String action;
+        try {
+            action = player.makePlay(5, 10, 10);
+            
+            System.out.println("Preflop action: " + action);
 
-        System.out.println("Preflop action: " + action);
+            assertValidAction(action);
+        } catch (TurnTimeoutException e) {
+            e.printStackTrace();
+        }
 
-        assertValidAction(action);
+
     }
 
     // ---------------------- TEST 2: FLOP ----------------------
 
     //@Test
-    public void testFlopDecision() {
+    public void testFlopDecision() throws IOException {
 
-        GeminiLLM bot = new GeminiLLM(0, 1000);
+        GeminiLLM geminiLLM = new GeminiLLM();
+        Player player = new Player(0, "Gemini", 1000, geminiLLM);
 
-        bot.notifyPlayerRole(PlayerRole.CUT_OFF);
-        bot.notifyPlayerCard(new Card(10, Suit.HEARTS)); // Th
-        bot.notifyPlayerCard(new Card(10, Suit.DIAMONDS)); // Td
+        player.receiveRole(PlayerRole.CUT_OFF);
+        player.receiveCard(new Card(10, Suit.HEARTS)); // Th
+        player.receiveCard(new Card(10, Suit.DIAMONDS)); // Td
 
-        bot.notifyTableCard(new Card(10, Suit.CLUBS)); // set
-        bot.notifyTableCard(new Card(5, Suit.SPADES));
-        bot.notifyTableCard(new Card(2, Suit.HEARTS));
+        player.receiveTableCard(new Card(10, Suit.CLUBS)); // set
+        player.receiveTableCard(new Card(5, Suit.SPADES));
+        player.receiveTableCard(new Card(2, Suit.HEARTS));
 
-        bot.notifyEquity(0.85);
+        player.notifyEquity(0.85);
 
-        bot.notifyPlayerAction(PlayerRole.UNDER_THE_GUN, "raise", 10);
-        bot.notifyPlayerAction(PlayerRole.HIJACK, "call", 10);
+        String action;
+        try {
+            action = player.makePlay(5, 10, 20);
 
-        String action = bot.actionMakePlay(5, 10, 20);
+            System.out.println("Flop action: " + action);
 
-        System.out.println("Flop action: " + action);
+            assertValidAction(action);
+        } catch (TurnTimeoutException e) {
+            e.printStackTrace();
+        }
 
-        assertValidAction(action);
+        
     }
 
     // ---------------------- TEST 3: LOW EQUITY ----------------------
 
     //@Test
-    public void testLowEquity() {
+    public void testLowEquity() throws IOException {
 
-        GeminiLLM bot = new GeminiLLM(0, 1000);
+        GeminiLLM geminiLLM = new GeminiLLM();
+        Player player = new Player(0, "Gemini", 1000, geminiLLM);
 
-        bot.notifyPlayerRole(PlayerRole.BIG_BLIND);
-        bot.notifyPlayerCard(new Card(2, Suit.HEARTS));
-        bot.notifyPlayerCard(new Card(7, Suit.DIAMONDS));
+        player.receiveRole(PlayerRole.BIG_BLIND);
+        player.receiveCard(new Card(2, Suit.HEARTS));
+        player.receiveCard(new Card(7, Suit.DIAMONDS));
 
-        bot.notifyTableCard(new Card(14, Suit.CLUBS));
-        bot.notifyTableCard(new Card(13,Suit.SPADES));
-        bot.notifyTableCard(new Card(12, Suit.HEARTS));
+        player.receiveTableCard(new Card(14, Suit.CLUBS));
+        player.receiveTableCard(new Card(13,Suit.SPADES));
+        player.receiveTableCard(new Card(12, Suit.HEARTS));
 
-        bot.notifyEquity(0.05);
+        player.notifyEquity(0.05);
 
-        String action = bot.actionMakePlay(5, 10, 20);
+        String action;
+        try {
+            action = player.makePlay(5, 10, 20);
 
-        System.out.println("Low equity action: " + action);
+            System.out.println("Low equity action: " + action);
 
-        assertValidAction(action);
+            assertValidAction(action);
+        } catch (TurnTimeoutException e) {
+            e.printStackTrace();
+        }
+
+        
     }
 
   

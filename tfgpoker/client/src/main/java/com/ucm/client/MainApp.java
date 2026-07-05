@@ -1,11 +1,10 @@
 
 package com.ucm.client;
 
+import com.ucm.client.utils.DialogsManager;
 import com.ucm.client.views.original.controllers.MainController;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class MainApp extends Application {
@@ -17,6 +16,7 @@ public class MainApp extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
        MainController mainController = new MainController(primaryStage);
+       DialogsManager.init(primaryStage);
        mainController.start();
     }
 
