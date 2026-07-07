@@ -89,9 +89,9 @@ public class RaiseCommandTest {
         
         final int initialBet = 0;
         final int maxBet = 100;
+        String input = "raise 150";
 
         FakePlayer player = new FakePlayer(0, INITIAL_MONEY - initialBet, initialBet);
-        String input = "raise 150";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
         CommandResult result = command.execute(SMALL_BLIND, BIG_BLIND, maxBet);

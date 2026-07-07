@@ -191,7 +191,7 @@ public class Player implements IPlayerActions {
 
 
     /* Player methods */
-    public String makePlay(int sb, int bb, int maxBet) throws IOException, TurnTimeoutException {
+    public String makePlay(int sb, int bb, int maxBet) throws IOException {
 
         if(_playerInfo == null)
             return null;

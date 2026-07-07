@@ -1,6 +1,9 @@
 package com.ucm.server.commands;
 
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.ucm.common.GameType;
 import com.ucm.server.interfaces.IPlayerActions;
 import com.ucm.server.middleclasses.CommandResult;
@@ -12,6 +15,8 @@ import com.ucm.server.middleclasses.CommandResult;
  */
 public class CallCommand extends Command {
 
+    private static final Logger log = LogManager.getLogger(CallCommand.class);
+    
 
     public CallCommand() {}
 
@@ -42,6 +47,8 @@ public class CallCommand extends Command {
             return command.execute(sb, bb, maxBet);
         }
         
+        log.debug("Player {} makes CALL", _player.getPlayerName());
+
         _player.call(maxBet);
         return CommandResult.continuePlaying(maxBet, false);
     }

@@ -240,7 +240,7 @@ public class Evaluator {
         return r;
     }
 
-    private static RANK handRank(short val) {
+    public static RANK handRank(short val) {
 
         if (val > 6185)
             return RANK.HIGH_CARD; // 1277 high card

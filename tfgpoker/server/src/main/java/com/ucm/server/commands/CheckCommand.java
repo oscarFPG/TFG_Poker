@@ -1,5 +1,7 @@
 package com.ucm.server.commands;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.ucm.common.GameType;
 import com.ucm.server.interfaces.IPlayerActions;
@@ -10,6 +12,8 @@ import com.ucm.server.middleclasses.CommandResult;
  * Class that represents the Check command in the game.
  */
 public class CheckCommand extends Command {
+
+    private static final Logger log = LogManager.getLogger(CheckCommand.class);
 
 
     public CheckCommand() {}
@@ -35,6 +39,8 @@ public class CheckCommand extends Command {
             CallCommand command = new CallCommand(_player);
             return command.execute(sb, bb, maxBet);
         }
+
+        log.debug("Player {} makes CHECK", _player.getPlayerName());
 
         _player.check();
         return CommandResult.continuePlaying(0, false);

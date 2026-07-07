@@ -1,5 +1,7 @@
 package com.ucm.server.commands;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.ucm.common.GameType;
 import com.ucm.server.interfaces.IPlayerActions;
@@ -10,6 +12,8 @@ import com.ucm.server.middleclasses.CommandResult;
  * Class that represents the fold command in the poker game. This command allows a player to fold and stop playing in the current hand.
  */
 public class FoldCommand extends Command {
+
+    private static final Logger log = LogManager.getLogger(FoldCommand.class);
 
 
     public FoldCommand() {}
@@ -30,6 +34,8 @@ public class FoldCommand extends Command {
 
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
+
+        log.debug("Player {} makes FOLD", _player.getPlayerName());
 
         _player.fold();
         return CommandResult.stopPlaying();

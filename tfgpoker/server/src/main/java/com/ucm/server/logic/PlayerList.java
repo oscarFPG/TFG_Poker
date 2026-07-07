@@ -308,12 +308,12 @@ public class PlayerList implements Iterable<Node> {
             pivotPlayer = result.raises() ? playerOnTurn : pivotPlayer;
             playerOnTurn = getNextPlayerActive(playerOnTurn);
 
-            log.debug("Total pot is {}", totalPot);
-            log.debug("Current bet is {}", currentBet);
-            log.debug("Maximum bet is {}", maxBet);
-            log.debug("Minimum raise is {}", minRaise);
+            //log.debug("Total pot is {}", totalPot);
+            //log.debug("Current bet is {}", currentBet);
+            //log.debug("Maximum bet is {}", maxBet);
+            //log.debug("Minimum raise is {}", minRaise);
         }
-        while( pivotPlayer != playerOnTurn && playersRemaining != 0);
+        while(pivotPlayer != playerOnTurn && playersRemaining != 0);
 
         _totalPot = totalPot;
         updateHandState();
@@ -336,7 +336,6 @@ public class PlayerList implements Iterable<Node> {
                 String[] commandFormatted = commandString.split(" ");
 
                 command = Command.parseCommand(commandFormatted, player);
-                log.debug("Player {} with command: {}", player.getPlayerName(), command.getCommandName());
             }
         }
         catch (TurnTimeoutException e) {

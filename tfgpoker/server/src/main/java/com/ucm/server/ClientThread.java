@@ -137,7 +137,7 @@ public class ClientThread implements Runnable {
                         }
 
                         
-                        boolean test_NN = true;
+                        boolean test_NN = false;
                         if(test_NN) {
 
                             // TEST -> usar bots Gemini como redes neuronales
