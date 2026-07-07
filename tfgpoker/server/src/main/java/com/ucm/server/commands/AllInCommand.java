@@ -31,14 +31,6 @@ public class AllInCommand extends Command {
 	}
 
     @Override
-    public boolean validate(final int maxBet) {
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
 
         _player.allIn();

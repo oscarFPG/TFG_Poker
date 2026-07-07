@@ -65,11 +65,9 @@ public class CallCommandTest {
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
 
-        boolean valid = command.validate(maxBet);
         CommandResult result = command.execute(SMALL_BLIND, BIG_BLIND, maxBet);
 
         assertEquals(CommandResult.continuePlaying(200, false), result);
-        assertEquals(true, valid);
         assertEquals(200, player.getMoneyOnBet());
         assertEquals(INITIAL_MONEY - 200, player.getMoneyOffBet());
     }
@@ -85,11 +83,9 @@ public class CallCommandTest {
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
 
-        boolean valid = command.validate(maxBet);
         CommandResult result = command.execute(SMALL_BLIND, BIG_BLIND, maxBet);
 
         assertEquals(CommandResult.continuePlaying(200, false), result);
-        assertEquals(true, valid);
         assertEquals(200, player.getMoneyOnBet());
         assertEquals(INITIAL_MONEY - 200, player.getMoneyOffBet());
     }

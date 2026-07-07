@@ -328,7 +328,6 @@ public class PlayerList implements Iterable<Node> {
         try {
 
             node._player.notifyTurnPlay();
-
             log.debug("It's is {} turn to play", player.getPlayerName());
             
             while (command == null) {
@@ -336,10 +335,8 @@ public class PlayerList implements Iterable<Node> {
                 String commandString = player.makePlay(sb, bb, maxBet);
                 String[] commandFormatted = commandString.split(" ");
 
-                log.debug("Player {} with command: {}", player.getPlayerName(), commandString);
-
                 command = Command.parseCommand(commandFormatted, player);
-                command = command.validate(maxBet) ? command : null;
+                log.debug("Player {} with command: {}", player.getPlayerName(), command.getCommandName());
             }
         }
         catch (TurnTimeoutException e) {

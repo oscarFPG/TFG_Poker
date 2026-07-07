@@ -113,13 +113,13 @@ public class LlamaPokerLLM extends BotLLM {
         action = action.toLowerCase().trim();
 
         if ( action.contains("fold") )
-            return "fold";
+            return GameType.FOLD_ACTION_FULL;
         if ( action.contains("call") 
             || (action.contains("check") && _maxBet > 0 ) )
-            return "call";
+            return GameType.CALL_ACTION_FULL;
         if ( action.contains("check") 
             || (action.contains("call") && _maxBet == 0) )
-            return "check";
+            return GameType.CHECK_ACTION_FULL;
 
         
         // Raise action
@@ -130,21 +130,7 @@ public class LlamaPokerLLM extends BotLLM {
         if (m.find()) {
 
             String targetBet = m.group(1);
-            int targetBetInt = Integer.parseInt(targetBet);
-            if(targetBetInt == _maxBet) {
-                return "call";
-            }
-            else if(targetBetInt < _maxBet 
-                || targetBetInt == player.getMoneyOffBet() + player.getMoneyOnBet()
-                || targetBetInt > player.getMoneyOffBet() + player.getMoneyOnBet()) {
-                return "call";
-            }
-            else
-                return "raise " + m.group(1);
-        }
-
-        if (action.startsWith("raise")) {
-            return "call";
+            return GameType.RAISE_ACTION_FULL + " " + targetBet;
         }
 
         return "fold";

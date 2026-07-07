@@ -29,12 +29,13 @@ public class CheckCommand extends Command {
 	}
 
     @Override
-    public boolean validate(final int maxBet) {
-        return _playersOnBetMoney == 0 && maxBet == 0;
-    }
-
-    @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
+
+        if(maxBet != 0) {
+            CallCommand command = new CallCommand(_player);
+            return command.execute(sb, bb, maxBet);
+        }
+
         _player.check();
         return CommandResult.continuePlaying(0, false);
     }

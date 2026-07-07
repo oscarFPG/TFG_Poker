@@ -29,11 +29,6 @@ public class FoldCommand extends Command {
 	}
 
     @Override
-    public boolean validate(final int maxBet) {
-        return true;
-    }
-
-    @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
 
         _player.fold();

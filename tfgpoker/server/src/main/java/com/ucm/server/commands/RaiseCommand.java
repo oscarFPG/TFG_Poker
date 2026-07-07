@@ -53,22 +53,24 @@ public class RaiseCommand extends Command {
         }
     }
 
-    @Override
-    public boolean validate(final int maxBet) {
-        return 0 <= _targetBet &&  maxBet < _targetBet && _targetBet <= _playersOnBetMoney + _playersOffBetMoney;
-    }
 
-    /**
-    * {@inheritDoc}
-    */
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
 
-        if (_targetBet == _playersOffBetMoney + _playersOnBetMoney) {
+        if (_targetBet >= _playersOffBetMoney + _playersOnBetMoney) {   // All-in -> Raise <total_money>
             AllInCommand command = new AllInCommand(_player);
             return command.execute(sb, bb, maxBet);
         }
-
+        else if(0 < maxBet) { // Call -> Raise <maxBet>
+            CallCommand command = new CallCommand(_player);
+            return command.execute(sb, bb, maxBet);
+        }
+        else if(maxBet == 0) { // Check -> Raise 0
+            CheckCommand command = new CheckCommand(_player);
+            return command.execute(sb, bb, maxBet);
+        }
+        
+        // Normal raise
         _player.raise(_targetBet);
         return CommandResult.continuePlaying(_targetBet, true);
     }

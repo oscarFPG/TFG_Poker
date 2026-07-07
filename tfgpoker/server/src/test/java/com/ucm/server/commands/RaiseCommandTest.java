@@ -66,11 +66,8 @@ public class RaiseCommandTest {
         String input = "raise -100";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
-        boolean valid = command.validate(maxBet);
-
 
         assertNotEquals(command, null);
-        assertEquals(false, valid);
     }
 
     @Test
@@ -83,11 +80,8 @@ public class RaiseCommandTest {
         String input = "raise 50";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
-        boolean valid = command.validate(maxBet);
-
 
         assertNotEquals(command, null);
-        assertEquals(false, valid);
     }
 
     @Test
@@ -100,12 +94,8 @@ public class RaiseCommandTest {
         String input = "raise 150";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
-        boolean valid = command.validate(maxBet);
         CommandResult result = command.execute(SMALL_BLIND, BIG_BLIND, maxBet);
 
-
-        assertNotEquals(command, null);
-        assertEquals(true, valid);
         assertEquals(CommandResult.continuePlaying(150, true), result);
         assertEquals(150, player.getMoneyOnBet());
         assertEquals(INITIAL_MONEY - 150, player.getMoneyOffBet());
@@ -121,12 +111,9 @@ public class RaiseCommandTest {
         String input = "raise 150";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
-        boolean valid = command.validate(maxBet);
         CommandResult result = command.execute(SMALL_BLIND, BIG_BLIND, maxBet);
 
-
         assertNotEquals(command, null);
-        assertEquals(true, valid);
         assertEquals(CommandResult.continuePlaying(150, true), result);
         assertEquals(150, player.getMoneyOnBet());
         assertEquals(INITIAL_MONEY - 150, player.getMoneyOffBet());
@@ -142,11 +129,8 @@ public class RaiseCommandTest {
         String input = "raise 1500";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
-        boolean valid = command.validate(maxBet);
-
 
         assertNotEquals(command, null);
-        assertNotEquals(true, valid);
     }
 
 }

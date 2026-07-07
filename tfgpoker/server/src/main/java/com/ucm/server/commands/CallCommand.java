@@ -30,17 +30,16 @@ public class CallCommand extends Command {
 		return new CallCommand(player);
 	}
 
-	@Override
-    public boolean validate(final int maxBet) {
-		return maxBet > 0 && maxBet <= _playersOffBetMoney + _playersOnBetMoney;
-    }
-
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
 
-        if(maxBet == _playersOffBetMoney + _playersOnBetMoney){
+        if(maxBet >= _playersOffBetMoney + _playersOnBetMoney){
             AllInCommand allIn = new AllInCommand(_player);
             return allIn.execute(sb, bb, maxBet);
+        }
+        else if(_playersOnBetMoney == 0 && maxBet == 0) {
+            CheckCommand command = new CheckCommand(_player);
+            return command.execute(sb, bb, maxBet);
         }
         
         _player.call(maxBet);
