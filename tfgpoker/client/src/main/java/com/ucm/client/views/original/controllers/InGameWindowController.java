@@ -176,7 +176,7 @@ public class InGameWindowController extends GenericController {
 
     private Integer _timerPlayerId = null;
     private long _turnEndTime;
-    
+    private int _secondsLeft;
     
     @Override
     protected void onViewShown() {
@@ -684,7 +684,7 @@ public class InGameWindowController extends GenericController {
 
                     Platform.runLater(() -> {
                         buttonsHolder.setVisible(false);
-                        GUI_stopVisualTimer();
+                        GUI_startVisualTimer(playerID);
                     });
                 }
                 else if(serverCode == GameType.TURN_OTHER_PLAYER) {
@@ -932,6 +932,7 @@ public class InGameWindowController extends GenericController {
                         GUI_putDealerButton(_clientInfo.id);
                     }
                     GUI_putTurnPlayer(_clientInfo.id);
+                    
                 });
 
 			}
@@ -986,7 +987,6 @@ public class InGameWindowController extends GenericController {
                     buttonsHolder.setVisible(true);
                     GUI_putTurnPlayer(_clientInfo.id);
                     GUI_startVisualTimer(_clientInfo.id);
-
                     int sliderStep = Math.clamp(offBetMoney / 100, 1, offBetMoney);
                     sliderMoney.setMajorTickUnit( sliderStep );
                     sliderMoney.setMin( (double)maxBet );
@@ -1043,7 +1043,7 @@ public class InGameWindowController extends GenericController {
 
                 Platform.runLater(() -> {
                     buttonsHolder.setVisible(false);
-                    GUI_stopVisualTimer();
+                    GUI_startVisualTimer(currentTurnPlayerId);
                 });
             }
             else if(serverCode == GameType.TURN_OTHER_PLAYER) {
@@ -1066,10 +1066,10 @@ public class InGameWindowController extends GenericController {
                 );
 
                 Platform.runLater(() -> {
-                    GUI_stopVisualTimer();
-
-                    GUI_putPlayerBet(otherPlayerID, otherPlayerOnBetMoney, otherPlayerOffBetMoney, otherPlayerIsFolded);
                     
+                    GUI_stopVisualTimer();
+                    GUI_putPlayerBet(otherPlayerID, otherPlayerOnBetMoney, otherPlayerOffBetMoney, otherPlayerIsFolded);
+
                     int seatID = _playerSeatMap.get(otherPlayerID);
                     if(otherPlayerRole == PlayerRole.DEALER)  {
                         GUI_putDealerButton(otherPlayerID);
@@ -1532,14 +1532,14 @@ public class InGameWindowController extends GenericController {
 
     }
 
-    private void GUI_putPlayerTimer(int seatID, int secondsLeft) {
+    private void GUI_putPlayerTimer(int seatID) {
         
         List<Rectangle> rectangles = _listTimer.get(seatID);
         if(rectangles == null)
             return;
         
 
-        final int blocksRemaining = Math.max(0, Math.min(TOTAL_BLOCKS, (int) Math.ceil(secondsLeft / (double) _blockTime)));
+        final int blocksRemaining = Math.max(0, Math.min(TOTAL_BLOCKS, (int) Math.ceil(_secondsLeft / (double) _blockTime)));
         Platform.runLater(()-> {
             for (int i = 0; i < rectangles.size(); i++) {
                 rectangles.get(i).setVisible(i < blocksRemaining);
@@ -1575,9 +1575,9 @@ public class InGameWindowController extends GenericController {
 
             long now = System.currentTimeMillis();
             long millisLeft = _turnEndTime - now;
-            int secondsLeft = (int) Math.ceil(Math.max(millisLeft, 0) / 1000.0);
+            _secondsLeft = (int) Math.ceil(Math.max(millisLeft, 0) / 1000.0);
 
-            GUI_putPlayerTimer(seatID, secondsLeft);
+            GUI_putPlayerTimer(seatID);
 
             if(millisLeft < 0) {
                 GUI_stopVisualTimer();

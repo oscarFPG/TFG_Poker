@@ -126,6 +126,17 @@ public class ClientThread implements Runnable {
                         _gameConfig._joinedAsSpectator = config._joinedAsSpectator;
                         _isHost = true;
 
+                        // Si el host es espectador no lo incluimos en la lista de jugadores pero si en el socket de espectador
+                        if(_gameConfig._joinedAsSpectator) {
+                            _playerID = -1;
+                            _spectator._name = _playerName;
+                            _spectator._socket = _socket;
+                        }
+                        else {
+                            _playerID = _id.getAndIncrement();
+                            _roomPlayerList.add(this);
+                        }
+
                         for( var entry : _gameConfig._botsByType.entrySet()) {
                             int botId = entry.getKey();
                             int amount = entry.getValue();
@@ -196,7 +207,7 @@ public class ClientThread implements Runnable {
                     
                     int playersCounter = _roomPlayerList.size() + _roomBotsList.size();
 
-                    if(_spectator._socket != null || 0 < playersCounter) {
+                    if(_spectator._socket != null || (0 < playersCounter && _roomPlayerList.size() < _gameConfig._numPlayers)) {
 
                         SocketUtils.sendInteger(output, GameType.CONFIRMATION_WAITING_GAME);
                         PokerPreGame.sendGameConfigToJoinedPlayer(_gameConfig, output);
@@ -271,6 +282,9 @@ public class ClientThread implements Runnable {
             }
             else {
                 closeConnection(_socket);
+                _roomPlayerList.remove(this);
+                broadcastPlayerJoined();
+                log.warn("Cliente {} sale de la waiting room", _playerName);
             }
         }
         log.debug("Client thread terminating...");

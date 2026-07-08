@@ -13,6 +13,7 @@ public class GameConfig {
     private static final String DEFAULT_HIKE_PERCENTAGE = "25";
     private static final int DEFAULT_NUM_BOTS = 0;
     private static final int DEFAULT_NUM_PLAYERS = 8;
+     private static final int DEFAULT_NUM_PLAYERS_WITH_SPECTATOR = 9;
     private static final String DEFAULT_TURN_TIMER = "60";
 
     /**
@@ -32,6 +33,7 @@ public class GameConfig {
      * Variables para crear partida: Add bots
     */
     public Map<Integer, Integer> _botsByType = new HashMap<>();
+
     /**
      * Variables para crear partida: Add players
      */
@@ -51,8 +53,7 @@ public class GameConfig {
     /**
      * Indicated if there is an spectator or not
      */
-    public boolean _joinedAsSpectator = false;
-
+    public boolean _joinedAsSpectator = true;
 
 
     public GameConfig() {}
