@@ -2,229 +2,100 @@ package com.ucm.server.gameobjects;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.FloatBuffer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
-import com.ucm.common.GameType;
-import com.ucm.common.gameobjects.Card;
-import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.interfaces.IPlayerInfo;
-import com.ucm.server.interfaces.IPlayerNotificator;
 
-import ai.onnxruntime.OnnxTensor;
 import ai.onnxruntime.OrtEnvironment;
 import ai.onnxruntime.OrtException;
 import ai.onnxruntime.OrtSession;
+import ai.onnxruntime.OrtSession.SessionOptions;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
-public class BotNN implements IPlayerNotificator {
+public abstract class BotNN extends Bot {
 
-    private static final String MODEL_RESOURCE = "models_nn/dqn_holdem_model.onnx";
+    private static final Logger log = LogManager.getLogger(BotNN.class);
 
-    private final OrtEnvironment _env;
-    private final OrtSession _session;
+    private static final String MODEL_PATH = "models_nn/";
+
+    protected OrtEnvironment _env;
+    protected OrtSession _session;
 
 
-    public BotNN() {
+    public BotNN(final int ID, final String filename) {
+        super(ID);
+        
+        String full_path = MODEL_PATH + filename;
         try {
+
+            InputStream is = getClass().getClassLoader()
+                            .getResourceAsStream(full_path);
+            if (is == null) {
+                throw new IllegalStateException("No se encontró el modelo.");
+            }
+
+            byte[] modelBytes = is.readAllBytes();
+
             _env = OrtEnvironment.getEnvironment();
-            _session = createSessionFromResources(_env, MODEL_RESOURCE);
-        } 
-        catch (IOException | OrtException e) {
-            throw new IllegalStateException("Cannot load ONNX model from resources: " + MODEL_RESOURCE, e);
+            _session = _env.createSession(modelBytes, new OrtSession.SessionOptions());
         }
+        catch(IOException | OrtException e) {
+            System.out.printf("ERROR LOADING MODEL with file %s : %s\n", full_path, e.getMessage());   
+        }
+
     }
 
-    
-    private static OrtSession createSessionFromResources(OrtEnvironment env, String resourcePath) throws IOException, OrtException {
-
-        ClassLoader classLoader = BotNN.class.getClassLoader();
-        try (InputStream inputStream = classLoader.getResourceAsStream(resourcePath)) {
-            if (inputStream == null) {
-                throw new IOException("Resource not found: " + resourcePath);
-            }
-
-            byte[] modelBytes = inputStream.readAllBytes();
-
-            OrtSession.SessionOptions options = new OrtSession.SessionOptions();
-            options.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.ALL_OPT);
-
-            return env.createSession(modelBytes, options);
-        }
+    public static void testEnviroment() {
+        OrtEnvironment env = OrtEnvironment.getEnvironment();
+        System.out.println(env);
     }
-
-    public int predict(float[] state) throws OrtException {
-
-        long[] shape = new long[]{1, state.length};
-        OnnxTensor inputTensor = OnnxTensor.createTensor(_env, FloatBuffer.wrap(state), shape);
-        String inputName = _session.getInputNames().iterator().next();
-
-        Map<String, OnnxTensor> inputs = Map.of(inputName, inputTensor);
-        try (OrtSession.Result results = _session.run(inputs)) {
-
-            float[][] output = (float[][]) results.get(0).getValue();
-
-            int bestAction = 0;
-            float maxQ = output[0][0];
-
-            for (int i = 1; i < output[0].length; i++) {
-                if (output[0][i] > maxQ) {
-                    maxQ = output[0][i];
-                    bestAction = i;
-                }
-            }
-
-            return bestAction;
-        }
-    }
-
 
     @Override
     public String notifyMakePlay(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyMakePlay'");
+        
+        float[] state = encondeState(maxBet, player);
+        float[] prediction = predict(state);
+        String response = translate(sb, bb, maxBet, player, prediction);
+        
+        //  Wait for a random number of seconds to send a response
+        Random rand = new Random();
+        int min_sec = 5;
+        int max_sec = 20;
+        try {
+            int randomSeconds = rand.nextInt((max_sec - min_sec) + 1) + min_sec;
+            log.info("Neural Network waiting for {} seconds...", randomSeconds);
+            TimeUnit.SECONDS.sleep(randomSeconds);
+        }
+        catch (InterruptedException e) {}   // Nothing
+
+        return response;
     }
 
+    /**
+     * Encode all the available game context to feed the neuronal network
+     * @return encoded game state
+     */
+    public abstract float[] encondeState(final int maxBet, IPlayerInfo player);
 
-    @Override
-    public void notifySmallBlindBet(int amount, IPlayerInfo player) throws IOException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifySmallBlindBet'");
-    }
+    /**
+     * ACtion performed by the neuronal network based on the game state
+     * @param state encoded as the neuronal network requires
+     * @return probability of each action predicted by the neuronal network
+     */
+    public abstract float[] predict(float[] state);
 
-
-    @Override
-    public void notifyBigBlindBet(int amount, IPlayerInfo player) throws IOException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyBigBlindBet'");
-    }
-
-
-    @Override
-    public void notifyPlayerRole(PlayerRole role) throws IOException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyPlayerRole'");
-    }
-
-
-    @Override
-    public void notifyPlayerCard(Card c) throws IOException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyPlayerCard'");
-    }
-
-
-    @Override
-    public void notifyTableCard(Card c) throws IOException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyTableCard'");
-    }
-
-
-    @Override
-    public void notifyTotalPot(int total) throws IOException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyTotalPot'");
-    }
-
-
-    @Override
-    public void notifyOtherPlayerAction(IPlayerInfo other) throws IOException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyOtherPlayerAction'");
-    }
-
-
-    @Override
-    public void notifyOwnState(IPlayerInfo player) throws IOException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyOwnState'");
-    }
-
-
-    @Override
-    public void notifyOtherPlayerState(IPlayerInfo other) throws IOException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyOtherPlayerState'");
-    }
-
-
-    @Override
-    public void notifyEndPlayerState() throws IOException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyEndPlayerState'");
-    }
-
-
-    @Override
-    public void notifyCurrentTurnPlayer(IPlayerInfo player) throws IOException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyCurrentTurnPlayer'");
-    }
-
-
-    @Override
-    public void notifyTurnWait() throws IOException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyTurnWait'");
-    }
-
-
-    @Override
-    public void notifyTurnPlay() throws IOException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyTurnPlay'");
-    }
-
-
-    @Override
-    public void notifyRoundEnded() throws IOException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyRoundEnded'");
-    }
-
-
-    @Override
-    public void notifyHandEndsByFolds() throws IOException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyHandEndsByFolds'");
-    }
-
-
-    @Override
-    public void notifyGameEnded() throws IOException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyGameEnded'");
-    }
-
-
-    @Override
-    public void notifyGameKeeps() throws IOException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyGameKeeps'");
-    }
-
-
-    @Override
-    public void notifyGameWinner() throws IOException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyGameWinner'");
-    }
-
-
-    @Override
-    public void notifyGameLoser() throws IOException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyGameLoser'");
-    }
-
-
-    @Override
-    public void notifyEquity(double equity) throws IOException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'notifyEquity'");
-    }
+    /**
+     * Translate the prediction made by the neuronal network to perform an action in the game
+     * @param prediction made by the nn
+     * @return final response
+     */
+    public abstract String translate(int sb, int bb, int maxBet, IPlayerInfo player, final float[] prediction);
 
 }

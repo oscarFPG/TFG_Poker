@@ -131,12 +131,9 @@ public class WaitingGameWindowController extends GenericController {
     protected void onViewShown() {
 
         clearAllLabels();
-        imgTableInGame.setImage(new Image(getClass().getResource(_clientInfo.gameConfig._selectedTable).toExternalForm()));
-        playerName0.setText( _clientInfo.name );
-        playerMoney0.setText( String.valueOf( _clientInfo.gameConfig._initialMoney ) );
-        pokerPlayer0.setOpacity( 1 );
-        initializeAvatarProfiles ();
-        getAvatarPosition(0,  _clientInfo.name );
+        initializeAvatarProfiles();
+        imgTableInGame.setImage( new Image(getClass().getResource(_clientInfo.gameConfig._selectedTable).toExternalForm()) );
+        
         roomNamePlaceholder.setText( _clientInfo.gameConfig._roomName );
         roomIdPlaceholder.setText( String.valueOf( _clientInfo.gameConfig._roomId ) );
 
@@ -147,14 +144,13 @@ public class WaitingGameWindowController extends GenericController {
     
         _stage.setOnCloseRequest(event -> {
 
-            System.out.printf("Intentando cerrar!\n");
             try {
                 _clientInfo.socket.close();
+                System.out.printf("Connection closed by user before closing the window!\n"); 
             }
             catch (IOException e) {
-                System.out.printf("Cerrando sockets!\n");    
+                System.out.printf("Minor error closing client socket!\n");    
             }
-            System.out.printf("Cerrado ¿?\n");
         });
 
     }
@@ -194,21 +190,41 @@ public class WaitingGameWindowController extends GenericController {
             InputStream input = _clientInfo.socket.getInputStream();
             OutputStream output = _clientInfo.socket.getOutputStream();
 
-            _clientInfo.id = SocketUtils.receiveInt(input);
-            System.out.printf("Player ID is %d\n", _clientInfo.id);
-           // NotificationManager.showSuccess(Messages.Notifications.PLAYER_ID_IS + _clientInfo.id);
-      
-            
-
             if(_clientInfo.isHost) {
+
+                _clientInfo.id = SocketUtils.receiveInt(input);
+                System.out.printf("Player host ID is %d\n", _clientInfo.id);
+
+                if(_clientInfo.gameConfig._joinedAsSpectator) {
+                    // TODO : Mostrar como espectador
+                    System.out.printf("Player host is specting!\n");
+                }
+                else {
+                    System.out.printf("Player host is playing!\n");
+                    Platform.runLater(() -> {
+                        playerName0.setText(_clientInfo.name);
+                        playerMoney0.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
+                        pokerPlayer0.setOpacity(1);
+                        getAvatarPosition(0, _clientInfo.name);
+                    });
+                }
+
                 System.out.printf("Server response: This client is the host of the game!\n");
                 NotificationManager.showSuccess(Messages.Notifications.PLAYER_IS_HOST);
             }
             else {
+
+                _clientInfo.id = SocketUtils.receiveInt(input);
+                System.out.printf("Player guest ID is %d\n", _clientInfo.id);
+
                 System.out.printf("Server response: This client is a guest!\n");
                 NotificationManager.showSuccess(Messages.Notifications.PLAYER_IS_GUEST);
                 
                 Platform.runLater(() -> {
+                    playerName0.setText(_clientInfo.name);
+                    playerMoney0.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
+                    pokerPlayer0.setOpacity(1);
+                    getAvatarPosition(0, _clientInfo.name);
                     startButton.setVisible(false);
                 });
             }
@@ -222,13 +238,10 @@ public class WaitingGameWindowController extends GenericController {
                     _clientInfo.playerPositions = PokerPreGame.receivePlayerListWaiting(input, output);
                     Platform.runLater(() ->
                         showPlayers(_clientInfo.playerPositions)
-                    );
-                    
+                    );    
                 }
                 else if(event == GameType.CONFIRMATION_GAME_STARTS) {
                     System.out.printf("Event GAME_STARTS!\n");
-                    //NotificationManager.showSuccess(Messages.Notifications.CONFIRMATION_GAME_STARTS);
-      
                     kepWaiting = false;
                 }
                 else if(event == GameType.ERROR_GAME_CANNOT_START) {
@@ -236,13 +249,11 @@ public class WaitingGameWindowController extends GenericController {
                     NotificationManager.showError(Messages.Notifications.ERROR_MISSING_PLAYERS);
                 }
                 else {
-                    System.out.printf("Event %d unknown!\n", event);
-                     NotificationManager.showError(Messages.Notifications.ERROR_UNKNOWN_EVENT);
-               
+                    System.out.printf("Waiting phase: event %d unknown!\n", event);
+                    NotificationManager.showError(Messages.Notifications.ERROR_UNKNOWN_EVENT);
                 }
             }
-            System.out.printf("Game has to start!\n");
-
+            System.out.printf("Game ready to start!\n");
             SocketUtils.sendInteger(output, GameType.CONFIRMATION_PLAYER_STARTS);
 
             Platform.runLater(() -> {
@@ -252,7 +263,6 @@ public class WaitingGameWindowController extends GenericController {
         catch(IOException e) {
             System.out.printf("Error: %s\n", e.getMessage());
             NotificationManager.showError(e.getMessage());
-            
         }
 
         System.out.printf("Finished waiting for players info!\n");
@@ -303,7 +313,8 @@ public class WaitingGameWindowController extends GenericController {
         }
     }
 
-    private void getAvatarPosition (final int position, String name) {
+    private void getAvatarPosition(final int position, String name) {
+
         ImageView avatarImage = _listaAvatarProfiles.get(position);
         Image avatar = _clientInfo.getAvatar(name, 80);
 
@@ -329,10 +340,28 @@ public class WaitingGameWindowController extends GenericController {
                         .findFirst()
                         .orElse(-1);
 
-        if(myIndex == -1){
-            System.out.printf("We are not in the list! Something is wrong...\n");
-            NotificationManager.showError(Messages.Notifications.ERROR_NOT_IN_LIST);
-               
+        if(myID == -1) {
+         
+            int seatIndex = 0;
+            for(int i = players.size() - 1; 0 <= i; i--) {
+
+                PlayerInfo p = players.get(i);
+
+                Label nameLabel = getNameLabelByPosition(seatIndex);
+                Label moneyLabel = getMoneyLabelByPosition(seatIndex);
+                StackPane playerStackPane = getPlayerStackPaneByPosition(seatIndex);
+                final int pos = seatIndex;
+
+                Platform.runLater(() -> {
+                    nameLabel.setText(p.name);
+                    moneyLabel.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
+                    playerStackPane.setOpacity(1);
+                    getAvatarPosition(pos, p.name);
+                });
+
+                seatIndex++;
+            }
+
             return;
         }
 
@@ -355,7 +384,6 @@ public class WaitingGameWindowController extends GenericController {
             });
 
             ++beforePosition;
-
         }
 
         // Show players ahead of me(in the list) : position 8, 7, 6, ...
@@ -382,6 +410,7 @@ public class WaitingGameWindowController extends GenericController {
         for(PlayerInfo cl : players) {
             System.out.printf("Player [%d]%s in waiting room\n", cl.id, cl.name);
         }
+        System.out.printf("\n");
     }
 
 }

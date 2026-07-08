@@ -1,68 +1,50 @@
 package com.ucm.server.players;
 
 
+import java.io.IOException;
+
 import org.junit.jupiter.api.Test;
 
+import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.Suit;
 import com.ucm.server.gameobjects.BotNN;
 import com.ucm.server.gameobjects.Player;
 
-import ai.onnxruntime.OrtEnvironment;
 import ai.onnxruntime.OrtException;
 
 
 public class BotNNTest {
 
     @Test
-    public void load() {
-        OrtEnvironment env = OrtEnvironment.getEnvironment();
-        System.out.println("OK");
+    public void testEnviroment() {
+        BotNN.testEnviroment();
     }
 
     @Test
-    public void loadTest() throws OrtException {
+    public void testResponse() throws OrtException {
     
-        BotNN botNN = new BotNN();
+        AgentCFR cfr = new AgentCFR();
+        Player player = new Player(0, "DeepCFR bot", 100, cfr);
+        int sb = 6;
+        int bb = 2 * sb;
 
-        float[] state = new float[] {
-            // 0–1: cartas jugador
-            0.72f, 0.10f,
 
-            // 2–11: board (5 cartas * 2 features)
-            0.33f, 0.80f,   // carta 1
-            0.55f, 0.20f,   // carta 2
-            0.91f, 0.10f,   // carta 3
-            0.00f, 0.00f,   // carta 4 (no existe)
-            0.00f, 0.00f,   // carta 5 (no existe)
+        try {
 
-            // 12: número de cartas en mesa (normalizado)
-            0.60f,
+            Card card1 = new Card(2, Suit.CLUBS);
+            Card card2 = new Card(7, Suit.DIAMONDS);
 
-            // 13–15: economía del juego
-            0.45f,   // pot
-            0.70f,   // stack hero
-            0.65f,   // stack rival
+            player.receiveCard(card1);
+            player.receiveCard(card2);
+            player.putSmallBlindBet(sb);
 
-            // 16–17: contexto
-            1.0f,    // in position
-            1.0f,    // to act
+            String action = cfr.notifyMakePlay(sb, bb, bb, player);
 
-            // 18–23: legal actions (fold, check, call, bet, raise, all-in)
-            1f, 1f, 1f, 0f, 1f, 0f,
-
-            // 24–28: historial (últimas acciones)
-            0f, 2f, 3f, 1f, 0f,
-
-            // 29: street (flop)
-            1f,
-
-            // 30–35: padding / bias / extras
-            1f, 0f, 0f, 0f, 0f, 1f
-        };
-
-        int action = botNN.predict(state);
-        System.out.printf("Neuronal network action: %d\n", action);
-
-        //Player player = new Player(0, "Bot-NN", 1000, botNN);
+            System.out.printf("Action: %s\n", action);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.ucm.server.gameobjects.Bot;
+import com.ucm.server.players.AgentCFR;
 import com.ucm.server.players.GeminiLLM;
 import com.ucm.server.players.LlamaPokerLLM;
 
@@ -12,16 +13,16 @@ public class BotManager {
     
     private static final List<Bot>AVAILABLE_BOTS  = Arrays.asList(
         new GeminiLLM(),
-        new LlamaPokerLLM()
+        new LlamaPokerLLM(),
+        new AgentCFR()
     );
 
 
     public static Bot createBot(int ID) {
 
         for(Bot bot : AVAILABLE_BOTS) {
-            if(bot.getIdBot() == ID) {
+            if(bot.getIdBot() == ID)
                 return bot;
-            }
         }
 
         return null;

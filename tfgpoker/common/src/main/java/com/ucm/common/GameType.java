@@ -93,6 +93,7 @@ public class GameType {
     public static final int OTHER_PLAYER_STATUS = 312;
     public static final int PLAYER_STATUS_END = 313;
     public static final int NEW_ROUND = 314;
+    public static final int TABLE_CARD = 315;
     public static final int PLAYER_WINS_GAME = 330;
     public static final int PLAYER_LOSES_GAME = 331;
     public static final int TOTAL_POT = 332;
@@ -112,6 +113,7 @@ public class GameType {
     // Bots identifier
     public static final int BOT_GEMINI = 10000;
     public static final int BOT_LLAMA = 10001;
+    public static final int BOT_NN_MODEL_1 = 10002;
 
     //Equity identifier
     public static final int EQUITY_UPDATE = 40000;

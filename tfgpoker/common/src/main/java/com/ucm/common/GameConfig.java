@@ -14,9 +14,10 @@ public class GameConfig {
     private static final int DEFAULT_NUM_BOTS = 0;
     private static final int DEFAULT_NUM_PLAYERS = 8;
     private static final String DEFAULT_TURN_TIMER = "60";
+
     /**
      * Variables para crear partida: Home
-    */
+     */
     public String _roomName;
     public String _userName;
     public int _roomId;
@@ -26,27 +27,33 @@ public class GameConfig {
     public boolean _dinamicBlinds = DEFAULT_DINAMIC_VALUE;
     public String _levelDuration = DEFAULT_LEVEL_DURATION;
     public String _hikePercentage = DEFAULT_HIKE_PERCENTAGE;
+
     /**
      * Variables para crear partida: Add bots
     */
     public Map<Integer, Integer> _botsByType = new HashMap<>();
     /**
      * Variables para crear partida: Add players
-    */
+     */
     public int _numPlayers = DEFAULT_NUM_PLAYERS;
+
     /**
      * Variables para crear partida: Add tables
-    */
+     */
     public String _selectedTable = null;
-    /**
-     * Variables para crear partida: Add tables
-    */
     public String _selectedCard = null;
 
     /**
      * Variable para determinar el tiempo de jugada de cada jugador
     */
     public String _turnTimerPlayer = DEFAULT_TURN_TIMER;
+
+    /**
+     * Indicated if there is an spectator or not
+     */
+    public boolean _joinedAsSpectator = false;
+
+
 
     public GameConfig() {}
 

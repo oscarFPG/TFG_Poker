@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import com.ucm.server.control.Controller;
 import com.ucm.server.exceptions.EvaluatorException;
 import com.ucm.server.logic.Game;
+import com.ucm.server.middleclasses.Spectator;
 import com.ucm.common.BotStruct;
 import com.ucm.common.ClientStruct;
 import com.ucm.common.GameConfig;
@@ -42,16 +43,16 @@ public class ServerMain {
 
             List<ClientStruct> players = new ArrayList<>(
                 List.of(
-                    new ClientStruct("PL1", null), 
-                    new ClientStruct("PL2", null),
-                    new ClientStruct("PL3", null)
-                ) 
+                    ClientStruct.createGuestPlayer("PL1", null),
+                    ClientStruct.createGuestPlayer("PL2", null),
+                    ClientStruct.createGuestPlayer("PL3", null)
+                )
             );
             List<BotStruct> bots = new ArrayList<>();
             GameConfig config = new GameConfig();
             config.reset();
 
-            Game game = new Game(players, bots, config);
+            Game game = new Game(players, bots, null, config);
             Controller controller = new Controller(game);
             controller.run();
             return; 
@@ -66,11 +67,12 @@ public class ServerMain {
 
                 List<ClientStruct> players = server.getRoomPlayers();
                 List<BotStruct> bots = server.getRoomBots();
+                Spectator spectator = server.getSpectator();
                 GameConfig config = server.getGameConfigDeepCopy();
                 log.debug("Pregame ended!");
 
                 log.debug("Poker game starting!");
-                server.startGame(players, bots, config);
+                server.startGame(players, bots, spectator, config);
                 log.debug("Poker game finished!");
             }
             catch(IOException | InterruptedException e) {

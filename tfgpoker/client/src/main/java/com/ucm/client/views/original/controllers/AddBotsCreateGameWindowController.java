@@ -22,7 +22,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
-import javafx.util.converter.IntegerStringConverter;
+
 
 public class AddBotsCreateGameWindowController extends GenericController {
     
@@ -54,12 +54,12 @@ public class AddBotsCreateGameWindowController extends GenericController {
             "Available bots: " + BotRegistry.getAvailableBots().size()
         );
         
+        boolean allowBots = _clientInfo.gameConfig._allowBots;
+        
         btnStartAddBots.setDisable(true);
 
         botsContainer.getChildren().clear();
         botCards.clear();
-
-        boolean allowBots = _clientInfo.gameConfig._allowBots;
 
         for(BotDescriptor bot: BotRegistry.getAvailableBots()) {
             try {

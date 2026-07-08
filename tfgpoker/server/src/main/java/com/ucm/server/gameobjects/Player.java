@@ -191,17 +191,13 @@ public class Player implements IPlayerActions {
 
 
     /* Player methods */
-    public String makePlay(int sb, int bb, int maxBet) throws TurnTimeoutException {
+    public String makePlay(int sb, int bb, int maxBet) throws IOException, TurnTimeoutException {
 
-        try {
-           return _playerInfo.notifyMakePlay(sb, bb, maxBet, this);
-        }
-        catch (TurnTimeoutException e) {
-           throw e;
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        if(_playerInfo == null)
+            return null;
+
+        String action = _playerInfo.notifyMakePlay(sb, bb, maxBet, this);
+        return action;
     }
 
     public int placeOnBetMoney() {
@@ -231,7 +227,8 @@ public class Player implements IPlayerActions {
 
         _role = r;
         try {
-            _playerInfo.notifyPlayerRole(r);
+            if(_playerInfo != null)
+                _playerInfo.notifyPlayerRole(r);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -246,7 +243,8 @@ public class Player implements IPlayerActions {
 
         _cards[_numCards++] = c;
         try {
-            _playerInfo.notifyPlayerCard(c);
+            if(_playerInfo != null)
+                _playerInfo.notifyPlayerCard(c);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -256,7 +254,8 @@ public class Player implements IPlayerActions {
     public void receiveTableCard(Card c) {
 
         try {
-            _playerInfo.notifyTableCard(c);
+            if(_playerInfo != null)
+                _playerInfo.notifyTableCard(c);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -278,7 +277,8 @@ public class Player implements IPlayerActions {
     public void notifyTurnPlay() {
 
         try {
-            _playerInfo.notifyTurnPlay();
+            if(_playerInfo != null)
+                _playerInfo.notifyTurnPlay();
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -288,7 +288,8 @@ public class Player implements IPlayerActions {
     public void notifyTurnWait() {
 
         try {
-            _playerInfo.notifyTurnWait();
+            if(_playerInfo != null)
+                _playerInfo.notifyTurnWait();
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -298,7 +299,8 @@ public class Player implements IPlayerActions {
     public void notifyOtherPlayerAction(IPlayerInfo other) {
 
         try {
-            _playerInfo.notifyOtherPlayerAction(other);
+            if(_playerInfo != null)
+                _playerInfo.notifyOtherPlayerAction(other);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -308,7 +310,8 @@ public class Player implements IPlayerActions {
     public void notifyCurrentTurnPlayer(IPlayerInfo other) {
         
         try {
-            _playerInfo.notifyCurrentTurnPlayer(other);
+            if(_playerInfo != null)
+                _playerInfo.notifyCurrentTurnPlayer(other);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -316,8 +319,10 @@ public class Player implements IPlayerActions {
     }
 
     public void notifyOwnState() {
+
         try {
-            _playerInfo.notifyOwnState(this);
+            if(_playerInfo != null)
+                _playerInfo.notifyOwnState(this);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -327,7 +332,8 @@ public class Player implements IPlayerActions {
     public void notifyOtherPlayerState(IPlayerInfo other) {
 
         try {
-            _playerInfo.notifyOtherPlayerState(other);
+            if(_playerInfo != null)
+                _playerInfo.notifyOtherPlayerState(other);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -337,7 +343,8 @@ public class Player implements IPlayerActions {
     public void notifyEndPlayerState() {
 
         try {
-            _playerInfo.notifyEndPlayerState();
+            if(_playerInfo != null)
+                _playerInfo.notifyEndPlayerState();
         }
         catch(IOException e) {
             e.printStackTrace();
@@ -347,7 +354,8 @@ public class Player implements IPlayerActions {
     public void notifyTotalPot(int total) {
 
         try {
-            _playerInfo.notifyTotalPot(total);
+            if(_playerInfo != null)
+                _playerInfo.notifyTotalPot(total);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -357,7 +365,8 @@ public class Player implements IPlayerActions {
     public void notifyHandEndsByFolds() {
 
         try {
-            _playerInfo.notifyHandEndsByFolds();
+            if(_playerInfo != null)
+                _playerInfo.notifyHandEndsByFolds();
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -367,7 +376,8 @@ public class Player implements IPlayerActions {
     public void notifyRoundEnded() {
 
         try {
-            _playerInfo.notifyRoundEnded();
+            if(_playerInfo != null)
+                _playerInfo.notifyRoundEnded();
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -377,11 +387,15 @@ public class Player implements IPlayerActions {
     public void notifyGameEnded() {
 
         try {
-            _playerInfo.notifyGameEnded();
-            if(isWinner())
-                _playerInfo.notifyGameWinner();
-            else
-                _playerInfo.notifyGameLoser();
+            if(_playerInfo != null) {
+
+                _playerInfo.notifyGameEnded();
+                if(isWinner())
+                    _playerInfo.notifyGameWinner();
+                else
+                    _playerInfo.notifyGameLoser();
+            }
+            
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -391,7 +405,8 @@ public class Player implements IPlayerActions {
     public void notifyGameKeeps() {
 
         try {
-            _playerInfo.notifyGameKeeps();
+            if(_playerInfo != null)
+                _playerInfo.notifyGameKeeps();
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -402,7 +417,8 @@ public class Player implements IPlayerActions {
 
         _equity = equity;
         try {
-            _playerInfo.notifyEquity(equity);
+            if(_playerInfo != null)
+                _playerInfo.notifyEquity(equity);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -417,7 +433,8 @@ public class Player implements IPlayerActions {
 
         try {
             _lastCommand = "small-blind";
-            _playerInfo.notifySmallBlindBet(bet, this);
+            if(_playerInfo != null)
+                _playerInfo.notifySmallBlindBet(bet, this);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -434,7 +451,8 @@ public class Player implements IPlayerActions {
 
         try {
             _lastCommand = "big-blind";
-            _playerInfo.notifyBigBlindBet(bet, this);
+            if(_playerInfo != null)
+                _playerInfo.notifyBigBlindBet(bet, this);
         }
         catch (IOException e) {
             e.printStackTrace();

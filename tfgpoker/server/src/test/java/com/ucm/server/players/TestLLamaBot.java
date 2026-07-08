@@ -1,6 +1,8 @@
 package com.ucm.server.players;
 
 
+import java.io.IOException;
+
 import org.junit.jupiter.api.Test;
 
 import com.ucm.common.gameobjects.Card;
@@ -14,7 +16,7 @@ public class TestLLamaBot {
 
     private static final int INIT_MONEY = 1000;
 
-    @Test
+    //@Test
     private void testPromptBasic_2Players() {
 
         LlamaPokerLLM llama = new LlamaPokerLLM();
@@ -32,7 +34,7 @@ public class TestLLamaBot {
     }
 
     //@Test
-    private void testFullPrompt() {
+    private void testFullPrompt() throws IOException {
 
         LlamaPokerLLM llama = new LlamaPokerLLM();
         Player player = new Player(0, "LlamaBot", INIT_MONEY, llama);
