@@ -49,7 +49,7 @@ public class HomeCreateGameWindowController extends GenericController {
     private Spinner<Integer> spinnerInitialMoney;
 
     @FXML
-    private CheckBox checkBoxAllowBots;
+    private CheckBox checkBoxAllowBots, checkBoxSpectator;
 
     @FXML
     private ComboBox<String> comboBlindsValue;
@@ -69,6 +69,7 @@ public class HomeCreateGameWindowController extends GenericController {
         btnStartHome.setDisable(true);
         labelUserName.setText(_clientInfo.name);
         checkBoxAllowBots.setSelected(_clientInfo.gameConfig._allowBots);
+        checkBoxSpectator.setSelected(_clientInfo.gameConfig._joinedAsSpectator);
         initializeRoomName();
         initializeSpinner();
         initializeBlindsValue();
@@ -181,6 +182,11 @@ public class HomeCreateGameWindowController extends GenericController {
     @FXML
     private void onAllowBots() {
         _clientInfo.gameConfig._allowBots = checkBoxAllowBots.isSelected();
+    }
+
+    @FXML
+    private void onJoinAsSpectator(){
+        _clientInfo.gameConfig._joinedAsSpectator = checkBoxSpectator.isSelected();
     }
 
     @FXML

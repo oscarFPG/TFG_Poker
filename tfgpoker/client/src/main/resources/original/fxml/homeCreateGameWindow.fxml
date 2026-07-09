@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.HomeCreateGameWindowController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.HomeCreateGameWindowController">
    <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0">
          <top>
@@ -59,11 +59,11 @@
                </BorderPane.margin></Button>
          </bottom>
          <center>
-            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+            <VBox alignment="CENTER" prefHeight="558.0" prefWidth="1344.0" BorderPane.alignment="CENTER">
                <children>
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                      <children>
-                        <Label alignment="CENTER" prefHeight="82.0" prefWidth="493.0" styleClass="title-label" text="HOME" textAlignment="CENTER" />
+                        <Label alignment="CENTER" prefHeight="72.0" prefWidth="494.0" styleClass="title-label" text="HOME" textAlignment="CENTER" />
                         <Button fx:id="btnNextHome" alignment="CENTER" mnemonicParsing="false" onAction="#jumpToBots" prefHeight="44.0" prefWidth="36.0" rotate="180.0">
                            <styleClass>
                               <String fx:value="arrow-back" />
@@ -72,9 +72,9 @@
                         </Button>
                      </children>
                   </HBox>
-                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                  <HBox alignment="CENTER" prefHeight="348.0" prefWidth="1344.0">
                      <children>
-                        <VBox alignment="CENTER" prefHeight="405.0" prefWidth="689.0" spacing="6.0" styleClass="rounded-description-label">
+                        <VBox alignment="CENTER" prefHeight="416.0" prefWidth="690.0" spacing="6.0" styleClass="rounded-description-label">
                            <children>
                               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
                                  <children>
@@ -97,13 +97,18 @@
                                     <Spinner fx:id="spinnerInitialMoney" styleClass="container-colors" />
                                  </children>
                               </HBox>
-                              <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
+                              <VBox alignment="CENTER" prefHeight="66.0" prefWidth="690.0" spacing="10.0">
                                  <children>
-                                    <CheckBox fx:id="checkBoxAllowBots" mnemonicParsing="false" onAction="#onAllowBots" styleClass="container-colors" text="Allow bots" />
+                                    <CheckBox fx:id="checkBoxAllowBots" mnemonicParsing="false" onAction="#onAllowBots" prefHeight="18.0" prefWidth="138.0" styleClass="container-colors" text="Allow bots" />
                                  </children>
                                  <VBox.margin>
                                     <Insets bottom="10.0" />
                                  </VBox.margin>
+                              </VBox>
+                              <VBox alignment="CENTER" prefHeight="51.0" prefWidth="690.0">
+                                 <children>
+                                    <CheckBox fx:id="checkBoxSpectator" mnemonicParsing="false" onAction="#onJoinAsSpectator" styleClass="container-colors" text="Join as Spectator" />
+                                 </children>
                               </VBox>
                               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
                                  <children>

@@ -29,6 +29,7 @@ public class AddBotsCreateGameWindowController extends GenericController {
     private static final int MIN_NUM_BOTS = 0;
 
     private static final int MAX_NUM_BOTS = 8;
+    private static final int MAX_NUM_BOTS_SPECTATOR = 9;
 
     private final List<BotCardController> botCards = new ArrayList<>();
 
@@ -68,7 +69,7 @@ public class AddBotsCreateGameWindowController extends GenericController {
 
                 StackPane card = loader.load();
                 BotCardController controller = loader.getController();
-                controller.setup(bot, MAX_NUM_BOTS, allowBots);
+                controller.setup(bot, isSpectator() ? MAX_NUM_BOTS_SPECTATOR : MAX_NUM_BOTS, allowBots);
                 int previousValue= _clientInfo.gameConfig.getBotCount(bot.botId());
                 controller.setInitialValue(previousValue);
                 controller.setOnValueChanged(this::updateSpinners);
@@ -86,7 +87,7 @@ public class AddBotsCreateGameWindowController extends GenericController {
 
     private void updateSpinners() {
         int totalBots = botCards.stream().mapToInt(BotCardController::getValue).sum();
-        int remaining = MAX_NUM_BOTS - totalBots;
+        int remaining = isSpectator() ? MAX_NUM_BOTS_SPECTATOR - totalBots : MAX_NUM_BOTS - totalBots;
         for(BotCardController card : botCards) {
             Spinner<Integer> spinner = card.getSpinner();
             int current = spinner.getValue();
@@ -116,6 +117,10 @@ public class AddBotsCreateGameWindowController extends GenericController {
         for(BotCardController card : botCards) {
             _clientInfo.gameConfig.setBotCount(card.getBotId(), card.getValue());
         }
+    }
+
+    private boolean isSpectator () {
+        return _clientInfo.gameConfig._joinedAsSpectator;
     }
 
     @Override

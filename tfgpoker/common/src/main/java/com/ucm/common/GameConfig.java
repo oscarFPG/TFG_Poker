@@ -7,6 +7,7 @@ public class GameConfig {
     
     private static final int DEFAULT_INITIAL_MONEY = 100;
     private static final boolean DEFAULT_ALLOW_BOTS = true;
+    private static final boolean DEFAULT_JOIN_AS_SPECTATOR = false;
     private static final String DEFAULT_BLINDS_VALUE = "1/2";
     private static final boolean DEFAULT_DINAMIC_VALUE = false;
     private static final String DEFAULT_LEVEL_DURATION = "15";
@@ -53,7 +54,7 @@ public class GameConfig {
     /**
      * Indicated if there is an spectator or not
      */
-    public boolean _joinedAsSpectator = true;
+    public boolean _joinedAsSpectator = DEFAULT_JOIN_AS_SPECTATOR;
 
 
     public GameConfig() {}
