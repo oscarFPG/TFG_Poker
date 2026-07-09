@@ -4,6 +4,7 @@ package com.ucm.server.control;
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.server.logic.Game;
+import com.ucm.server.history.PokerHistory;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,6 +43,11 @@ public class Controller {
     }
 
     private void runGame() throws CancelGameException {
+
+        PokerHistory.startMatch(1);
+        PokerHistory.startHand(1);
+
+        PokerHistory.write("Hola desde PokerHistory");
 
         int handCounter = 0;
         boolean endOfGame = false;
