@@ -1,12 +1,15 @@
 package com.ucm.client.views.original.controllers;
 
 import com.ucm.common.BotDescriptor;
+import com.ucm.common.GameType;
 
 import javafx.animation.RotateTransition;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.SplitMenuButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -34,6 +37,8 @@ public class BotCardController {
     private Label labelBotName;
     @FXML
     private ImageView imgBot;
+    @FXML
+    private SplitMenuButton splitMenuStyles;
 
     private boolean isFlippedBot = false;
     private BotDescriptor descriptor;
@@ -52,7 +57,7 @@ public class BotCardController {
         spinnerBot.valueProperty().addListener((obs, oldVal, newVal) -> {
             if(onValueChanged != null) onValueChanged.run();
         });
-
+        
         cardBackBot.setVisible(false);
         cardFrontBot.setVisible(true);
     }

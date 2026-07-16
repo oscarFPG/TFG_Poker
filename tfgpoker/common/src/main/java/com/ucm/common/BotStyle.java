@@ -1,4 +1,4 @@
-package com.ucm.server.gameobjects;
+package com.ucm.common;
 
 /**
  * Defines the playing style (personality) of a poker bot.

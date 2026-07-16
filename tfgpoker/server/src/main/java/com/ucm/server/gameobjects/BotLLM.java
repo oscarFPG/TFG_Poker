@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
