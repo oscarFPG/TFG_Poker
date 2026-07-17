@@ -2,8 +2,6 @@ package com.ucm.client.views.original.controllers;
 
 import java.util.List;
 
-import com.ucm.client.ClientInfo;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;

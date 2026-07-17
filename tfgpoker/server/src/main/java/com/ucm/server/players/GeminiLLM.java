@@ -1,14 +1,9 @@
 package com.ucm.server.players;
 
 
-import java.io.IOException;
-
 import com.ucm.common.GameType;
-import com.ucm.common.gameobjects.Card;
-import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.gameobjects.BotLLMOnline;
-import com.ucm.server.interfaces.IPlayerInfo;
 
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
