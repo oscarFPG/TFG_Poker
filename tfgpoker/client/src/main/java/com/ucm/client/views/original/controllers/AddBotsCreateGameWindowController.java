@@ -3,10 +3,12 @@ package com.ucm.client.views.original.controllers;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.ucm.client.ClientInfo;
 import com.ucm.common.BotDescriptor;
 import com.ucm.common.BotRegistry;
+import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
 import com.ucm.common.SocketUtils;
 
@@ -72,6 +74,10 @@ public class AddBotsCreateGameWindowController extends GenericController {
                 controller.setup(bot, isSpectator() ? MAX_NUM_BOTS_SPECTATOR : MAX_NUM_BOTS, allowBots);
                 int previousValue= _clientInfo.gameConfig.getBotCount(bot.botId());
                 controller.setInitialValue(previousValue);
+                for(BotStyle style : BotStyle.values()){
+                    int value = _clientInfo.gameConfig.getBotSyleCount(bot.botId(), style);
+                    controller.setInitialStylesValue(style, value);
+                }
                 controller.setOnValueChanged(this::updateSpinners);
 
                 botCards.add(controller);
@@ -116,6 +122,12 @@ public class AddBotsCreateGameWindowController extends GenericController {
 
         for(BotCardController card : botCards) {
             _clientInfo.gameConfig.setBotCount(card.getBotId(), card.getValue());
+
+            Map<BotStyle, Integer> styles = card.getStyleDistribution();
+
+            for(var entry : styles.entrySet()){
+                _clientInfo.gameConfig.setBotStyleCount(card.getBotId(), entry.getKey(), entry.getValue());
+            }
         }
     }
 

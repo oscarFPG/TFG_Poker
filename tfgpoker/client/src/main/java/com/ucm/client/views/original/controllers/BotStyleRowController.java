@@ -27,6 +27,26 @@ public class BotStyleRowController {
                 _onValueChanged.run();
             }
         });
-    }   
+    }  
+
+    public BotStyle getStyle(){
+        return _style;
+    }
+
+    public int getValue() {
+        return spinnerBotStyle.getValue();
+    }
+
+    public void setValue(int value){
+        spinnerBotStyle.getValueFactory().setValue(value);
+    }
+
+    public Spinner<Integer> getSpinner(){
+        return spinnerBotStyle;
+    }
+
+    public void setOnValueChanged(Runnable r){
+        _onValueChanged = r;
+    }
 
 }

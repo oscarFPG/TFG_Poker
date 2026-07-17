@@ -70,6 +70,10 @@ public class GameConfig {
         _levelDuration = (other._levelDuration != null) ? String.copyValueOf(other._levelDuration.toCharArray()) : null;
         _hikePercentage = (other._hikePercentage != null) ? String.copyValueOf(other._hikePercentage.toCharArray()) : null;
         _botsByType = new HashMap<>(other._botsByType);
+        _botStylesByType = new HashMap<>();
+        for(var entry : other._botStylesByType.entrySet()){
+            _botStylesByType.put(entry.getKey(), new HashMap<>(entry.getValue()));
+        }
         _numPlayers = other._numPlayers;
         _selectedTable = (other._selectedTable != null) ? String.copyValueOf(other._selectedTable.toCharArray()) : null;
         _selectedCard = (other._selectedCard != null) ? String.copyValueOf(other._selectedCard.toCharArray()) : null;
@@ -88,6 +92,7 @@ public class GameConfig {
         _levelDuration = DEFAULT_LEVEL_DURATION;
         _hikePercentage = DEFAULT_HIKE_PERCENTAGE;
         _botsByType.clear();
+        _botStylesByType.clear();
         _numPlayers = DEFAULT_NUM_PLAYERS;
         _selectedTable = null;
         _selectedCard = null;
@@ -96,6 +101,7 @@ public class GameConfig {
     public void setBotCount(int botId, int count) {
         if(count <= 0) {
             _botsByType.remove(botId);
+            _botStylesByType.remove(botId);
         }
         else {
             _botsByType.put(botId, count);
@@ -104,6 +110,24 @@ public class GameConfig {
 
     public int getBotCount(int botId) {
         return _botsByType.getOrDefault(botId, 0);
+    }
+
+    public void setBotStyleCount(int botId, BotStyle style,int count){
+        _botStylesByType.computeIfAbsent(botId, k -> new HashMap<>());
+
+        if(count <= 0) {
+            Map<BotStyle,Integer> styles = _botStylesByType.get(botId);
+            if(styles != null){
+                styles.remove(style);
+            }
+        }
+        else {
+            _botStylesByType.get(botId).put(style, count);
+        }
+    }
+
+    public int getBotSyleCount(int botId, BotStyle style){
+        return _botStylesByType.getOrDefault(botId, Map.of()).getOrDefault(style, 0);
     }
 
     private int getTotalBots() {

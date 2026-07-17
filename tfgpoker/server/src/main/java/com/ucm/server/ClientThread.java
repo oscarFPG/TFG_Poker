@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.ucm.common.BotRegistry;
 import com.ucm.common.BotStruct;
+import com.ucm.common.BotStyle;
 import com.ucm.common.GameConfig;
 import com.ucm.common.GameType;
 import com.ucm.common.PlayerInfo;
@@ -140,6 +141,8 @@ public class ClientThread implements Runnable {
                         for( var entry : _gameConfig._botsByType.entrySet()) {
                             int botId = entry.getKey();
                             int amount = entry.getValue();
+
+                            
 
                             for(int i = 0; i < amount; i++) {
                                 int botIdentifier = _id.getAndIncrement();
