@@ -14,6 +14,7 @@ import com.ucm.server.exceptions.EvaluatorException;
 import com.ucm.server.middleclasses.HandInfo;
 import com.ucm.server.middleclasses.PlayerEvaluation;
 
+
 /**
  * Utility class responsible for evaluating poker hands.
  * <p>
@@ -240,7 +241,7 @@ public class Evaluator {
         return r;
     }
 
-    private static RANK handRank(short val) {
+    public static RANK handRank(short val) {
 
         if (val > 6185)
             return RANK.HIGH_CARD; // 1277 high card

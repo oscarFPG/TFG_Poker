@@ -1,6 +1,0 @@
-AhAc;3;QhJhTh
-- Best Hand: Pair of Aces with AcAhQhJhTh
-- Draw: Flush
-- Draw: Straight Gutshot
-AhAc;5;As2s3h4dJd
-- Best Hand: Three of a Kind of Aces with AsAcAh3h2s

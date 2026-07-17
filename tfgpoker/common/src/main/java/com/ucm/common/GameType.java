@@ -114,6 +114,7 @@ public class GameType {
     public static final int BOT_GEMINI = 10000;
     public static final int BOT_LLAMA = 10001;
     public static final int BOT_NN_MODEL_1 = 10002;
+    public static final int BOT_FSM_1 = 10003;
 
     //Equity identifier
     public static final int EQUITY_UPDATE = 40000;
