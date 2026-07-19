@@ -187,12 +187,8 @@ public class InGameWindowController extends GenericController {
         GUI_initializeDealerButton();
         GUI_initializeMoneySlider();
         GUI_initializeTimers();
-        GUI_clearTableCards();
-        GUI_clearPlayerBets();
-        GUI_clearDealer();
-        GUI_clearTurnPlayer();
         GUI_initializeTurnTimer();
-        GUI_showWaitingPlayers(_clientInfo.playerPositions);
+        //GUI_showWaitingPlayers(_clientInfo.playerPositions);
 
         usernamePlaceHolder.setText( _clientInfo.name );
         imgAvatarProfile.setImage( _clientInfo.getAvatar(_clientInfo.name,64) );
@@ -203,8 +199,7 @@ public class InGameWindowController extends GenericController {
             try {
                 _userCloses = true;
 
-                GUI_shutdownVisualTimer();
-
+                //GUI_shutdownVisualTimer();
                 if(_clientInfo.socket != null && !_clientInfo.socket.isClosed())
                     _clientInfo.socket.close();
 
@@ -220,7 +215,7 @@ public class InGameWindowController extends GenericController {
         _gameThread = new Thread(() -> {
 
             if(_clientInfo.isHost && _clientInfo.gameConfig._joinedAsSpectator) {
-                spectateGame(_clientInfo.socket);
+                //spectateGame(_clientInfo.socket);
             }
             else {
 
@@ -432,125 +427,10 @@ public class InGameWindowController extends GenericController {
         }
     }
 
-    private void GUI_clearTableCards() {
-        tableCard0.setImage(null);
-        tableCard1.setImage(null);
-        tableCard2.setImage(null);
-        tableCard3.setImage(null);
-        tableCard4.setImage(null);
-    }
-
-    private void GUI_clearPlayerBets() {
-        _listOnBetMoney.forEach(label -> label.setVisible(false));
-        _listHandBet.forEach(bet -> bet.setVisible(false));
-        _listHandBet.forEach(bet -> { bet.setVisible(false);  bet.setOpacity(1.0);});
-        _listPlayerStackPanes.forEach(pane -> pane.setOpacity(1.0));
-        _listImageCards.forEach(img -> img.setOpacity(1.0));
-    }
-
-    private void GUI_clearDealer() {
-        _listDealer.forEach(iv -> iv.setVisible(false));
-    }
-
-    private void GUI_clearTurnPlayer() {
-        _listPlayerStackPanes.forEach(pane -> pane.getStyleClass().remove("tourn-player-color"));
-    }
-
     private void GUI_initializeTurnTimer() {
 
         _turnTimerTotal = Integer.parseInt(_clientInfo.gameConfig._turnTimerPlayer);
         _blockTime = _turnTimerTotal / TOTAL_BLOCKS;
-    }
-
-    private void GUI_showWaitingPlayers(final List<PlayerInfo> players) {
-
-        int myIndex = IntStream.range(0, players.size())
-                        .filter(i -> players.get(i).id == _clientInfo.id)
-                        .findFirst()
-                        .orElse(-1);
-
-        _playerSeatMap = new HashMap<>(players.size());
-        if(myIndex == -1) {
-         
-            int seatIndex = 0;
-            for(int i = players.size() - 1; 0 <= i; i--) {
-
-                PlayerInfo p = players.get(i);
-                _playerSeatMap.put(p.id, seatIndex);
-
-                Label nameLabel = _listNameLabels.get(seatIndex);
-                Label moneyLabel = _listMoneyLabels.get(seatIndex);
-                StackPane playerStackPane = _listPlayerStackPanes.get(seatIndex);
-                HBox cardsHBox = _listImageCards.get(seatIndex);
-                HBox onBetHBox = _listHandBet.get(seatIndex);
-
-                nameLabel.setText(p.name);
-                moneyLabel.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
-                playerStackPane.setVisible(true);
-                cardsHBox.setVisible(true);
-                onBetHBox.setVisible(true);
-                GUI_getAvatarPosition(seatIndex, p.name);
-
-                seatIndex++;
-            }
-
-            return;
-        }
-
-        
-        _playerSeatMap.put(myIndex, 0);
-        GUI_getAvatarPosition(0, _clientInfo.name);
-        playerName0.setText( _clientInfo.name );
-        playerMoney0.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
-        pokerPlayer0.setVisible(true);
-        _listImageCards.get(0).setVisible(true);
-        _listHandBet.get(0).setVisible(true);
-
-        // Show players behind me(in the list) : position 1, 2, 3, ...
-        int beforePosition = 1;
-        for(int i = myIndex - 1; 0 <= i; i--) {
-
-            PlayerInfo p = players.get(i);
-            _playerSeatMap.put(p.id, beforePosition);
-
-            Label nameLabel = _listNameLabels.get(beforePosition);
-            Label moneyLabel = _listMoneyLabels.get(beforePosition);
-            StackPane playerStackPane = _listPlayerStackPanes.get(beforePosition);
-            HBox cardsHBox = _listImageCards.get(beforePosition);
-            HBox onBetHBox = _listHandBet.get(beforePosition);
-            
-            nameLabel.setText(p.name);
-            moneyLabel.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
-            playerStackPane.setVisible(true);
-            cardsHBox.setVisible(true);
-            onBetHBox.setVisible(true);
-            GUI_getAvatarPosition(beforePosition, p.name);
-
-            ++beforePosition;
-        }
-
-        // Show players ahead of me(in the list) : position 8, 7, 6, ...
-        int nextPosition = 8;
-        for(int i = myIndex + 1; i < players.size(); i++) {
-
-            PlayerInfo p = players.get(i);
-            _playerSeatMap.put(p.id, nextPosition);
-
-            Label nameLabel = _listNameLabels.get(nextPosition);
-            Label moneyLabel = _listMoneyLabels.get(nextPosition);
-            StackPane playerStackPane = _listPlayerStackPanes.get(nextPosition);
-            HBox cardsHBox = _listImageCards.get(nextPosition);
-            HBox onBetHBox = _listHandBet.get(nextPosition);
-            
-            nameLabel.setText(p.name);
-            moneyLabel.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
-            playerStackPane.setVisible(true);
-            cardsHBox.setVisible(true);
-            onBetHBox.setVisible(true);
-            GUI_getAvatarPosition(nextPosition, p.name);
-
-            --nextPosition;
-        }
     }
 
     
@@ -639,10 +519,345 @@ public class InGameWindowController extends GenericController {
     private void seeEquity() {
         _equityVisible = btnEquity.isSelected();
         imgSeeEquity.setImage(_equityVisible ? equityOn : equityOff);
-        GUI_putEquityToPlayer();
     }
 
 
+
+    private boolean pokerGame(String name, Socket socket) {
+
+        try {
+
+            InputStream input = socket.getInputStream();
+            boolean endOfGame = false;
+            
+            // Game loop
+            while(!endOfGame) {
+                endOfGame = playRound(name, socket);
+            }
+        }
+        catch(IOException e) {
+
+            if(_userCloses) {
+                return true;
+            }
+            else {
+                System.out.printf("Error on client socket: %s\n", e.getMessage());
+                NotificationManager.showError(Messages.Notifications.ERROR_CLIENT_SOCKET + e.getMessage());
+                return false;
+            }
+        }
+        catch(CancelGameException e) {
+
+            System.out.printf("Game cancelled by server: %s\n", e.getMessage());
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean playRound(final String name, Socket socket) throws CancelGameException, IOException {
+
+        PlayerRole role;
+        String myEquity;
+		Card[] playerCards = new Card[2];
+		Card[] tableCards = new Card[5];
+
+
+        // Clear all previous info : Remove table cards, player bets, dealer button and player with turn(White border around)
+        Platform.runLater(() -> {
+            GUI_clearTableCards();
+            GUI_clearPlayerBets();
+            GUI_clearDealer();
+            GUI_clearTurnPlayer();
+        });
+
+        // 1. PLAYER ROLE
+        System.out.printf("-- New hand --\n");
+        role = PokerGame.receivePlayerRole( socket.getInputStream() );
+        System.out.printf("Assigned role: %s\n", role.toString());
+
+        // 2. GET AND DISPLAY ALL PLAYERS STATUS
+        playerStartInfo(socket);
+
+        // 3. GET PLAYER AND DISPLAY PLAYER CARDS
+        playerCards[0] = PokerGame.receiveCard( socket.getInputStream() );
+        playerCards[1] = PokerGame.receiveCard( socket.getInputStream() );
+        Platform.runLater(() -> {
+            GUI_putMyCards(_clientInfo.id, playerCards[0], playerCards[1]);
+        });
+
+        // 4. GET PLAYER EQUITY
+        int eqCode = SocketUtils.receiveInt(socket.getInputStream());
+        myEquity = SocketUtils.receiveString(socket.getInputStream());
+        Platform.runLater(() -> {
+            GUI_updateEquity(myEquity);
+        });
+
+        
+
+        /* 
+        catch (OnlyOnePlayerLeftException e) {
+
+            System.out.printf("There is only one player left!\n");
+            NotificationManager.showError(Messages.Notifications.ERROR_ONLY_ONE_PLAYER_LEFT);
+            
+            try {
+                endOfGame = showdown(socket);
+            }
+            catch(IOException ex) {
+                System.out.printf("Error receiving the rank after a fold exception: %s", ex.getMessage());
+                NotificationManager.showError(Messages.Notifications.ERROR_RECEIVING_RANK + ex.getMessage());
+            }
+            catch(InterruptedException ex) {
+                System.out.printf("Game thread interrupted: %s\n", ex.getMessage());
+                NotificationManager.showError(Messages.Notifications.ERROR_THREAD_INTERRUPTED + ex.getMessage());
+            }
+
+        }
+        catch(InterruptedException e) {
+            System.out.printf("Game thread interrupted: %s\n", e.getMessage());
+            NotificationManager.showError(Messages.Notifications.ERROR_THREAD_INTERRUPTED + e.getMessage());
+        }
+        */
+
+        return true;
+    }
+
+
+    /* ---------------------- GUI METHODS ---------------------- */
+    private void GUI_clearTableCards() {
+        tableCard0.setImage(null);
+        tableCard1.setImage(null);
+        tableCard2.setImage(null);
+        tableCard3.setImage(null);
+        tableCard4.setImage(null);
+    }
+
+    private void GUI_clearPlayerBets() {
+        _listOnBetMoney.forEach(label -> label.setVisible(false));
+        _listHandBet.forEach(bet -> bet.setVisible(false));
+        _listHandBet.forEach(bet -> { bet.setVisible(false);  bet.setOpacity(1.0);});
+        _listPlayerStackPanes.forEach(pane -> pane.setOpacity(1.0));
+        _listImageCards.forEach(img -> img.setOpacity(1.0));
+    }
+
+    private void GUI_clearDealer() {
+        _listDealer.forEach(iv -> iv.setVisible(false));
+    }
+
+    private void GUI_clearTurnPlayer() {
+        _listPlayerStackPanes.forEach(pane -> pane.getStyleClass().remove("tourn-player-color"));
+    }
+
+    /* PUT METHODS */
+    private void GUI_putDealerButton(final int playerID) {
+
+        Integer seatID = _playerSeatMap.get(playerID);
+        if(seatID != null)
+            _listDealer.get(seatID).setVisible(true);
+    }
+
+    private void GUI_putMyCards(final int playerID, Card card1, Card card2) {
+
+        int seatID = _playerSeatMap.get(playerID);
+        ImageView leftCard = (ImageView) _listPaintCards.get(seatID * 2);
+        ImageView rightCard = (ImageView) _listPaintCards.get(seatID * 2 + 1);
+
+        GUI_showCard(leftCard, card1);
+        GUI_showCard(rightCard, card2);
+    }
+
+    /* UPDATE METHODS */
+    private void GUI_updatePlayerInfo(
+        int playerID, 
+        PlayerRole role, 
+        int onBetMoney, 
+        int offBetMoney, 
+        boolean isFolded, 
+        boolean isWinner, 
+        boolean isEliminated, 
+        boolean isShowdown
+    ) {
+
+        int seatID = _playerSeatMap.get(playerID);
+        Label nameLabel = _listNameLabels.get(seatID);
+        Label moneyLabel = _listMoneyLabels.get(seatID);
+        Label betLabel = _listOnBetMoney.get(seatID);
+
+
+        if(isShowdown && role == PlayerRole.DEALER) {
+            GUI_putDealerButton(playerID);
+        }
+
+        if(isShowdown && isWinner) {
+
+            System.out.printf("Player %s is the winner of the hand!\n", nameLabel.getText());
+            NotificationManager.showSuccess(
+                String.format(
+                    Messages.Notifications.CONFIRMATION_WINNER_GAME, 
+                    nameLabel.getText()
+                )
+            );
+             
+
+            PauseTransition transition = new PauseTransition( Duration.seconds(3) );
+            transition.setOnFinished(event -> {
+                nameLabel.setText( nameLabel.getText().replace(" (Winner!)", "") );
+            });
+            
+            // Set players name as "<name> (Winner!)" for 3 seconds and then to "<name>"
+            nameLabel.setText( nameLabel.getText() + " (Winner!)" );
+            transition.play();
+        }
+
+        if(isEliminated) {
+            System.out.printf("Player %s has been eliminated from the game!\n", nameLabel.getText());
+            NotificationManager.showSuccess(
+                String.format(
+                    Messages.Notifications.CONFIRMATION_PLAYER_ELIMINATED, 
+                    nameLabel.getText()
+                )
+            );
+             
+            nameLabel.setText( nameLabel.getText() + " (Eliminated)" );
+            _listPlayerStackPanes.get(seatID).setOpacity(0.4);
+        }
+
+        betLabel.setText( String.valueOf(onBetMoney) );
+        moneyLabel.setText( String.valueOf(offBetMoney) );
+    }
+
+    private void GUI_updateEquity(String equity) {
+    
+        Label myEquityLabel = _listEquity.get(0);   // Me
+        if(equity == null)
+            return;
+
+            
+        // Get value from string
+        double equityValue = Double.parseDouble(equity.replace("%","").replace(",", "."))/100;
+
+        // Update text
+        myEquityLabel.setText(equity);
+        myEquityLabel.setVisible(true);
+        
+        // Clear info if necessary
+        myEquityLabel.getStyleClass().removeAll(
+            "equity-green",
+            "equity-yellow",
+            "equity-red"  
+        );
+
+        // Update color based on value
+        if(equityValue >= 0.65)
+            myEquityLabel.getStyleClass().add("equity-green");
+        else if(equityValue >= 0.35)
+            myEquityLabel.getStyleClass().add("equity-yellow");
+        else
+            myEquityLabel.getStyleClass().add("equity-red");
+    }
+
+    /* SHOW METHODS */
+    private void GUI_showCard(ImageView imageView, Card card) {
+
+        final String path = "images/cards/";
+        String cardValue = (card.getNumber() == 2) ? "2"
+                        : (card.getNumber() == 3) ? "3"
+                        : (card.getNumber() == 4) ? "4"
+                        : (card.getNumber() == 5) ? "5"
+                        : (card.getNumber() == 6) ? "6"
+                        : (card.getNumber() == 7) ? "7"
+                        : (card.getNumber() == 8) ? "8"
+                        : (card.getNumber() == 9) ? "9"
+                        : (card.getNumber() == 10) ? "10"
+                        : (card.getNumber() == 11) ? "jack"
+                        : (card.getNumber() == 12) ? "queen"
+                        : (card.getNumber() == 13) ? "king"
+                        : (card.getNumber() == 14) ? "ace"
+                        : "unknown";
+
+        String cardSuit = (card.getSuit() == Suit.HEARTS) ? "hearts"
+                        : (card.getSuit() == Suit.DIAMONDS) ? "diamonds"
+                        : (card.getSuit() == Suit.CLUBS) ? "clubs"
+                        : (card.getSuit() == Suit.SPADES) ? "spades"
+                        : "unknown";
+
+
+        InputStream in = getClass().getClassLoader().getResourceAsStream(  
+            String.format("%s%s_of_%s.png", path, cardValue, cardSuit)
+        );
+
+        Image cardImage = new Image(in);
+        imageView.setImage( cardImage );
+    }
+
+    
+
+    /* ---------------------- GAME LOOP METHODS ---------------------- */
+    private void playerStartInfo(Socket socket) throws IOException, CancelGameException {
+
+        int code;
+        do {
+
+            code = SocketUtils.receiveInt(socket.getInputStream());
+            if(code == GameType.MY_PLAYER_STATUS) {
+
+                String myName = SocketUtils.receiveString(socket.getInputStream());
+                int myOffBetMoney = SocketUtils.receiveInt(socket.getInputStream());
+                int myOnBetMoney = SocketUtils.receiveInt(socket.getInputStream());
+                PlayerRole role = PokerGame.receivePlayerRole(socket.getInputStream());
+                boolean iAmFolded = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
+                boolean iAmWinner = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
+                boolean iAmEliminated = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
+
+                System.out.printf(
+                    "My info - Name: %s, Role: %s, OffBetMoney: %d, OnBetMoney: %d\n",
+                    myName,
+                    role.name(),
+                    myOffBetMoney, myOnBetMoney
+                );
+
+                Platform.runLater(() -> {
+                    GUI_updatePlayerInfo(_clientInfo.id, role, myOnBetMoney, myOffBetMoney, iAmFolded, iAmWinner, iAmEliminated, false);
+                });
+            }
+            else if(code == GameType.OTHER_PLAYER_STATUS) {
+
+                int playerID = SocketUtils.receiveInt(socket.getInputStream());
+                String player = SocketUtils.receiveString(socket.getInputStream());
+                PlayerRole playerRole = PokerGame.receivePlayerRole( socket.getInputStream() );
+                boolean isFolded = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
+                boolean isWinner = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
+                boolean isEliminated = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
+                int moneyOffBet = SocketUtils.receiveInt(socket.getInputStream());
+                int moneyOnBet = SocketUtils.receiveInt(socket.getInputStream());
+
+                System.out.printf(
+                    "Player %s info - PlayerID: %d, Role: %s, OffBetMoney: %d, OnBetMoney: %d\n",
+                    player,
+                    playerID,
+                    playerRole.name(),
+                    moneyOffBet, moneyOnBet
+                );
+
+                Platform.runLater(() -> {
+                    GUI_updatePlayerInfo(playerID, playerRole, moneyOnBet, moneyOffBet, isFolded, isWinner, isEliminated, false);
+                });
+            }
+            else if(code == GameType.PLAYER_STATUS_END) {
+                System.out.printf("Exiting player status update loop!\n");
+            }
+            else {
+                System.out.printf("ERROR! Code received: %d!\n", code);
+                NotificationManager.showError(Messages.Notifications.ERROR_UNKNOWN_CODE + code);
+            }
+            
+        } 
+        while(code != GameType.PLAYER_STATUS_END);
+    }
+
+
+    /* 
     private void spectateGame(Socket socket) {
 
         Card[] tableCards = new Card[5];
@@ -1302,114 +1517,95 @@ public class InGameWindowController extends GenericController {
         }
     }
 
-    private void playerStartInfo(Socket socket) throws IOException, CancelGameException {
+    private void GUI_showWaitingPlayers(final List<PlayerInfo> players) {
 
-        int code;
-        do {
+        int myIndex = IntStream.range(0, players.size())
+                        .filter(i -> players.get(i).id == _clientInfo.id)
+                        .findFirst()
+                        .orElse(-1);
 
-            code = SocketUtils.receiveInt(socket.getInputStream());
-            if(code == GameType.MY_PLAYER_STATUS) {
+        _playerSeatMap = new HashMap<>(players.size());
+        if(myIndex == -1) {
+         
+            int seatIndex = 0;
+            for(int i = players.size() - 1; 0 <= i; i--) {
 
-                String myName = SocketUtils.receiveString(socket.getInputStream());
-                int myOffBetMoney = SocketUtils.receiveInt(socket.getInputStream());
-                int myOnBetMoney = SocketUtils.receiveInt(socket.getInputStream());
-                PlayerRole role = PokerGame.receivePlayerRole(socket.getInputStream());
-                boolean iAmFolded = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
-                boolean iAmWinner = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
-                boolean iAmEliminated = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
+                PlayerInfo p = players.get(i);
+                _playerSeatMap.put(p.id, seatIndex);
 
-                System.out.printf(
-                    "My info - Name: %s, Role: %s, OffBetMoney: %d, OnBetMoney: %d\n",
-                    myName,
-                    role.name(),
-                    myOffBetMoney, myOnBetMoney
-                );
+                Label nameLabel = _listNameLabels.get(seatIndex);
+                Label moneyLabel = _listMoneyLabels.get(seatIndex);
+                StackPane playerStackPane = _listPlayerStackPanes.get(seatIndex);
+                HBox cardsHBox = _listImageCards.get(seatIndex);
+                HBox onBetHBox = _listHandBet.get(seatIndex);
 
-                Platform.runLater(() -> {
-                    GUI_updatePlayerInfo(_clientInfo.id, role, myOnBetMoney, myOffBetMoney, iAmFolded, iAmWinner, iAmEliminated, false);
-                });
+                nameLabel.setText(p.name);
+                moneyLabel.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
+                playerStackPane.setVisible(true);
+                cardsHBox.setVisible(true);
+                onBetHBox.setVisible(true);
+                GUI_getAvatarPosition(seatIndex, p.name);
+
+                seatIndex++;
             }
-            else if(code == GameType.OTHER_PLAYER_STATUS) {
 
-                int playerID = SocketUtils.receiveInt(socket.getInputStream());
-                String player = SocketUtils.receiveString(socket.getInputStream());
-                PlayerRole playerRole = PokerGame.receivePlayerRole( socket.getInputStream() );
-                boolean isFolded = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
-                boolean isWinner = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
-                boolean isEliminated = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
-                int moneyOffBet = SocketUtils.receiveInt(socket.getInputStream());
-                int moneyOnBet = SocketUtils.receiveInt(socket.getInputStream());
+            return;
+        }
 
-                System.out.printf(
-                    "Player %s info - PlayerID: %d, Role: %s, OffBetMoney: %d, OnBetMoney: %d\n",
-                    player,
-                    playerID,
-                    playerRole.name(),
-                    moneyOffBet, moneyOnBet
-                );
+        
+        _playerSeatMap.put(myIndex, 0);
+        GUI_getAvatarPosition(0, _clientInfo.name);
+        playerName0.setText( _clientInfo.name );
+        playerMoney0.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
+        pokerPlayer0.setVisible(true);
+        _listImageCards.get(0).setVisible(true);
+        _listHandBet.get(0).setVisible(true);
 
-                Platform.runLater(() -> {
-                    GUI_updatePlayerInfo(playerID, playerRole, moneyOnBet, moneyOffBet, isFolded, isWinner, isEliminated, false);
-                });
-            }
-            else if(code == GameType.PLAYER_STATUS_END) {
-                System.out.printf("Exiting player status update loop!\n");
-            }
-            else {
-                System.out.printf("ERROR! Code received: %d!\n", code);
-                NotificationManager.showError(Messages.Notifications.ERROR_UNKNOWN_CODE + code);
-             
-            }
+        // Show players behind me(in the list) : position 1, 2, 3, ...
+        int beforePosition = 1;
+        for(int i = myIndex - 1; 0 <= i; i--) {
+
+            PlayerInfo p = players.get(i);
+            _playerSeatMap.put(p.id, beforePosition);
+
+            Label nameLabel = _listNameLabels.get(beforePosition);
+            Label moneyLabel = _listMoneyLabels.get(beforePosition);
+            StackPane playerStackPane = _listPlayerStackPanes.get(beforePosition);
+            HBox cardsHBox = _listImageCards.get(beforePosition);
+            HBox onBetHBox = _listHandBet.get(beforePosition);
             
-        } 
-        while(code != GameType.PLAYER_STATUS_END);
-    }
+            nameLabel.setText(p.name);
+            moneyLabel.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
+            playerStackPane.setVisible(true);
+            cardsHBox.setVisible(true);
+            onBetHBox.setVisible(true);
+            GUI_getAvatarPosition(beforePosition, p.name);
 
-
-    private void GUI_updatePlayerInfo(
-        int playerID, 
-        PlayerRole role, 
-        int onBetMoney, 
-        int offBetMoney, 
-        boolean isFolded, 
-        boolean isWinner, 
-        boolean isEliminated, 
-        boolean isShowdown
-    ) {
-
-        int seatID = _playerSeatMap.get(playerID);
-        Label nameLabel = _listNameLabels.get(seatID);
-        Label moneyLabel = _listMoneyLabels.get(seatID);
-        Label betLabel = _listOnBetMoney.get(seatID);
-
-
-        if(isShowdown && role == PlayerRole.DEALER) {
-            GUI_putDealerButton(playerID);
+            ++beforePosition;
         }
 
-        if(isShowdown && isWinner) {
-            System.out.printf("Player %s is the winner of the hand!\n", nameLabel.getText());
-            NotificationManager.showSuccess(String.format(Messages.Notifications.CONFIRMATION_WINNER_GAME, nameLabel.getText()));
-             
-            PauseTransition transition = new PauseTransition( Duration.seconds(3) );
+        // Show players ahead of me(in the list) : position 8, 7, 6, ...
+        int nextPosition = 8;
+        for(int i = myIndex + 1; i < players.size(); i++) {
 
-            nameLabel.setText( nameLabel.getText() + " (Winner!)" );
-            transition.setOnFinished(event -> {
-                nameLabel.setText( nameLabel.getText().replace(" (Winner!)", "") );
-            });
-            transition.play();
+            PlayerInfo p = players.get(i);
+            _playerSeatMap.put(p.id, nextPosition);
+
+            Label nameLabel = _listNameLabels.get(nextPosition);
+            Label moneyLabel = _listMoneyLabels.get(nextPosition);
+            StackPane playerStackPane = _listPlayerStackPanes.get(nextPosition);
+            HBox cardsHBox = _listImageCards.get(nextPosition);
+            HBox onBetHBox = _listHandBet.get(nextPosition);
+            
+            nameLabel.setText(p.name);
+            moneyLabel.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
+            playerStackPane.setVisible(true);
+            cardsHBox.setVisible(true);
+            onBetHBox.setVisible(true);
+            GUI_getAvatarPosition(nextPosition, p.name);
+
+            --nextPosition;
         }
-
-        if(isEliminated) {
-            System.out.printf("Player %s has been eliminated from the game!\n", nameLabel.getText());
-             NotificationManager.showSuccess(String.format(Messages.Notifications.CONFIRMATION_PLAYER_ELIMINATED, nameLabel.getText()));
-             
-            nameLabel.setText( nameLabel.getText() + " (Eliminated)" );
-            _listPlayerStackPanes.get(seatID).setOpacity(0.4);
-        }
-
-        betLabel.setText( String.valueOf(onBetMoney) );
-        moneyLabel.setText( String.valueOf(offBetMoney) );
     }
 
     private void GUI_getAvatarPosition(final int position, String name) {
@@ -1430,46 +1626,6 @@ public class InGameWindowController extends GenericController {
         avatarImage.setVisible(true);
     }
 
-    private void GUI_showCard(ImageView imageView, Card card) {
-
-        String path = "images/cards/";
-        String cardValue = (card.getNumber() == 2) ? "2"
-                        : (card.getNumber() == 3) ? "3"
-                        : (card.getNumber() == 4) ? "4"
-                        : (card.getNumber() == 5) ? "5"
-                        : (card.getNumber() == 6) ? "6"
-                        : (card.getNumber() == 7) ? "7"
-                        : (card.getNumber() == 8) ? "8"
-                        : (card.getNumber() == 9) ? "9"
-                        : (card.getNumber() == 10) ? "10"
-                        : (card.getNumber() == 11) ? "jack"
-                        : (card.getNumber() == 12) ? "queen"
-                        : (card.getNumber() == 13) ? "king"
-                        : (card.getNumber() == 14) ? "ace"
-                        : "unknown";
-
-        String cardSuit = (card.getSuit() == Suit.HEARTS) ? "hearts"
-                        : (card.getSuit() == Suit.DIAMONDS) ? "diamonds"
-                        : (card.getSuit() == Suit.CLUBS) ? "clubs"
-                        : (card.getSuit() == Suit.SPADES) ? "spades"
-                        : "unknown";
-
-
-        InputStream in = getClass().getClassLoader().getResourceAsStream(  
-            String.format("%s%s_of_%s.png", path, cardValue, cardSuit)
-        );
-
-        Image cardImage = new Image(in);
-        imageView.setImage( cardImage );
-    }
-
-    private void handleEquity(Socket socket) throws IOException {
-
-        int code = SocketUtils.receiveInt(socket.getInputStream());
-        _myEquity = SocketUtils.receiveString(socket.getInputStream());
-        Platform.runLater(this::GUI_putEquityToPlayer);
-    }
-
     private void GUI_putMyCards(int playerID, Card card1, Card card2) {
         int seatID = _playerSeatMap.get(playerID);
         ImageView leftCard = (ImageView) _listPaintCards.get(seatID * 2);
@@ -1481,13 +1637,6 @@ public class InGameWindowController extends GenericController {
 
     private void GUI_putRoundName(String round) {
         btnRound.setText(round);
-    }
-
-    private void GUI_putDealerButton(int playerID) {
-
-        Integer seatID = _playerSeatMap.get(playerID);
-        if(seatID != null)
-            _listDealer.get(seatID).setVisible(true);
     }
 
     private void GUI_putPlayerBet(int playerID, int amountOnBet, int amountOffBet, boolean isFolded) {
@@ -1521,41 +1670,6 @@ public class InGameWindowController extends GenericController {
         if(seatID != null) {
             _listPlayerStackPanes.get(seatID).getStyleClass().add("tourn-player-color");
         }
-    }
-
-    private void GUI_putEquityToPlayer() {
-        Label myEquityLabel = _listEquity.get(0);
-        
-        if(_equityVisible && _myEquity != null) {
-            myEquityLabel.setText(_myEquity);
-            myEquityLabel.setVisible(true);
-
-            double equityValue = Double.parseDouble(_myEquity.replace("%","").replace(",", "."))/100;
-            GUI_putColorStyleToEquity(myEquityLabel, equityValue);
-        }
-        else {
-            myEquityLabel.setVisible(false);
-        }
-    }
-
-    private void GUI_putColorStyleToEquity(Label equityLabel, double equity) {
-
-        equityLabel.getStyleClass().removeAll(
-          "equity-green",
-          "equity-yellow",
-          "equity-red"  
-        );
-
-        if(equity >= 0.65) {
-            equityLabel.getStyleClass().add("equity-green");
-        }
-        else if(equity >= 0.35) {
-            equityLabel.getStyleClass().add("equity-yellow");
-        }
-        else{
-            equityLabel.getStyleClass().add("equity-red");
-        }
-
     }
 
     private void GUI_putPlayerTimer(int seatID) {
@@ -1646,4 +1760,5 @@ public class InGameWindowController extends GenericController {
         });
     }
     
+    */
 }
