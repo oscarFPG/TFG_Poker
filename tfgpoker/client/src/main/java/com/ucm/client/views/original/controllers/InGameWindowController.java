@@ -188,7 +188,7 @@ public class InGameWindowController extends GenericController {
         GUI_initializeMoneySlider();
         GUI_initializeTimers();
         GUI_initializeTurnTimer();
-        //GUI_showWaitingPlayers(_clientInfo.playerPositions);
+        GUI_updateWaitingPlayers(_clientInfo.playerPositions);
 
         usernamePlaceHolder.setText( _clientInfo.name );
         imgAvatarProfile.setImage( _clientInfo.getAvatar(_clientInfo.name,64) );
@@ -587,14 +587,24 @@ public class InGameWindowController extends GenericController {
         });
 
         // 4. GET PLAYER EQUITY
-        int eqCode = SocketUtils.receiveInt(socket.getInputStream());
-        myEquity = SocketUtils.receiveString(socket.getInputStream());
+        int eqCode = SocketUtils.receiveInt( socket.getInputStream() );
+        myEquity = SocketUtils.receiveString( socket.getInputStream() );
         Platform.runLater(() -> {
             GUI_updateEquity(myEquity);
         });
 
-        
+        // 5. Three table cards
+        tableCards[0] = PokerGame.receiveCard( socket.getInputStream() );  // First table card
+        tableCards[1] = PokerGame.receiveCard( socket.getInputStream() );  // Second table card
+        tableCards[2] = PokerGame.receiveCard( socket.getInputStream() );  // Third table card
 
+        // 6. Fourth table card
+        tableCards[3] = PokerGame.receiveCard( socket.getInputStream() );  // Fourth table card
+
+        // 7. Fifth table card
+        tableCards[4] = PokerGame.receiveCard( socket.getInputStream() );  // Fourth table card
+
+        
         /* 
         catch (OnlyOnePlayerLeftException e) {
 
@@ -668,6 +678,116 @@ public class InGameWindowController extends GenericController {
     }
 
     /* UPDATE METHODS */
+    private void GUI_updateWaitingPlayers(final List<PlayerInfo> players) {
+
+        int myIndex = IntStream.range(0, players.size())
+                        .filter(i -> players.get(i).id == _clientInfo.id)
+                        .findFirst()
+                        .orElse(-1);
+
+        _playerSeatMap = new HashMap<>(players.size());
+        if(myIndex == -1) {     //  Update every player except me(As spectator)
+         
+            int seatIndex = 0;
+            for(int i = players.size() - 1; 0 <= i; i--) {
+
+                PlayerInfo p = players.get(i);
+
+                Label nameLabel = _listNameLabels.get(seatIndex);
+                Label moneyLabel = _listMoneyLabels.get(seatIndex);
+                StackPane playerStackPane = _listPlayerStackPanes.get(seatIndex);
+                HBox cardsHBox = _listImageCards.get(seatIndex);
+                HBox onBetHBox = _listHandBet.get(seatIndex);
+
+                _playerSeatMap.put(p.id, seatIndex);
+                nameLabel.setText(p.name);
+                moneyLabel.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
+                playerStackPane.setVisible(true);
+                cardsHBox.setVisible(true);
+                onBetHBox.setVisible(true);
+                GUI_updateAvatarImageByPosition(seatIndex, p.name);
+
+                seatIndex++;
+            }
+
+            return;
+        }
+
+        // Update my seat
+        _playerSeatMap.put(myIndex, 0);
+        playerName0.setText( _clientInfo.name );
+        playerMoney0.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
+        pokerPlayer0.setVisible(true);
+        _listImageCards.get(0).setVisible(true);
+        _listHandBet.get(0).setVisible(true);
+        GUI_updateAvatarImageByPosition(0, _clientInfo.name);
+
+        // Update players behind me(in the list) : position 1, 2, 3, ...
+        int beforePosition = 1;
+        for(int i = myIndex - 1; 0 <= i; i--) {
+
+            PlayerInfo p = players.get(i);
+
+            Label nameLabel = _listNameLabels.get(beforePosition);
+            Label moneyLabel = _listMoneyLabels.get(beforePosition);
+            StackPane playerStackPane = _listPlayerStackPanes.get(beforePosition);
+            HBox cardsHBox = _listImageCards.get(beforePosition);
+            HBox onBetHBox = _listHandBet.get(beforePosition);
+            
+            _playerSeatMap.put(p.id, beforePosition);
+            nameLabel.setText(p.name);
+            moneyLabel.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
+            playerStackPane.setVisible(true);
+            cardsHBox.setVisible(true);
+            onBetHBox.setVisible(true);
+            GUI_updateAvatarImageByPosition(beforePosition, p.name);
+
+            ++beforePosition;
+        }
+
+        // Update players ahead of me(in the list) : position 8, 7, 6, ...
+        int nextPosition = 8;
+        for(int i = myIndex + 1; i < players.size(); i++) {
+
+            PlayerInfo p = players.get(i);
+
+            Label nameLabel = _listNameLabels.get(nextPosition);
+            Label moneyLabel = _listMoneyLabels.get(nextPosition);
+            StackPane playerStackPane = _listPlayerStackPanes.get(nextPosition);
+            HBox cardsHBox = _listImageCards.get(nextPosition);
+            HBox onBetHBox = _listHandBet.get(nextPosition);
+            
+            _playerSeatMap.put(p.id, nextPosition);
+            nameLabel.setText(p.name);
+            moneyLabel.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
+            playerStackPane.setVisible(true);
+            cardsHBox.setVisible(true);
+            onBetHBox.setVisible(true);
+            GUI_updateAvatarImageByPosition(nextPosition, p.name);
+
+            --nextPosition;
+        }
+    }
+
+    private void GUI_updateAvatarImageByPosition(final int position, final String name) {
+
+        ImageView avatarImage = _listAvatarProfiles.get(position);
+        Image avatar = _clientInfo.getAvatar(name, 80);
+
+        avatarImage.setImage(avatar);
+        avatarImage.setFitWidth(80);
+        avatarImage.setFitHeight(80);
+        avatarImage.setPreserveRatio(true);
+
+        Circle clip = new Circle();
+        clip.centerXProperty().bind(avatarImage.fitWidthProperty().divide(2));
+        clip.centerYProperty().bind(avatarImage.fitWidthProperty().divide(2));
+        clip.radiusProperty().bind(avatarImage.fitWidthProperty().divide(2));
+
+        avatarImage.setClip(clip);
+        avatarImage.setVisible(true);
+    }
+
     private void GUI_updatePlayerInfo(
         int playerID, 
         PlayerRole role, 
@@ -1515,115 +1635,6 @@ public class InGameWindowController extends GenericController {
             NotificationManager.showError(Messages.Notifications.ERROR_SENDING_COMMAND + e.getMessage());
                     
         }
-    }
-
-    private void GUI_showWaitingPlayers(final List<PlayerInfo> players) {
-
-        int myIndex = IntStream.range(0, players.size())
-                        .filter(i -> players.get(i).id == _clientInfo.id)
-                        .findFirst()
-                        .orElse(-1);
-
-        _playerSeatMap = new HashMap<>(players.size());
-        if(myIndex == -1) {
-         
-            int seatIndex = 0;
-            for(int i = players.size() - 1; 0 <= i; i--) {
-
-                PlayerInfo p = players.get(i);
-                _playerSeatMap.put(p.id, seatIndex);
-
-                Label nameLabel = _listNameLabels.get(seatIndex);
-                Label moneyLabel = _listMoneyLabels.get(seatIndex);
-                StackPane playerStackPane = _listPlayerStackPanes.get(seatIndex);
-                HBox cardsHBox = _listImageCards.get(seatIndex);
-                HBox onBetHBox = _listHandBet.get(seatIndex);
-
-                nameLabel.setText(p.name);
-                moneyLabel.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
-                playerStackPane.setVisible(true);
-                cardsHBox.setVisible(true);
-                onBetHBox.setVisible(true);
-                GUI_getAvatarPosition(seatIndex, p.name);
-
-                seatIndex++;
-            }
-
-            return;
-        }
-
-        
-        _playerSeatMap.put(myIndex, 0);
-        GUI_getAvatarPosition(0, _clientInfo.name);
-        playerName0.setText( _clientInfo.name );
-        playerMoney0.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
-        pokerPlayer0.setVisible(true);
-        _listImageCards.get(0).setVisible(true);
-        _listHandBet.get(0).setVisible(true);
-
-        // Show players behind me(in the list) : position 1, 2, 3, ...
-        int beforePosition = 1;
-        for(int i = myIndex - 1; 0 <= i; i--) {
-
-            PlayerInfo p = players.get(i);
-            _playerSeatMap.put(p.id, beforePosition);
-
-            Label nameLabel = _listNameLabels.get(beforePosition);
-            Label moneyLabel = _listMoneyLabels.get(beforePosition);
-            StackPane playerStackPane = _listPlayerStackPanes.get(beforePosition);
-            HBox cardsHBox = _listImageCards.get(beforePosition);
-            HBox onBetHBox = _listHandBet.get(beforePosition);
-            
-            nameLabel.setText(p.name);
-            moneyLabel.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
-            playerStackPane.setVisible(true);
-            cardsHBox.setVisible(true);
-            onBetHBox.setVisible(true);
-            GUI_getAvatarPosition(beforePosition, p.name);
-
-            ++beforePosition;
-        }
-
-        // Show players ahead of me(in the list) : position 8, 7, 6, ...
-        int nextPosition = 8;
-        for(int i = myIndex + 1; i < players.size(); i++) {
-
-            PlayerInfo p = players.get(i);
-            _playerSeatMap.put(p.id, nextPosition);
-
-            Label nameLabel = _listNameLabels.get(nextPosition);
-            Label moneyLabel = _listMoneyLabels.get(nextPosition);
-            StackPane playerStackPane = _listPlayerStackPanes.get(nextPosition);
-            HBox cardsHBox = _listImageCards.get(nextPosition);
-            HBox onBetHBox = _listHandBet.get(nextPosition);
-            
-            nameLabel.setText(p.name);
-            moneyLabel.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
-            playerStackPane.setVisible(true);
-            cardsHBox.setVisible(true);
-            onBetHBox.setVisible(true);
-            GUI_getAvatarPosition(nextPosition, p.name);
-
-            --nextPosition;
-        }
-    }
-
-    private void GUI_getAvatarPosition(final int position, String name) {
-        ImageView avatarImage = _listAvatarProfiles.get(position);
-        Image avatar = _clientInfo.getAvatar(name, 80);
-
-        avatarImage.setImage(avatar);
-        avatarImage.setFitWidth(80);
-        avatarImage.setFitHeight(80);
-        avatarImage.setPreserveRatio(true);
-
-        Circle clip = new Circle();
-        clip.centerXProperty().bind(avatarImage.fitWidthProperty().divide(2));
-        clip.centerYProperty().bind(avatarImage.fitWidthProperty().divide(2));
-        clip.radiusProperty().bind(avatarImage.fitWidthProperty().divide(2));
-
-        avatarImage.setClip(clip);
-        avatarImage.setVisible(true);
     }
 
     private void GUI_putMyCards(int playerID, Card card1, Card card2) {
