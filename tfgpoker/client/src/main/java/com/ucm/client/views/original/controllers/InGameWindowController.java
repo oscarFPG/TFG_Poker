@@ -187,12 +187,12 @@ public class InGameWindowController extends GenericController {
         GUI_initializeDealerButton();
         GUI_initializeMoneySlider();
         GUI_initializeTimers();
-        GUI_showWaitingPlayers(_clientInfo.playerPositions);
         GUI_clearTableCards();
         GUI_clearPlayerBets();
         GUI_clearDealer();
         GUI_clearTurnPlayer();
         GUI_initializeTurnTimer();
+        GUI_showWaitingPlayers(_clientInfo.playerPositions);
 
         usernamePlaceHolder.setText( _clientInfo.name );
         imgAvatarProfile.setImage( _clientInfo.getAvatar(_clientInfo.name,64) );
@@ -371,24 +371,33 @@ public class InGameWindowController extends GenericController {
         _listImageCards.forEach(hbox -> hbox.setVisible(false));
         _listHandBet.forEach(hbox -> hbox.setVisible(false));
         _listHandBet.get(0).setOpacity(1);
-        _listEquity.forEach(label -> { label.setVisible(false); label.setText("0%");});
+        _listEquity.forEach(label -> {
+            label.setVisible(false);
+            label.setText("0%");
+        });
     }
 
-    private void GUI_initializeCardStyle() { 
-        Image cardImage = new Image(getClass().getResource(_clientInfo.gameConfig._selectedCard).toExternalForm());
+    private void GUI_initializeCardStyle() {
+
+        Image cardImage = new Image(
+            getClass().getResource(_clientInfo.gameConfig._selectedCard).toExternalForm()
+        );
         _listPaintCards.subList(2, _listPaintCards.size()).forEach(iv -> iv.setImage(cardImage));
     }
 
     private void GUI_initializeDealerButton() {
         
-        Image DealerImage = new Image(getClass().getResource("/images/fichaDealer.png").toExternalForm());
+        Image DealerImage = new Image(
+            getClass().getResource("/images/fichaDealer.png").toExternalForm()
+        );
         _listDealer.forEach(iv -> {
             iv.setImage(DealerImage);
             iv.setVisible(false);
         });
     }
 
-    private void GUI_initializeMoneySlider() {   
+    private void GUI_initializeMoneySlider() {
+
         sliderMoney.setMin(0);
         sliderMoney.setValue(0);
         sliderMoney.setMax(1_000_000);
@@ -396,7 +405,6 @@ public class InGameWindowController extends GenericController {
         sliderMoney.valueProperty().addListener((obs, oldVal, newVal) -> {
             
             labelMoney.setText( String.valueOf(newVal.intValue()) );
-
             if( newVal.intValue() == sliderMoney.getMin() )
                 btnRaise.setDisable(true);
             else
@@ -407,7 +415,6 @@ public class InGameWindowController extends GenericController {
     private void GUI_initializeTimers() {
 
         _listTimer = new HashMap<>();
-
         _listTimer.put(0, List.of(rectFirstTimer0, rectSecondTimer0, rectThirdTimer0, rectFourthTimer0, rectFifthTimer0, rectSixthTimer0));
         _listTimer.put(1, List.of(rectFirstTimer1, rectSecondTimer1, rectThirdTimer1, rectFourthTimer1, rectFifthTimer1, rectSixthTimer1));
         _listTimer.put(2, List.of(rectFirstTimer2, rectSecondTimer2, rectThirdTimer2, rectFourthTimer2, rectFifthTimer2, rectSixthTimer2));
@@ -425,7 +432,32 @@ public class InGameWindowController extends GenericController {
         }
     }
 
+    private void GUI_clearTableCards() {
+        tableCard0.setImage(null);
+        tableCard1.setImage(null);
+        tableCard2.setImage(null);
+        tableCard3.setImage(null);
+        tableCard4.setImage(null);
+    }
+
+    private void GUI_clearPlayerBets() {
+        _listOnBetMoney.forEach(label -> label.setVisible(false));
+        _listHandBet.forEach(bet -> bet.setVisible(false));
+        _listHandBet.forEach(bet -> { bet.setVisible(false);  bet.setOpacity(1.0);});
+        _listPlayerStackPanes.forEach(pane -> pane.setOpacity(1.0));
+        _listImageCards.forEach(img -> img.setOpacity(1.0));
+    }
+
+    private void GUI_clearDealer() {
+        _listDealer.forEach(iv -> iv.setVisible(false));
+    }
+
+    private void GUI_clearTurnPlayer() {
+        _listPlayerStackPanes.forEach(pane -> pane.getStyleClass().remove("tourn-player-color"));
+    }
+
     private void GUI_initializeTurnTimer() {
+
         _turnTimerTotal = Integer.parseInt(_clientInfo.gameConfig._turnTimerPlayer);
         _blockTime = _turnTimerTotal / TOTAL_BLOCKS;
     }
@@ -1607,29 +1639,7 @@ public class InGameWindowController extends GenericController {
         _scheduler.shutdownNow();
     }
 
-    private void GUI_clearTableCards() {
-        tableCard0.setImage(null);
-        tableCard1.setImage(null);
-        tableCard2.setImage(null);
-        tableCard3.setImage(null);
-        tableCard4.setImage(null);
-    }
-
-    private void GUI_clearPlayerBets() {
-        _listOnBetMoney.forEach(label -> label.setVisible(false));
-        _listHandBet.forEach(bet -> bet.setVisible(false));
-        _listHandBet.forEach(bet -> { bet.setVisible(false);  bet.setOpacity(1.0);});
-        _listPlayerStackPanes.forEach(pane -> pane.setOpacity(1.0));
-        _listImageCards.forEach(img -> img.setOpacity(1.0));
-    }
-
-    private void GUI_clearDealer() {
-        _listDealer.forEach(iv -> iv.setVisible(false));
-    }
-
-    private void GUI_clearTurnPlayer() {
-        _listPlayerStackPanes.forEach(pane -> pane.getStyleClass().remove("tourn-player-color"));
-    }
+    
 
     private void GUI_clearTimer(int seatID) {
         List<Rectangle> rectangles = _listTimer.get(seatID);
