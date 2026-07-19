@@ -111,7 +111,7 @@ public abstract class Command {
      * 
      * @return true if the command can be executed, false in any other case
      */
-    public abstract boolean validate(final int maxBet);
+    //public abstract boolean validate(final int maxBet);
 
     /**
      * Method that executes the command. This method should be implemented by each

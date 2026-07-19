@@ -205,9 +205,6 @@ public class Card {
     public static int getCardValueFromCode(int valueCode) {
 
         switch (valueCode) {
-        case GameType.NUMBER_ACE:
-            return 1;
-
         case GameType.NUMBER_TWO:
             return 2;
 
@@ -244,6 +241,9 @@ public class Card {
         case GameType.NUMBER_K:
             return 13;
 
+        case GameType.NUMBER_ACE:
+            return 14;
+
         default:
             return -1;
         }
@@ -251,9 +251,6 @@ public class Card {
 
     public int getCardValueNetworkCode() {
         switch (_number) {
-        case 1:
-            return GameType.NUMBER_ACE;
-
         case 2:
             return GameType.NUMBER_TWO;
         
@@ -289,6 +286,9 @@ public class Card {
 
         case 13:
             return GameType.NUMBER_K;
+
+        case 14:
+            return GameType.NUMBER_ACE;
 
         default:
             return -1;

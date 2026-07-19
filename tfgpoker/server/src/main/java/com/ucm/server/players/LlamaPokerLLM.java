@@ -85,10 +85,9 @@ public class LlamaPokerLLM extends BotLLM {
                             .replace("\\u003e", ">");
 
             return clean;
-
         } 
         catch (Exception e) {
-            e.printStackTrace();
+            System.out.printf("ERROR WITH OLLAMA: %s\n", e.getMessage());
             return "<action>fold</action>";
         }
     }
@@ -112,13 +111,11 @@ public class LlamaPokerLLM extends BotLLM {
         action = action.toLowerCase().trim();
 
         if ( action.contains("fold") )
-            return "fold";
-        if ( action.contains("call") 
-            || (action.contains("check") && _maxBet > 0 ) )
-            return "call";
-        if ( action.contains("check") 
-            || (action.contains("call") && _maxBet == 0) )
-            return "check";
+            return GameType.FOLD_ACTION_FULL;
+        if ( action.contains("call") )
+            return GameType.CALL_ACTION_FULL;
+        if ( action.contains("check") )
+            return GameType.CHECK_ACTION_FULL;
 
         
         // Raise action
@@ -127,26 +124,11 @@ public class LlamaPokerLLM extends BotLLM {
         Pattern p = Pattern.compile("^raise\\s+(\\d+(\\.\\d+)?)$");
         Matcher m = p.matcher(action);
         if (m.find()) {
-
             String targetBet = m.group(1);
-            int targetBetInt = Integer.parseInt(targetBet);
-            if(targetBetInt == _maxBet) {
-                return "call";
-            }
-            else if(targetBetInt < _maxBet 
-                || targetBetInt == player.getMoneyOffBet() + player.getMoneyOnBet()
-                || targetBetInt > player.getMoneyOffBet() + player.getMoneyOnBet()) {
-                return "call";
-            }
-            else
-                return "raise " + m.group(1);
+            return GameType.RAISE_ACTION_FULL + " " + targetBet;
         }
 
-        if (action.startsWith("raise")) {
-            return "call";
-        }
-
-        return "fold";
+        return GameType.FOLD_ACTION_FULL;
     }
 
 

@@ -57,7 +57,7 @@ public class HumanPlayer implements IPlayerNotificator {
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOffBet());
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOnBet());
 
-        _socket.setSoTimeout(60_000);
+        _socket.setSoTimeout(60 * 1000);
 
         String commandInput = null;
         try {

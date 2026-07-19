@@ -813,19 +813,16 @@ public class InGameWindowController extends GenericController {
                     // Player roles
                     System.out.printf("-- New hand --\n");
                     role = PokerGame.receivePlayerRole(input);
-                    System.out.printf("Assigned role: %s\n", role.toString());
+                    //System.out.printf("Assigned role: %s\n", role.toString());
                     playerStartInfo(socket);
-                    System.out.printf("Waiting for the game to start...\n");
                     NotificationManager.showSuccess(Messages.Notifications.WAITING_GAME_START);
                     
 
-                    
                     // Player cards
-                    System.out.printf("Waiting for my cards...\n");
                     playerCards[0] = PokerGame.receiveCard(input);
                     playerCards[1] = PokerGame.receiveCard(input);
                     handleEquity(socket);
-                    System.out.printf("Cards: %s %s\n", 
+                    System.out.printf("My cards: %s %s\n", 
                         playerCards[0].toString(), playerCards[1].toString()
                     );
                     Platform.runLater(() -> {
@@ -954,9 +951,6 @@ public class InGameWindowController extends GenericController {
 				final int amountSB = SocketUtils.receiveInt(socket.getInputStream());
                 final int onBetMoney = SocketUtils.receiveInt(socket.getInputStream());
                 final int offBetMoney = SocketUtils.receiveInt(socket.getInputStream());
-				System.out.printf("Forced play as the small blind with %d chips\n", amountSB);
-                //NotificationManager.showSuccess(Messages.Notifications.TURN_FORCED_SB + amountSB);
-            
 
                 Platform.runLater(() -> {
                     GUI_putPlayerBet(_clientInfo.id, onBetMoney, offBetMoney, false);
@@ -974,8 +968,7 @@ public class InGameWindowController extends GenericController {
                 final int onBetMoney = SocketUtils.receiveInt(socket.getInputStream());
                 final int offBetMoney = SocketUtils.receiveInt(socket.getInputStream());
 				System.out.printf("Forced play as the big blind with %d chips\n", amountBB);
-                //NotificationManager.showSuccess(Messages.Notifications.TURN_FORCED_BB + amountBB);
-            
+
                 Platform.runLater(() -> {
                     GUI_putPlayerBet(_clientInfo.id, onBetMoney, offBetMoney, false);
                     if(role == PlayerRole.DEALER)  {
@@ -998,8 +991,7 @@ public class InGameWindowController extends GenericController {
 			else if(serverCode == GameType.TURN_PLAY) {
 
 				System.out.printf("It's your turn to play!\n");
-                // NotificationManager.showSuccess(Messages.Notifications.TURN_PLAY);
-                
+
 				// Receive round info
 				final int sb = SocketUtils.receiveInt( socket.getInputStream() );
 				final int bb = SocketUtils.receiveInt( socket.getInputStream() );
@@ -1043,6 +1035,7 @@ public class InGameWindowController extends GenericController {
                     buttonsHolder.setVisible(false);
                     GUI_stopVisualTimer();
                 });
+
 				handEndsByFold = true;
 			}
             else if(serverCode == GameType.MY_PLAYER_STATUS) {
@@ -1145,15 +1138,14 @@ public class InGameWindowController extends GenericController {
 
         }
         while(serverCode != GameType.ROUND_ENDS && !handEndsByFold);
-		System.out.printf("Round has ended!\n\n");
-        //NotificationManager.showSuccess(Messages.Notifications.CONFIRMATION_ROUND_ENDS);
-            
+		System.out.printf("Round has ended!\n\n");    
 
 		if(handEndsByFold) {
             NotificationManager.showError(Messages.Notifications.ERROR_ONLY_ONE_PLAYER_LEFT);
             Platform.runLater(() -> {
                 buttonsHolder.setVisible(false);
             });
+
 			throw new OnlyOnePlayerLeftException();
         }
     }
@@ -1392,7 +1384,7 @@ public class InGameWindowController extends GenericController {
 
 
         if(isShowdown && role == PlayerRole.DEALER) {
-            GUI_putDealerButton(seatID);
+            GUI_putDealerButton(playerID);
         }
 
         if(isShowdown && isWinner) {
@@ -1441,8 +1433,7 @@ public class InGameWindowController extends GenericController {
     private void GUI_showCard(ImageView imageView, Card card) {
 
         String path = "images/cards/";
-        String cardValue = (card.getNumber() == 1) ? "ace"
-                        : (card.getNumber() == 2) ? "2"
+        String cardValue = (card.getNumber() == 2) ? "2"
                         : (card.getNumber() == 3) ? "3"
                         : (card.getNumber() == 4) ? "4"
                         : (card.getNumber() == 5) ? "5"
@@ -1454,6 +1445,7 @@ public class InGameWindowController extends GenericController {
                         : (card.getNumber() == 11) ? "jack"
                         : (card.getNumber() == 12) ? "queen"
                         : (card.getNumber() == 13) ? "king"
+                        : (card.getNumber() == 14) ? "ace"
                         : "unknown";
 
         String cardSuit = (card.getSuit() == Suit.HEARTS) ? "hearts"
@@ -1492,8 +1484,10 @@ public class InGameWindowController extends GenericController {
     }
 
     private void GUI_putDealerButton(int playerID) {
-        int seatID = _playerSeatMap.get(playerID);
-        _listDealer.get(seatID).setVisible(true);
+
+        Integer seatID = _playerSeatMap.get(playerID);
+        if(seatID != null)
+            _listDealer.get(seatID).setVisible(true);
     }
 
     private void GUI_putPlayerBet(int playerID, int amountOnBet, int amountOffBet, boolean isFolded) {

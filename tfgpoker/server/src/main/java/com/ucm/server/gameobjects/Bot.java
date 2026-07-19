@@ -76,6 +76,11 @@ public abstract class Bot implements IPlayerNotificator {
      */
     protected double _equity;
 
+    /**
+     *  Communication bridge between the poker player and the player controller
+     */
+    protected IPlayerInfo _player;
+
 
     /**
      * Constructs a bot with a given identifier.

@@ -1,11 +1,7 @@
 package com.ucm.client.views.original.controllers;
 
-import java.io.IOException;
 
-import com.ucm.client.ClientInfo;
 import com.ucm.common.GameConfig;
-import com.ucm.common.GameType;
-import com.ucm.common.PokerPreGame;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;

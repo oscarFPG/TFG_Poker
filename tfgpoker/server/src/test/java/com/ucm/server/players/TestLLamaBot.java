@@ -3,8 +3,6 @@ package com.ucm.server.players;
 
 import java.io.IOException;
 
-import org.junit.jupiter.api.Test;
-
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.common.gameobjects.Suit;

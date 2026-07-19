@@ -40,11 +40,9 @@ public class AllInCommandTest {
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
 
-        boolean valid = command.validate(maxBet);
         CommandResult result = command.execute(SMALL_BLIND, BIG_BLIND, maxBet);
 
         assertEquals(CommandResult.continuePlaying(INITIAL_MONEY, true), result);
-        assertEquals(valid, true);
         assertEquals(INITIAL_MONEY, player.getMoneyOnBet());
         assertEquals(0, player.getMoneyOffBet());
     }
@@ -60,11 +58,9 @@ public class AllInCommandTest {
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
 
-        boolean valid = command.validate(maxBet);
         CommandResult result = command.execute(SMALL_BLIND, BIG_BLIND, maxBet);
 
         assertEquals(CommandResult.continuePlaying(INITIAL_MONEY, true), result);
-        assertEquals(valid, true);
         assertEquals(INITIAL_MONEY, player.getMoneyOnBet());
         assertEquals(0, player.getMoneyOffBet());
     }
@@ -80,11 +76,9 @@ public class AllInCommandTest {
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
 
-        boolean valid = command.validate(maxBet);
         CommandResult result = command.execute(SMALL_BLIND, BIG_BLIND, maxBet);
 
         assertEquals(CommandResult.continuePlaying(INITIAL_MONEY, true), result);
-        assertEquals(valid, true);
         assertEquals(INITIAL_MONEY, player.getMoneyOnBet());
         assertEquals(0, player.getMoneyOffBet());
     }
@@ -100,11 +94,9 @@ public class AllInCommandTest {
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
 
-        boolean valid = command.validate(maxBet);
         CommandResult result = command.execute(SMALL_BLIND, BIG_BLIND, maxBet);
 
         assertEquals(CommandResult.continuePlaying(INITIAL_MONEY, true), result);
-        assertEquals(valid, true);
         assertEquals(INITIAL_MONEY, player.getMoneyOnBet());
         assertEquals(0, player.getMoneyOffBet());
     }
@@ -120,11 +112,9 @@ public class AllInCommandTest {
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
 
-        boolean valid = command.validate(maxBet);
         CommandResult result = command.execute(SMALL_BLIND, BIG_BLIND, maxBet);
 
         assertEquals(CommandResult.continuePlaying(INITIAL_MONEY, false), result);
-        assertEquals(valid, true);
         assertEquals(INITIAL_MONEY, player.getMoneyOnBet());
         assertEquals(0, player.getMoneyOffBet());
     }
@@ -140,11 +130,9 @@ public class AllInCommandTest {
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
 
-        boolean valid = command.validate(maxBet);
         CommandResult result = command.execute(SMALL_BLIND, BIG_BLIND, maxBet);
 
         assertEquals(CommandResult.continuePlaying(INITIAL_MONEY, false), result);
-        assertEquals(valid, true);
         assertEquals(INITIAL_MONEY, player.getMoneyOnBet());
         assertEquals(0, player.getMoneyOffBet());
     }
