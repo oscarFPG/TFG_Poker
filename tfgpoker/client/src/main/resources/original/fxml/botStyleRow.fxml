@@ -7,6 +7,6 @@
 <HBox alignment="CENTER" prefHeight="26.0" spacing="3.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.BotStyleRowController">
    <children>
       <Label fx:id="labelBotStyle" prefWidth="110.0" styleClass="text-font-add-bots" />
-      <Spinner fx:id="spinnerBotStyle" prefWidth="90.0" styleClass="container-colors" />
+      <Spinner fx:id="spinnerBotStyle" prefWidth="80.0" styleClass="container-colors" />
    </children>
 </HBox>

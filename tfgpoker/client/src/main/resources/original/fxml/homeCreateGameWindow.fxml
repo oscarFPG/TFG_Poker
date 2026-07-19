@@ -18,9 +18,9 @@
    <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0">
          <top>
-            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+            <VBox alignment="CENTER" prefHeight="169.0" prefWidth="1344.0" BorderPane.alignment="CENTER">
                <children>
-                  <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                  <HBox alignment="CENTER_LEFT" prefHeight="88.0" prefWidth="1339.0" spacing="5.0">
                      <children>
                         <Button fx:id="btnBackChooseGame" mnemonicParsing="false" onAction="#returnChooseGame" prefHeight="48.0" prefWidth="40.0">
                            <styleClass>
@@ -37,7 +37,7 @@
                         <Insets left="5.0" />
                      </VBox.margin>
                   </HBox>
-                  <Label alignment="CENTER" prefHeight="60.0" prefWidth="372.0" styleClass="bold-general-text-font" text="CREATE GAME">
+                  <Label alignment="CENTER" prefHeight="94.0" prefWidth="372.0" styleClass="bold-general-text-font" text="CREATE GAME">
                      <font>
                         <Font size="58.0" />
                      </font>
@@ -59,11 +59,11 @@
                </BorderPane.margin></Button>
          </bottom>
          <center>
-            <VBox alignment="CENTER" prefHeight="558.0" prefWidth="1344.0" BorderPane.alignment="CENTER">
+            <VBox alignment="CENTER" prefHeight="514.0" prefWidth="1344.0" spacing="10.0" BorderPane.alignment="CENTER">
                <children>
-                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                  <HBox alignment="CENTER" prefHeight="74.0" prefWidth="1302.0" spacing="10.0">
                      <children>
-                        <Label alignment="CENTER" prefHeight="72.0" prefWidth="494.0" styleClass="title-label" text="HOME" textAlignment="CENTER" />
+                        <Label alignment="CENTER" prefHeight="61.0" prefWidth="494.0" styleClass="title-label" text="HOME" textAlignment="CENTER" />
                         <Button fx:id="btnNextHome" alignment="CENTER" mnemonicParsing="false" onAction="#jumpToBots" prefHeight="44.0" prefWidth="36.0" rotate="180.0">
                            <styleClass>
                               <String fx:value="arrow-back" />
@@ -71,10 +71,13 @@
                            </styleClass>
                         </Button>
                      </children>
+                     <VBox.margin>
+                        <Insets left="42.0" />
+                     </VBox.margin>
                   </HBox>
-                  <HBox alignment="CENTER" prefHeight="348.0" prefWidth="1344.0">
+                  <HBox alignment="CENTER" prefHeight="482.0" prefWidth="1344.0">
                      <children>
-                        <VBox alignment="CENTER" prefHeight="416.0" prefWidth="690.0" spacing="6.0" styleClass="rounded-description-label">
+                        <VBox alignment="CENTER" prefHeight="413.0" prefWidth="690.0" spacing="6.0" styleClass="rounded-description-label">
                            <children>
                               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
                                  <children>
@@ -156,10 +159,13 @@
                               </HBox>
                            </children>
                            <padding>
-                              <Insets bottom="10.0" top="10.0" />
+                              <Insets bottom="8.0" top="8.0" />
                            </padding>
                         </VBox>
                      </children>
+                     <padding>
+                        <Insets bottom="10.0" />
+                     </padding>
                   </HBox>
                </children>
             </VBox>

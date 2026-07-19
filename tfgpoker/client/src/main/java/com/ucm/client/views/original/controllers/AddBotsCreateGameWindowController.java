@@ -33,7 +33,7 @@ public class AddBotsCreateGameWindowController extends GenericController {
     private static final int MAX_NUM_BOTS = 8;
     private static final int MAX_NUM_BOTS_SPECTATOR = 9;
 
-    private final List<BotCardController> botCards = new ArrayList<>();
+    private final List<BotAllowedStyleCardController> botCards = new ArrayList<>();
 
     @FXML
     private Button btnBackChooseGame;
@@ -65,43 +65,15 @@ public class AddBotsCreateGameWindowController extends GenericController {
         botCards.clear();
 
         for(BotDescriptor bot: BotRegistry.getAvailableBots()) {
-            try {
-                
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/original/fxml/botCard.fxml"));
-
-                StackPane card = loader.load();
-                BotCardController controller = loader.getController();
-                controller.setup(bot, isSpectator() ? MAX_NUM_BOTS_SPECTATOR : MAX_NUM_BOTS, allowBots);
-                int previousValue= _clientInfo.gameConfig.getBotCount(bot.botId());
-                controller.setInitialValue(previousValue);
-                for(BotStyle style : BotStyle.values()){
-                    int value = _clientInfo.gameConfig.getBotSyleCount(bot.botId(), style);
-                    controller.setInitialStylesValue(style, value);
-                }
-                controller.setOnValueChanged(this::updateSpinners);
-
-                botCards.add(controller);
-                botsContainer.getChildren().add(card);
+            if(bot.allowStyles()){
+                loadBotAllowedStyleCard(bot, allowBots);
             }
-            catch(IOException e) {
-                e.printStackTrace();
-            }
+            else{
 
-            updateSpinners();
+            }
         }
     }
 
-    private void updateSpinners() {
-        int totalBots = botCards.stream().mapToInt(BotCardController::getValue).sum();
-        int remaining = isSpectator() ? MAX_NUM_BOTS_SPECTATOR - totalBots : MAX_NUM_BOTS - totalBots;
-        for(BotCardController card : botCards) {
-            Spinner<Integer> spinner = card.getSpinner();
-            int current = spinner.getValue();
-            SpinnerValueFactory.IntegerSpinnerValueFactory vf = (SpinnerValueFactory.IntegerSpinnerValueFactory) spinner.getValueFactory();
-            vf.setMax(current + remaining);
-        }
-    }
- 
     @FXML
     public void returnChooseGame() {
         backWindow();
@@ -117,10 +89,35 @@ public class AddBotsCreateGameWindowController extends GenericController {
         next();
     }
 
+    private void loadBotAllowedStyleCard(BotDescriptor bot, boolean allowBots){
+        try {
+                
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/original/fxml/BotAllowedStyleCard.fxml"));
+
+            StackPane card = loader.load();
+            BotAllowedStyleCardController controller = loader.getController();
+            controller.setup(bot, isSpectator() ? MAX_NUM_BOTS_SPECTATOR : MAX_NUM_BOTS, allowBots);
+            for(BotStyle style : BotStyle.values()){
+                int value = _clientInfo.gameConfig.getBotStyleCount(bot.botId(), style);
+                controller.setInitialStylesValue(style, value);
+            }
+            controller.updateBotCountByType();
+            controller.setOnValueChanged(this::updateSpinnersAllowedStyles);
+
+            botCards.add(controller);
+            botsContainer.getChildren().add(card);
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
+
+        updateSpinnersAllowedStyles();
+    }
+
     private void saveAddBotsConfig() {
         _clientInfo.gameConfig._botsByType.clear();
 
-        for(BotCardController card : botCards) {
+        for(BotAllowedStyleCardController card : botCards) {
             _clientInfo.gameConfig.setBotCount(card.getBotId(), card.getValue());
 
             Map<BotStyle, Integer> styles = card.getStyleDistribution();
@@ -131,8 +128,21 @@ public class AddBotsCreateGameWindowController extends GenericController {
         }
     }
 
+    private void updateSpinnersAllowedStyles() {
+        int maxBots = isSpectator() ? MAX_NUM_BOTS_SPECTATOR : MAX_NUM_BOTS;
+        int totalBots = getTotalBotsByStyles();
+        int remaining = maxBots - totalBots;
+        for(BotAllowedStyleCardController card : botCards){
+            card.updateStyleSpinners(remaining);
+        }
+    }
+
     private boolean isSpectator () {
         return _clientInfo.gameConfig._joinedAsSpectator;
+    }
+
+    private int getTotalBotsByStyles() {
+        return botCards.stream().mapToInt(BotAllowedStyleCardController::getValue).sum();
     }
 
     @Override

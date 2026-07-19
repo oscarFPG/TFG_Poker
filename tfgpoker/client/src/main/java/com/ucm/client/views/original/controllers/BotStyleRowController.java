@@ -18,10 +18,11 @@ public class BotStyleRowController {
 
     private Runnable _onValueChanged;
 
-    public void setup(BotStyle style, int maxBots){
+    public void setup(BotStyle style, int maxBots, boolean allowBots){
         _style = style;
         labelBotStyle.setText(style.name());
         spinnerBotStyle.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, maxBots, 0));
+        spinnerBotStyle.setDisable(!allowBots);
         spinnerBotStyle.valueProperty().addListener((obs, oldValue, newValue) -> {
             if(_onValueChanged != null){
                 _onValueChanged.run();

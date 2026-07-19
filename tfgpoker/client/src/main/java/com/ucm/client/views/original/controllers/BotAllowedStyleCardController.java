@@ -20,6 +20,7 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.SplitMenuButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -28,22 +29,21 @@ import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 import javafx.scene.Node;
 
-public class BotCardController {
+public class BotAllowedStyleCardController {
 
     private static final int MIN_NUM_BOTS = 0;
+    private static final int MAX_COLUMN_STYLES = 2;
 
     @FXML
-    private Spinner<Integer> spinnerBot;
+    private GridPane gridPaneBotStyles;
     @FXML
-    private StackPane cardInfoBot;
+    private VBox cardFrontBot;
     @FXML
-    private VBox cardFrontBot, vBoxBotStyles;
-    @FXML
-    private StackPane cardBackBot;
+    private StackPane cardInfoBot, cardBackBot;
     @FXML
     private Text textBotDescription;
     @FXML
-    private Label labelBotName;
+    private Label labelBotName, labelBotCount;
     @FXML
     private ImageView imgBot;
     @FXML
@@ -53,6 +53,7 @@ public class BotCardController {
     private BotDescriptor descriptor;
     private Runnable onValueChanged;
     private final List<BotStyleRowController> styleRows = new ArrayList<>();
+    private int _columnStyles = MAX_COLUMN_STYLES;
 
     public void setup(BotDescriptor bot, int maxBots, boolean allowBots) {
         
@@ -62,82 +63,58 @@ public class BotCardController {
         textBotDescription.setText(bot.fullDescription());
         imgBot.setImage(new Image(getClass().getResource(bot.iconPath()).toExternalForm()));
 
-        spinnerBot.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(MIN_NUM_BOTS, maxBots, 0));
-        spinnerBot.setDisable(!allowBots);
-        spinnerBot.valueProperty().addListener((obs, oldVal, newVal) -> {
-            updateStyleSpinnerCount();
-            updateBotStyleControls();
-            updateStyleSpinners();
-            if(onValueChanged != null) onValueChanged.run();
-            
-        });
+        
+        for(BotStyle style : BotStyle.values()){
+            try{
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/original/fxml/botStyleRow.fxml"));
+                HBox row = loader.load();
+                BotStyleRowController controller = loader.getController();
+                controller.setup(style, maxBots, allowBots);
+                controller.setOnValueChanged(() ->{
+                    updateBotCountLabel();
+                    if(onValueChanged != null) onValueChanged.run();
+                });
 
-        if(bot.allowStyles()){
-            for(BotStyle style : BotStyle.values()){
-                try{
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/original/fxml/botStyleRow.fxml"));
-                    HBox row = loader.load();
-                    BotStyleRowController controller = loader.getController();
-                    controller.setup(style, maxBots);
-                    controller.setOnValueChanged(this::updateStyleSpinners);
-                    styleRows.add(controller);
-                    vBoxBotStyles.getChildren().add(row);
-                }
-                catch(IOException e) {
-                    e.printStackTrace();
-                }
+                styleRows.add(controller);
+                int index = styleRows.size() - 1;
+                int rowStyle = index / _columnStyles;
+                int column = index % _columnStyles;
+
+                gridPaneBotStyles.add(row, column, rowStyle);
+            }
+            catch(IOException e) {
+                e.printStackTrace();
             }
         }
-
-        updateBotStyleControls();
-        updateStyleSpinners();
+        
         
         cardBackBot.setVisible(false);
         cardFrontBot.setVisible(true);
     }
 
     public int getValue() {
-        return spinnerBot.getValue();
+        return styleRows.stream().mapToInt(BotStyleRowController::getValue).sum();
     }
 
     public int getBotId() {
         return descriptor.botId();
     }
 
-    public Spinner<Integer> getSpinner() {
-        return spinnerBot;
-    }
-
     public Map<BotStyle, Integer> getStyleDistribution(){
         Map<BotStyle, Integer> distribution = new HashMap<>();
 
-        int assignedStyles = 0;
-
-        for(BotStyleRowController row : styleRows) {
+        for(BotStyleRowController row : styleRows){
             int value = row.getValue();
 
-            if(value > 0){
+            if(value > 0) {
                 distribution.put(row.getStyle(), value);
             }
-
-            assignedStyles += value;
         }
-
-        int remainingBots = spinnerBot.getValue() - assignedStyles;
-
-        if(remainingBots > 0){
-            distribution.merge(BotStyle.DEFAULT, remainingBots, Integer::sum);
-        }
-
         return distribution;
     }
 
     public void setOnValueChanged(Runnable r) {
         this.onValueChanged = r;
-    }
-
-    public void setInitialValue(int value) {
-        spinnerBot.getValueFactory().setValue(value);
     }
 
     public void setInitialStylesValue(BotStyle style, int value){
@@ -177,41 +154,20 @@ public class BotCardController {
         isFlippedBot = !isFlippedBot;
     }
 
-    private void updateStyleSpinners(){
-        int totalBotStyles = styleRows.stream().mapToInt(BotStyleRowController::getValue).sum();
-        int remaining = Math.max(0, spinnerBot.getValue() - totalBotStyles);
+    private void updateBotCountLabel() {
+        labelBotCount.setText(String.valueOf(getValue()));
+    }
+
+    public void updateStyleSpinners(int maxBots){
         for(BotStyleRowController row : styleRows){
             Spinner<Integer> spinner = row.getSpinner();
             int current = spinner.getValue();
             SpinnerValueFactory.IntegerSpinnerValueFactory vf = (SpinnerValueFactory.IntegerSpinnerValueFactory) spinner.getValueFactory();
-            vf.setMax((current + remaining));
+            vf.setMax((current + maxBots));
         }
     }
 
-    private void updateBotStyleControls() {
-        boolean enabled = spinnerBot.getValue() > 0;
-        vBoxBotStyles.setDisable(!enabled);
-        if(!enabled) {
-            styleRows.forEach(row -> {row.setValue(0);});
-            vBoxBotStyles.setVisible(false);
-            vBoxBotStyles.setManaged(false);
-        }
-        else{
-            vBoxBotStyles.setVisible(true);
-            vBoxBotStyles.setManaged(true);
-        }
-    }
-
-    private void updateStyleSpinnerCount(){
-        int botCount = spinnerBot.getValue();
-        int styleCount = styleRows.stream().mapToInt(BotStyleRowController::getValue).sum();
-        int remaining = botCount - styleCount;
-        if((remaining) == 0) return;
-        for(BotStyleRowController row : styleRows){
-            if(row.getStyle() == BotStyle.DEFAULT){
-                row.setValue(Math.max(0, row.getValue() + remaining));
-                break;
-            }
-        }
+    public void updateBotCountByType(){
+        updateBotCountLabel();
     }
 }

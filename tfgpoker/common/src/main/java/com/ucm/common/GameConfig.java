@@ -119,6 +119,9 @@ public class GameConfig {
             Map<BotStyle,Integer> styles = _botStylesByType.get(botId);
             if(styles != null){
                 styles.remove(style);
+                if(styles.isEmpty()){
+                    _botStylesByType.remove(botId);
+                }
             }
         }
         else {
@@ -126,7 +129,7 @@ public class GameConfig {
         }
     }
 
-    public int getBotSyleCount(int botId, BotStyle style){
+    public int getBotStyleCount(int botId, BotStyle style){
         return _botStylesByType.getOrDefault(botId, Map.of()).getOrDefault(style, 0);
     }
 

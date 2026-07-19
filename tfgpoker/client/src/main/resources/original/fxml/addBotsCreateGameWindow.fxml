@@ -16,9 +16,9 @@
          <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0">
          <top>
-            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="15.0" BorderPane.alignment="CENTER">
+            <VBox alignment="CENTER" prefHeight="183.0" prefWidth="1344.0" spacing="15.0" BorderPane.alignment="CENTER">
                <children>
-                  <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                  <HBox alignment="CENTER_LEFT" prefHeight="64.0" prefWidth="1339.0" spacing="5.0">
                      <children>
                         <Button fx:id="btnBackChooseGame" mnemonicParsing="false" onAction="#returnChooseGame" prefHeight="48.0" prefWidth="40.0">
                            <styleClass>
@@ -35,7 +35,7 @@
                         <Insets left="5.0" />
                      </VBox.margin>
                   </HBox>
-                  <Label alignment="CENTER" styleClass="bold-general-text-font" text="CREATE GAME" textAlignment="CENTER">
+                  <Label alignment="CENTER" prefHeight="66.0" prefWidth="372.0" styleClass="bold-general-text-font" text="CREATE GAME" textAlignment="CENTER">
                      <font>
                         <Font size="58.0" />
                      </font>
@@ -44,9 +44,9 @@
             </VBox>
          </top>
          <center>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+                  <VBox alignment="TOP_CENTER" prefHeight="498.0" prefWidth="1344.0" BorderPane.alignment="CENTER">
                      <children>
-                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                  <HBox alignment="CENTER" prefHeight="82.0" prefWidth="1344.0" spacing="10.0">
                      <children>
                         <Button fx:id="btnBackHome" mnemonicParsing="false" onAction="#jumpToHome" prefHeight="44.0" prefWidth="36.0">
                            <styleClass>
@@ -54,7 +54,7 @@
                               <String fx:value="arrow-colors-black" />
                            </styleClass>
                         </Button>
-                              <Label alignment="TOP_CENTER" prefHeight="82.0" prefWidth="493.0" styleClass="title-label" text="Add Bots" />
+                              <Label alignment="TOP_CENTER" prefHeight="61.0" prefWidth="494.0" styleClass="title-label" text="Add Bots" />
                         <Button fx:id="btnNextPlayers" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#jumpToPlayers" prefHeight="44.0" prefWidth="36.0" rotate="180.0">
                            <styleClass>
                               <String fx:value="arrow-back" />
@@ -81,7 +81,7 @@
                   </VBox>
          </center>
          <bottom>
-                  <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="40.0" BorderPane.alignment="CENTER">
+                  <HBox alignment="TOP_CENTER" prefHeight="69.0" prefWidth="1344.0" spacing="40.0" BorderPane.alignment="CENTER">
                      <children>
                         <Button fx:id="btnStartAddBots" mnemonicParsing="false" prefHeight="40.0" prefWidth="137.0" text="START">
                            <styleClass>
