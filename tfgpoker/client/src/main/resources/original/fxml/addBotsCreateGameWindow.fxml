@@ -68,7 +68,7 @@
                   </HBox>
                   <ScrollPane fitToWidth="false" hbarPolicy="NEVER" styleClass="transparent-background" vbarPolicy="AS_NEEDED">
                      <content>
-                        <FlowPane fx:id="botsContainer" alignment="CENTER" columnHalignment="CENTER" hgap="30.0" prefWrapLength="895.0" styleClass="transparent-background" vgap="30.0">
+                        <FlowPane fx:id="botsContainer" alignment="CENTER" columnHalignment="CENTER" hgap="30.0" prefWidth="1310.0" prefWrapLength="895.0" styleClass="transparent-background" vgap="30.0">
                            <padding>
                               <Insets top="5.0" />
                            </padding></FlowPane>

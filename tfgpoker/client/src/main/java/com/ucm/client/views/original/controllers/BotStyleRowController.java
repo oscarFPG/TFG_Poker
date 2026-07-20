@@ -1,5 +1,6 @@
 package com.ucm.client.views.original.controllers;
 
+import com.ucm.common.BotDescriptor;
 import com.ucm.common.BotStyle;
 
 import javafx.fxml.FXML;
@@ -9,21 +10,33 @@ import javafx.scene.control.SpinnerValueFactory;
 
 public class BotStyleRowController {
     
-    @FXML
-    private Spinner<Integer> spinnerBotStyle;
-    @FXML
-    private Label labelBotStyle;
+    private Spinner<Integer> _spinnerBotStyle;
+    
+    private Label _labelBotStyle;
 
+    private BotDescriptor _bot;
     private BotStyle _style;
 
     private Runnable _onValueChanged;
 
-    public void setup(BotStyle style, int maxBots, boolean allowBots){
+
+
+    public BotStyleRowController(BotDescriptor bot, BotStyle style) {
+        _bot = bot;
         _style = style;
-        labelBotStyle.setText(style.name());
-        spinnerBotStyle.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, maxBots, 0));
-        spinnerBotStyle.setDisable(!allowBots);
-        spinnerBotStyle.valueProperty().addListener((obs, oldValue, newValue) -> {
+
+        _labelBotStyle = new Label();
+        _spinnerBotStyle = new Spinner<Integer>();
+    }
+
+
+    public void setup(BotStyle style, int maxBots, boolean allowBots) {
+
+        _style = style;
+        _labelBotStyle.setText(style.name());
+        _spinnerBotStyle.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, maxBots, 0));
+        _spinnerBotStyle.setDisable(!allowBots);
+        _spinnerBotStyle.valueProperty().addListener((obs, oldValue, newValue) -> {
             if(_onValueChanged != null){
                 _onValueChanged.run();
             }
@@ -35,15 +48,15 @@ public class BotStyleRowController {
     }
 
     public int getValue() {
-        return spinnerBotStyle.getValue();
+        return _spinnerBotStyle.getValue();
     }
 
     public void setValue(int value){
-        spinnerBotStyle.getValueFactory().setValue(value);
+        _spinnerBotStyle.getValueFactory().setValue(value);
     }
 
     public Spinner<Integer> getSpinner(){
-        return spinnerBotStyle;
+        return _spinnerBotStyle;
     }
 
     public void setOnValueChanged(Runnable r){

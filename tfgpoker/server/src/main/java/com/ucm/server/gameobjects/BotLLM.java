@@ -100,8 +100,6 @@ public abstract class BotLLM extends Bot {
         super(botID);
     }
 
-
-
     /**
      * Calls the external LLM with the given prompt.
      * 
