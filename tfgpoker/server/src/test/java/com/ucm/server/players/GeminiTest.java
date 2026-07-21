@@ -3,6 +3,7 @@ package com.ucm.server.players;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.ucm.common.BotStyle;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.gameobjects.Player;
 
@@ -16,7 +17,7 @@ public class GeminiTest {
 
         try {
 
-            GeminiLLM geminiLLM = new GeminiLLM();
+            GeminiLLM geminiLLM = new GeminiLLM(BotStyle.DEFAULT);
             Player player = new Player(0, "Gemini", 1000, geminiLLM);
 
             player.receiveRole(PlayerRole.DEALER);

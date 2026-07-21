@@ -23,10 +23,11 @@ public final class BotRegistry {
         );
     }
 
-    public static String getBotName(int botId, int botIdentifier) {
+    public static String getBotName(int botId, int botIdentifier, BotStyle style) {
         return switch (botId) {
-            case GameType.BOT_GEMINI -> "Gemini LLM #" + botIdentifier;
-            case GameType.BOT_LLAMA -> "Llama Poker LLM #" + botIdentifier;
+            case GameType.BOT_GEMINI -> "Gemini LLM #" + botIdentifier+ " "  + style.name();
+            case GameType.BOT_LLAMA -> "Llama Poker LLM #" + botIdentifier+ " "  + style.name();
+            case GameType.BOT_NN_MODEL_1 -> "Deep CFR #" + botIdentifier + " " + style.name();
             default -> "Bot-" + botId + "-" + botIdentifier;
         };
     }

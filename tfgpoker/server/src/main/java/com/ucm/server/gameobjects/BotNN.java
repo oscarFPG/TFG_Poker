@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import com.ucm.common.BotStruct;
+import com.ucm.common.BotStyle;
 import com.ucm.server.interfaces.IPlayerInfo;
 
 import ai.onnxruntime.OrtEnvironment;

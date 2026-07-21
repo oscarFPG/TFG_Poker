@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.logging.log4j.LogManager;
@@ -21,8 +22,9 @@ import com.ucm.common.PokerPreGame;
 import com.ucm.common.SocketUtils;
 import com.ucm.server.middleclasses.Spectator;
 import com.ucm.server.players.AgentCFR;
-//import com.ucm.server.players.GeminiLLM;
+import com.ucm.server.players.GeminiLLM;
 import com.ucm.server.players.LlamaPokerLLM;
+
 
 
 public class ClientThread implements Runnable {
@@ -119,8 +121,12 @@ public class ClientThread implements Runnable {
                         _gameConfig._levelDuration = config._levelDuration;
                         _gameConfig._hikePercentage = config._hikePercentage;
                         _gameConfig._turnTimerPlayer = config._turnTimerPlayer;
+
                         _gameConfig._botsByType.clear();
                         _gameConfig._botsByType.putAll(config._botsByType);
+                        _gameConfig._botStylesByType.clear();
+                        _gameConfig._botStylesByType.putAll(config._botStylesByType);
+                        
                         _gameConfig._numPlayers = config._numPlayers + 1; // + 1 porque cuenta el host
                         _gameConfig._selectedTable = config._selectedTable;
                         _gameConfig._selectedCard = config._selectedCard;
@@ -138,16 +144,40 @@ public class ClientThread implements Runnable {
                             _roomPlayerList.add(this);
                         }
 
+
+                        // Instanciate ever bot
                         for(var entry : _gameConfig._botsByType.entrySet()) {
-                            int botId = entry.getKey();
-                            int amount = entry.getValue();
+                            Integer botID = entry.getKey();
+                            Integer botCount = entry.getValue();
 
-                            for(int i = 0; i < amount; i++) {
-                                int botIdentifier = _id.getAndIncrement();
-                                String botName = BotRegistry.getBotName(botId, botIdentifier);
+                            // Check if this bot allow styles
+                            if( _gameConfig._botStylesByType.containsKey(botID) ) {
+                                
+                                Map<BotStyle, Integer> dist = _gameConfig._botStylesByType.get(botID);
 
-                                _roomBotsList.add(new BotStruct(botIdentifier, botId, botName));
+                                for(var d : dist.entrySet()){
+
+                                    BotStyle st = d.getKey();
+                                    Integer amount = d.getValue();
+
+                                    for(int i = 0; i < amount; i++){
+                                        int matchId = _id.getAndIncrement();
+                                        String botName = BotRegistry.getBotName(botID, matchId, st);
+                                        _roomBotsList.add( BotStruct.createStyledBot(botID, matchId, botName, st) );
+                                    }
+                                }
                             }
+                            else {
+
+                                for(int i = 0; i < botCount; ++i) {
+
+                                    int matchId = _id.getAndIncrement();
+                                    String botName = BotRegistry.getBotName(botID, matchId, BotStyle.DEFAULT);
+
+                                    _roomBotsList.add( BotStruct.createSimpleBot(botID, matchId, botName) );
+                                }
+                            }
+
                         }
 
                         // Avisar a todos los jugadores de la correcta creacion de la partida, ID de sala y su ID de jugador

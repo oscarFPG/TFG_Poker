@@ -13,26 +13,26 @@ import com.ucm.server.players.LlamaPokerLLM;
 
 public class BotManager {
 
-    private static final Map<Integer, Supplier<Bot>> BOTS = new HashMap<>();
+    private static final Map<Integer, Bot> BOTS = new HashMap<>();
 
     private BotManager(){}
 
     static {
-        register(GameType.BOT_GEMINI, GeminiLLM::new);
-        register(GameType.BOT_LLAMA, LlamaPokerLLM::new);
-        register(GameType.BOT_NN_MODEL_1, AgentCFR::new);
+        register(GameType.BOT_GEMINI, new GeminiLLM(null));
+        register(GameType.BOT_LLAMA, new LlamaPokerLLM(null));
+        register(GameType.BOT_NN_MODEL_1, new AgentCFR());
     }
 
-    private static void register(int botId, Supplier<Bot> factory){
-        BOTS.put(botId, factory);
+    private static void register(int botId, Bot bot){
+        BOTS.put(botId, bot);
     }
 
     public static Bot createBot(int botId){
-        Supplier<Bot> factory = BOTS.get(botId);
-        if(factory == null){
+        Bot bot = BOTS.get(botId);
+        if(bot == null){
             throw new IllegalArgumentException("Unknown bot id:" + botId);
         }
-        return factory.get();
+        return bot;
     }
 
 }

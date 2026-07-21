@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.server.gameobjects.Bot;
@@ -26,8 +27,8 @@ public class LlamaPokerLLM extends BotLLM {
     private static final int LLAMA_ID = GameType.BOT_LLAMA;
     public static final String MODEL_NAME = "llamaPokerBot";
 
-    public LlamaPokerLLM() {
-        super(LLAMA_ID);
+    public LlamaPokerLLM(BotStyle style) {
+        super(LLAMA_ID, style);
     }
 
     
@@ -287,8 +288,8 @@ public class LlamaPokerLLM extends BotLLM {
 
 
     @Override
-	public Bot create() {
-		return new LlamaPokerLLM();
+	public Bot create(BotStyle style) {
+		return new LlamaPokerLLM(style);
 	}
 
     @Override

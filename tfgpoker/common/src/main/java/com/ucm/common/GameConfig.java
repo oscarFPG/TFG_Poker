@@ -61,8 +61,9 @@ public class GameConfig {
 
     // Deep-copy constructor
     public GameConfig(GameConfig other) {
-        _roomName =  (other._roomName != null) ? String.copyValueOf(other._roomName.toCharArray()) : null;
-        _userName =  (other._userName != null) ? String.copyValueOf(other._userName.toCharArray()) : null;
+
+        _roomName = (other._roomName != null) ? String.copyValueOf(other._roomName.toCharArray()) : null;
+        _userName = (other._userName != null) ? String.copyValueOf(other._userName.toCharArray()) : null;
         _roomId = other._roomId;
         _initialMoney = other._initialMoney;
         _allowBots = other._allowBots;
@@ -70,13 +71,11 @@ public class GameConfig {
         _levelDuration = (other._levelDuration != null) ? String.copyValueOf(other._levelDuration.toCharArray()) : null;
         _hikePercentage = (other._hikePercentage != null) ? String.copyValueOf(other._hikePercentage.toCharArray()) : null;
         _botsByType = new HashMap<>(other._botsByType);
-        _botStylesByType = new HashMap<>();
-        for(var entry : other._botStylesByType.entrySet()){
-            _botStylesByType.put(entry.getKey(), new HashMap<>(entry.getValue()));
-        }
+        _botStylesByType = new HashMap<>(other._botStylesByType);
         _numPlayers = other._numPlayers;
         _selectedTable = (other._selectedTable != null) ? String.copyValueOf(other._selectedTable.toCharArray()) : null;
         _selectedCard = (other._selectedCard != null) ? String.copyValueOf(other._selectedCard.toCharArray()) : null;
+        _joinedAsSpectator = other._joinedAsSpectator;
     }
 
     public static boolean isValidRoomName(String roomName){
@@ -112,7 +111,8 @@ public class GameConfig {
         return _botsByType.getOrDefault(botId, 0);
     }
 
-    public void setBotStyleCount(int botId, BotStyle style,int count){
+    public void setBotStyleCount(int botId, BotStyle style,int count) {
+        
         _botStylesByType.computeIfAbsent(botId, k -> new HashMap<>());
 
         if(count <= 0) {

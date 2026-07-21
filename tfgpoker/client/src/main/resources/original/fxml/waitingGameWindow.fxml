@@ -230,7 +230,7 @@
                               <String fx:value="container-gradiant-colors" />
                            </styleClass>
                            <children>
-                              <VBox alignment="CENTER" prefHeight="56.0" prefWidth="187.0" spacing="10.0">
+                              <VBox alignment="CENTER" prefHeight="62.0" prefWidth="185.0" spacing="10.0">
                                  <children>
                                     <Label fx:id="playerName3" styleClass="bold-general-text-font" text="Label" />
                                     <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />

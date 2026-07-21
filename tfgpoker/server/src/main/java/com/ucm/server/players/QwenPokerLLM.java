@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
+import com.ucm.common.BotStyle;
 import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.gameobjects.BotLLM;
 import com.ucm.server.interfaces.IPlayerInfo;
@@ -21,8 +22,8 @@ public class QwenPokerLLM extends BotLLM {
 
 
 
-    public QwenPokerLLM() {
-        super(QWEN_ID);
+    public QwenPokerLLM(BotStyle style) {
+        super(QWEN_ID, style);
     }
 
 
@@ -117,8 +118,8 @@ public class QwenPokerLLM extends BotLLM {
 
 
     @Override
-    public Bot create() {
-        return new QwenPokerLLM();
+    public Bot create(BotStyle style) {
+        return new QwenPokerLLM(style);
     }
 
     @Override
