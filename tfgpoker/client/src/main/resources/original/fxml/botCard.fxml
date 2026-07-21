@@ -6,15 +6,13 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<StackPane fx:id="cardInfoBot" prefHeight="283.0" prefWidth="305.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane fx:id="cardInfoBot" prefHeight="327.0" prefWidth="447.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <StackPane fx:id="cardBackBot">
             <children>
@@ -26,7 +24,7 @@
             <String fx:value="border-neon-effect" />
             </styleClass>
         </StackPane>
-            <VBox fx:id="cardFrontBot" alignment="CENTER" prefHeight="268.0" prefWidth="200.0" spacing="2.0" styleClass="rounded-description-label" StackPane.alignment="CENTER">
+            <VBox fx:id="cardFrontBot" alignment="CENTER" spacing="2.0" styleClass="rounded-description-label" StackPane.alignment="CENTER">
                 <children>
                     <Label fx:id="labelBotName" alignment="CENTER_LEFT" prefHeight="15.0" prefWidth="178.0" styleClass="super-bold-general-text-font" wrapText="true">
                 <VBox.margin>
@@ -38,17 +36,7 @@
             </Label>
                     <ImageView fx:id="imgBot" fitHeight="184.0" fitWidth="176.0" pickOnBounds="true" preserveRatio="true">
                     </ImageView>
-            <GridPane fx:id="gridPaneBotStyles">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-            </GridPane>
+            <FlowPane fx:id="flowPaneBotStyles" alignment="CENTER" columnHalignment="CENTER" prefHeight="200.0" prefWidth="200.0" />
                     </children>
             </VBox>
         <Button id="cardInfoIcon" fx:id="cardInfoIconBot1" alignment="CENTER" mnemonicParsing="false" onAction="#flipCardBot" prefHeight="47.0" prefWidth="49.0" textAlignment="CENTER" StackPane.alignment="TOP_RIGHT">

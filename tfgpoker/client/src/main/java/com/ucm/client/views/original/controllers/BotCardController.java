@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.GroupLayout.Alignment;
+
 import com.ucm.common.BotDescriptor;
 import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
@@ -13,6 +15,8 @@ import com.ucm.common.GameType;
 import javafx.animation.RotateTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.NodeOrientation;
+import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
@@ -20,6 +24,7 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.SplitMenuButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -47,11 +52,8 @@ public abstract class BotCardController {
     private Text textBotDescription;    // Bot description
     @FXML
     private ImageView imgBot;           // Bot image
-    /*
-    
     @FXML
-    private GridPane gridPaneBotStyles; // Holder for each spinner
-    */
+    private FlowPane flowPaneBotStyles; // Holder for each spinner
 
     private final List<BotStyleRowController> styleRows = new ArrayList<>();
 
@@ -59,7 +61,7 @@ public abstract class BotCardController {
     private BotDescriptor _descriptor;
     private Runnable onValueChanged;
     protected boolean _allowStyle;
-
+    
 
     public BotCardController(final boolean allowStyles) {
         _allowStyle = allowStyles;
@@ -68,11 +70,26 @@ public abstract class BotCardController {
 
     public void addSpinner(BotStyleRowController ctrl) {
 
-        int index = this.getSpinnerListSize() - 1;
-        int rowStyle = index / MAX_COLUMN_STYLES;
-        int column = index % MAX_COLUMN_STYLES;
+        //add a new BotStyleRowController to styleRows
+        styleRows.add(ctrl);
 
-        //gridPaneBotStyles.add(row, column, rowStyle);
+        HBox groupStyle = new HBox();
+        groupStyle.autosize();
+        groupStyle.setSpacing(3); // separación entre Label y Spinner
+        groupStyle.setAlignment(Pos.CENTER);
+
+        Label label = ctrl.getLabel();
+        label.setPrefWidth(110);
+        label.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
+        label.getStyleClass().add("text-font-add-bots");
+
+        Spinner<Integer> spinner = ctrl.getSpinner();
+        spinner.setPrefWidth(80);
+        spinner.setMinWidth( spinner.getPrefWidth() );
+        spinner.getStyleClass().add("container-colors");
+
+        groupStyle.getChildren().addAll(label, spinner);
+        flowPaneBotStyles.getChildren().add(groupStyle);
     }
 
     public int getValue() {
@@ -116,6 +133,7 @@ public abstract class BotCardController {
     
 
     public void setupCommon(BotDescriptor bot) {
+
         // Update label, description, image and save the bot descriptor to be able to recover it later
         labelBotName.setText( bot.botName() );
         textBotDescription.setText( bot.fullDescription() );

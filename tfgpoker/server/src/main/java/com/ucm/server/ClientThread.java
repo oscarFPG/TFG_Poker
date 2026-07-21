@@ -138,11 +138,9 @@ public class ClientThread implements Runnable {
                             _roomPlayerList.add(this);
                         }
 
-                        for( var entry : _gameConfig._botsByType.entrySet()) {
+                        for(var entry : _gameConfig._botsByType.entrySet()) {
                             int botId = entry.getKey();
                             int amount = entry.getValue();
-
-                            
 
                             for(int i = 0; i < amount; i++) {
                                 int botIdentifier = _id.getAndIncrement();

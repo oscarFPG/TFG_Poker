@@ -31,11 +31,12 @@ import javafx.scene.Node;
 
 public class BotAllowedStyleCardController extends BotCardController {
 
-    private Label labelBotCount;
-
+    private Label _labelBotCount;
 
     public BotAllowedStyleCardController() {
         super(true);
+
+        _labelBotCount = new Label();
     }
 
     @Override
@@ -54,18 +55,14 @@ public class BotAllowedStyleCardController extends BotCardController {
                 if(this.getRunnable() != null) 
                     this.getRunnable().run();
             });
-
+           
             // Save this controller
             this.addSpinner(controller);
         }
     }
 
     private void updateBotCountLabel() {
-        labelBotCount.setText(String.valueOf(getValue()));
-    }
-
-    public void updateBotCountByType(){
-        updateBotCountLabel();
+        _labelBotCount.setText(String.valueOf(getValue()));
     }
 
 }

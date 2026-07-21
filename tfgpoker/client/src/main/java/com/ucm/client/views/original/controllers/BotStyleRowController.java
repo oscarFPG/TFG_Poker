@@ -41,7 +41,11 @@ public class BotStyleRowController {
                 _onValueChanged.run();
             }
         });
-    }  
+    } 
+
+    public Label getLabel(){
+        return _labelBotStyle;
+    }
 
     public BotStyle getStyle(){
         return _style;

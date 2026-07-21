@@ -27,12 +27,10 @@ public class BotNotAllowedStyleCardController extends BotCardController{
     private static final int MIN_NUM_BOTS = 0;
 
 
-    @FXML
-    private Spinner<Integer> spinnerBot;
-
 
     public BotNotAllowedStyleCardController() {
         super(false);
+
     }
 
 
@@ -41,37 +39,21 @@ public class BotNotAllowedStyleCardController extends BotCardController{
 
         setupCommon(bot);
 
-        spinnerBot.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(MIN_NUM_BOTS, maxBots, 0));
-        spinnerBot.setDisable(!allowBots);
-        spinnerBot.valueProperty().addListener((obs, oldVal, newVal) -> {
+        this.setInitialValue(BotStyle.DEFAULT, 0);
+        // Controller for bot
+        BotStyleRowController controller = new BotStyleRowController(bot, BotStyle.DEFAULT);
+        controller.setup(BotStyle.DEFAULT, maxBots, allowBots);
+        controller.setOnValueChanged(() -> {
             
             if(this.getRunnable() != null) 
                 this.getRunnable().run();
         });
-    }
 
-    @Override
-    public int getValue() {
-        return spinnerBot.getValue();
+        // Add view to the bot card
+        this.addSpinner(controller);
     }
 
     @Override
     public Map<BotStyle, Integer> getStyleDistribution(){return Map.of();}
-
-    @Override
-    public void setInitialValue(BotStyle style, int value) {
-       spinnerBot.getValueFactory().setValue(value);
-    }
-
-    public Spinner<Integer> getSpinner() {
-        return spinnerBot;
-    }
-
-    @Override
-    public void updateSpinners(int remaining) {
-        int current = spinnerBot.getValue();
-        SpinnerValueFactory.IntegerSpinnerValueFactory vf = (SpinnerValueFactory.IntegerSpinnerValueFactory) spinnerBot.getValueFactory();
-        vf.setMax(current + remaining);
-    }
 }
     

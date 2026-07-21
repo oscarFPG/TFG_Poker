@@ -98,7 +98,7 @@ public class AddBotsCreateGameWindowController extends GenericController {
             }
             else {
                 previousValue = _clientInfo.gameConfig.getBotCount(bot.botId());
-                controller.setInitialValue(null, previousValue);
+                controller.setInitialValue(BotStyle.DEFAULT, previousValue);
             }
 
             // Link event listener to update each spinner for each bot card when interacting
