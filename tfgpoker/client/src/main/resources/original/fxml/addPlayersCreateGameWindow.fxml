@@ -18,9 +18,9 @@
    <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0">
          <top>
-            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+            <VBox alignment="CENTER" prefHeight="170.0" prefWidth="1344.0" BorderPane.alignment="CENTER">
                <children>
-                  <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                  <HBox alignment="CENTER_LEFT" prefHeight="85.0" prefWidth="1339.0" spacing="5.0">
                      <children>
                         <Button fx:id="btnBackChooseGame" mnemonicParsing="false" onAction="#returnChooseGame" prefHeight="48.0" prefWidth="40.0">
                            <styleClass>
@@ -37,7 +37,7 @@
                         <Insets left="5.0" />
                      </VBox.margin>
                   </HBox>
-                  <Label alignment="CENTER" text="CREATE GAME">
+                  <Label alignment="CENTER" prefHeight="47.0" prefWidth="372.0" text="CREATE GAME">
                      <font>
                         <Font size="58.0" />
                      </font>
@@ -50,9 +50,9 @@
             </VBox>
          </top>
          <center>
-            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" BorderPane.alignment="CENTER">
                <children>
-                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                  <HBox alignment="CENTER" prefHeight="72.0" prefWidth="1344.0" spacing="10.0">
                      <children>
                         <Button fx:id="btnBackBots" mnemonicParsing="false" onAction="#jumpToBots" prefHeight="44.0" prefWidth="36.0">
                            <styleClass>
@@ -60,7 +60,7 @@
                               <String fx:value="arrow-colors" />
                            </styleClass>
                         </Button>
-                        <Label prefHeight="82.0" prefWidth="493.0" styleClass="title-label" text="Add Players" />
+                        <Label prefHeight="61.0" prefWidth="494.0" styleClass="title-label" text="Add Players" />
                         <Button fx:id="btnNextTable" mnemonicParsing="false" onAction="#jumpToTable" prefHeight="44.0" prefWidth="36.0" rotate="180.0">
                            <styleClass>
                               <String fx:value="arrow-back" />
@@ -69,7 +69,7 @@
                         </Button>
                      </children>
                   </HBox>
-                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                  <HBox alignment="CENTER" prefHeight="406.0" prefWidth="1344.0">
                      <children>
                         <VBox alignment="CENTER" minHeight="-Infinity" prefHeight="360.0" prefWidth="450.0" spacing="2.0" styleClass="rounded-description-label">
                            <children>
