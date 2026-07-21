@@ -19,8 +19,7 @@ import com.ucm.server.middleclasses.PlayerEvaluation;
 
 
 public class PlayerListTest {
- 
-    private static final int INITIAL_MONEY = 1000;
+
 
     static Stream<Arguments> playerRoleProvider() {
         return Stream.of(
@@ -38,6 +37,8 @@ public class PlayerListTest {
 
     private List<FakePlayer> getPlayerSubsetWithSize(final int size) {
         
+        final int INITIAL_MONEY = 1000;
+
         List<FakePlayer> players = new ArrayList<>();
         for(int i = 0; i < size; i++)
             players.add( new FakePlayer(1, INITIAL_MONEY, 0) );
@@ -53,6 +54,7 @@ public class PlayerListTest {
     @MethodSource("playerRoleProvider")
     void initialRoleAssigment(int numPlayers, List<PlayerRole> expectedRoles) throws CancelGameException {
 
+        final int INITIAL_MONEY = 1000;
         PlayerList playerList = new PlayerList(numPlayers);
         FakePlayer[] players = new FakePlayer[numPlayers];
         for (int i = 0; i < numPlayers; i++) {
@@ -69,6 +71,7 @@ public class PlayerListTest {
     @Test
     void assignNewRolesOnPassTurnWithTwoPlayers() throws CancelGameException {
 
+        final int INITIAL_MONEY = 1000;
         FakePlayer player1 = new FakePlayer(0, INITIAL_MONEY, 0);
         FakePlayer player2 = new FakePlayer(1, INITIAL_MONEY, 0);
         PlayerList playerList = new PlayerList(2);
@@ -129,6 +132,7 @@ public class PlayerListTest {
     @Test
     void call() throws CancelGameException {
 
+        final int INITIAL_MONEY = 1000;
         final int SB = 1;
         final int BB = SB * 2;
         
@@ -164,6 +168,7 @@ public class PlayerListTest {
     @Test
     void raise() throws CancelGameException {
         
+        final int INITIAL_MONEY = 1000;
         final int SB = 1;
         final int BB = SB * 2;
         
@@ -208,6 +213,7 @@ public class PlayerListTest {
     @Test
     void allin_raise() throws CancelGameException {
 
+        final int INITIAL_MONEY = 1000;
         final int SB = 1;
         final int BB = SB * 2;
         
@@ -252,6 +258,7 @@ public class PlayerListTest {
     @Test
     void allin1_allin2() throws CancelGameException {
         
+        final int INITIAL_MONEY = 1000;
         final int SB = 1;
         final int BB = SB * 2;
         
@@ -290,6 +297,60 @@ public class PlayerListTest {
             assertEquals(2000, p3.getMoneyOffBet(), "P3 does not have the corret money");
             assertEquals(0, p4.getMoneyOffBet(), "P3 does not have the corret money");
 
+        }
+        catch(OnlyOnePlayerLeftException e) {
+            assertEquals(true, false, "This test should not reach this code");
+        }
+    }
+
+    @Test
+    void allin1_allin2_raise() throws CancelGameException {
+
+        final int INITIAL_MONEY = 1000;
+        final int SB = 1;
+        final int BB = SB * 2;
+        
+        FakePlayer p0 = new FakePlayer(0, 2 * INITIAL_MONEY, 0);
+        FakePlayer p1 = new FakePlayer(1, INITIAL_MONEY, 0);
+        FakePlayer p2 = new FakePlayer(2, 2 * INITIAL_MONEY, 0);
+        FakePlayer p3 = new FakePlayer(3, INITIAL_MONEY, 0);
+        PlayerList playerList = new PlayerList(4);
+
+        try {
+
+            playerList.addPlayer( p0 );
+            playerList.addPlayer( p1 );
+            playerList.addPlayer( p2 );
+            playerList.addPlayer( p3 );
+
+            playerList.assignRolesToAllPlayers();
+
+            // Order: P1, P2, P3, P0
+            p1.commands = new ArrayList<>( List.of("all-in") );  // 1000
+            p2.commands = new ArrayList<>( List.of("call", "raise 500") );    // 1000 (1000$ restantes)
+            p3.commands = new ArrayList<>( List.of("all-in") );  // 1000
+            p0.commands = new ArrayList<>( List.of("call", "call") );    // 1000 (1000$ restantes)
+            
+            // P0 and P3 all-in but P2 and P4 have 1000$ left : 4000$ in total
+            playerList.playHand(SB, BB, false);
+
+            // ONLY P2 and P4 play : both bet 500$ : 1000$ in total
+            playerList.playHand(SB, BB, false);
+            
+            // P2 wins the first pot (1000, 1000, 1000, 1000)
+            // P1 wins the second pot (500, 500)
+            // Both P2 and P4 lost the game 
+            PlayerEvaluation p0Ev = new PlayerEvaluation(0, (short)100);
+            PlayerEvaluation p1Ev = new PlayerEvaluation(1, (short) 50);
+            PlayerEvaluation p2Ev = new PlayerEvaluation(2, (short)400);
+            PlayerEvaluation p3Ev = new PlayerEvaluation(3, (short)500);
+
+            playerList.calculatePrizeDistribution( new ArrayList<>( List.of(p0Ev, p1Ev, p2Ev, p3Ev) ) );
+
+            assertEquals(1500, p0.getMoneyOffBet());
+            assertEquals(4000, p1.getMoneyOffBet());
+            assertEquals(500, p2.getMoneyOffBet());
+            assertEquals(0, p3.getMoneyOffBet());
         }
         catch(OnlyOnePlayerLeftException e) {
             assertEquals(true, false, "This test should not reach this code");

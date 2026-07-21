@@ -54,7 +54,7 @@ public abstract class BotNN extends Bot {
     }
 
     @Override
-    public String notifyMakePlay(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException {
+    public String play(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException {
         
         float[] state = encondeState(maxBet, player);
         float[] prediction = predict(state);

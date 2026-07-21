@@ -217,7 +217,7 @@ public abstract class BotLLM extends Bot {
      * @return sanitized poker action (fold, call, check or raise X)
      */
     @Override
-    public String notifyMakePlay(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException {
+    public String play(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException {
         
         _smallBlind = sb;
         _bigBlind = bb;
