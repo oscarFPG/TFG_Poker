@@ -8,6 +8,7 @@ import com.ucm.common.GameType;
 import com.ucm.server.interfaces.IPlayerActions;
 import com.ucm.server.middleclasses.CommandResult;
 
+
 /**
  * Class that represents the Raise command, which is a type of Command that a player can execute during a hand of poker.
  * When a player raises, they increase the current bet to a new amount, which must be higher than the current bet. 
@@ -53,21 +54,26 @@ public class RaiseCommand extends Command {
         }
     }
 
-    @Override
-    public boolean validate(final int maxBet) {
-        return 0 <= _targetBet &&  maxBet < _targetBet && _targetBet <= _playersOnBetMoney + _playersOffBetMoney;
-    }
 
-    /**
-    * {@inheritDoc}
-    */
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
 
-        if (_targetBet == _playersOffBetMoney + _playersOnBetMoney) {
+        if (_targetBet >= _playersOffBetMoney + _playersOnBetMoney) {   // All-in -> Raise <total_money>
             AllInCommand command = new AllInCommand(_player);
             return command.execute(sb, bb, maxBet);
         }
+        else if(_targetBet == 0 && _playersOnBetMoney == 0 && maxBet == 0) { // Check -> Raise 0
+            CheckCommand command = new CheckCommand(_player);
+            return command.execute(sb, bb, maxBet);
+        }
+        else if(0 < maxBet && _targetBet <= maxBet) { // Call -> Raise <maxBet>
+            CallCommand command = new CallCommand(_player);
+            return command.execute(sb, bb, maxBet);
+        }
+        
+        
+        // Normal raise
+        log.debug("Player {} makes RAISE {}", _player.getPlayerName(), _targetBet);
 
         _player.raise(_targetBet);
         return CommandResult.continuePlaying(_targetBet, true);

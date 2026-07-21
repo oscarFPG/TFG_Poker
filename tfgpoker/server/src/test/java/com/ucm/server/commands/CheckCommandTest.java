@@ -38,10 +38,8 @@ public class CheckCommandTest {
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
 
-        boolean valid = command.validate(maxBet);
         CommandResult result = command.execute(SMALL_BLIND, BIG_BLIND, maxBet);
 
-        assertEquals(true, valid);
         assertEquals(CommandResult.continuePlaying(0, false), result);
         assertEquals(0, player.getMoneyOnBet());
         assertEquals(INITIAL_MONEY, player.getMoneyOffBet());
@@ -57,9 +55,7 @@ public class CheckCommandTest {
         String input = "check";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
-        boolean valid = command.validate(maxBet);
         
-        assertEquals(false, valid);
         assertEquals(initialBet, player.getMoneyOnBet());
         assertEquals(INITIAL_MONEY - initialBet, player.getMoneyOffBet());
     }

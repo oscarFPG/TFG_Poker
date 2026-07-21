@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
 import com.ucm.common.gameobjects.Card;
-import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.interfaces.IPlayerInfo;
 
 /**
@@ -40,56 +39,11 @@ import com.ucm.server.interfaces.IPlayerInfo;
 public abstract class BotLLM extends Bot {
 
     /**
-     * Community cards on the table.
-     */
-    protected List<Card> table;
-
-    /**
-     * History of actions in the current hand.
-     */
-    protected List<String> actionHistory;
-
-    /**
-     * Small blind value.
-     */
-    protected int _smallBlind;
-
-    /**
-     * Big blind value.
-     */
-    protected int _bigBlind;
-
-    /**
-     * Max bet in the current hand
-     */
-    protected int _maxBet;
-
-    /**
-     * Total pot in the table
-     */
-    protected int _totalPot;
-
-    /**
-     * Estimated probability of winning the hand.
-     */
-    protected double _equity;
-
-
-        /**
      * Playing style used by this bot.
      * By default, bots use a balanced playing style.
      */
     protected BotStyle _style = BotStyle.DEFAULT;
 
-    protected IPlayerInfo _player;
-
-    public BotStyle getStyle() {
-        return _style;
-    }
-
-    public void setPlayingStyle(BotStyle style) {
-        _style = (style == null) ? BotStyle.DEFAULT : style;
-    }
 
     /**
      * Default constructor.
@@ -201,10 +155,10 @@ public abstract class BotLLM extends Bot {
     protected String sanitize(String action, IPlayerInfo player) {
 
         action = action.toLowerCase().trim();
-        if (action.contains("fold")) return "fold";
-        if (action.contains("call")) return "call";
-        if (action.contains("check")) return "check";
-        if (action.contains("all-in")) return "all-in";
+        if (action.contains("fold")) return GameType.FOLD_ACTION_FULL;
+        if (action.contains("call")) return GameType.CALL_ACTION_FULL;
+        if (action.contains("check")) return GameType.CHECK_ACTION_FULL;
+        if (action.contains("all-in")) return GameType.ALL_IN_ACTION_FULL;
 
 
         action = action.replace("bet", "raise");
@@ -212,14 +166,10 @@ public abstract class BotLLM extends Bot {
         Matcher m = p.matcher(action);
 
         if (m.find()) {
-            return "raise " + m.group(1);
+            return GameType.RAISE_ACTION_FULL + " " + m.group(1);
         }
 
-        if (action.contains("raise")) {
-            return "call";
-        }
-
-        return "fold";
+        return GameType.FOLD_ACTION_FULL;
     }
 
 
@@ -236,6 +186,15 @@ public abstract class BotLLM extends Bot {
             result.add( c.toLetterString() );
 
         return "[" + String.join(", ", result) + "]";
+    }
+
+
+    public BotStyle getStyle() {
+        return _style;
+    }
+
+    public void setPlayingStyle(BotStyle style) {
+        _style = (style == null) ? BotStyle.DEFAULT : style;
     }
 
 

@@ -1,7 +1,5 @@
 package com.ucm.client.views.original.controllers;
 
-import com.ucm.client.ClientInfo;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;

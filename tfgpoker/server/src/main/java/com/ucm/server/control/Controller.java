@@ -51,20 +51,20 @@ public class Controller {
 
         while (!endOfGame) {
 
-            log.debug("Starting hand {}", handCounter);
+            log.debug("---- HAND_{} ----", handCounter);
             try {
 
                 // Player roles
                 _game.assignRolesToAllPlayers();
 
                 // Pre-flop (2)
-                log.debug("Pre-flop round");
+                log.debug("---- PRE-FLOP ----");
                 _game.shareOutCardsToAllPlayers();
                 _game.updateEquity();
                 _game.playHand();
 
                 // Flop (3)
-                log.debug("Flop round");
+                log.debug("---- FLOP ----");
                 _game.addCardToTable();
                 _game.addCardToTable();
                 _game.addCardToTable();
@@ -72,19 +72,19 @@ public class Controller {
                 _game.playHand();
 
                 // Turn (4)
-                log.debug("Turn round");
+                log.debug("---- TURN ----");
                 _game.addCardToTable();
                 _game.updateEquity();
                 _game.playHand();
 
                 // River (5)
-                log.debug("River round");
+                log.debug("---- RIVER ----");
                 _game.addCardToTable();
                 _game.updateEquity();
                 _game.playHand();
 
                 // Showdown (6)
-                log.debug("Showdown round");
+                log.debug("---- SHOWDOWN ----");
                 _game.giveRewardToWinner();
             }
             catch (OnlyOnePlayerLeftException e) {
@@ -92,11 +92,11 @@ public class Controller {
                 _game.giveRewardToWinner();
             }
 
-            log.debug("Passing to the next round");
+            log.debug("---- ~HAND_{} ----", handCounter);
             endOfGame = _game.passTurn();
 
             // Logger configuration for the next hand -> Write on file match{0}_hand{handCounter}.log
-            log.debug("Finishing hand {}", handCounter);
+            //log.debug("Finishing hand {}", handCounter);
             ++handCounter;
             //ThreadContext.put("hand", String.valueOf(handCounter));
         }

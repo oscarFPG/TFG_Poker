@@ -1,19 +1,12 @@
 package com.ucm.server.players;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.common.gameobjects.Suit;
-import com.ucm.server.ServerMain;
 import com.ucm.server.exceptions.TurnTimeoutException;
 import com.ucm.server.gameobjects.Player;
 

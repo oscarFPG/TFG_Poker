@@ -4,11 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.ucm.client.utils.AlertManager;
 import com.ucm.client.utils.NotificationManager;
 import com.ucm.client.utils.Messages;
 
-import com.ucm.client.ClientInfo;
 import com.ucm.common.GameType;
 import com.ucm.common.PokerPreGame;
 import com.ucm.common.SocketUtils;
