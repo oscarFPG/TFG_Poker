@@ -2,6 +2,7 @@ package com.ucm.server.players;
 
 import java.io.IOException;
 
+import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
 import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.gameobjects.BotFSM;
@@ -69,7 +70,7 @@ public class ClassifierFSM extends BotFSM {
     }
 
     @Override
-    public Bot create() {
+    public Bot create(BotStyle style) {
         return new ClassifierFSM();
     }
     

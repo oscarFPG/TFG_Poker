@@ -1,15 +1,20 @@
 package com.ucm.common;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class GameConfig {
     
     private static final int DEFAULT_INITIAL_MONEY = 100;
     private static final boolean DEFAULT_ALLOW_BOTS = true;
+    private static final boolean DEFAULT_JOIN_AS_SPECTATOR = false;
     private static final String DEFAULT_BLINDS_VALUE = "1/2";
     private static final boolean DEFAULT_DINAMIC_VALUE = false;
     private static final String DEFAULT_LEVEL_DURATION = "15";
     private static final String DEFAULT_HIKE_PERCENTAGE = "25";
     private static final int DEFAULT_NUM_BOTS = 0;
     private static final int DEFAULT_NUM_PLAYERS = 8;
+    private static final int DEFAULT_NUM_PLAYERS_WITH_SPECTATOR = 9;
     private static final String DEFAULT_TURN_TIMER = "60";
 
     /**
@@ -27,9 +32,9 @@ public class GameConfig {
 
     /**
      * Variables para crear partida: Add bots
-     */
-    public int _numBots1 = DEFAULT_NUM_BOTS;
-    public int _numBots2 = DEFAULT_NUM_BOTS;
+    */
+    public Map<Integer, Integer> _botsByType = new HashMap<>();
+    public Map<Integer, Map<BotStyle, Integer>> _botStylesByType =  new HashMap<>();
 
     /**
      * Variables para crear partida: Add players
@@ -50,27 +55,27 @@ public class GameConfig {
     /**
      * Indicated if there is an spectator or not
      */
-    public boolean _joinedAsSpectator = false;
-
-
+    public boolean _joinedAsSpectator = DEFAULT_JOIN_AS_SPECTATOR;
 
     public GameConfig() {}
 
     // Deep-copy constructor
     public GameConfig(GameConfig other) {
-        _roomName =  (other._roomName != null) ? String.copyValueOf(other._roomName.toCharArray()) : null;
-        _userName =  (other._userName != null) ? String.copyValueOf(other._userName.toCharArray()) : null;
+
+        _roomName = (other._roomName != null) ? String.copyValueOf(other._roomName.toCharArray()) : null;
+        _userName = (other._userName != null) ? String.copyValueOf(other._userName.toCharArray()) : null;
         _roomId = other._roomId;
         _initialMoney = other._initialMoney;
         _allowBots = other._allowBots;
         _blindsValue = (other._blindsValue != null) ? String.copyValueOf(other._blindsValue.toCharArray()) : null;
         _levelDuration = (other._levelDuration != null) ? String.copyValueOf(other._levelDuration.toCharArray()) : null;
         _hikePercentage = (other._hikePercentage != null) ? String.copyValueOf(other._hikePercentage.toCharArray()) : null;
-        _numBots1 = other._numBots1;
-        _numBots2 = other._numBots2;
+        _botsByType = new HashMap<>(other._botsByType);
+        _botStylesByType = new HashMap<>(other._botStylesByType);
         _numPlayers = other._numPlayers;
         _selectedTable = (other._selectedTable != null) ? String.copyValueOf(other._selectedTable.toCharArray()) : null;
         _selectedCard = (other._selectedCard != null) ? String.copyValueOf(other._selectedCard.toCharArray()) : null;
+        _joinedAsSpectator = other._joinedAsSpectator;
     }
 
     public static boolean isValidRoomName(String roomName){
@@ -85,15 +90,55 @@ public class GameConfig {
         _dinamicBlinds = DEFAULT_DINAMIC_VALUE;
         _levelDuration = DEFAULT_LEVEL_DURATION;
         _hikePercentage = DEFAULT_HIKE_PERCENTAGE;
-        _numBots1 = DEFAULT_NUM_BOTS;
-        _numBots2 = DEFAULT_NUM_BOTS;
+        _botsByType.clear();
+        _botStylesByType.clear();
         _numPlayers = DEFAULT_NUM_PLAYERS;
         _selectedTable = null;
         _selectedCard = null;
     }
 
+    public void setBotCount(int botId, int count) {
+        if(count <= 0) {
+            _botsByType.remove(botId);
+            _botStylesByType.remove(botId);
+        }
+        else {
+            _botsByType.put(botId, count);
+        }
+    }
+
+    public int getBotCount(int botId) {
+        return _botsByType.getOrDefault(botId, 0);
+    }
+
+    public void setBotStyleCount(int botId, BotStyle style,int count) {
+        
+        _botStylesByType.computeIfAbsent(botId, k -> new HashMap<>());
+
+        if(count <= 0) {
+            Map<BotStyle,Integer> styles = _botStylesByType.get(botId);
+            if(styles != null){
+                styles.remove(style);
+                if(styles.isEmpty()){
+                    _botStylesByType.remove(botId);
+                }
+            }
+        }
+        else {
+            _botStylesByType.get(botId).put(style, count);
+        }
+    }
+
+    public int getBotStyleCount(int botId, BotStyle style){
+        return _botStylesByType.getOrDefault(botId, Map.of()).getOrDefault(style, 0);
+    }
+
+    private int getTotalBots() {
+        return _botsByType.values().stream().mapToInt(Integer::intValue).sum();
+    }
+
     public int getTotalPlayers() {
-        return _numPlayers + _numBots1 + _numBots2;
+        return _numPlayers + getTotalBots();
     }
 
 }

@@ -1,5 +1,6 @@
 package com.ucm.server.gameobjects;
 
+import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
 
 public abstract class BotFSM extends Bot {

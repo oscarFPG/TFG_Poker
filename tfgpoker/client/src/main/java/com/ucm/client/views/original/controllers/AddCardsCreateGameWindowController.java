@@ -143,7 +143,7 @@ public class AddCardsCreateGameWindowController extends GenericController {
     }
 
     private int totalPlayers() {
-        return _clientInfo.gameConfig._numPlayers +  _clientInfo.gameConfig._numBots1 + _clientInfo.gameConfig._numBots2;
+        return _clientInfo.gameConfig._numPlayers +  _clientInfo.gameConfig._botsByType.values().stream().mapToInt(Integer::intValue).sum();
     }
 
     @FXML

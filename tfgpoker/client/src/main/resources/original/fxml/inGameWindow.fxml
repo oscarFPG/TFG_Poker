@@ -51,9 +51,9 @@
                   </HBox>
                </children>
             </StackPane>
-            <HBox alignment="CENTER_LEFT" minWidth="-Infinity" prefHeight="110.0" prefWidth="369.0" styleClass="semi-oval-pane">
+            <HBox alignment="CENTER_LEFT" minWidth="-Infinity" prefHeight="110.0" prefWidth="293.0" styleClass="semi-oval-pane">
                <children>
-                  <HBox fx:id="hboxMenuItems" maxHeight="-Infinity" prefHeight="82.0" prefWidth="250.0" spacing="5.0">
+                  <HBox fx:id="hboxMenuItems" maxHeight="-Infinity" prefHeight="88.0" prefWidth="170.0" spacing="5.0">
                      <children>
                         <Button fx:id="btnExitGame" mnemonicParsing="false" prefHeight="66.0" prefWidth="62.0">
                            <graphic>
@@ -81,19 +81,6 @@
                               </ImageView>
                            </graphic>
                         </ToggleButton>
-                        <Button mnemonicParsing="false" prefHeight="66.0" prefWidth="62.0">
-                           <graphic>
-                              <ImageView fitHeight="41.0" fitWidth="52.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../../images/rangeTable.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                           <styleClass>
-                              <String fx:value="semi-oval-pane" />
-                              <String fx:value="container-gradiant-colors" />
-                           </styleClass>
-                        </Button>
                      </children>
                      <styleClass>
                         <String fx:value="subtitle-label" />
