@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ucm.common.GameType;
+import com.ucm.server.history.PokerHistory;
 import com.ucm.server.interfaces.IPlayerActions;
 import com.ucm.server.middleclasses.CommandResult;
 
@@ -48,8 +49,10 @@ public class CallCommand extends Command {
         }
         
         log.debug("Player {} makes CALL", _player.getPlayerName());
+        
 
         _player.call(maxBet);
+        PokerHistory.current().call(_player);
         return CommandResult.continuePlaying(maxBet, false);
     }
 

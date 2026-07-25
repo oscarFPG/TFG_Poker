@@ -1,13 +1,13 @@
 package com.ucm.server.control;
 
 
-import com.ucm.common.exceptions.CancelGameException;
-import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
-import com.ucm.server.logic.Game;
-import com.ucm.server.history.PokerHistory;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.ucm.common.exceptions.CancelGameException;
+import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
+import com.ucm.server.history.PokerHistory;
+import com.ucm.server.logic.Game;
 
 
 public class Controller {
@@ -44,28 +44,33 @@ public class Controller {
 
     private void runGame() throws CancelGameException {
 
-        PokerHistory.startMatch(1);
-        PokerHistory.startHand(1);
-
-        PokerHistory.write("Hola desde PokerHistory");
-
+       
         int handCounter = 0;
         boolean endOfGame = false;
 
         //ThreadContext.put("match", "0");
         //ThreadContext.put("hand", String.valueOf(handCounter));
+        PokerHistory.startMatch(_game.getMatchId());
+        PokerHistory history = null;
 
         while (!endOfGame) {
 
+           
             log.debug("---- HAND_{} ----", handCounter);
             try {
 
+                history = null;
                 // Player roles
                 _game.assignRolesToAllPlayers();
+               history = new PokerHistory(_game, handCounter + 1);
+                PokerHistory.set(history);
 
                 // Pre-flop (2)
                 log.debug("---- PRE-FLOP ----");
                 _game.shareOutCardsToAllPlayers();
+
+               
+                history.startHand();
                 _game.updateEquity();
                 _game.playHand();
 
@@ -74,30 +79,42 @@ public class Controller {
                 _game.addCardToTable();
                 _game.addCardToTable();
                 _game.addCardToTable();
+                history.flop(_game.getTableCards());
                 _game.updateEquity();
                 _game.playHand();
 
                 // Turn (4)
                 log.debug("---- TURN ----");
                 _game.addCardToTable();
+                history.turn(_game.getTableCards());
                 _game.updateEquity();
                 _game.playHand();
 
                 // River (5)
                 log.debug("---- RIVER ----");
                 _game.addCardToTable();
+                history.river(_game.getTableCards());
                 _game.updateEquity();
                 _game.playHand();
 
                 // Showdown (6)
                 log.debug("---- SHOWDOWN ----");
+                history.showdown();
                 _game.giveRewardToWinner();
             }
             catch (OnlyOnePlayerLeftException e) {
                 log.debug("Showdown with only one player left");
+                 if (history != null ) history.showdown();
                 _game.giveRewardToWinner();
             }
 
+            if (history != null ) {
+                history.summary(_game.getTableCards());
+                history.experimentData();
+                history.endHand();
+            }
+
+            PokerHistory.clear(); 
             log.debug("---- ~HAND_{} ----", handCounter);
             endOfGame = _game.passTurn();
 
@@ -107,6 +124,8 @@ public class Controller {
             //ThreadContext.put("hand", String.valueOf(handCounter));
         }
 
+        
+        PokerHistory.endMatch();
     }
 
 }

@@ -1,8 +1,11 @@
 package com.ucm.server.logic;
 
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,6 +33,10 @@ import com.ucm.server.statistics.EquityCalculator;
 public class Game {
 
     private static final Logger log = LogManager.getLogger(Game.class);
+    private static final AtomicInteger NEXT_MATCH_ID = new AtomicInteger(1);
+    private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss_SSS");
+    private final String _matchId;
+    
 
     public static final boolean DEBUG = true;
     public static final boolean DEBUG_PLAYERS = false;
@@ -52,7 +59,6 @@ public class Game {
     private int _level;
     private int _handCounter = 0;
     private boolean _firstHand = true;
-    
 
     public Game(
         List<ClientStruct> players, 
@@ -60,6 +66,8 @@ public class Game {
         Spectator spectator, 
         GameConfig config
     ) throws EvaluatorException {
+
+       _matchId = String.format("%s_%03d",LocalDateTime.now().format(FORMAT), NEXT_MATCH_ID.getAndIncrement());
 
         _gameConfig = config;
 
@@ -255,4 +263,28 @@ public class Game {
         _playerList.notifyEquityToPlayers(equity);
     }
 
+    public int getHandCounter() {
+    return _handCounter;
+    }
+
+    public int getCurrentSmallBlind() {
+        return _currentSB;
+    }
+
+    public int getCurrentBigBlind() {
+        return _currentBB;
+    }
+
+    public PlayerList getPlayerList() {
+        return _playerList;
+    }
+
+    public String getMatchId() {
+        return _matchId;
+    }
+
+    public Card[] getTableCards() {
+        return _tableCards;
+    }
 }
+

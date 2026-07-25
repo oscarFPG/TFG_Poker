@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ucm.common.GameType;
+import com.ucm.server.history.PokerHistory;
 import com.ucm.server.interfaces.IPlayerActions;
 import com.ucm.server.middleclasses.CommandResult;
 
@@ -76,6 +77,7 @@ public class RaiseCommand extends Command {
         log.debug("Player {} makes RAISE {}", _player.getPlayerName(), _targetBet);
 
         _player.raise(_targetBet);
+        PokerHistory.current().raise(_player);
         return CommandResult.continuePlaying(_targetBet, true);
     }
 

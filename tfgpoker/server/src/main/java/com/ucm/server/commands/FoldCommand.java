@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ucm.common.GameType;
+import com.ucm.server.history.PokerHistory;
 import com.ucm.server.interfaces.IPlayerActions;
 import com.ucm.server.middleclasses.CommandResult;
 
@@ -38,6 +39,7 @@ public class FoldCommand extends Command {
         log.debug("Player {} makes FOLD", _player.getPlayerName());
 
         _player.fold();
+        PokerHistory.current().fold(_player);
         return CommandResult.stopPlaying();
     }
 

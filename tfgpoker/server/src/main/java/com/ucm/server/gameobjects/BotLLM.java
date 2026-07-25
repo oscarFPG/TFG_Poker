@@ -100,8 +100,8 @@ public abstract class BotLLM extends Bot {
             Board: %s
             Stack: %d
             Pot: %d
-            Blinds: %.1f/%d
-
+            Blinds: %d/%d
+            
             Action history:
             %s
 
@@ -118,12 +118,13 @@ public abstract class BotLLM extends Bot {
             <action>check</action>
             <action>raise AMOUNT</action>
             """,
+                _style.getPromptDescription(),
                 mapRole( player.getRole() ),
                 formatCards( List.of(player.getPlayerCards()) ),
                 table.isEmpty() ? "[]" : formatCards(table),
                 player.getMoneyOffBet(),
                 _totalPot,
-                _smallBlind / 2.0,
+                _smallBlind,
                 _bigBlind,
                 getHistory(),
                 _equity
