@@ -227,7 +227,7 @@ public class Game {
             
             Bot bot = BotManager.createBot( bs.botId() );
             if(bot != null) {
-                Bot specificBot = bot.create();
+                Bot specificBot = bot.create(bs.style());
                 String botName = String.format("%s#%d", bs.botName(), id);
                 _playerList.addPlayer( new Player(id, botName, config._initialMoney, specificBot) );
                 ++id;

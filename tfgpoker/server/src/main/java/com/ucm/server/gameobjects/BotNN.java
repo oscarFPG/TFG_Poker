@@ -2,18 +2,16 @@ package com.ucm.server.gameobjects;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import com.ucm.common.BotStruct;
+import com.ucm.common.BotStyle;
 import com.ucm.server.interfaces.IPlayerInfo;
 
 import ai.onnxruntime.OrtEnvironment;
 import ai.onnxruntime.OrtException;
 import ai.onnxruntime.OrtSession;
-import ai.onnxruntime.OrtSession.SessionOptions;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

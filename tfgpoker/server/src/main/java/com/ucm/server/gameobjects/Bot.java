@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
@@ -81,16 +82,30 @@ public abstract class Bot implements IPlayerNotificator {
      */
     protected IPlayerInfo _player;
 
+    /**
+     * Playing style used by this bot.
+     * By default, bots use a balanced playing style.
+     */
+    protected BotStyle _style = BotStyle.DEFAULT;
+
+
+    public Bot(final int botID) {
+        _botID = botID;
+        table = new ArrayList<>();
+        actionHistory = new ArrayList<>();
+        _style = BotStyle.DEFAULT;
+    }
 
     /**
      * Constructs a bot with a given identifier.
       *
      * @param botID unique identifier for the bot
      */
-    public Bot(final int botID) {
+    public Bot(final int botID, BotStyle style) {
         _botID = botID;
         table = new ArrayList<>();
         actionHistory = new ArrayList<>();
+        _style = (style == null) ? BotStyle.DEFAULT : style;
     }
 
 
@@ -135,6 +150,10 @@ public abstract class Bot implements IPlayerNotificator {
         return _botID;
     }
 
+    public BotStyle getStyle() {
+        return _style;
+    }
+
     /**
      * Returns a full description of the bot, including its name and behavior.
      * 
@@ -155,7 +174,7 @@ public abstract class Bot implements IPlayerNotificator {
      * @param initialMoney initial stack
      * @return a new instance of a bot ready to play
     */
-    public abstract Bot create();
+    public abstract Bot create(BotStyle style);
     
 
     /* ============== Communication methods ============== */

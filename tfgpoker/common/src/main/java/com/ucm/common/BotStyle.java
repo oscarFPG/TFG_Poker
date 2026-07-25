@@ -1,4 +1,4 @@
-package com.ucm.server.gameobjects;
+package com.ucm.common;
 
 /**
  * Defines the playing style (personality) of a poker bot.
@@ -143,4 +143,15 @@ public enum BotStyle {
      * @return style description to inject into the LLM prompt
      */
     public abstract String getPromptDescription();
+
+    public static BotStyle createByOrdinal(final int ordinal) {
+
+        for(BotStyle st : BotStyle.values()) {
+            if(ordinal == st.ordinal())
+                return st;
+        }
+
+        return null;
+    }
+
 }

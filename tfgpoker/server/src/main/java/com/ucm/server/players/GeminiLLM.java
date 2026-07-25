@@ -1,14 +1,10 @@
 package com.ucm.server.players;
 
 
-import java.io.IOException;
-
+import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
-import com.ucm.common.gameobjects.Card;
-import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.gameobjects.BotLLMOnline;
-import com.ucm.server.interfaces.IPlayerInfo;
 
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
@@ -41,15 +37,14 @@ public class GeminiLLM extends BotLLMOnline {
     private static final int GEMINI_ID = GameType.BOT_GEMINI;
     public static final String NAME = "Gemini LLM";
 
-
     /**
      * Chat model instance used to interact with Gemini.
      */
     private ChatModel gemini;
 
 
-    public GeminiLLM() {
-        super(GEMINI_ID);
+    public GeminiLLM(BotStyle style) {
+        super(GEMINI_ID, style);
 
         gemini = GoogleAiGeminiChatModel.builder()
                 .apiKey(_apiKey)
@@ -90,8 +85,8 @@ public class GeminiLLM extends BotLLMOnline {
     }
 
 	@Override
-	public Bot create() {
-		return new GeminiLLM();
+	public Bot create(BotStyle style) {
+		return new GeminiLLM(style);
 	}
     
 }

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ucm.common.BotStyle;
 
 
 /**
@@ -53,8 +54,8 @@ public abstract class BotLLMOnline extends BotLLM {
     /**
      * Default empty constructor
      */
-    public BotLLMOnline(int botID) {
-        super(botID);
+    public BotLLMOnline(int botID, BotStyle style) {
+        super(botID, style);
         _credentialKey = getCredentialKey();
         _apiKey = loadApiKey();
     }

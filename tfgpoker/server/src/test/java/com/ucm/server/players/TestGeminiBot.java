@@ -1,19 +1,14 @@
 package com.ucm.server.players;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ucm.common.BotStyle;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.common.gameobjects.Suit;
-import com.ucm.server.ServerMain;
 import com.ucm.server.exceptions.TurnTimeoutException;
 import com.ucm.server.gameobjects.Player;
 
@@ -25,7 +20,7 @@ public class TestGeminiBot {
     //@Test
     public void testPreflopDecision() throws IOException {
 
-        GeminiLLM geminiLLM = new GeminiLLM();
+        GeminiLLM geminiLLM = new GeminiLLM(BotStyle.LOOSE_AGGRESSIVE);
         Player player = new Player(0, "Gemini", 1000, geminiLLM);
 
         player.receiveRole(PlayerRole.DEALER);
@@ -53,7 +48,7 @@ public class TestGeminiBot {
     //@Test
     public void testFlopDecision() throws IOException {
 
-        GeminiLLM geminiLLM = new GeminiLLM();
+        GeminiLLM geminiLLM = new GeminiLLM(BotStyle.MANIAC);
         Player player = new Player(0, "Gemini", 1000, geminiLLM);
 
         player.receiveRole(PlayerRole.CUT_OFF);
@@ -85,7 +80,7 @@ public class TestGeminiBot {
     //@Test
     public void testLowEquity() throws IOException {
 
-        GeminiLLM geminiLLM = new GeminiLLM();
+        GeminiLLM geminiLLM = new GeminiLLM(BotStyle.LOOSE_PASSIVE);
         Player player = new Player(0, "Gemini", 1000, geminiLLM);
 
         player.receiveRole(PlayerRole.BIG_BLIND);

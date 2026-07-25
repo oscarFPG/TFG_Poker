@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.server.interfaces.IPlayerInfo;
@@ -37,11 +38,7 @@ import com.ucm.server.interfaces.IPlayerInfo;
  */
 public abstract class BotLLM extends Bot {
 
-    /**
-     * Playing style used by this bot.
-     * By default, bots use a balanced playing style.
-     */
-    protected BotStyle _style = BotStyle.DEFAULT;
+    
 
 
     /**
@@ -49,11 +46,9 @@ public abstract class BotLLM extends Bot {
      * 
      * @param botID unique identifier for the bot
      */
-    public BotLLM(int botID) {
-        super(botID);
+    public BotLLM(int botID, BotStyle style) {
+        super(botID, style);
     }
-
-
 
     /**
      * Calls the external LLM with the given prompt.
@@ -80,10 +75,20 @@ public abstract class BotLLM extends Bot {
      * @return {@link String} prompt ready to be sent to the model
      */
     protected String buildPrompt(int sb, int bb, int maxBet, IPlayerInfo player) {
-        return String.format("""
+
+        String roles = mapRole( player.getRole() );
+        String cards = formatCards( List.of(player.getPlayerCards()) );
+        String tableCards = table.isEmpty() ? "[]" : formatCards(table);
+        int offBetMoney = player.getMoneyOffBet();
+        int pot = _totalPot;
+        String hist = getHistory();
+        double eq = _equity;
+
+
+        String prompt = String.format("""
             You are an expert No Limit Texas Hold'em player.
 
-           Play optimally according to your assigned playing style.
+            Play optimally according to your assigned playing style.
 
             %s
 
@@ -102,6 +107,7 @@ public abstract class BotLLM extends Bot {
             Pot: %d
             Blinds: %d/%d
             
+
             Action history:
             %s
 
@@ -126,9 +132,13 @@ public abstract class BotLLM extends Bot {
                 _totalPot,
                 _smallBlind,
                 _bigBlind,
+                sb,
+                bb,
                 getHistory(),
                 _equity
         );
+
+        return prompt;
     }
 
     /**
@@ -189,16 +199,6 @@ public abstract class BotLLM extends Bot {
 
         return "[" + String.join(", ", result) + "]";
     }
-
-
-    public BotStyle getStyle() {
-        return _style;
-    }
-
-    public void setPlayingStyle(BotStyle style) {
-        _style = (style == null) ? BotStyle.DEFAULT : style;
-    }
-
 
     /**
      * Determines the action to take using the LLM.
