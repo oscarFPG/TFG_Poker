@@ -365,9 +365,8 @@ public final class PokerHistory {
         blankLine();
 
         write("Position........... %s", mapRole(player.getRole()));
-        write("Hole cards......... %s %s",
-                player.getPlayerCards()[0].toLetterString(),
-                player.getPlayerCards()[1].toLetterString());
+        write("Hole cards......... %s",
+                boardToString(player.getPlayerCards()));
 
         blankLine();
 
@@ -430,10 +429,8 @@ public final class PokerHistory {
         blankLine();
         flopSeen = true;
 
-        write("*** FLOP *** %s %s %s",
-                tableCards[0].toLetterString(),
-                tableCards[1].toLetterString(),
-                tableCards[2].toLetterString());
+        write("*** FLOP ***  %s",
+                boardToString(tableCards));
     }
 
     public void turn(Card[] tableCards) {
@@ -442,11 +439,8 @@ public final class PokerHistory {
         blankLine();
 
 
-        write("*** TURN *** %s %s %s  %s",
-                tableCards[0].toLetterString(),
-                tableCards[1].toLetterString(),
-                tableCards[2].toLetterString(),
-                tableCards[3].toLetterString());
+        write("*** TURN *** %s",
+                boardToString(tableCards));
     }
 
     public void river(Card[] tableCards) {
@@ -454,12 +448,8 @@ public final class PokerHistory {
         currentStreet = Street.RIVER;
         blankLine();
 
-        write("*** RIVER *** %s %s %s %s  %s",
-                tableCards[0].toLetterString(),
-                tableCards[1].toLetterString(),
-                tableCards[2].toLetterString(),
-                tableCards[3].toLetterString(),
-                tableCards[4].toLetterString());
+        write("*** RIVER *** %s",
+                boardToString(tableCards));
     }
 
     public void showdown() {
