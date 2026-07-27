@@ -106,6 +106,7 @@ public abstract class BotLLM extends Bot {
             Stack: %d
             Pot: %d
             Blinds: %d/%d
+            
 
             Action history:
             %s
@@ -129,8 +130,8 @@ public abstract class BotLLM extends Bot {
                 table.isEmpty() ? "[]" : formatCards(table),
                 player.getMoneyOffBet(),
                 _totalPot,
-                sb,
-                bb,
+                _smallBlind,
+                _bigBlind,
                 getHistory(),
                 _equity
         );
@@ -229,4 +230,8 @@ public abstract class BotLLM extends Bot {
         return sanitized;
     }
     
+    @Override
+    public String getPlayerType() {
+        return "BOT_LLM";
+    }
 }

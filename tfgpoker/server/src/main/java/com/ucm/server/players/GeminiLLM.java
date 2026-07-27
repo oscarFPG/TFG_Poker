@@ -89,4 +89,9 @@ public class GeminiLLM extends BotLLMOnline {
 		return new GeminiLLM(style);
 	}
     
+     @Override
+    public String getPlayerModel() {
+        return "Gemini";
+    }
+    
 }

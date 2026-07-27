@@ -5,16 +5,14 @@ import java.io.InputStream;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import com.ucm.common.BotStruct;
-import com.ucm.common.BotStyle;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.ucm.server.interfaces.IPlayerInfo;
 
 import ai.onnxruntime.OrtEnvironment;
 import ai.onnxruntime.OrtException;
 import ai.onnxruntime.OrtSession;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 
 public abstract class BotNN extends Bot {
@@ -95,5 +93,10 @@ public abstract class BotNN extends Bot {
      * @return final response
      */
     public abstract String translate(int sb, int bb, int maxBet, IPlayerInfo player, final float[] prediction);
+
+     @Override
+    public String getPlayerType() {
+        return "BOT_NN";
+    }
 
 }

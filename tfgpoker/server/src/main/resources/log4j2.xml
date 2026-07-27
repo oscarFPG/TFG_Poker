@@ -32,13 +32,48 @@
                 </Route>
             </Routes>
         </Routing>
+
+
+
+        <Routing name="PokerHistoryRouter">
+            <Routes pattern="${ctx:match}-${ctx:hand}">
+                <Route>
+                    <File
+                        name="PokerHistory-${ctx:match}-${ctx:hand}"
+                        fileName="server/logs/history/match_${ctx:match:-0}/hand_${ctx:hand:-0}.log"
+                        append="false"
+                        createOnDemand="true"
+                        immediateFlush="true">
+
+                        <!-- Solo escribe el texto -->
+                        <PatternLayout pattern="%msg%n"/>
+
+                    </File>
+                </Route>
+            </Routes>
+        </Routing>
+
+
+
     </Appenders>
 
     <Loggers>
+
+        <Logger name="PokerHistory"
+                level="info"
+                additivity="false">
+
+            <AppenderRef ref="PokerHistoryRouter"/>
+
+        </Logger>
+
         <Root level="debug">
             <AppenderRef ref="Console"/>
             <!--  <AppenderRef ref="FileRouter"/> -->
         </Root>
+
+       
+
     </Loggers>
 
 </Configuration>

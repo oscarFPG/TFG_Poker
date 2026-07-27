@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ucm.common.GameType;
+import com.ucm.server.history.PokerHistory;
 import com.ucm.server.interfaces.IPlayerActions;
 import com.ucm.server.middleclasses.CommandResult;
 
@@ -43,6 +44,7 @@ public class CheckCommand extends Command {
         log.debug("Player {} makes CHECK", _player.getPlayerName());
 
         _player.check();
+        PokerHistory.current().check(_player);
         return CommandResult.continuePlaying(0, false);
     }
 

@@ -9,20 +9,21 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.ucm.common.GameType;
+import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.commands.Command;
 import com.ucm.server.exceptions.TurnTimeoutException;
 import com.ucm.server.gameobjects.Player;
-import com.ucm.common.GameType;
-import com.ucm.common.exceptions.CancelGameException;
+import com.ucm.server.history.PokerHistory;
+import com.ucm.server.managers.PotManager;
 import com.ucm.server.middleclasses.CommandResult;
 import com.ucm.server.middleclasses.HandInfo;
 import com.ucm.server.middleclasses.PlayerEvaluation;
 import com.ucm.server.middleclasses.PotDistribution;
 import com.ucm.server.middleclasses.Spectator;
-import com.ucm.server.managers.PotManager;
 
 
 public class PlayerList implements Iterable<Node> {
@@ -281,8 +282,13 @@ public class PlayerList implements Iterable<Node> {
 
             // Execute player on turn action and notify all about the player state
             notifyTurnPlayer(playerOnTurn._player);
+            long start = System.nanoTime();
             Command command = askCommandToPlayer(playerOnTurn, sb, bb, maxBet);
+            long end = System.nanoTime();
+            playerOnTurn._player.getExperimentData().setDecisionTime((end - start) / 1_000_000);
             CommandResult result = command.execute(sb, bb, maxBet);
+            
+
             notifyPlayerOwnState(playerOnTurn);
             notifyOtherPlayerActionToAllPlayers(playerOnTurn._player);
             
@@ -564,6 +570,10 @@ public class PlayerList implements Iterable<Node> {
 
         winner._player.receivePriceMoney(amount);
         winner._player.wins();
+        PokerHistory history = PokerHistory.current();
+        if (history != null) {
+            history.winner(winner._player, amount);
+        }
         log.debug("Player {} receives {}$ as prize! It has now {}$", winner._player.getPlayerName(), amount, winner._player.getMoneyOffBet());
     }
 
@@ -974,4 +984,19 @@ public class PlayerList implements Iterable<Node> {
     }
 
 
+    public List<Player> getPlayers() {
+
+        List<Player> players = new ArrayList<>();
+
+        Iterator<Node> it = iterator();
+        while (it.hasNext()) {
+            players.add(it.next()._player);
+        }
+
+        return players;
+    }
+
+    public int getTotalPot() {
+        return _totalPot;
+    }
 }
