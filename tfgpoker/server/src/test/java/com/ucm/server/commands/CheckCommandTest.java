@@ -55,7 +55,8 @@ public class CheckCommandTest {
         String input = "check";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
-        
+        CommandResult result = command.execute(SMALL_BLIND, BIG_BLIND, maxBet);
+
         assertEquals(initialBet, player.getMoneyOnBet());
         assertEquals(INITIAL_MONEY - initialBet, player.getMoneyOffBet());
     }

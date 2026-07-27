@@ -44,7 +44,10 @@ public class CheckCommand extends Command {
         log.debug("Player {} makes CHECK", _player.getPlayerName());
 
         _player.check();
-        PokerHistory.current().check(_player);
+
+        if(PokerHistory.current() != null)
+            PokerHistory.current().check(_player);
+        
         return CommandResult.continuePlaying(0, false);
     }
 

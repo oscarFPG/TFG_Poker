@@ -77,7 +77,10 @@ public class RaiseCommand extends Command {
         log.debug("Player {} makes RAISE {}", _player.getPlayerName(), _targetBet);
 
         _player.raise(_targetBet);
-        PokerHistory.current().raise(_player);
+
+        if(PokerHistory.current() != null)
+            PokerHistory.current().raise(_player);
+        
         return CommandResult.continuePlaying(_targetBet, true);
     }
 

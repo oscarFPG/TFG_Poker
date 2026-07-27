@@ -41,7 +41,10 @@ public class AllInCommand extends Command {
         log.debug("Player {} makes ALL-IN", _player.getPlayerName());
 
         _player.allIn();
-        PokerHistory.current().allIn(_player);
+
+        if(PokerHistory.current() != null)
+            PokerHistory.current().allIn(_player);
+        
         int playerBet = _player.getMoneyOnBet();
         return CommandResult.continuePlaying(playerBet, playerBet > maxBet);
     }

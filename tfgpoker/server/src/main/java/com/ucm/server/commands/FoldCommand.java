@@ -39,7 +39,10 @@ public class FoldCommand extends Command {
         log.debug("Player {} makes FOLD", _player.getPlayerName());
 
         _player.fold();
-        PokerHistory.current().fold(_player);
+
+        if(PokerHistory.current() != null)
+            PokerHistory.current().fold(_player);
+        
         return CommandResult.stopPlaying();
     }
 

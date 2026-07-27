@@ -4,23 +4,7 @@ import java.util.Map;
 
 import com.ucm.common.BotDescriptor;
 import com.ucm.common.BotStyle;
-import com.ucm.common.GameType;
 
-import javafx.animation.RotateTransition;
-import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.SplitMenuButton;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
-import javafx.scene.transform.Rotate;
-import javafx.util.Duration;
-import javafx.scene.Node;
 
 public class BotNotAllowedStyleCardController extends BotCardController{
     
