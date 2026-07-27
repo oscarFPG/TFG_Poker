@@ -132,8 +132,6 @@ public abstract class BotLLM extends Bot {
                 _totalPot,
                 _smallBlind,
                 _bigBlind,
-                sb,
-                bb,
                 getHistory(),
                 _equity
         );
@@ -232,4 +230,8 @@ public abstract class BotLLM extends Bot {
         return sanitized;
     }
     
+    @Override
+    public String getPlayerType() {
+        return "BOT_LLM";
+    }
 }

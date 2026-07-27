@@ -245,4 +245,9 @@ public class AgentCFR extends BotNN {
         return new AgentCFR();
     }
 
+    @Override
+    public String getPlayerModel() {
+        return "AgentCFR_1";
+    }
+
 }

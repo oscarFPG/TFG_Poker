@@ -2,6 +2,7 @@ package com.ucm.server.interfaces;
 
 import java.io.IOException;
 
+import com.ucm.common.BotStyle;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 
@@ -150,5 +151,8 @@ public interface IPlayerNotificator {
      * @throws IOException
      */
     public void notifyEquity(double equity) throws IOException;
-
+    
+    public BotStyle getStyle();
+    public String getPlayerType();
+    public String getPlayerModel();
 }

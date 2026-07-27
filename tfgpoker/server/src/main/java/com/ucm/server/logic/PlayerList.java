@@ -282,8 +282,13 @@ public class PlayerList implements Iterable<Node> {
 
             // Execute player on turn action and notify all about the player state
             notifyTurnPlayer(playerOnTurn._player);
+            long start = System.nanoTime();
             Command command = askCommandToPlayer(playerOnTurn, sb, bb, maxBet);
+            long end = System.nanoTime();
+            playerOnTurn._player.getExperimentData().setDecisionTime((end - start) / 1_000_000);
             CommandResult result = command.execute(sb, bb, maxBet);
+            
+
             notifyPlayerOwnState(playerOnTurn);
             notifyOtherPlayerActionToAllPlayers(playerOnTurn._player);
             

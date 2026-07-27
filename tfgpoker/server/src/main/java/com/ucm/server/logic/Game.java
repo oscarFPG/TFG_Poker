@@ -21,12 +21,14 @@ import com.ucm.server.exceptions.EvaluatorException;
 import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.gameobjects.Deck;
 import com.ucm.server.gameobjects.Player;
+import com.ucm.server.history.PokerHistory;
 import com.ucm.server.managers.BotManager;
 import com.ucm.server.middleclasses.HandInfo;
 import com.ucm.server.middleclasses.PlayerEvaluation;
 import com.ucm.server.middleclasses.Spectator;
 import com.ucm.server.players.HumanPlayer;
 import com.ucm.server.statistics.EquityCalculator;
+import com.ucm.server.statistics.PlayerExperimentData;
 
 
 
@@ -111,6 +113,19 @@ public class Game {
             Card randomCard1 = _deck.takeRandomCard();
             Card randomCard2 = _deck.takeRandomCard();
             _playerList.shareOutCardsToSomePlayer(randomCard1, randomCard2);
+        }
+    }
+
+
+    public void initializeExperimentData() {
+
+        for(Player p : _playerList.getPlayers()) {
+
+            p.getExperimentData().reset();
+
+            p.getExperimentData().setInitialStack(
+                p.getMoneyOffBet()
+            );
         }
     }
 
@@ -261,6 +276,32 @@ public class Game {
 
         Map<Integer, Double> equity = EquityCalculator.calculateEquity(players, _tableCards, _deck);
         _playerList.notifyEquityToPlayers(equity);
+
+        PokerHistory history = PokerHistory.current();
+        if (history != null)
+            history.equity(equity);
+
+                
+    }
+
+    public void finishExperimentData() {
+
+        for(Player p : _playerList.getPlayers()) {
+
+            PlayerExperimentData e = p.getExperimentData();
+
+            e.setFinalStack(
+                p.getMoneyOffBet()
+            );
+
+            e.setWonHand(
+                p.isWinner()
+            );
+
+            e.setNetChips(
+                e.getFinalStack()
+            - e.getInitialStack());
+        }
     }
 
     public int getHandCounter() {

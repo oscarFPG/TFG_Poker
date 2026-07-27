@@ -62,6 +62,7 @@ public class Controller {
                 history = null;
                 // Player roles
                 _game.assignRolesToAllPlayers();
+                _game.initializeExperimentData();
                history = new PokerHistory(_game, handCounter + 1);
                 PokerHistory.set(history);
 
@@ -101,11 +102,13 @@ public class Controller {
                 log.debug("---- SHOWDOWN ----");
                 history.showdown();
                 _game.giveRewardToWinner();
+                _game.finishExperimentData();
             }
             catch (OnlyOnePlayerLeftException e) {
                 log.debug("Showdown with only one player left");
                  if (history != null ) history.showdown();
                 _game.giveRewardToWinner();
+                _game.finishExperimentData();
             }
 
             if (history != null ) {

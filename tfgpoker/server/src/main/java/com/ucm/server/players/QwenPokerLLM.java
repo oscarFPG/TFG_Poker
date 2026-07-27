@@ -132,5 +132,10 @@ public class QwenPokerLLM extends BotLLM {
         return "Qwen Poker LLM is a poker-playing bot that uses the Qwen language model, running locally with Ollama.";
     }
 
+    @Override
+    public String getPlayerModel() {
+        return "Qwen3-4B";
+    }
+
     
 }

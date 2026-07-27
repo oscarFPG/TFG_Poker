@@ -14,6 +14,7 @@ import com.ucm.server.gameobjects.Player;
 import com.ucm.server.interfaces.IPlayerActions;
 import com.ucm.server.logic.Game;
 import com.ucm.server.logic.PlayerList;
+import com.ucm.server.statistics.PlayerExperimentData;
 import com.ucm.server.statistics.Street;
 
 
@@ -52,7 +53,11 @@ public final class PokerHistory {
 
      private final Map<IPlayerActions, Street> foldStreet = new HashMap<>();
     private final Map<IPlayerActions, Integer> winnerPrize = new HashMap<>();
-
+    private boolean showdownPlayed = false;
+    private boolean flopSeen = false;
+    private boolean preflopRaiseSeen = false;
+    private boolean threeBetDone = false;
+    private int firstRaiserId = -1;
     /**
      * Maps every player to his seat number.
      */
@@ -81,6 +86,9 @@ public final class PokerHistory {
         dealer = null;
         smallBlind = null;
         bigBlind = null;
+        preflopRaiseSeen = false;
+        threeBetDone = false;
+        firstRaiserId = -1;
 
         playerSeats = new HashMap<>();
 
@@ -130,6 +138,8 @@ public final class PokerHistory {
 
     public void startHand() {
 
+        showdownPlayed = false;
+        flopSeen = false;
         foldStreet.clear();
         winnerPrize.clear();
         currentStreet = Street.PREFLOP;
@@ -198,11 +208,13 @@ public final class PokerHistory {
                 if (player.isEliminated())
                     continue;
 
+              
                 write(
-                        "Seat %d: %s (%d in chips)",
-                        playerSeats.get(player),
-                        player.getPlayerName(),
-                        player.getMoneyOffBet());
+                    "Seat %d: %s (%d in chips)",
+                    playerSeats.get(player),
+                    player.getPlayerName(),
+                    player.getMoneyOffBet()
+                );
             }
         }
 
@@ -239,31 +251,157 @@ public final class PokerHistory {
         write("%s: calls %d",
                 player.getPlayerName(),
                 player.getMoneyOnBet());
+
+        if (currentStreet == Street.PREFLOP) {
+            Player p = (Player) player;
+            p.getExperimentData().setVPIP(true);
+        }
     }
 
     public void raise(IPlayerActions player) {
         write("%s: raises to %d",
                 player.getPlayerName(),
                 player.getMoneyOnBet());
+
+         if (currentStreet == Street.PREFLOP) {
+
+            Player p = (Player) player;
+
+            p.getExperimentData().setVPIP(true);
+            p.getExperimentData().setPFR(true);
+
+             if (!preflopRaiseSeen) {
+
+                preflopRaiseSeen = true;
+                firstRaiserId = p.getPlayerId();
+            }
+            else if (!threeBetDone && p.getPlayerId() != firstRaiserId) {
+
+                p.getExperimentData().setThreeBet(true);
+                threeBetDone = true;
+            }
+        }
     }
 
     public void allIn(IPlayerActions player) {
         write("%s: is all-in %d",
                 player.getPlayerName(),
                 player.getMoneyOnBet());
+
+        if (currentStreet == Street.PREFLOP) {
+            Player p = (Player) player;
+            p.getExperimentData().setVPIP(true);
+            p.getExperimentData().setPFR(true);
+
+            if (!preflopRaiseSeen) {
+
+                preflopRaiseSeen = true;
+                firstRaiserId = p.getPlayerId();
+            }
+            else if (!threeBetDone && p.getPlayerId() != firstRaiserId) {
+
+                p.getExperimentData().setThreeBet(true);
+                threeBetDone = true;
+            }
+        }
     }
         
     public void winner(IPlayerActions player, int prize) {
       winnerPrize.put(player, prize);
+      Player p = (Player) player;
+      p.getExperimentData().setWonHand(true);
+
+      if(showdownPlayed)
+        p.getExperimentData().setWSD(true);
+
+      if(flopSeen)
+         p.getExperimentData().setWWSF(true);
     }
     /*--------------------------------------------------
      * EXPERIMENT DATA
      *--------------------------------------------------*/
 
-    public void experimentData() {
+   public void equity(Map<Integer, Double> equityMap) {
 
-        // TODO
+        for (Player player : players) {
+
+            Double equity = equityMap.get(player.getPlayerId());
+
+            if (equity == null)
+                continue;
+
+            player.getExperimentData().setEquity(currentStreet, equity);
+        }
     }
+    
+    /*--------------------------------------------------
+    * EXPERIMENT DATA
+    *--------------------------------------------------*/
+
+   public void experimentData() {
+
+    blankLine();
+    write("*** EXPERIMENT ***");
+    blankLine();
+
+    for (Player player : players) {
+
+        PlayerExperimentData exp = player.getExperimentData();
+
+        blankLine();
+        write("--------- PLAYER %d -------------" , player.getPlayerId());
+        blankLine();
+
+        write("Seat............... %d", playerSeats.get(player));
+        write("Player............. %s", player.getPlayerName());
+        write("PlayerId........... %d", player.getPlayerId());
+
+        blankLine();
+
+        write("Type............... %s", player.getPlayerType());
+        write("Model.............. %s", player.getPlayerModel());
+        write("Style.............. %s", getPlayerStyle(player));
+
+        blankLine();
+
+        write("Position........... %s", mapRole(player.getRole()));
+        write("Hole cards......... %s %s",
+                player.getPlayerCards()[0].toLetterString(),
+                player.getPlayerCards()[1].toLetterString());
+
+        blankLine();
+
+        write("Initial stack...... %d", exp.getInitialStack());
+        write("Final stack........ %d", exp.getFinalStack());
+        write("Net chips.......... %+d", exp.getNetChips());
+
+        blankLine();
+
+        write("Preflop equity..... %.2f %%", exp.getPreflopEquity());
+        write("Flop equity........ %.2f %%", exp.getFlopEquity());
+        write("Turn equity........ %.2f %%", exp.getTurnEquity());
+        write("River equity....... %.2f %%", exp.getRiverEquity());
+        write("Decision time...... %d ms", exp.getDecisionTime());
+
+        blankLine();
+
+        write("VPIP............... %s", exp.isVPIP() ? "YES" : "NO");
+        write("PFR................ %s", exp.isPFR() ? "YES" : "NO");
+        write("3Bet............... %s", exp.isThreeBet() ? "YES" : "NO");
+      
+
+        blankLine();
+
+        write("WTSD............... %s", exp.isWTSD() ? "YES" : "NO");
+        write("WSD................ %s", exp.isWSD() ? "YES" : "NO");
+        write("WWSF............... %s", exp.isWWSF() ? "YES" : "NO");
+
+        blankLine();
+
+        write("Hand result........ %s",
+                exp.isWonHand() ? "WON" : "LOST");
+    }
+}
 
     /*--------------------------------------------------
      * WRITE
@@ -288,8 +426,9 @@ public final class PokerHistory {
 
     public void flop(Card[] tableCards) {
 
-          currentStreet = Street.FLOP;
+        currentStreet = Street.FLOP;
         blankLine();
+        flopSeen = true;
 
         write("*** FLOP *** %s %s %s",
                 tableCards[0].toLetterString(),
@@ -328,6 +467,15 @@ public final class PokerHistory {
         blankLine();
 
         write("*** SHOW DOWN ***");
+        showdownPlayed = true;
+
+        for (Player player : players) {
+
+            if (!player.isFolded()) {
+
+                player.getExperimentData().setWTSD(true);
+            }
+        }
     }
 
     public void summary(Card[] tableCards) {
@@ -339,7 +487,7 @@ public final class PokerHistory {
         write("Total pot: %d", playerList.getTotalPot());
         blankLine();
 
-       write("Board: [%s]", boardToString(tableCards));
+       write("Board: %s", boardToString(tableCards));
 
         blankLine();
 
@@ -406,5 +554,21 @@ public final class PokerHistory {
         return sb.toString();
     }
 
-    
+    private String getPlayerStyle(Player player) {
+
+        return switch (player.getStyle()) {
+
+            case DEFAULT -> "DEFAULT";
+
+            case TIGHT_PASSIVE -> "TP";
+
+            case TIGHT_AGGRESSIVE -> "TAG";
+
+            case LOOSE_PASSIVE -> "LP";
+
+            case LOOSE_AGGRESSIVE -> "LAG";
+
+            case MANIAC -> "MANIAC";
+        };
+    }
 }
