@@ -3,7 +3,6 @@ package com.ucm.client.views.original.controllers;
 import com.ucm.common.BotDescriptor;
 import com.ucm.common.BotStyle;
 
-import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;

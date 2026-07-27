@@ -3,6 +3,7 @@
 <Configuration status="WARN">
 
     <Appenders>
+
         <!-- Console Appender (DEBUG+) + use different colors for each level -->
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout 
@@ -32,7 +33,6 @@
                 </Route>
             </Routes>
         </Routing>
-
 
 
         <Routing name="PokerHistoryRouter">
@@ -71,8 +71,6 @@
             <AppenderRef ref="Console"/>
             <!--  <AppenderRef ref="FileRouter"/> -->
         </Root>
-
-       
 
     </Loggers>
 

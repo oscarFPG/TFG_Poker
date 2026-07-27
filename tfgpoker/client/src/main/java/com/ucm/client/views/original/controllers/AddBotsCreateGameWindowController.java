@@ -1,35 +1,21 @@
 package com.ucm.client.views.original.controllers;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.ucm.client.ClientInfo;
 import com.ucm.common.BotDescriptor;
 import com.ucm.common.BotRegistry;
 import com.ucm.common.BotStyle;
-import com.ucm.common.GameType;
-import com.ucm.common.SocketUtils;
 
-import javafx.animation.RotateTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.transform.Rotate;
-import javafx.util.Duration;
 
 
 public class AddBotsCreateGameWindowController extends GenericController {
     
-    private static final int MIN_NUM_BOTS = 0;
     private static final int MAX_NUM_BOTS = 8;
     private static final int MAX_NUM_BOTS_SPECTATOR = 9;
 

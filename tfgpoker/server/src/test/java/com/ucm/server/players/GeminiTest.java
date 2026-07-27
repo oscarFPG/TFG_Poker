@@ -15,7 +15,7 @@ import com.ucm.server.gameobjects.Player;
 public class GeminiTest {
  
     
-    @Test
+    //@Test
     public void testApi() {
 
         try {
@@ -23,8 +23,8 @@ public class GeminiTest {
             GeminiLLM geminiLLM = new GeminiLLM(BotStyle.DEFAULT);
             Player player = new Player(0, "Gemini", 1000, geminiLLM);
 
-            player.receiveCard( new Card(2, Suit.CLUBS));
-            player.receiveCard( new Card(4, Suit.CLUBS));
+            player.receiveCard( new Card(2, Suit.CLUBS) );
+            player.receiveCard( new Card(4, Suit.CLUBS) );
             player.receiveRole(PlayerRole.DEALER);
             String response = player.makePlay(1, 2, 2);
 

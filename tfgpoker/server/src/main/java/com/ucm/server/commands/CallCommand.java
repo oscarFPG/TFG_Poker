@@ -52,7 +52,10 @@ public class CallCommand extends Command {
         
 
         _player.call(maxBet);
-        PokerHistory.current().call(_player);
+
+        if(PokerHistory.current() != null)
+            PokerHistory.current().call(_player);
+        
         return CommandResult.continuePlaying(maxBet, false);
     }
 

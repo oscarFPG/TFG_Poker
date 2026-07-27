@@ -44,15 +44,11 @@ public class Controller {
 
     private void runGame() throws CancelGameException {
 
-       
         int handCounter = 0;
         boolean endOfGame = false;
 
-        //ThreadContext.put("match", "0");
-        //ThreadContext.put("hand", String.valueOf(handCounter));
         PokerHistory.startMatch(_game.getMatchId());
         PokerHistory history = null;
-
         while (!endOfGame) {
 
            
@@ -60,17 +56,17 @@ public class Controller {
             try {
 
                 history = null;
-                // Player roles
+                // Asign player roles
                 _game.assignRolesToAllPlayers();
+                
+                // Initialize history
                 _game.initializeExperimentData();
-               history = new PokerHistory(_game, handCounter + 1);
+                history = new PokerHistory(_game, handCounter + 1);
                 PokerHistory.set(history);
 
                 // Pre-flop (2)
                 log.debug("---- PRE-FLOP ----");
                 _game.shareOutCardsToAllPlayers();
-
-               
                 history.startHand();
                 _game.updateEquity();
                 _game.playHand();
@@ -106,12 +102,14 @@ public class Controller {
             }
             catch (OnlyOnePlayerLeftException e) {
                 log.debug("Showdown with only one player left");
-                 if (history != null ) history.showdown();
+                if (history != null) 
+                    history.showdown();
+
                 _game.giveRewardToWinner();
                 _game.finishExperimentData();
             }
 
-            if (history != null ) {
+            if (history != null) {
                 history.summary(_game.getTableCards());
                 history.experimentData();
                 history.endHand();
@@ -121,10 +119,7 @@ public class Controller {
             log.debug("---- ~HAND_{} ----", handCounter);
             endOfGame = _game.passTurn();
 
-            // Logger configuration for the next hand -> Write on file match{0}_hand{handCounter}.log
-            //log.debug("Finishing hand {}", handCounter);
             ++handCounter;
-            //ThreadContext.put("hand", String.valueOf(handCounter));
         }
 
         

@@ -23,7 +23,7 @@ import com.ucm.server.statistics.Street;
  */
 public final class PokerHistory {
 
-        /*--------------------------------------------------
+    /*--------------------------------------------------
     * CURRENT HISTORY
     *--------------------------------------------------*/
 
@@ -51,7 +51,7 @@ public final class PokerHistory {
     private Player smallBlind;
     private Player bigBlind;
 
-     private final Map<IPlayerActions, Street> foldStreet = new HashMap<>();
+    private final Map<IPlayerActions, Street> foldStreet = new HashMap<>();
     private final Map<IPlayerActions, Integer> winnerPrize = new HashMap<>();
     private boolean showdownPlayed = false;
     private boolean flopSeen = false;
@@ -124,13 +124,14 @@ public final class PokerHistory {
      * MATCH
      *--------------------------------------------------*/
 
-   public static void startMatch(String matchId) {
+    public static void startMatch(String matchId) {
         ThreadContext.put("match", matchId);
     }   
 
     public static void endMatch() {
         ThreadContext.clearAll();
     }
+
 
     /*--------------------------------------------------
      * HAND
@@ -167,11 +168,12 @@ public final class PokerHistory {
         ThreadContext.remove("hand");
     }
 
+
     /*--------------------------------------------------
      * POKERSTARS SECTIONS
      *--------------------------------------------------*/
 
-   private void writeHeader() {
+    private void writeHeader() {
 
         int activePlayers = 0;
 
@@ -201,22 +203,22 @@ public final class PokerHistory {
         }
     }
 
-        private void writeSeats() {
+    private void writeSeats() {
 
-            for (Player player : players) {
+        for (Player player : players) {
 
-                if (player.isEliminated())
-                    continue;
+            if (player.isEliminated())
+                continue;
 
-              
-                write(
-                    "Seat %d: %s (%d in chips)",
-                    playerSeats.get(player),
-                    player.getPlayerName(),
-                    player.getMoneyOffBet()
-                );
-            }
+            
+            write(
+                "Seat %d: %s (%d in chips)",
+                playerSeats.get(player),
+                player.getPlayerName(),
+                player.getMoneyOffBet()
+            );
         }
+    }
 
     private void writeBlinds() {
 
@@ -233,6 +235,7 @@ public final class PokerHistory {
         }
 
     }
+
 
    /*--------------------------------------------------
  * PLAYER ACTIONS
@@ -317,11 +320,13 @@ public final class PokerHistory {
       if(flopSeen)
          p.getExperimentData().setWWSF(true);
     }
+    
+    
     /*--------------------------------------------------
      * EXPERIMENT DATA
      *--------------------------------------------------*/
 
-   public void equity(Map<Integer, Double> equityMap) {
+    public void equity(Map<Integer, Double> equityMap) {
 
         for (Player player : players) {
 
@@ -334,73 +339,75 @@ public final class PokerHistory {
         }
     }
     
+
     /*--------------------------------------------------
     * EXPERIMENT DATA
     *--------------------------------------------------*/
 
-   public void experimentData() {
-
-    blankLine();
-    write("*** EXPERIMENT ***");
-    blankLine();
-
-    for (Player player : players) {
-
-        PlayerExperimentData exp = player.getExperimentData();
+    public void experimentData() {
 
         blankLine();
-        write("--------- PLAYER %d -------------" , player.getPlayerId());
+        write("*** EXPERIMENT ***");
         blankLine();
 
-        write("Seat............... %d", playerSeats.get(player));
-        write("Player............. %s", player.getPlayerName());
-        write("PlayerId........... %d", player.getPlayerId());
+        for (Player player : players) {
 
-        blankLine();
+            PlayerExperimentData exp = player.getExperimentData();
 
-        write("Type............... %s", player.getPlayerType());
-        write("Model.............. %s", player.getPlayerModel());
-        write("Style.............. %s", getPlayerStyle(player));
+            blankLine();
+            write("--------- PLAYER %d -------------" , player.getPlayerId());
+            blankLine();
 
-        blankLine();
+            write("Seat............... %d", playerSeats.get(player));
+            write("Player............. %s", player.getPlayerName());
+            write("PlayerId........... %d", player.getPlayerId());
 
-        write("Position........... %s", mapRole(player.getRole()));
-        write("Hole cards......... %s",
-                boardToString(player.getPlayerCards()));
+            blankLine();
 
-        blankLine();
+            write("Type............... %s", player.getPlayerType());
+            write("Model.............. %s", player.getPlayerModel());
+            write("Style.............. %s", getPlayerStyle(player));
 
-        write("Initial stack...... %d", exp.getInitialStack());
-        write("Final stack........ %d", exp.getFinalStack());
-        write("Net chips.......... %+d", exp.getNetChips());
+            blankLine();
 
-        blankLine();
+            write("Position........... %s", mapRole(player.getRole()));
+            write("Hole cards......... %s",
+                    boardToString(player.getPlayerCards()));
 
-        write("Preflop equity..... %.2f %%", exp.getPreflopEquity());
-        write("Flop equity........ %.2f %%", exp.getFlopEquity());
-        write("Turn equity........ %.2f %%", exp.getTurnEquity());
-        write("River equity....... %.2f %%", exp.getRiverEquity());
-        write("Decision time...... %d ms", exp.getDecisionTime());
+            blankLine();
 
-        blankLine();
+            write("Initial stack...... %d", exp.getInitialStack());
+            write("Final stack........ %d", exp.getFinalStack());
+            write("Net chips.......... %+d", exp.getNetChips());
 
-        write("VPIP............... %s", exp.isVPIP() ? "YES" : "NO");
-        write("PFR................ %s", exp.isPFR() ? "YES" : "NO");
-        write("3Bet............... %s", exp.isThreeBet() ? "YES" : "NO");
-      
+            blankLine();
 
-        blankLine();
+            write("Preflop equity..... %.2f %%", exp.getPreflopEquity());
+            write("Flop equity........ %.2f %%", exp.getFlopEquity());
+            write("Turn equity........ %.2f %%", exp.getTurnEquity());
+            write("River equity....... %.2f %%", exp.getRiverEquity());
+            write("Decision time...... %d ms", exp.getDecisionTime());
 
-        write("WTSD............... %s", exp.isWTSD() ? "YES" : "NO");
-        write("WSD................ %s", exp.isWSD() ? "YES" : "NO");
-        write("WWSF............... %s", exp.isWWSF() ? "YES" : "NO");
+            blankLine();
 
-        blankLine();
+            write("VPIP............... %s", exp.isVPIP() ? "YES" : "NO");
+            write("PFR................ %s", exp.isPFR() ? "YES" : "NO");
+            write("3Bet............... %s", exp.isThreeBet() ? "YES" : "NO");
+            
+
+            blankLine();
+
+            write("WTSD............... %s", exp.isWTSD() ? "YES" : "NO");
+            write("WSD................ %s", exp.isWSD() ? "YES" : "NO");
+            write("WWSF............... %s", exp.isWWSF() ? "YES" : "NO");
+
+            blankLine();
 
         write("Hand result........ %s",
                 exp.isWonHand() ? "WON" : "LOST");
     }
-}
+    }
+
 
     /*--------------------------------------------------
      * WRITE
@@ -561,4 +568,5 @@ public final class PokerHistory {
             case MANIAC -> "MANIAC";
         };
     }
+    
 }
