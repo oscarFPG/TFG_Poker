@@ -1,6 +1,5 @@
 package com.ucm.server.players;
 
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -11,6 +10,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
 import com.ucm.common.BotStyle;
@@ -22,6 +23,8 @@ import com.ucm.server.interfaces.IPlayerInfo;
 
 
 public class LlamaPokerLLM extends BotLLM {
+
+    private static final Logger log = LogManager.getLogger(LlamaPokerLLM.class);
 
     private static final String OLLAMA_URL = "http://localhost:11434/api/generate";
     private static final int LLAMA_ID = GameType.BOT_LLAMA;
@@ -36,13 +39,15 @@ public class LlamaPokerLLM extends BotLLM {
     protected String callModel(String prompt) {
         
         try {
+
+            // Make HTTP connection
             URL url = new URL(OLLAMA_URL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setDoOutput(true);
 
+            // Sanitize prompt
             String safePrompt = prompt
                     .replace("\\", "\\\\")
                     .replace("\"", "\\\"")
@@ -60,36 +65,43 @@ public class LlamaPokerLLM extends BotLLM {
                 "num_predict": 30
                 }
             }
-            """.formatted(MODEL_NAME, safePrompt);
+            """
+            .formatted(MODEL_NAME, safePrompt);
 
+            // Send request via JSON
             OutputStream os = conn.getOutputStream();
             os.write(json.getBytes());
             os.flush();
             os.close();
 
             BufferedReader br = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream()));
+                new InputStreamReader(
+                    conn.getInputStream()
+                )
+            );
 
+            // Receive model response
             StringBuilder response = new StringBuilder();
             String line;
-
             while ((line = br.readLine()) != null) {
                 response.append(line);
             }   
             conn.disconnect();
 
+            // Extract action from JSON
             String raw = response.toString();
             JSONObject obj = new JSONObject(raw);
-            String clean = obj.getString("response");
+            String cleanResponse = obj.getString("response");
 
-            clean = clean.replace("\\u003c", "<")
+            // Replace special characters
+            cleanResponse = cleanResponse.replace("\\u003c", "<")
                             .replace("\\u003e", ">");
 
-            return clean;
+            return cleanResponse;
         } 
         catch (Exception e) {
-            System.out.printf("ERROR WITH OLLAMA: %s\n", e.getMessage());
-            return "<action>fold</action>";
+            log.error("Ollama bot {} could not be reached! Action made in this case: FOLD", MODEL_NAME);
+            return GameType.FOLD_ACTION_FULL;
         }
     }
 

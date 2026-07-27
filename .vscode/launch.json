@@ -3,13 +3,6 @@
     "configurations": [
         {
             "type": "java",
-            "name": "MainApp",
-            "request": "launch",
-            "mainClass": "com.ucm.client.MainApp",
-            "projectName": "client"
-        },
-        {
-            "type": "java",
             "name": "Run Server",
             "preLaunchTask": "Server run",
             "request": "launch"
@@ -21,20 +14,6 @@
             "hostName": "localhost",
             "port": 8000,
             "projectName": "server"
-        },
-        {
-            "type": "java",
-            "name": "Run Client",
-            "preLaunchTask": "Client run",
-            "request": "launch"
-        },
-        {
-            "type": "java",
-            "name": "Debug Client",
-            "request": "attach",
-            "hostName": "localhost",
-            "port": 8000,
-            "projectName": "client"
         },
         {
             "type": "java",
