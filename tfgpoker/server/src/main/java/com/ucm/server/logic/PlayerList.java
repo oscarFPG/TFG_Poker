@@ -280,15 +280,21 @@ public class PlayerList implements Iterable<Node> {
                 continue;
             }
 
-            // Execute player on turn action and notify all about the player state
+            // Notify all about the player state
             notifyTurnPlayer(playerOnTurn._player);
+
+            // Ask player to play and check response time
             long start = System.nanoTime();
             Command command = askCommandToPlayer(playerOnTurn, sb, bb, maxBet);
             long end = System.nanoTime();
+
+            // Annotate response time
             playerOnTurn._player.getExperimentData().setDecisionTime((end - start) / 1_000_000);
+            
+            // Execute player action
             CommandResult result = command.execute(sb, bb, maxBet);
             
-
+            // Notify new player state
             notifyPlayerOwnState(playerOnTurn);
             notifyOtherPlayerActionToAllPlayers(playerOnTurn._player);
             
@@ -297,7 +303,8 @@ public class PlayerList implements Iterable<Node> {
             notifyTotalPotToAllPlayers(totalPot);
 
             if( result.folds() ) {
-                --playersRemaining; 
+
+                --playersRemaining;
                 if (playersRemaining == 1) {
                     _totalPot = totalPot;
                     updateHandState();
@@ -313,11 +320,6 @@ public class PlayerList implements Iterable<Node> {
 
             pivotPlayer = result.raises() ? playerOnTurn : pivotPlayer;
             playerOnTurn = getNextPlayerActive(playerOnTurn);
-
-            //log.debug("Total pot is {}", totalPot);
-            //log.debug("Current bet is {}", currentBet);
-            //log.debug("Maximum bet is {}", maxBet);
-            //log.debug("Minimum raise is {}", minRaise);
         }
         while(pivotPlayer != playerOnTurn && playersRemaining != 0);
 
