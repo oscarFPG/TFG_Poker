@@ -8,13 +8,9 @@ import com.ucm.common.BotStyle;
 
 public class BotNotAllowedStyleCardController extends BotCardController{
     
-    private static final int MIN_NUM_BOTS = 0;
-
-
 
     public BotNotAllowedStyleCardController() {
         super(false);
-
     }
 
 

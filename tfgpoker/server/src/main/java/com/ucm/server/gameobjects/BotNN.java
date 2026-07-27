@@ -3,9 +3,6 @@ package com.ucm.server.gameobjects;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.ucm.server.interfaces.IPlayerInfo;
 
 import ai.onnxruntime.OrtEnvironment;
@@ -14,8 +11,6 @@ import ai.onnxruntime.OrtSession;
 
 
 public abstract class BotNN extends Bot {
-
-    private static final Logger log = LogManager.getLogger(BotNN.class);
 
     private static final String MODEL_PATH = "models_nn/";
 

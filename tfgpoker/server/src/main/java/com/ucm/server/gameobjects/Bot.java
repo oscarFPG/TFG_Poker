@@ -14,8 +14,7 @@ import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.interfaces.IPlayerInfo;
 import com.ucm.server.interfaces.IPlayerNotificator;
-import com.ucm.server.logic.Game;
-import com.ucm.server.logic.Timer;
+
 
 /**
  * Abstract class that represents an automated poker player (bot).
