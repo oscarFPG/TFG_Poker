@@ -1,12 +1,18 @@
 package com.ucm.server.evaluator;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.List;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.Suit;
+import com.ucm.server.evaluator.Evaluator.RANK;
 import com.ucm.server.exceptions.EvaluatorException;
+import com.ucm.server.gameobjects.Deck;
 
 
 public class EvaluatorTest {
@@ -347,6 +353,84 @@ public class EvaluatorTest {
 
         Assertions.assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 7459);
 
+    }
+
+    @Test
+    public void testAllCombinations() {
+
+        Deck deck = new Deck();
+        int combinations = 0;
+        int high_card = 0;
+        int one_pair = 0;
+        int two_pair = 0;
+        int three = 0;
+        int straight = 0;
+        int flush = 0;
+        int full_house = 0;
+        int four = 0;
+        int straight_flush = 0;
+
+
+        List<Card> cards = deck.getAvailableCards();
+        for(int a = 0; a < cards.size() - 4; ++a)
+            for(int b = a + 1; b < cards.size() - 3; ++b)
+                for(int c = b + 1; c < cards.size() - 2; ++c)
+                    for(int d = c + 1; d < cards.size() - 1; ++d)
+                        for(int e = d + 1; e < cards.size(); ++e) {
+
+                            // Count combinations
+                            ++combinations;
+
+                            // Select cards
+                            Card c1 = cards.get(a);
+                            Card c2 = cards.get(b);
+                            Card c3 = cards.get(c);
+                            Card c4 = cards.get(d);
+                            Card c5 = cards.get(e);
+
+                            // Encode cards
+                            int c1e = Evaluator.encodeCard(c1);
+                            int c2e = Evaluator.encodeCard(c2);
+                            int c3e = Evaluator.encodeCard(c3);
+                            int c4e = Evaluator.encodeCard(c4);
+                            int c5e = Evaluator.encodeCard(c5);
+
+                            // Evaluate cards
+                            short eval = Evaluator.evaluate5hand(c1e, c2e, c3e, c4e, c5e);
+                            RANK rank = Evaluator.handRank(eval);
+                            
+                            if(rank == RANK.HIGH_CARD)
+                                ++high_card;
+                            else if(rank == RANK.ONE_PAIR)
+                                ++one_pair;
+                            else if(rank == RANK.TWO_PAIR)
+                                ++two_pair;
+                            else if(rank == RANK.THREE_OF_A_KIND)
+                                ++three;
+                            else if(rank == RANK.STRAIGHT)
+                                ++straight;
+                            else if(rank == RANK.FLUSH)
+                                ++flush;
+                            else if(rank == RANK.FULL_HOUSE)
+                                ++full_house;
+                            else if(rank == RANK.FOUR_OF_A_KIND)
+                                ++four;
+                            else if(rank == RANK.STRAIGHT_FLUSH)
+                                ++straight_flush;
+                        }
+        
+        // Check all possible hands
+        assertEquals(1302540, high_card);
+        assertEquals(1098240, one_pair);
+        assertEquals(123552, two_pair);
+        assertEquals(54912, three);
+        assertEquals(10200, straight);
+        assertEquals(5108, flush);
+        assertEquals(3744, full_house);
+        assertEquals(624, four);
+        assertEquals(40, straight_flush);
+
+        assertEquals(2598960, combinations);
     }
 
 }

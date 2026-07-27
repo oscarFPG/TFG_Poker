@@ -38,7 +38,7 @@ public class BotNNTest {
             player.receiveCard(card2);
             player.putSmallBlindBet(sb);
 
-            String action = cfr.notifyMakePlay(sb, bb, bb, player);
+            String action = cfr.play(sb, bb, bb, player);
 
             System.out.printf("Action: %s\n", action);
         }

@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
 import com.ucm.common.gameobjects.Card;
-import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.interfaces.IPlayerInfo;
 
 /**
@@ -38,68 +38,15 @@ import com.ucm.server.interfaces.IPlayerInfo;
  */
 public abstract class BotLLM extends Bot {
 
-    /**
-     * Community cards on the table.
-     */
-    protected List<Card> table;
-
-    /**
-     * History of actions in the current hand.
-     */
-    protected List<String> actionHistory;
-
-    /**
-     * Small blind value.
-     */
-    protected int _smallBlind;
-
-    /**
-     * Big blind value.
-     */
-    protected int _bigBlind;
-
-    /**
-     * Max bet in the current hand
-     */
-    protected int _maxBet;
-
-    /**
-     * Total pot in the table
-     */
-    protected int _totalPot;
-
-    /**
-     * Estimated probability of winning the hand.
-     */
-    protected double _equity;
-
-
-        /**
-     * Playing style used by this bot.
-     * By default, bots use a balanced playing style.
-     */
-    protected BotStyle _style = BotStyle.DEFAULT;
-
-    protected IPlayerInfo _player;
-
-    public BotStyle getStyle() {
-        return _style;
-    }
-
-    public void setPlayingStyle(BotStyle style) {
-        _style = (style == null) ? BotStyle.DEFAULT : style;
-    }
 
     /**
      * Default constructor.
      * 
      * @param botID unique identifier for the bot
      */
-    public BotLLM(int botID) {
-        super(botID);
+    public BotLLM(int botID, BotStyle style) {
+        super(botID, style);
     }
-
-
 
     /**
      * Calls the external LLM with the given prompt.
@@ -126,10 +73,11 @@ public abstract class BotLLM extends Bot {
      * @return {@link String} prompt ready to be sent to the model
      */
     protected String buildPrompt(int sb, int bb, int maxBet, IPlayerInfo player) {
-        return String.format("""
+
+        String prompt = String.format("""
             You are an expert No Limit Texas Hold'em player.
 
-           Play optimally according to your assigned playing style.
+            Play optimally according to your assigned playing style.
 
             %s
 
@@ -146,7 +94,8 @@ public abstract class BotLLM extends Bot {
             Board: %s
             Stack: %d
             Pot: %d
-            Blinds: %.1f/%d
+            Blinds: %d/%d
+            
 
             Action history:
             %s
@@ -164,16 +113,19 @@ public abstract class BotLLM extends Bot {
             <action>check</action>
             <action>raise AMOUNT</action>
             """,
-                mapRole( player.getRole() ),
-                formatCards( List.of(player.getPlayerCards()) ),
-                table.isEmpty() ? "[]" : formatCards(table),
-                player.getMoneyOffBet(),
-                _totalPot,
-                _smallBlind / 2.0,
-                _bigBlind,
-                getHistory(),
-                _equity
+            _style.getPromptDescription(),
+            mapRole( player.getRole() ),
+            formatCards( List.of(player.getPlayerCards()) ),
+            table.isEmpty() ? "[]" : formatCards(table),
+            player.getMoneyOffBet(),
+            _totalPot,
+            sb,
+            bb,
+            getHistory(),
+            _equity
         );
+
+        return prompt;
     }
 
     /**
@@ -202,10 +154,10 @@ public abstract class BotLLM extends Bot {
     protected String sanitize(String action, IPlayerInfo player) {
 
         action = action.toLowerCase().trim();
-        if (action.contains("fold")) return "fold";
-        if (action.contains("call")) return "call";
-        if (action.contains("check")) return "check";
-        if (action.contains("all-in")) return "all-in";
+        if (action.contains("fold")) return GameType.FOLD_ACTION_FULL;
+        if (action.contains("call")) return GameType.CALL_ACTION_FULL;
+        if (action.contains("check")) return GameType.CHECK_ACTION_FULL;
+        if (action.contains("all-in")) return GameType.ALL_IN_ACTION_FULL;
 
 
         action = action.replace("bet", "raise");
@@ -213,14 +165,10 @@ public abstract class BotLLM extends Bot {
         Matcher m = p.matcher(action);
 
         if (m.find()) {
-            return "raise " + m.group(1);
+            return GameType.RAISE_ACTION_FULL + " " + m.group(1);
         }
 
-        if (action.contains("raise")) {
-            return "call";
-        }
-
-        return "fold";
+        return GameType.FOLD_ACTION_FULL;
     }
 
 
@@ -232,13 +180,17 @@ public abstract class BotLLM extends Bot {
      */
     protected String formatCards(List<Card> cards) {
 
+        if(cards == null)
+            return "[]";
+
         List<String> result = new ArrayList<>();
-        for (Card c : cards)
-            result.add( c.toLetterString() );
+        for (Card c : cards) {
+            if(c != null)
+                result.add( c.toLetterString() );
+        }
 
         return "[" + String.join(", ", result) + "]";
     }
-
 
     /**
      * Determines the action to take using the LLM.
@@ -258,7 +210,7 @@ public abstract class BotLLM extends Bot {
      * @return sanitized poker action (fold, call, check or raise X)
      */
     @Override
-    public String notifyMakePlay(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException {
+    public String play(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException {
         
         _smallBlind = sb;
         _bigBlind = bb;
@@ -272,4 +224,8 @@ public abstract class BotLLM extends Bot {
         return sanitized;
     }
     
+    @Override
+    public String getPlayerType() {
+        return "BOT_LLM";
+    }
 }

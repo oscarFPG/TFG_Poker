@@ -205,7 +205,7 @@ public class WaitingGameWindowController extends GenericController {
                         playerName0.setText(_clientInfo.name);
                         playerMoney0.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
                         pokerPlayer0.setOpacity(1);
-                        getAvatarPosition(0, _clientInfo.name);
+                        updateAvatarPosition(0, _clientInfo.name, false);
                     });
                 }
 
@@ -224,7 +224,7 @@ public class WaitingGameWindowController extends GenericController {
                     playerName0.setText(_clientInfo.name);
                     playerMoney0.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
                     pokerPlayer0.setOpacity(1);
-                    getAvatarPosition(0, _clientInfo.name);
+                    updateAvatarPosition(0, _clientInfo.name, false);
                     startButton.setVisible(false);
                 });
             }
@@ -236,9 +236,10 @@ public class WaitingGameWindowController extends GenericController {
                 if(event == GameType.EVENT_PLAYER_JOINED) {
 
                     _clientInfo.playerPositions = PokerPreGame.receivePlayerListWaiting(input, output);
-                    Platform.runLater(() ->
-                        showPlayers(_clientInfo.playerPositions)
-                    );    
+                    Platform.runLater(() -> {
+                        resetPlayers(_clientInfo.playerPositions);
+                        showPlayers(_clientInfo.playerPositions);
+                    });    
                 }
                 else if(event == GameType.CONFIRMATION_GAME_STARTS) {
                     System.out.printf("Event GAME_STARTS!\n");
@@ -313,7 +314,7 @@ public class WaitingGameWindowController extends GenericController {
         }
     }
 
-    private void getAvatarPosition(final int position, String name) {
+    private void updateAvatarPosition(final int position, String name, boolean clear) {
 
         ImageView avatarImage = _listaAvatarProfiles.get(position);
         Image avatar = _clientInfo.getAvatar(name, 80);
@@ -329,7 +330,7 @@ public class WaitingGameWindowController extends GenericController {
         clip.radiusProperty().bind(avatarImage.fitWidthProperty().divide(2));
 
         avatarImage.setClip(clip);
-        avatarImage.setVisible(true);
+        avatarImage.setVisible(!clear);
     }
 
     private void showPlayers(final List<PlayerInfo> players) {
@@ -356,7 +357,7 @@ public class WaitingGameWindowController extends GenericController {
                     nameLabel.setText(p.name);
                     moneyLabel.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
                     playerStackPane.setOpacity(1);
-                    getAvatarPosition(pos, p.name);
+                    updateAvatarPosition(pos, p.name, false);
                 });
 
                 seatIndex++;
@@ -380,7 +381,7 @@ public class WaitingGameWindowController extends GenericController {
                 nameLabel.setText(p.name);
                 moneyLabel.setText(String.valueOf(_clientInfo.gameConfig._initialMoney));
                 playerStackPane.setOpacity( 1 );
-                getAvatarPosition(pos, p.name);
+                updateAvatarPosition(pos, p.name, false);
             });
 
             ++beforePosition;
@@ -401,7 +402,7 @@ public class WaitingGameWindowController extends GenericController {
                 nameLabel.setText(p.name);
                 moneyLabel.setText(String.valueOf(_clientInfo.gameConfig._initialMoney));
                 playerStackPane.setOpacity( 1 );
-                getAvatarPosition(pos, p.name);
+                updateAvatarPosition(pos, p.name, false);
             });
 
             --nextPosition;
@@ -413,4 +414,47 @@ public class WaitingGameWindowController extends GenericController {
         System.out.printf("\n");
     }
 
+    private void resetPlayers(final List<PlayerInfo> players) {
+
+        int myID = _clientInfo.id;
+        if(myID == -1) {
+         
+            int seatIndex = 0;
+            for(int i = players.size() - 1; 0 <= i; i--) {
+
+                Label nameLabel = getNameLabelByPosition(seatIndex);
+                Label moneyLabel = getMoneyLabelByPosition(seatIndex);
+                StackPane playerStackPane = getPlayerStackPaneByPosition(seatIndex);
+
+                final int pos = i;
+
+                Platform.runLater(() -> {
+                    nameLabel.setText("");
+                    moneyLabel.setText("");
+                    playerStackPane.setOpacity(0.6);
+                    updateAvatarPosition(pos, _clientInfo.name, true);
+                });
+
+                seatIndex++;
+            }
+
+            return;
+        }
+
+        for(int seatIndex = 1; seatIndex < 9; seatIndex++) {
+            
+            Label nameLabel = getNameLabelByPosition(seatIndex);
+            Label moneyLabel = getMoneyLabelByPosition(seatIndex);
+            StackPane playerStackPane = getPlayerStackPaneByPosition(seatIndex);
+
+            final int pos = seatIndex;
+
+            Platform.runLater(() -> {
+                nameLabel.setText("");
+                moneyLabel.setText("");
+                playerStackPane.setOpacity(0.6);
+                updateAvatarPosition(pos, _clientInfo.name, true);
+            });
+        }
+    }
 }

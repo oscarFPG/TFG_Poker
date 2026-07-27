@@ -1,7 +1,11 @@
 package com.ucm.server.commands;
 
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.ucm.common.GameType;
+import com.ucm.server.history.PokerHistory;
 import com.ucm.server.interfaces.IPlayerActions;
 import com.ucm.server.middleclasses.CommandResult;
 
@@ -12,6 +16,8 @@ import com.ucm.server.middleclasses.CommandResult;
  */
 public class CallCommand extends Command {
 
+    private static final Logger log = LogManager.getLogger(CallCommand.class);
+    
 
     public CallCommand() {}
 
@@ -30,20 +36,23 @@ public class CallCommand extends Command {
 		return new CallCommand(player);
 	}
 
-	@Override
-    public boolean validate(final int maxBet) {
-		return maxBet > 0 && maxBet <= _playersOffBetMoney + _playersOnBetMoney;
-    }
-
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
 
-        if(maxBet == _playersOffBetMoney + _playersOnBetMoney){
+        if(maxBet >= _playersOffBetMoney + _playersOnBetMoney){
             AllInCommand allIn = new AllInCommand(_player);
             return allIn.execute(sb, bb, maxBet);
         }
+        else if(_playersOnBetMoney == 0 && maxBet == 0) {
+            CheckCommand command = new CheckCommand(_player);
+            return command.execute(sb, bb, maxBet);
+        }
         
+        log.debug("Player {} makes CALL", _player.getPlayerName());
+        
+
         _player.call(maxBet);
+        PokerHistory.current().call(_player);
         return CommandResult.continuePlaying(maxBet, false);
     }
 

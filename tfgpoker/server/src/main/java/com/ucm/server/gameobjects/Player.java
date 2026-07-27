@@ -2,15 +2,14 @@ package com.ucm.server.gameobjects;
 
 import java.io.IOException;
 
-import javax.management.RuntimeErrorException;
-
+import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
-import com.ucm.server.exceptions.TurnTimeoutException;
 import com.ucm.server.interfaces.IPlayerActions;
 import com.ucm.server.interfaces.IPlayerInfo;
 import com.ucm.server.interfaces.IPlayerNotificator;
+import com.ucm.server.statistics.PlayerExperimentData;
 
 
 /**
@@ -122,6 +121,9 @@ public class Player implements IPlayerActions {
     protected IPlayerNotificator _playerInfo;
     
 
+   private final PlayerExperimentData _experimentData = new PlayerExperimentData();
+
+
     /**
      * Default constructor.
      */
@@ -145,6 +147,7 @@ public class Player implements IPlayerActions {
         _numCards = 0;
         _playerInfo = playerInfo;
 
+       
         _isFold = false;
         _isWinner = false;
         _isAllIn = false;
@@ -191,7 +194,7 @@ public class Player implements IPlayerActions {
 
 
     /* Player methods */
-    public String makePlay(int sb, int bb, int maxBet) throws IOException, TurnTimeoutException {
+    public String makePlay(int sb, int bb, int maxBet) throws IOException {
 
         if(_playerInfo == null)
             return null;
@@ -220,6 +223,7 @@ public class Player implements IPlayerActions {
         _isWinner = false;
         _isAllIn = false;
         _lastCommand = "none";
+        _experimentData.reset();
     }
 
 
@@ -531,4 +535,22 @@ public class Player implements IPlayerActions {
         return _lastCommand;
     }
 
+    
+
+    public PlayerExperimentData getExperimentData() {
+        return _experimentData;
+    }
+
+    public BotStyle getStyle() {
+        return _playerInfo.getStyle();
+    }
+
+    public String getPlayerType() {
+        return _playerInfo.getPlayerType();
+    }
+
+    public String getPlayerModel() {
+        return _playerInfo.getPlayerModel();
+    }
+   
 }

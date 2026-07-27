@@ -1,11 +1,12 @@
 package com.ucm.server.players;
 
-import java.io.IOException;
+
 import java.nio.FloatBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.Suit;
@@ -240,8 +241,13 @@ public class AgentCFR extends BotNN {
     }
 
     @Override
-    public Bot create() {
+    public Bot create(BotStyle style) {
         return new AgentCFR();
+    }
+
+    @Override
+    public String getPlayerModel() {
+        return "AgentCFR_1";
     }
 
 }

@@ -2,21 +2,17 @@ package com.ucm.server.gameobjects;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.ucm.server.interfaces.IPlayerInfo;
 
 import ai.onnxruntime.OrtEnvironment;
 import ai.onnxruntime.OrtException;
 import ai.onnxruntime.OrtSession;
-import ai.onnxruntime.OrtSession.SessionOptions;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 
 public abstract class BotNN extends Bot {
@@ -58,7 +54,7 @@ public abstract class BotNN extends Bot {
     }
 
     @Override
-    public String notifyMakePlay(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException {
+    public String play(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException {
         
         float[] state = encondeState(maxBet, player);
         float[] prediction = predict(state);
@@ -97,5 +93,10 @@ public abstract class BotNN extends Bot {
      * @return final response
      */
     public abstract String translate(int sb, int bb, int maxBet, IPlayerInfo player, final float[] prediction);
+
+     @Override
+    public String getPlayerType() {
+        return "BOT_NN";
+    }
 
 }

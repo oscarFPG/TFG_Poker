@@ -4,19 +4,51 @@
         {
             "label": "Server run",
             "type": "shell",
-            "command": "cd .\\tfgpoker; .\\mvnw.cmd -pl server -Prun exec:java"
+            "options": {
+                "cwd": "${workspaceFolder}/tfgpoker"
+            },
+            "windows": {
+                "command": ".\\mvnw.cmd",
+                "args": [
+                    "-pl",
+                    "server",
+                    "-Prun",
+                    "exec:java"
+                ]
+            },
+            "linux": {
+                "command": "mvn",
+                "args": [
+                    "-pl",
+                    "server",
+                    "-Prun",
+                    "exec:java"
+                ]
+            }
         },
-        {
-            "label": "Client run",
-            "type": "shell",
-            "command": "cd .\\tfgpoker; .\\mvnw.cmd -pl client -Prun exec:java"
-        },
-        
         {
             "label": "Run JavaFX",
             "type": "shell",
-            "command": "cd tfgpoker; .\\mvnw.cmd -pl client -Prun javafx:run"
+            "options": {
+                "cwd": "${workspaceFolder}/tfgpoker"
+            },
+            "windows": {
+                "command": ".\\mvnw.cmd",
+                "args": [
+                    "-pl",
+                    "client",
+                    "-Prun",
+                    "javafx:run"
+                ]
+            },
+            "linux": {
+                "command": "mvn",
+                "args": [
+                    "-pl",
+                    "client",
+                    "javafx:run"
+                ]
+            }
         }
-        
     ]
 }

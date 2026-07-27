@@ -179,6 +179,12 @@
     -fx-text-fill: #e5e5e5;
 }
 
+.text-font-add-bots {
+    -fx-text-fill: #e5e5e5;
+    -fx-font-family: "Constantia";
+    -fx-font-size: 11px;
+}
+
 .general-text-font {
     -fx-text-fill: #e5e5e5;
     -fx-font-family: "Constantia";
@@ -204,6 +210,10 @@
 .transparent-background{
     -fx-background-color: transparent;
     -fx-control-inner-background: transparent;
+}
+
+.transparent-background .viewport {
+    -fx-background-color: transparent;
 }
 
 /**

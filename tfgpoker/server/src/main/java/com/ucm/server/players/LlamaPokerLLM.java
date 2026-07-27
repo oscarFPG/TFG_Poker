@@ -1,8 +1,5 @@
 package com.ucm.server.players;
 
-
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -13,6 +10,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.json.JSONObject;
+
+import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.server.gameobjects.Bot;
@@ -22,13 +24,14 @@ import com.ucm.server.interfaces.IPlayerInfo;
 
 public class LlamaPokerLLM extends BotLLM {
 
+    private static final Logger log = LogManager.getLogger(LlamaPokerLLM.class);
+
     private static final String OLLAMA_URL = "http://localhost:11434/api/generate";
-    public static final String MODEL_NAME = "llamaPokerBot";
     private static final int LLAMA_ID = GameType.BOT_LLAMA;
+    public static final String MODEL_NAME = "llamaPokerBot";
 
-
-    public LlamaPokerLLM() {
-        super(LLAMA_ID);
+    public LlamaPokerLLM(BotStyle style) {
+        super(LLAMA_ID, style);
     }
 
     
@@ -36,13 +39,15 @@ public class LlamaPokerLLM extends BotLLM {
     protected String callModel(String prompt) {
         
         try {
+
+            // Make HTTP connection
             URL url = new URL(OLLAMA_URL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setDoOutput(true);
 
+            // Sanitize prompt
             String safePrompt = prompt
                     .replace("\\", "\\\\")
                     .replace("\"", "\\\"")
@@ -60,37 +65,43 @@ public class LlamaPokerLLM extends BotLLM {
                 "num_predict": 30
                 }
             }
-            """.formatted(MODEL_NAME, safePrompt);
+            """
+            .formatted(MODEL_NAME, safePrompt);
 
+            // Send request via JSON
             OutputStream os = conn.getOutputStream();
             os.write(json.getBytes());
             os.flush();
             os.close();
 
             BufferedReader br = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream()));
+                new InputStreamReader(
+                    conn.getInputStream()
+                )
+            );
 
+            // Receive model response
             StringBuilder response = new StringBuilder();
             String line;
-
             while ((line = br.readLine()) != null) {
                 response.append(line);
             }   
             conn.disconnect();
 
+            // Extract action from JSON
             String raw = response.toString();
             JSONObject obj = new JSONObject(raw);
-            String clean = obj.getString("response");
+            String cleanResponse = obj.getString("response");
 
-            clean = clean.replace("\\u003c", "<")
+            // Replace special characters
+            cleanResponse = cleanResponse.replace("\\u003c", "<")
                             .replace("\\u003e", ">");
 
-            return clean;
-
+            return cleanResponse;
         } 
         catch (Exception e) {
-            e.printStackTrace();
-            return "<action>fold</action>";
+            log.error("Ollama bot {} could not be reached! Action made in this case: FOLD", MODEL_NAME);
+            return GameType.FOLD_ACTION_FULL;
         }
     }
 
@@ -113,13 +124,11 @@ public class LlamaPokerLLM extends BotLLM {
         action = action.toLowerCase().trim();
 
         if ( action.contains("fold") )
-            return "fold";
-        if ( action.contains("call") 
-            || (action.contains("check") && _maxBet > 0 ) )
-            return "call";
-        if ( action.contains("check") 
-            || (action.contains("call") && _maxBet == 0) )
-            return "check";
+            return GameType.FOLD_ACTION_FULL;
+        if ( action.contains("call") )
+            return GameType.CALL_ACTION_FULL;
+        if ( action.contains("check") )
+            return GameType.CHECK_ACTION_FULL;
 
         
         // Raise action
@@ -128,26 +137,11 @@ public class LlamaPokerLLM extends BotLLM {
         Pattern p = Pattern.compile("^raise\\s+(\\d+(\\.\\d+)?)$");
         Matcher m = p.matcher(action);
         if (m.find()) {
-
             String targetBet = m.group(1);
-            int targetBetInt = Integer.parseInt(targetBet);
-            if(targetBetInt == _maxBet) {
-                return "call";
-            }
-            else if(targetBetInt < _maxBet 
-                || targetBetInt == player.getMoneyOffBet() + player.getMoneyOnBet()
-                || targetBetInt > player.getMoneyOffBet() + player.getMoneyOnBet()) {
-                return "call";
-            }
-            else
-                return "raise " + m.group(1);
+            return GameType.RAISE_ACTION_FULL + " " + targetBet;
         }
 
-        if (action.startsWith("raise")) {
-            return "call";
-        }
-
-        return "fold";
+        return GameType.FOLD_ACTION_FULL;
     }
 
 
@@ -306,8 +300,8 @@ public class LlamaPokerLLM extends BotLLM {
 
 
     @Override
-	public Bot create() {
-		return new LlamaPokerLLM();
+	public Bot create(BotStyle style) {
+		return new LlamaPokerLLM(style);
 	}
 
     @Override
@@ -320,4 +314,8 @@ public class LlamaPokerLLM extends BotLLM {
         return "This is the Llama3 local LLM poker bot. It uses the Ollama API to call a local Llama3 model fine-tuned for poker decision making. It provides detailed game context in the prompt and extracts actions from the model's response.";
     }
 
+    @Override
+    public String getPlayerModel() {
+        return "Llama3-8B";
+    }
 }

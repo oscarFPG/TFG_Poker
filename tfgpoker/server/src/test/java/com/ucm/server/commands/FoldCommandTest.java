@@ -22,7 +22,6 @@ public class FoldCommandTest {
         String input = "fodl";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
-        
 
         assertEquals(command, null);
     }
@@ -37,11 +36,8 @@ public class FoldCommandTest {
         String input = "fold";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
-        boolean valid = command.validate(maxBet);
         CommandResult result = command.execute(SMALL_BLIND, BIG_BLIND, maxBet);
 
-
-        assertEquals(true, valid);
         assertEquals(CommandResult.stopPlaying(), result);
         assertEquals(0, player.getMoneyOnBet());
         assertEquals(INITIAL_MONEY, player.getMoneyOffBet());
@@ -58,10 +54,8 @@ public class FoldCommandTest {
         String input = "fold";
         String[] inputFormatted = input.split(" ");
         Command command = Command.parseCommand(inputFormatted, player);
-        boolean valid = command.validate(maxBet);
         CommandResult result = command.execute(SMALL_BLIND, BIG_BLIND, maxBet);
 
-        assertEquals(true, valid);
         assertEquals(CommandResult.stopPlaying(), result);
         assertEquals(initialBet, player.getMoneyOnBet());
         assertEquals(INITIAL_MONEY - initialBet, player.getMoneyOffBet());

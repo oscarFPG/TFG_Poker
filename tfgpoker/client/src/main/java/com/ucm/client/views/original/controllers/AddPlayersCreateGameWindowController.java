@@ -1,18 +1,18 @@
 package com.ucm.client.views.original.controllers;
 
-import com.ucm.client.ClientInfo;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 
 public class AddPlayersCreateGameWindowController extends GenericController  {
 
     private static final int MIN_NUM_PLAYERS = 0;
     private static final int MAX_NUM_PLAYERS = 8;
+    private static final int MAX_NUM_PLAYERS_SPECTATOR = 9;
 
     SpinnerValueFactory.IntegerSpinnerValueFactory valueFactoryPlayer;
 
@@ -47,7 +47,7 @@ public class AddPlayersCreateGameWindowController extends GenericController  {
 
     private void initializeSpinnner() {
         int maxPlayers = getMaxRemainingPlayers();
-        int initialNumPlayers = _clientInfo.gameConfig._numPlayers;
+        int initialNumPlayers = isSpectator() ? _clientInfo.gameConfig._numPlayers + 1 : _clientInfo.gameConfig._numPlayers;
         if(initialNumPlayers > maxPlayers) {
             initialNumPlayers = maxPlayers;
         }
@@ -77,7 +77,10 @@ public class AddPlayersCreateGameWindowController extends GenericController  {
     }
 
     private int getMaxRemainingPlayers() {
-        int totalBots = _clientInfo.gameConfig._numBots1 + _clientInfo.gameConfig._numBots2;
+        int totalBots = _clientInfo.gameConfig._botsByType.values().stream().mapToInt(Integer::intValue).sum();
+        if(isSpectator ()){
+            return MAX_NUM_PLAYERS_SPECTATOR - totalBots;
+        }
         return MAX_NUM_PLAYERS - totalBots;
     }
 
@@ -90,6 +93,10 @@ public class AddPlayersCreateGameWindowController extends GenericController  {
         }
 
         _clientInfo.gameConfig._turnTimerPlayer = timerTurn;
+    }
+
+    private boolean isSpectator () {
+        return _clientInfo.gameConfig._joinedAsSpectator;
     }
 
     @FXML

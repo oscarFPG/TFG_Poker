@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
+import com.ucm.common.BotStyle;
 import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.gameobjects.BotLLM;
 import com.ucm.server.interfaces.IPlayerInfo;
@@ -21,8 +22,8 @@ public class QwenPokerLLM extends BotLLM {
 
 
 
-    public QwenPokerLLM() {
-        super(QWEN_ID);
+    public QwenPokerLLM(BotStyle style) {
+        super(QWEN_ID, style);
     }
 
 
@@ -117,8 +118,8 @@ public class QwenPokerLLM extends BotLLM {
 
 
     @Override
-    public Bot create() {
-        return new QwenPokerLLM();
+    public Bot create(BotStyle style) {
+        return new QwenPokerLLM(style);
     }
 
     @Override
@@ -129,6 +130,11 @@ public class QwenPokerLLM extends BotLLM {
     @Override
     public String getFullDescription() {
         return "Qwen Poker LLM is a poker-playing bot that uses the Qwen language model, running locally with Ollama.";
+    }
+
+    @Override
+    public String getPlayerModel() {
+        return "Qwen3-4B";
     }
 
     

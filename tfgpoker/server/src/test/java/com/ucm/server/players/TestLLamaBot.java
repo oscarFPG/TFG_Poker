@@ -3,8 +3,7 @@ package com.ucm.server.players;
 
 import java.io.IOException;
 
-import org.junit.jupiter.api.Test;
-
+import com.ucm.common.BotStyle;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.common.gameobjects.Suit;
@@ -19,7 +18,7 @@ public class TestLLamaBot {
     //@Test
     private void testPromptBasic_2Players() {
 
-        LlamaPokerLLM llama = new LlamaPokerLLM();
+        LlamaPokerLLM llama = new LlamaPokerLLM(BotStyle.TIGHT_PASSIVE);
         Player player = new Player(0, "LlamaBot", INIT_MONEY, llama);
 
         // Roles
@@ -36,7 +35,7 @@ public class TestLLamaBot {
     //@Test
     private void testFullPrompt() throws IOException {
 
-        LlamaPokerLLM llama = new LlamaPokerLLM();
+        LlamaPokerLLM llama = new LlamaPokerLLM(BotStyle.LOOSE_PASSIVE);
         Player player = new Player(0, "LlamaBot", INIT_MONEY, llama);
 
         // =========================

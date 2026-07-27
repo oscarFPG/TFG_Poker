@@ -1,7 +1,11 @@
 package com.ucm.server.commands;
 
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.ucm.common.GameType;
+import com.ucm.server.history.PokerHistory;
 import com.ucm.server.interfaces.IPlayerActions;
 import com.ucm.server.middleclasses.CommandResult;
 
@@ -11,6 +15,7 @@ import com.ucm.server.middleclasses.CommandResult;
  */
 public class AllInCommand extends Command {
 
+    private static final Logger log = LogManager.getLogger(AllInCommand.class);
 
     public AllInCommand() {}
 
@@ -31,18 +36,12 @@ public class AllInCommand extends Command {
 	}
 
     @Override
-    public boolean validate(final int maxBet) {
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
 
-        _player.allIn();
+        log.debug("Player {} makes ALL-IN", _player.getPlayerName());
 
+        _player.allIn();
+        PokerHistory.current().allIn(_player);
         int playerBet = _player.getMoneyOnBet();
         return CommandResult.continuePlaying(playerBet, playerBet > maxBet);
     }

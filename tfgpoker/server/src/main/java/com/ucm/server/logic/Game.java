@@ -1,8 +1,11 @@
 package com.ucm.server.logic;
 
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,18 +21,24 @@ import com.ucm.server.exceptions.EvaluatorException;
 import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.gameobjects.Deck;
 import com.ucm.server.gameobjects.Player;
+import com.ucm.server.history.PokerHistory;
 import com.ucm.server.managers.BotManager;
 import com.ucm.server.middleclasses.HandInfo;
 import com.ucm.server.middleclasses.PlayerEvaluation;
 import com.ucm.server.middleclasses.Spectator;
 import com.ucm.server.players.HumanPlayer;
 import com.ucm.server.statistics.EquityCalculator;
+import com.ucm.server.statistics.PlayerExperimentData;
 
 
 
 public class Game {
 
     private static final Logger log = LogManager.getLogger(Game.class);
+    private static final AtomicInteger NEXT_MATCH_ID = new AtomicInteger(1);
+    private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss_SSS");
+    private final String _matchId;
+    
 
     public static final boolean DEBUG = true;
     public static final boolean DEBUG_PLAYERS = false;
@@ -52,7 +61,6 @@ public class Game {
     private int _level;
     private int _handCounter = 0;
     private boolean _firstHand = true;
-    
 
     public Game(
         List<ClientStruct> players, 
@@ -60,6 +68,8 @@ public class Game {
         Spectator spectator, 
         GameConfig config
     ) throws EvaluatorException {
+
+       _matchId = String.format("%s_%03d",LocalDateTime.now().format(FORMAT), NEXT_MATCH_ID.getAndIncrement());
 
         _gameConfig = config;
 
@@ -103,6 +113,19 @@ public class Game {
             Card randomCard1 = _deck.takeRandomCard();
             Card randomCard2 = _deck.takeRandomCard();
             _playerList.shareOutCardsToSomePlayer(randomCard1, randomCard2);
+        }
+    }
+
+
+    public void initializeExperimentData() {
+
+        for(Player p : _playerList.getPlayers()) {
+
+            p.getExperimentData().reset();
+
+            p.getExperimentData().setInitialStack(
+                p.getMoneyOffBet()
+            );
         }
     }
 
@@ -219,7 +242,7 @@ public class Game {
             
             Bot bot = BotManager.createBot( bs.botId() );
             if(bot != null) {
-                Bot specificBot = bot.create();
+                Bot specificBot = bot.create(bs.style());
                 String botName = String.format("%s#%d", bs.botName(), id);
                 _playerList.addPlayer( new Player(id, botName, config._initialMoney, specificBot) );
                 ++id;
@@ -253,6 +276,56 @@ public class Game {
 
         Map<Integer, Double> equity = EquityCalculator.calculateEquity(players, _tableCards, _deck);
         _playerList.notifyEquityToPlayers(equity);
+
+        PokerHistory history = PokerHistory.current();
+        if (history != null)
+            history.equity(equity);
+
+                
     }
 
+    public void finishExperimentData() {
+
+        for(Player p : _playerList.getPlayers()) {
+
+            PlayerExperimentData e = p.getExperimentData();
+
+            e.setFinalStack(
+                p.getMoneyOffBet()
+            );
+
+            e.setWonHand(
+                p.isWinner()
+            );
+
+            e.setNetChips(
+                e.getFinalStack()
+            - e.getInitialStack());
+        }
+    }
+
+    public int getHandCounter() {
+    return _handCounter;
+    }
+
+    public int getCurrentSmallBlind() {
+        return _currentSB;
+    }
+
+    public int getCurrentBigBlind() {
+        return _currentBB;
+    }
+
+    public PlayerList getPlayerList() {
+        return _playerList;
+    }
+
+    public String getMatchId() {
+        return _matchId;
+    }
+
+    public Card[] getTableCards() {
+        return _tableCards;
+    }
 }
+
