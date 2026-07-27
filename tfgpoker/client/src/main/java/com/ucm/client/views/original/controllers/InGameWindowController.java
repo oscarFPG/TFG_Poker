@@ -45,6 +45,11 @@ import javafx.util.Duration;
 
 public class InGameWindowController extends GenericController {
 
+    /* Constants */
+    private static final float DEFAULT_OPCAITY = 1.0f;
+    private static final float FOLDED_OPACITY = 0.6f;
+    private static final float ELIMINATED_OPACITY = 0.6f;
+    
 
     /* Player info */
     @FXML private Label usernamePlaceHolder;
@@ -781,7 +786,6 @@ public class InGameWindowController extends GenericController {
                     // Player roles
                     System.out.printf("-- New hand --\n");
                     role = PokerGame.receivePlayerRole(input);
-                    //System.out.printf("Assigned role: %s\n", role.toString());
                     playerStartInfo(socket);
                     NotificationManager.showSuccess(Messages.Notifications.WAITING_GAME_START);
                     
@@ -1020,7 +1024,7 @@ public class InGameWindowController extends GenericController {
 
                     int seatID = _playerSeatMap.get(_clientInfo.id);
                     if(iAmFolded) {
-                        _listHandBet.get( seatID ).setOpacity(0.6);
+                        _listHandBet.get( seatID ).setOpacity(FOLDED_OPACITY);
                     }
                     else {
                         GUI_putPlayerBet(_clientInfo.id, myOnBetMoney, myOffBetMoney, iAmFolded);
@@ -1142,7 +1146,7 @@ public class InGameWindowController extends GenericController {
             else if(code == GameType.OTHER_PLAYER_STATUS) {
 
                 int playerID = SocketUtils.receiveInt(socket.getInputStream());
-                String player = SocketUtils.receiveString(socket.getInputStream());
+                String playerName = SocketUtils.receiveString(socket.getInputStream());
                 PlayerRole role = PokerGame.receivePlayerRole( socket.getInputStream() );
                 boolean isFolded = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
                 boolean isWinner = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
@@ -1346,21 +1350,35 @@ public class InGameWindowController extends GenericController {
     ) {
 
         int seatID = _playerSeatMap.get(playerID);
+        StackPane playerStackPane = _listPlayerStackPanes.get(seatID);
+
         Label nameLabel = _listNameLabels.get(seatID);
         Label moneyLabel = _listMoneyLabels.get(seatID);
         Label betLabel = _listOnBetMoney.get(seatID);
 
-
+        // Draw dealers button if necessary
         if(isShowdown && role == PlayerRole.DEALER) {
             GUI_putDealerButton(playerID);
+        }
+
+        // Draw player as folded if necessary
+        if(isFolded) {
+            playerStackPane.setOpacity(FOLDED_OPACITY);
+            _listHandBet.get(seatID).setOpacity(FOLDED_OPACITY);
+            _listImageCards.get(seatID).setOpacity(FOLDED_OPACITY);
+        }
+        else {
+            playerStackPane.setOpacity(DEFAULT_OPCAITY);
+            _listHandBet.get(seatID).setOpacity(DEFAULT_OPCAITY);
+            _listImageCards.get(seatID).setOpacity(DEFAULT_OPCAITY);
         }
 
         if(isShowdown && isWinner) {
             System.out.printf("Player %s is the winner of the hand!\n", nameLabel.getText());
             NotificationManager.showSuccess(String.format(Messages.Notifications.CONFIRMATION_WINNER_GAME, nameLabel.getText()));
              
+            // Change winners name during 3 seconds
             PauseTransition transition = new PauseTransition( Duration.seconds(3) );
-
             nameLabel.setText( nameLabel.getText() + " (Winner!)" );
             transition.setOnFinished(event -> {
                 nameLabel.setText( nameLabel.getText().replace(" (Winner!)", "") );
@@ -1370,7 +1388,7 @@ public class InGameWindowController extends GenericController {
 
         if(isEliminated) {
             System.out.printf("Player %s has been eliminated from the game!\n", nameLabel.getText());
-             NotificationManager.showSuccess(String.format(Messages.Notifications.CONFIRMATION_PLAYER_ELIMINATED, nameLabel.getText()));
+            NotificationManager.showSuccess(String.format(Messages.Notifications.CONFIRMATION_PLAYER_ELIMINATED, nameLabel.getText()));
              
             nameLabel.setText( nameLabel.getText() + " (Eliminated)" );
             _listPlayerStackPanes.get(seatID).setOpacity(0.4);
@@ -1477,9 +1495,9 @@ public class InGameWindowController extends GenericController {
             StackPane playerStackPane = _listPlayerStackPanes.get(seatID);
             HBox cards = _listImageCards.get(seatID);
 
-            playerStackPane.setOpacity(0.6);
-            _listHandBet.get(seatID).setOpacity(0.6);
-            cards.setOpacity(0.6);
+            playerStackPane.setOpacity(FOLDED_OPACITY);
+            _listHandBet.get(seatID).setOpacity(FOLDED_OPACITY);
+            cards.setOpacity(FOLDED_OPACITY);
         }
     }
 
@@ -1601,6 +1619,10 @@ public class InGameWindowController extends GenericController {
         _scheduler.shutdownNow();
     }
 
+    private void GUI_clearPlayersFolded() {
+
+    }
+
     private void GUI_clearTableCards() {
         tableCard0.setImage(null);
         tableCard1.setImage(null);
@@ -1610,11 +1632,15 @@ public class InGameWindowController extends GenericController {
     }
 
     private void GUI_clearPlayerBets() {
+        
         _listOnBetMoney.forEach(label -> label.setVisible(false));
         _listHandBet.forEach(bet -> bet.setVisible(false));
-        _listHandBet.forEach(bet -> { bet.setVisible(false);  bet.setOpacity(1.0);});
-        _listPlayerStackPanes.forEach(pane -> pane.setOpacity(1.0));
-        _listImageCards.forEach(img -> img.setOpacity(1.0));
+        _listHandBet.forEach(bet -> {
+            bet.setVisible(false);  
+            bet.setOpacity(1.0);
+        });
+        //_listPlayerStackPanes.forEach(pane -> pane.setOpacity(1.0));
+        //_listImageCards.forEach(img -> img.setOpacity(1.0));
     }
 
     private void GUI_clearDealer() {

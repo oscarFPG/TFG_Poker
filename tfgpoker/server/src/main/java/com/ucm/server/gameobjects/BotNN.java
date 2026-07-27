@@ -2,8 +2,6 @@ package com.ucm.server.gameobjects;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -60,17 +58,6 @@ public abstract class BotNN extends Bot {
         float[] prediction = predict(state);
         String response = translate(sb, bb, maxBet, player, prediction);
         
-        //  Wait for a random number of seconds to send a response
-        Random rand = new Random();
-        int min_sec = 5;
-        int max_sec = 20;
-        try {
-            int randomSeconds = rand.nextInt((max_sec - min_sec) + 1) + min_sec;
-            log.info("Neural Network waiting for {} seconds...", randomSeconds);
-            TimeUnit.SECONDS.sleep(randomSeconds);
-        }
-        catch (InterruptedException e) {}   // Nothing
-
         return response;
     }
 
@@ -94,7 +81,7 @@ public abstract class BotNN extends Bot {
      */
     public abstract String translate(int sb, int bb, int maxBet, IPlayerInfo player, final float[] prediction);
 
-     @Override
+    @Override
     public String getPlayerType() {
         return "BOT_NN";
     }
