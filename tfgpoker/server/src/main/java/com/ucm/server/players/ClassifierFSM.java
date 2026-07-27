@@ -21,7 +21,7 @@ public class ClassifierFSM extends BotFSM {
 
 
     @Override
-    public String notifyMakePlay(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException {
+    public String play(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException {
         
         // Get table cards values -> Zero if there is no card on the table
         int valueTC1 = table.get(0) != null ? table.get(0).getNumber() : 0;

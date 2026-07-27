@@ -1,6 +1,9 @@
 package com.ucm.server.players;
 
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
 import com.ucm.server.gameobjects.Bot;
@@ -34,6 +37,8 @@ import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
  */
 public class GeminiLLM extends BotLLMOnline {
 
+    private static final Logger log = LogManager.getLogger(GeminiLLM.class);
+
     private static final int GEMINI_ID = GameType.BOT_GEMINI;
     public static final String NAME = "Gemini LLM";
 
@@ -61,7 +66,16 @@ public class GeminiLLM extends BotLLMOnline {
      */
     @Override
     protected String callModel(String prompt) {
-        return gemini.chat(prompt);
+        
+        String response = GameType.FOLD_ACTION_FULL;
+        try {
+            response = gemini.chat(prompt);
+        }
+        catch(Exception e) {
+            log.error("GeminiLLM could not be reached! Action made in this case: FOLD");
+        }
+
+        return response;
     }
 
     /**

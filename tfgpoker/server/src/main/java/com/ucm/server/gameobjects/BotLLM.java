@@ -38,8 +38,6 @@ import com.ucm.server.interfaces.IPlayerInfo;
  */
 public abstract class BotLLM extends Bot {
 
-    
-
 
     /**
      * Default constructor.
@@ -75,15 +73,6 @@ public abstract class BotLLM extends Bot {
      * @return {@link String} prompt ready to be sent to the model
      */
     protected String buildPrompt(int sb, int bb, int maxBet, IPlayerInfo player) {
-
-        String roles = mapRole( player.getRole() );
-        String cards = formatCards( List.of(player.getPlayerCards()) );
-        String tableCards = table.isEmpty() ? "[]" : formatCards(table);
-        int offBetMoney = player.getMoneyOffBet();
-        int pot = _totalPot;
-        String hist = getHistory();
-        double eq = _equity;
-
 
         String prompt = String.format("""
             You are an expert No Limit Texas Hold'em player.
@@ -124,16 +113,16 @@ public abstract class BotLLM extends Bot {
             <action>check</action>
             <action>raise AMOUNT</action>
             """,
-                _style.getPromptDescription(),
-                mapRole( player.getRole() ),
-                formatCards( List.of(player.getPlayerCards()) ),
-                table.isEmpty() ? "[]" : formatCards(table),
-                player.getMoneyOffBet(),
-                _totalPot,
-                _smallBlind,
-                _bigBlind,
-                getHistory(),
-                _equity
+            _style.getPromptDescription(),
+            mapRole( player.getRole() ),
+            formatCards( List.of(player.getPlayerCards()) ),
+            table.isEmpty() ? "[]" : formatCards(table),
+            player.getMoneyOffBet(),
+            _totalPot,
+            sb,
+            bb,
+            getHistory(),
+            _equity
         );
 
         return prompt;
@@ -191,9 +180,14 @@ public abstract class BotLLM extends Bot {
      */
     protected String formatCards(List<Card> cards) {
 
+        if(cards == null)
+            return "[]";
+
         List<String> result = new ArrayList<>();
-        for (Card c : cards)
-            result.add( c.toLetterString() );
+        for (Card c : cards) {
+            if(c != null)
+                result.add( c.toLetterString() );
+        }
 
         return "[" + String.join(", ", result) + "]";
     }
@@ -216,7 +210,7 @@ public abstract class BotLLM extends Bot {
      * @return sanitized poker action (fold, call, check or raise X)
      */
     @Override
-    public String notifyMakePlay(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException {
+    public String play(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException {
         
         _smallBlind = sb;
         _bigBlind = bb;

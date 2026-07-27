@@ -3,6 +3,10 @@ package com.ucm.server.gameobjects;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
@@ -10,6 +14,8 @@ import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.interfaces.IPlayerInfo;
 import com.ucm.server.interfaces.IPlayerNotificator;
+import com.ucm.server.logic.Game;
+import com.ucm.server.logic.Timer;
 
 /**
  * Abstract class that represents an automated poker player (bot).
@@ -36,6 +42,12 @@ import com.ucm.server.interfaces.IPlayerNotificator;
  * @see BotLLM
  */
 public abstract class Bot implements IPlayerNotificator {
+
+    public static final int MIN_DECISION_TIME_SEC = 4;
+    public static final int MAX_DECISION_TIME_SEC = 10; 
+
+    private static final Logger log = LogManager.getLogger(Bot.class);
+
 
     /**
      * Unique identifier for the bot, used to distinguish it from other bots.
@@ -177,6 +189,15 @@ public abstract class Bot implements IPlayerNotificator {
     */
     public abstract Bot create(BotStyle style);
     
+    /**
+     * Player immplementation for the decision making when it is his turn to play
+     * @param sb 
+     * @param bb
+     * @param maxBet
+     * @param player
+     * @return
+     */
+    public abstract String play(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException;
 
     /* ============== Communication methods ============== */
     @Override
@@ -214,6 +235,38 @@ public abstract class Bot implements IPlayerNotificator {
     @Override
     public void notifyEquity(double equity) throws IOException {
         _equity = equity; 
+    }
+
+    @Override
+    public String notifyMakePlay(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException {
+        
+        long startTime = System.currentTimeMillis();
+        long responseTime;
+
+        // Wait for bot response
+        String action = play(sb, bb, maxBet, player);
+
+        // Check stop time
+        responseTime = System.currentTimeMillis() - startTime;
+        log.warn("Bot {} response took {} miliseconds", player.getPlayerName(), responseTime);
+        
+        // If response took less than MIN_DECISION_TIME_SEC seconds, wait up to MAX_DECISION_TIME_SEC seconds to respond
+        if(responseTime < MIN_DECISION_TIME_SEC * 1000) {
+
+            long esperaMinima = MIN_DECISION_TIME_SEC * 1000 - responseTime;
+            long esperaMaxima = MAX_DECISION_TIME_SEC * 1000 - responseTime;
+
+            // Wait for a random time amount
+            long randomWaitingTime = ThreadLocalRandom.current().nextLong(esperaMinima, esperaMaxima + 1);
+            log.warn("Waiting {} miliseconds to respond", randomWaitingTime);
+
+            try {
+                Thread.sleep(randomWaitingTime);
+            }
+            catch (InterruptedException e) {}
+        }
+
+        return action;
     }
 
     @Override public void notifyPlayerRole(PlayerRole role) throws IOException {}

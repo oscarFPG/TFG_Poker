@@ -102,7 +102,7 @@ public class PotManager {
         _pots.sort( Comparator.comparingInt(p -> p.playerPot) );   // Important: start from the player with the smaller pot
 
         // Associate players with their rank
-        for(PlayerEvaluation p : players){
+        for(PlayerEvaluation p : players) {
             PlayerInfo player = _pots.stream()
                                     .filter( pl -> pl.playerID == p.playerID() )
                                     .findFirst()
