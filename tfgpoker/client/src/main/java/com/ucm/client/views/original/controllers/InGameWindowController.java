@@ -1619,10 +1619,6 @@ public class InGameWindowController extends GenericController {
         _scheduler.shutdownNow();
     }
 
-    private void GUI_clearPlayersFolded() {
-
-    }
-
     private void GUI_clearTableCards() {
         tableCard0.setImage(null);
         tableCard1.setImage(null);
@@ -1632,7 +1628,7 @@ public class InGameWindowController extends GenericController {
     }
 
     private void GUI_clearPlayerBets() {
-        
+
         _listOnBetMoney.forEach(label -> label.setVisible(false));
         _listHandBet.forEach(bet -> bet.setVisible(false));
         _listHandBet.forEach(bet -> {
