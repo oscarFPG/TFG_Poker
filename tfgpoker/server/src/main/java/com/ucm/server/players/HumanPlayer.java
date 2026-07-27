@@ -8,6 +8,7 @@ import java.util.Scanner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
 import com.ucm.common.SocketUtils;
 import com.ucm.common.gameobjects.Card;
@@ -249,6 +250,22 @@ public class HumanPlayer implements IPlayerNotificator {
 
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_BEFORE_PLAY);
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getPlayerId());
+    }
+
+
+    @Override
+    public BotStyle getStyle() {
+        return BotStyle.DEFAULT;
+    }
+
+    @Override
+    public String getPlayerType() {
+        return "HUMAN";
+    }
+
+    @Override
+    public String getPlayerModel() {
+        return "-";
     }
 
 }

@@ -95,6 +95,7 @@ public abstract class BotLLM extends Bot {
             Stack: %d
             Pot: %d
             Blinds: %d/%d
+            
 
             Action history:
             %s
@@ -223,4 +224,8 @@ public abstract class BotLLM extends Bot {
         return sanitized;
     }
     
+    @Override
+    public String getPlayerType() {
+        return "BOT_LLM";
+    }
 }

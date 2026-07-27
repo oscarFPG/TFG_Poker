@@ -1,8 +1,6 @@
 package com.ucm.server.players;
 
 
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -12,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.json.JSONObject;
 
 import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
@@ -302,4 +302,8 @@ public class LlamaPokerLLM extends BotLLM {
         return "This is the Llama3 local LLM poker bot. It uses the Ollama API to call a local Llama3 model fine-tuned for poker decision making. It provides detailed game context in the prompt and extracts actions from the model's response.";
     }
 
+    @Override
+    public String getPlayerModel() {
+        return "Llama3-8B";
+    }
 }

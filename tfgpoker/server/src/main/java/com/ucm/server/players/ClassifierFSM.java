@@ -73,5 +73,11 @@ public class ClassifierFSM extends BotFSM {
     public Bot create(BotStyle style) {
         return new ClassifierFSM();
     }
+
+    
+    @Override
+    public String getPlayerModel() {
+        return "ClassifierFSM";
+    }
     
 }

@@ -162,6 +162,7 @@ public abstract class Bot implements IPlayerNotificator {
         return _botID;
     }
 
+    @Override
     public BotStyle getStyle() {
         return _style;
     }
@@ -283,4 +284,13 @@ public abstract class Bot implements IPlayerNotificator {
     @Override public void notifyGameWinner() throws IOException {}
     @Override public void notifyGameLoser() throws IOException {}
 
+    @Override
+    public String getPlayerType() {
+        return "BOT";
+    }
+
+    @Override
+    public String getPlayerModel() {
+        return "-";
+    }
 }

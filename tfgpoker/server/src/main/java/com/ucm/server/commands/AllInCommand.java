@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ucm.common.GameType;
+import com.ucm.server.history.PokerHistory;
 import com.ucm.server.interfaces.IPlayerActions;
 import com.ucm.server.middleclasses.CommandResult;
 
@@ -40,6 +41,7 @@ public class AllInCommand extends Command {
         log.debug("Player {} makes ALL-IN", _player.getPlayerName());
 
         _player.allIn();
+        PokerHistory.current().allIn(_player);
         int playerBet = _player.getMoneyOnBet();
         return CommandResult.continuePlaying(playerBet, playerBet > maxBet);
     }
