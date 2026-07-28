@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 
+
 public class BotStyleRowController {
     
     private Spinner<Integer> _spinnerBotStyle;

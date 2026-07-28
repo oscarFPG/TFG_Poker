@@ -2,7 +2,6 @@ package com.ucm.server.managers;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import com.ucm.common.GameType;
 import com.ucm.server.gameobjects.Bot;

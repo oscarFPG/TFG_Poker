@@ -17,14 +17,12 @@ public class PotManager {
         public int playerID;
         public short playerRank;
         public int playerPot;
-        public boolean isFolded;
 
         
         public PlayerInfo(final int id, final short rank, final int pot) {
             playerID = id;
             playerRank = rank;
             playerPot = pot;
-            isFolded = false;
         }
 
 
@@ -39,7 +37,6 @@ public class PotManager {
         public void restart(){
             playerRank = 0;
             playerPot = 0;
-            isFolded = false;
         }
 
     }
@@ -77,7 +74,6 @@ public class PotManager {
                         orElse(null);
 
         p.increasePot(amount);
-        p.isFolded = hasFolded;
         if(hasFolded)
             p.playerRank = Short.MAX_VALUE;
     }
