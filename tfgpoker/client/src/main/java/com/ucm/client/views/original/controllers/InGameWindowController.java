@@ -188,7 +188,7 @@ public class InGameWindowController extends GenericController {
 
         initialize();
         GUI_initializePlayersInfo();
-        GUI_initializeCardStyle();
+        GUI_flipDownAllPlayerCards();
         GUI_initializeDealerButton();
         GUI_initializeMoneySlider();
         GUI_initializeTimers();
@@ -379,7 +379,7 @@ public class InGameWindowController extends GenericController {
         _listEquity.forEach(label -> { label.setVisible(false); label.setText("0%");});
     }
 
-    private void GUI_initializeCardStyle() { 
+    private void GUI_flipDownAllPlayerCards() { 
         Image cardImage = new Image(getClass().getResource(_clientInfo.gameConfig._selectedCard).toExternalForm());
         _listPaintCards.subList(2, _listPaintCards.size()).forEach(iv -> iv.setImage(cardImage));
     }
@@ -775,6 +775,7 @@ public class InGameWindowController extends GenericController {
 
                     Platform.runLater(() -> {
                         GUI_clearTableCards();
+                        GUI_flipDownAllPlayerCards();
                         GUI_clearPlayerBets();
                         GUI_clearDealer();
                         GUI_clearTurnPlayer();
@@ -805,7 +806,7 @@ public class InGameWindowController extends GenericController {
                     Platform.runLater(() -> {
                         GUI_putRoundName("PREFLOP");
                     });
-                    playRound(playerCards[0], playerCards[1], role, socket);
+                    playRound(socket);
                     tableCards[0] = PokerGame.receiveCard(input);  // First table card
                     tableCards[1] = PokerGame.receiveCard(input);  // Second table card
                     tableCards[2] = PokerGame.receiveCard(input);  // Third table card
@@ -823,7 +824,7 @@ public class InGameWindowController extends GenericController {
                         GUI_putRoundName("FLOP");
                         GUI_clearPlayerBets();
                     });
-                    playRound(playerCards[0], playerCards[1], role, socket);
+                    playRound(socket);
                     tableCards[3] = PokerGame.receiveCard(input);  // Fourth table card
                     handleEquity(socket);
                     Platform.runLater(() -> {
@@ -837,7 +838,7 @@ public class InGameWindowController extends GenericController {
                         GUI_putRoundName("TURN");
                         GUI_clearPlayerBets();
                     });
-                    playRound(playerCards[0], playerCards[1], role, socket);
+                    playRound(socket);
                     tableCards[4] = PokerGame.receiveCard(input);  // fifth table card
                     handleEquity(socket);
                     Platform.runLater(() -> {
@@ -851,7 +852,7 @@ public class InGameWindowController extends GenericController {
                         GUI_putRoundName("RIVER");
                         GUI_clearPlayerBets();
                     });
-                    playRound(playerCards[0], playerCards[1], role, socket);
+                    playRound(socket);
 
 
                     // Showdown
@@ -906,11 +907,10 @@ public class InGameWindowController extends GenericController {
         return true;
     }
 
-    private void playRound(Card card1, Card card2, PlayerRole role, Socket socket) 
+    private void playRound(Socket socket) 
     throws OnlyOnePlayerLeftException, CancelGameException, IOException, InterruptedException {
 
         boolean handEndsByFold = false;
-
 		int serverCode;
         do {
 
@@ -1121,7 +1121,7 @@ public class InGameWindowController extends GenericController {
                 String myName = SocketUtils.receiveString(socket.getInputStream());
                 int myOffBetMoney = SocketUtils.receiveInt(socket.getInputStream());
                 int myOnBetMoney = SocketUtils.receiveInt(socket.getInputStream());
-                PlayerRole myRole = PokerGame.receivePlayerRole( socket.getInputStream() );
+                PlayerRole myRole = PokerGame.receivePlayerRole(socket.getInputStream());
                 boolean iAmFolded = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
                 boolean iAmWinner = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
                 boolean iAmEliminated = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
@@ -1134,7 +1134,7 @@ public class InGameWindowController extends GenericController {
 
                 int playerID = SocketUtils.receiveInt(socket.getInputStream());
                 String playerName = SocketUtils.receiveString(socket.getInputStream());
-                PlayerRole role = PokerGame.receivePlayerRole( socket.getInputStream() );
+                PlayerRole role = PokerGame.receivePlayerRole(socket.getInputStream());
                 boolean isFolded = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
                 boolean isWinner = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
                 boolean isEliminated = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
@@ -1144,6 +1144,9 @@ public class InGameWindowController extends GenericController {
                 Platform.runLater(() -> {
                     GUI_updatePlayerInfo(playerID, role, moneyOnBet, moneyOffBet, isFolded, isWinner, isEliminated, true);
                 });
+            }
+            else if (code == GameType.PLAYER_CARDS) {
+                
             }
             else if(code == GameType.PLAYER_STATUS_END) {
                 System.out.printf("Player status end received!\n");
@@ -1558,6 +1561,45 @@ public class InGameWindowController extends GenericController {
         });
     }
 
+    private void GUI_clearTableCards() {
+        tableCard0.setImage(null);
+        tableCard1.setImage(null);
+        tableCard2.setImage(null);
+        tableCard3.setImage(null);
+        tableCard4.setImage(null);
+    }
+
+    private void GUI_clearPlayerBets() {
+
+        _listOnBetMoney.forEach(label -> label.setVisible(false));
+        _listHandBet.forEach(bet -> bet.setVisible(false));
+        _listHandBet.forEach(bet -> {
+            bet.setVisible(false);  
+            bet.setOpacity(1.0);
+        });
+    }
+
+    private void GUI_clearDealer() {
+        _listDealer.forEach(iv -> iv.setVisible(false));
+    }
+
+    private void GUI_clearTurnPlayer() {
+        _listPlayerStackPanes.forEach(pane -> pane.getStyleClass().remove("tourn-player-color"));
+    }
+
+    private void GUI_clearTimer(int seatID) {
+        List<Rectangle> rectangles = _listTimer.get(seatID);
+        if(rectangles == null) return;
+
+        Platform.runLater(()->{
+            for (Rectangle r : rectangles) {
+                r.setVisible(false);
+            }
+        });
+    }
+
+
+
     private synchronized void GUI_startVisualTimer(int playerID) {
 
         GUI_stopVisualTimer();
@@ -1606,41 +1648,6 @@ public class InGameWindowController extends GenericController {
         _scheduler.shutdownNow();
     }
 
-    private void GUI_clearTableCards() {
-        tableCard0.setImage(null);
-        tableCard1.setImage(null);
-        tableCard2.setImage(null);
-        tableCard3.setImage(null);
-        tableCard4.setImage(null);
-    }
-
-    private void GUI_clearPlayerBets() {
-
-        _listOnBetMoney.forEach(label -> label.setVisible(false));
-        _listHandBet.forEach(bet -> bet.setVisible(false));
-        _listHandBet.forEach(bet -> {
-            bet.setVisible(false);  
-            bet.setOpacity(1.0);
-        });
-    }
-
-    private void GUI_clearDealer() {
-        _listDealer.forEach(iv -> iv.setVisible(false));
-    }
-
-    private void GUI_clearTurnPlayer() {
-        _listPlayerStackPanes.forEach(pane -> pane.getStyleClass().remove("tourn-player-color"));
-    }
-
-    private void GUI_clearTimer(int seatID) {
-        List<Rectangle> rectangles = _listTimer.get(seatID);
-        if(rectangles == null) return;
-
-        Platform.runLater(()->{
-            for (Rectangle r : rectangles) {
-                r.setVisible(false);
-            }
-        });
-    }
+    
     
 }

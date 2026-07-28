@@ -101,6 +101,7 @@ public class Controller {
                 _game.finishExperimentData();
             }
             catch (OnlyOnePlayerLeftException e) {
+                
                 log.debug("Showdown with only one player left");
                 if (history != null) 
                     history.showdown();

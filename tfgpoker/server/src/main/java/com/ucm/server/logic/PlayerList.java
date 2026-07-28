@@ -477,8 +477,34 @@ public class PlayerList implements Iterable<Node> {
         }
     }
 
+    public void broadcastAllPlayerCards() {
+
+        // Send the player cards to everyone just to display -> Only if the player has not folded or it is eliminated
+        Iterator<Node> modelIT = iterator();
+        while( modelIT.hasNext() ) {
+
+            Node modelPlayer = modelIT.next();
+            if(modelPlayer._player.isEliminated() || modelPlayer._player.isFolded())
+                continue;
+
+
+            Iterator<Node> receiverIT = iterator();
+            while( receiverIT.hasNext() ) {
+
+                Node receiver = receiverIT.next();
+                receiver._player.notifyOtherPlayerCards(
+                    modelPlayer._player.getPlayerId(),
+                    modelPlayer._player.getCard
+                );
+            }
+
+        }
+        
+    }
+
     public List<HandInfo> getPlayerHandsInfo() {
 
+        // Generate struct <playerID, cards> for every player to select the winner(s)
         List<HandInfo> info = new ArrayList<>(_playerCounter);
         Iterator<Node> it = iterator();
         while( it.hasNext() ) {

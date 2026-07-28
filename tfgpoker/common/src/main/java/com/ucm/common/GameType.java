@@ -97,6 +97,7 @@ public class GameType {
     public static final int PLAYER_WINS_GAME = 330;
     public static final int PLAYER_LOSES_GAME = 331;
     public static final int TOTAL_POT = 332;
+    public static final int PLAYER_CARDS = 333;
 
     // Player actions
     public static final String FOLD_ACTION_FULL = "fold";
