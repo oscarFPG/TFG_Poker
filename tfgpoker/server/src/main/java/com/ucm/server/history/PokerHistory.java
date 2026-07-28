@@ -382,10 +382,10 @@ public final class PokerHistory {
 
             blankLine();
 
-            write("Preflop equity..... %.2f %%", exp.getPreflopEquity());
-            write("Flop equity........ %.2f %%", exp.getFlopEquity());
-            write("Turn equity........ %.2f %%", exp.getTurnEquity());
-            write("River equity....... %.2f %%", exp.getRiverEquity());
+            write("Preflop equity..... %.2f %%", exp.getPreflopEquity() * 100);
+            write("Flop equity........ %.2f %%", exp.getFlopEquity() * 100);
+            write("Turn equity........ %.2f %%", exp.getTurnEquity() * 100);
+            write("River equity....... %.2f %%", exp.getRiverEquity() * 100);
             write("Decision time...... %d ms", exp.getDecisionTime());
 
             blankLine();
