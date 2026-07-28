@@ -45,6 +45,11 @@ import javafx.util.Duration;
 
 public class InGameWindowController extends GenericController {
 
+    /* Constants */
+    private static final float DEFAULT_OPACITY = 1.0f;
+    private static final float FOLDED_OPACITY = 0.6f;
+    private static final float ELIMINATED_OPACITY = 0.4f;
+    
 
     /* Player info */
     @FXML private Label usernamePlaceHolder;
@@ -155,27 +160,27 @@ public class InGameWindowController extends GenericController {
     
 
     /* Variables to add logic */
+    // Command queue to save user actions via buttons - Avoid multiple sends cause by multiple clicks
     private BlockingQueue<String> _commandQueue = new LinkedBlockingQueue<>();
+    private Thread _gameThread; // Receiving game logic thread
     private Map<Integer, Integer> _playerSeatMap; // Player id = i -> list[i] = m -> m stackpane label
-    private boolean _swapCallToCheck = false;
-    private boolean _userCloses = false;
-    private int _sliderStep = 0;
-    private Thread _gameThread;
-    private boolean _menuOpen = true;
-    private boolean _equityVisible = false;
+    private boolean _swapCallToCheck = false;   // Flag to change call button for check button
+    private boolean _userCloses = false;    // Flag for user closes window
+    private boolean _menuOpen = true;       // Flag to open/close top menu
+    private boolean _equityVisible = false; // Flag to show/hide player equity
     private String _myEquity = "0%";
 
+    // Images to show if equity is being displayed
     private final Image equityOn = new Image(getClass().getResource("/images/seeStatistic.png").toExternalForm());
     private final Image equityOff = new Image(getClass().getResource("/images/notSeeStatistic.png").toExternalForm());
     
-    private int _turnTimerTotal; 
+    private int _turnTimerTotal;
     private int _blockTime;
     private static final int TOTAL_BLOCKS = 6;
     private ScheduledFuture<?> _task;
     private final ScheduledExecutorService _scheduler = Executors.newSingleThreadScheduledExecutor();
 
     private Integer _timerPlayerId = null;
-    private long _turnEndTime;
     private int _secondsLeft;
     
     @Override
@@ -700,20 +705,17 @@ public class InGameWindowController extends GenericController {
                     int otherPlayerOnBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
 
                     Platform.runLater(() -> {
-                        GUI_stopVisualTimer();
 
+                        GUI_stopVisualTimer();
                         GUI_putPlayerBet(otherPlayerID, otherPlayerOnBetMoney, otherPlayerOffBetMoney, otherPlayerIsFolded);
                         
                         int seatID = _playerSeatMap.get(otherPlayerID);
-                        if(otherPlayerRole == PlayerRole.DEALER)  {
-                            GUI_putDealerButton(otherPlayerID);
-                        }
                         _listPlayerStackPanes.get(seatID).getStyleClass().remove("tourn-player-color");
                     });
                 }
                 else if(serverCode == GameType.HAND_ENDS_BY_FOLD) {
-                    System.out.printf("Hand ended because all players except one folded\n");
 
+                    System.out.printf("Hand ended because all players except one folded\n");
                     Platform.runLater(() -> {
                         buttonsHolder.setVisible(false);
                         GUI_stopVisualTimer();
@@ -781,7 +783,6 @@ public class InGameWindowController extends GenericController {
                     // Player roles
                     System.out.printf("-- New hand --\n");
                     role = PokerGame.receivePlayerRole(input);
-                    //System.out.printf("Assigned role: %s\n", role.toString());
                     playerStartInfo(socket);
                     NotificationManager.showSuccess(Messages.Notifications.WAITING_GAME_START);
                     
@@ -921,12 +922,9 @@ public class InGameWindowController extends GenericController {
                 final int offBetMoney = SocketUtils.receiveInt(socket.getInputStream());
 
                 Platform.runLater(() -> {
+
                     GUI_putPlayerBet(_clientInfo.id, onBetMoney, offBetMoney, false);
-                    if(role == PlayerRole.DEALER)  {
-                        GUI_putDealerButton(_clientInfo.id);
-                    }
                     GUI_putTurnPlayer(_clientInfo.id);
-                    
                 });
 
 			}
@@ -938,10 +936,8 @@ public class InGameWindowController extends GenericController {
 				System.out.printf("Forced play as the big blind with %d chips\n", amountBB);
 
                 Platform.runLater(() -> {
+
                     GUI_putPlayerBet(_clientInfo.id, onBetMoney, offBetMoney, false);
-                    if(role == PlayerRole.DEALER)  {
-                        GUI_putDealerButton(_clientInfo.id);
-                    }
                     GUI_putTurnPlayer(_clientInfo.id);
                 });
 			}
@@ -976,18 +972,16 @@ public class InGameWindowController extends GenericController {
 
                 // Do not allow to bet less than the current max bet
                 Platform.runLater(() -> {
+
                     buttonsHolder.setVisible(true);
                     GUI_putTurnPlayer(_clientInfo.id);
                     GUI_startVisualTimer(_clientInfo.id);
+
                     int sliderStep = Math.clamp(offBetMoney / 100, 1, offBetMoney);
                     sliderMoney.setMajorTickUnit( sliderStep );
                     sliderMoney.setMin( (double)maxBet );
                     sliderMoney.setMax( (double)(offBetMoney + onBetMoney) );
                     sliderMoney.setValue( sliderMoney.getMin() );
-                    
-                    if(role == PlayerRole.DEALER)  {
-                        GUI_putDealerButton(_clientInfo.id);
-                    }
                 });
 
                 selectCommand(socket, sb, bb, maxBet, offBetMoney, onBetMoney);
@@ -1020,7 +1014,7 @@ public class InGameWindowController extends GenericController {
 
                     int seatID = _playerSeatMap.get(_clientInfo.id);
                     if(iAmFolded) {
-                        _listHandBet.get( seatID ).setOpacity(0.6);
+                        _listHandBet.get( seatID ).setOpacity(FOLDED_OPACITY);
                     }
                     else {
                         GUI_putPlayerBet(_clientInfo.id, myOnBetMoney, myOffBetMoney, iAmFolded);
@@ -1064,9 +1058,6 @@ public class InGameWindowController extends GenericController {
                     GUI_putPlayerBet(otherPlayerID, otherPlayerOnBetMoney, otherPlayerOffBetMoney, otherPlayerIsFolded);
 
                     int seatID = _playerSeatMap.get(otherPlayerID);
-                    if(otherPlayerRole == PlayerRole.DEALER)  {
-                        GUI_putDealerButton(otherPlayerID);
-                    }
                     _listPlayerStackPanes.get(seatID).getStyleClass().remove("tourn-player-color");
                 });
 
@@ -1142,7 +1133,7 @@ public class InGameWindowController extends GenericController {
             else if(code == GameType.OTHER_PLAYER_STATUS) {
 
                 int playerID = SocketUtils.receiveInt(socket.getInputStream());
-                String player = SocketUtils.receiveString(socket.getInputStream());
+                String playerName = SocketUtils.receiveString(socket.getInputStream());
                 PlayerRole role = PokerGame.receivePlayerRole( socket.getInputStream() );
                 boolean isFolded = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
                 boolean isWinner = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
@@ -1345,35 +1336,50 @@ public class InGameWindowController extends GenericController {
         boolean isShowdown
     ) {
 
-        int seatID = _playerSeatMap.get(playerID);
+        final int seatID = _playerSeatMap.get(playerID);
+        StackPane playerStackPane = _listPlayerStackPanes.get(seatID);
         Label nameLabel = _listNameLabels.get(seatID);
         Label moneyLabel = _listMoneyLabels.get(seatID);
         Label betLabel = _listOnBetMoney.get(seatID);
 
-
+        // Draw dealers button if necessary
         if(isShowdown && role == PlayerRole.DEALER) {
             GUI_putDealerButton(playerID);
+        }
+
+        // Draw player as folded if necessary
+        if(isFolded) {
+            playerStackPane.setOpacity(FOLDED_OPACITY);
+            _listHandBet.get(seatID).setOpacity(FOLDED_OPACITY);
+            _listImageCards.get(seatID).setOpacity(FOLDED_OPACITY);
+        }
+        else {
+            playerStackPane.setOpacity(DEFAULT_OPACITY);
+            _listHandBet.get(seatID).setOpacity(DEFAULT_OPACITY);
+            _listImageCards.get(seatID).setOpacity(DEFAULT_OPACITY);
         }
 
         if(isShowdown && isWinner) {
             System.out.printf("Player %s is the winner of the hand!\n", nameLabel.getText());
             NotificationManager.showSuccess(String.format(Messages.Notifications.CONFIRMATION_WINNER_GAME, nameLabel.getText()));
              
+            // Change winners name during 3 seconds
             PauseTransition transition = new PauseTransition( Duration.seconds(3) );
-
-            nameLabel.setText( nameLabel.getText() + " (Winner!)" );
+            nameLabel.setText( nameLabel.getText() + " (Winner)" );
             transition.setOnFinished(event -> {
-                nameLabel.setText( nameLabel.getText().replace(" (Winner!)", "") );
+                nameLabel.setText( nameLabel.getText().replace(" (Winner)", "") );
             });
             transition.play();
         }
 
         if(isEliminated) {
             System.out.printf("Player %s has been eliminated from the game!\n", nameLabel.getText());
-             NotificationManager.showSuccess(String.format(Messages.Notifications.CONFIRMATION_PLAYER_ELIMINATED, nameLabel.getText()));
-             
-            nameLabel.setText( nameLabel.getText() + " (Eliminated)" );
-            _listPlayerStackPanes.get(seatID).setOpacity(0.4);
+            NotificationManager.showSuccess(String.format(Messages.Notifications.CONFIRMATION_PLAYER_ELIMINATED, nameLabel.getText()));
+            
+            // Set text as <name> (Eliminated) if necessary
+            if(!nameLabel.getText().contains("(Eliminated)"))
+                nameLabel.setText( nameLabel.getText() + " (Eliminated)" );
+            _listPlayerStackPanes.get(seatID).setOpacity(ELIMINATED_OPACITY);
         }
 
         betLabel.setText( String.valueOf(onBetMoney) );
@@ -1477,9 +1483,9 @@ public class InGameWindowController extends GenericController {
             StackPane playerStackPane = _listPlayerStackPanes.get(seatID);
             HBox cards = _listImageCards.get(seatID);
 
-            playerStackPane.setOpacity(0.6);
-            _listHandBet.get(seatID).setOpacity(0.6);
-            cards.setOpacity(0.6);
+            playerStackPane.setOpacity(FOLDED_OPACITY);
+            _listHandBet.get(seatID).setOpacity(FOLDED_OPACITY);
+            cards.setOpacity(FOLDED_OPACITY);
         }
     }
 
@@ -1557,18 +1563,17 @@ public class InGameWindowController extends GenericController {
         GUI_stopVisualTimer();
 
         Integer seatID = _playerSeatMap.get(playerID);
+        final long turnEndTime = System.currentTimeMillis() + _turnTimerTotal * 1000L;
         _timerPlayerId = playerID;
 
-        _turnEndTime = System.currentTimeMillis() + _turnTimerTotal * 1000L;
-
+        // Reset timer
         System.out.printf("Timer start for playerId=%d (%s client)\n", playerID, playerID == _clientInfo.id ? "local turn" : "remote turn");
-
         GUI_resetPlayerTimer(seatID);
 
         _task = _scheduler.scheduleAtFixedRate(()-> {
 
             long now = System.currentTimeMillis();
-            long millisLeft = _turnEndTime - now;
+            long millisLeft = turnEndTime - now;
             _secondsLeft = (int) Math.ceil(Math.max(millisLeft, 0) / 1000.0);
 
             GUI_putPlayerTimer(seatID);
@@ -1610,11 +1615,13 @@ public class InGameWindowController extends GenericController {
     }
 
     private void GUI_clearPlayerBets() {
+
         _listOnBetMoney.forEach(label -> label.setVisible(false));
         _listHandBet.forEach(bet -> bet.setVisible(false));
-        _listHandBet.forEach(bet -> { bet.setVisible(false);  bet.setOpacity(1.0);});
-        _listPlayerStackPanes.forEach(pane -> pane.setOpacity(1.0));
-        _listImageCards.forEach(img -> img.setOpacity(1.0));
+        _listHandBet.forEach(bet -> {
+            bet.setVisible(false);  
+            bet.setOpacity(1.0);
+        });
     }
 
     private void GUI_clearDealer() {

@@ -21,10 +21,6 @@ import com.ucm.common.PlayerInfo;
 import com.ucm.common.PokerPreGame;
 import com.ucm.common.SocketUtils;
 import com.ucm.server.middleclasses.Spectator;
-import com.ucm.server.players.AgentCFR;
-import com.ucm.server.players.GeminiLLM;
-import com.ucm.server.players.LlamaPokerLLM;
-
 
 
 public class ClientThread implements Runnable {

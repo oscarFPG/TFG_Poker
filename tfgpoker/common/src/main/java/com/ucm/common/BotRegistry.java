@@ -25,16 +25,21 @@ public final class BotRegistry {
 
     public static String getBotName(int botId, int botIdentifier, BotStyle style) {
         return switch (botId) {
-            case GameType.BOT_GEMINI -> "Gemini LLM #" + botIdentifier+ " "  + style.name();
-            case GameType.BOT_LLAMA -> "Llama Poker LLM #" + botIdentifier+ " "  + style.name();
-            case GameType.BOT_NN_MODEL_1 -> "Deep CFR #" + botIdentifier + " " + style.name();
+            case GameType.BOT_GEMINI -> "Gemini LLM " + style.name();
+            case GameType.BOT_LLAMA -> "Llama Poker LLM " + style.name();
+            case GameType.BOT_NN_MODEL_1 -> "Deep CFR " + style.name();
             default -> "Bot-" + botId + "-" + botIdentifier;
         };
     }
 
     private static String normalizeBotName(String botName) {
-        if(botName == null) return "defaultBot";
-        if(botName.length() <= MAX_BOT_NAME_LENGTH) return botName;
+
+        if(botName == null)
+            return "defaultBot";
+
+        if(botName.length() <= MAX_BOT_NAME_LENGTH)
+            return botName;
+        
         return botName.substring(0, MAX_BOT_NAME_LENGTH);
     }
 

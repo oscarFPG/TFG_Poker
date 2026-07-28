@@ -25,6 +25,8 @@ import ai.onnxruntime.OrtSession.Result;
  */
 public class AgentCFR extends BotNN {
 
+    private static final boolean DEBUG_CFR = false;
+
     private static final int CFR_ID = GameType.BOT_NN_MODEL_1;
     private static final String CFR_FILENAME = "poker_cfr.onnx";
     public static final String CFR_NAME = "DeepCFR";
@@ -146,32 +148,6 @@ public class AgentCFR extends BotNN {
     }
 
 
-    private int cardToIndex(final Card c) {
-
-        Suit suit = c.getSuit();
-        int value = c.getCardValueNetworkCode();
-
-        int row = (suit == Suit.SPADES) ? 0 :
-                  (suit == Suit.HEARTS) ? 1 :
-                  (suit == Suit.DIAMONDS) ? 2 :
-                  3;
-
-        int column = (value == GameType.NUMBER_ACE) ? 0 :
-                     (value == GameType.NUMBER_TWO) ? 1 :
-                     (value == GameType.NUMBER_THREE) ? 2 :
-                     (value == GameType.NUMBER_FOUR) ? 3 :
-                     (value == GameType.NUMBER_FIVE) ? 4 :
-                     (value == GameType.NUMBER_SIX) ? 5 :
-                     (value == GameType.NUMBER_SEVEN) ? 6 :
-                     (value == GameType.NUMBER_EIGHT) ? 7 :
-                     (value == GameType.NUMBER_NINE) ? 8 :
-                     (value == GameType.NUMBER_TEN) ? 9 :
-                     (value == GameType.NUMBER_J) ? 10 :
-                     (value == GameType.NUMBER_Q) ? 11 :
-                     12;
-
-        return row * 13 + column;
-    }
 
     /**
      * Softmax function to get the probability based on the logits
@@ -219,6 +195,41 @@ public class AgentCFR extends BotNN {
         for (int i = 0; i < probs.length; i++)
             result[i] = indices[i];
 
+        if(DEBUG_CFR)
+            showProbDistribution(result, probs);
+
+        return result;
+    }
+
+    private int cardToIndex(final Card c) {
+
+        Suit suit = c.getSuit();
+        int value = c.getCardValueNetworkCode();
+
+        int row = (suit == Suit.SPADES) ? 0 :
+                  (suit == Suit.HEARTS) ? 1 :
+                  (suit == Suit.DIAMONDS) ? 2 :
+                  3;
+
+        int column = (value == GameType.NUMBER_ACE) ? 0 :
+                     (value == GameType.NUMBER_TWO) ? 1 :
+                     (value == GameType.NUMBER_THREE) ? 2 :
+                     (value == GameType.NUMBER_FOUR) ? 3 :
+                     (value == GameType.NUMBER_FIVE) ? 4 :
+                     (value == GameType.NUMBER_SIX) ? 5 :
+                     (value == GameType.NUMBER_SEVEN) ? 6 :
+                     (value == GameType.NUMBER_EIGHT) ? 7 :
+                     (value == GameType.NUMBER_NINE) ? 8 :
+                     (value == GameType.NUMBER_TEN) ? 9 :
+                     (value == GameType.NUMBER_J) ? 10 :
+                     (value == GameType.NUMBER_Q) ? 11 :
+                     12;
+
+        return row * 13 + column;
+    }
+
+    private void showProbDistribution(int[] result, float[] probs) {
+
         // Show probability of each action
         System.out.printf("Predictions:\n");
         for(int idx : result) {
@@ -226,8 +237,6 @@ public class AgentCFR extends BotNN {
             System.out.printf("Action %d : %.2f%%\n", idx, prob * 100);
         }
         System.out.printf("\n");
-
-        return result;
     }
 
     @Override
