@@ -477,7 +477,7 @@ public class PlayerList implements Iterable<Node> {
         }
     }
 
-    public void broadcastAllPlayerCards() {
+    public void broadcastAllPlayerCards() throws CancelGameException {
 
         // Send the player cards to everyone just to display -> Only if the player has not folded or it is eliminated
         Iterator<Node> modelIT = iterator();
@@ -488,14 +488,25 @@ public class PlayerList implements Iterable<Node> {
                 continue;
 
 
+            // Send cards from modelPlayer to spectator
+            if(_spectator != null)
+                _spectator.notifyOtherPlayerCards(modelPlayer._player);
+
+            // Send cards from modelPlayer to every player
             Iterator<Node> receiverIT = iterator();
             while( receiverIT.hasNext() ) {
 
                 Node receiver = receiverIT.next();
-                receiver._player.notifyOtherPlayerCards(
-                    modelPlayer._player.getPlayerId(),
-                    modelPlayer._player.getCard
-                );
+                try {
+                    receiver._player.notifyOtherPlayerCards(modelPlayer._player);
+                }
+                catch (IOException e) {
+                    
+                    receiver._isDisconnected = true;
+                    if( checkIfGameCancel() )
+                        throw new CancelGameException();
+                }
+                
             }
 
         }

@@ -152,6 +152,13 @@ public interface IPlayerNotificator {
      */
     public void notifyEquity(double equity) throws IOException;
     
+    /**
+     * Notifies the cards from an specific player. The other player and receiver could be the same
+     * @param other
+     * @throws IOException
+     */
+    public void notifyOtherPlayerCards(IPlayerInfo other) throws IOException;
+
     public BotStyle getStyle();
     public String getPlayerType();
     public String getPlayerModel();

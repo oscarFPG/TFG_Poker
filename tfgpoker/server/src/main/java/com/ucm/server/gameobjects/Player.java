@@ -429,6 +429,12 @@ public class Player implements IPlayerActions {
         }
     }
 
+    public void notifyOtherPlayerCards(IPlayerInfo other) throws IOException {
+
+        if(_playerInfo != null)
+            _playerInfo.notifyOtherPlayerCards(other);
+    }
+
     public int putSmallBlindBet(int sb) {
         
         int bet = Math.min(sb, _offBetMoney);

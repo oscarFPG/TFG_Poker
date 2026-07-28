@@ -8,6 +8,7 @@ public class GameType {
     /* ---------------- SERVER PROPERTIES ----------------  */
     public static final int PORT = 5005;
     public static final int MAX_PLAYERS = 9;
+    public static final int SHOWDOWN_WAIT_TIME_SEC = 6; 
 
     /* ---------------- BOOLEAN TYPES ----------------*/
     public static final int TRUE = 1;
@@ -117,9 +118,9 @@ public class GameType {
     public static final int BOT_NN_MODEL_1 = 10002;
     public static final int BOT_FSM_1 = 10003;
 
-    //Equity identifier
+    // Equity identifier
     public static final int EQUITY_UPDATE = 40000;
 
-    //Turn timer left identifier
+    // Turn timer left identifier
     public static final int TURN_TIMER_UPDATE = 40100;
 }

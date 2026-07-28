@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import com.ucm.common.BotStruct;
 import com.ucm.common.ClientStruct;
 import com.ucm.common.GameConfig;
+import com.ucm.common.GameType;
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.common.gameobjects.Card;
@@ -193,6 +194,14 @@ public class Game {
         }
         
         _playerList.manageEliminatedPlayers();
+
+
+        // Wait to display player cards for the user
+        try {
+            System.out.printf("%d seconds pause to see the winner...\n", GameType.SHOWDOWN_WAIT_TIME_SEC);
+            Thread.sleep(GameType.SHOWDOWN_WAIT_TIME_SEC * 1000);
+        }
+        catch (InterruptedException e) {}
     }
 
     public boolean passTurn() throws CancelGameException {

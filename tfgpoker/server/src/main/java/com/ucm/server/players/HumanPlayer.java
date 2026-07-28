@@ -252,20 +252,25 @@ public class HumanPlayer implements IPlayerNotificator {
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getPlayerId());
     }
 
-
     @Override
-    public BotStyle getStyle() {
-        return BotStyle.DEFAULT;
+    public void notifyOtherPlayerCards(IPlayerInfo other) throws IOException {
+        if(Game.DEBUG_PLAYERS) return;
+
+        SocketUtils.sendInteger(_socket.getOutputStream(), GameType.PLAYER_CARDS);
+        SocketUtils.sendInteger(_socket.getOutputStream(), other.getPlayerId());
+
+        Card c1 = other.getPlayerCards()[0];
+        SocketUtils.sendInteger(_socket.getOutputStream(), c1.getCardValueNetworkCode());
+        SocketUtils.sendInteger(_socket.getOutputStream(), c1.getSuit().getNetworkCode());
+
+        Card c2 = other.getPlayerCards()[1];
+        SocketUtils.sendInteger(_socket.getOutputStream(), c2.getCardValueNetworkCode());
+        SocketUtils.sendInteger(_socket.getOutputStream(), c2.getSuit().getNetworkCode());
     }
 
-    @Override
-    public String getPlayerType() {
-        return "HUMAN";
-    }
 
-    @Override
-    public String getPlayerModel() {
-        return "-";
-    }
+    @Override public BotStyle getStyle() { return BotStyle.DEFAULT; }
+    @Override public String getPlayerType() { return "HUMAN"; }
+    @Override public String getPlayerModel() { return "-"; }
 
 }

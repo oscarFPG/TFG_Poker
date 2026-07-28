@@ -1147,6 +1147,32 @@ public class InGameWindowController extends GenericController {
             }
             else if (code == GameType.PLAYER_CARDS) {
                 
+                final int otherPlayerID = SocketUtils.receiveInt(socket.getInputStream());
+                final Card c1 = PokerGame.receiveCard(socket.getInputStream());
+                final Card c2 = PokerGame.receiveCard(socket.getInputStream());
+            
+                Platform.runLater(() -> {
+                    
+                    final int seatID = _playerSeatMap.get(otherPlayerID);
+                    ImageView leftCard = (ImageView) _listPaintCards.get(seatID * 2);
+                    ImageView rightCard = (ImageView) _listPaintCards.get(seatID * 2 + 1);
+
+                    GUI_showCard(leftCard, c1);
+                    GUI_showCard(rightCard, c2);
+                });
+
+                if(_clientInfo.id == otherPlayerID)
+                    System.out.printf("Player[%d](ME) has cards: %s %s\n", 
+                        otherPlayerID,
+                        c1.toString(), 
+                        c2.toString()
+                    );
+                else
+                    System.out.printf("Other player[%d] has cards: %s %s\n", 
+                        otherPlayerID,
+                        c1.toString(), 
+                        c2.toString()
+                    );
             }
             else if(code == GameType.PLAYER_STATUS_END) {
                 System.out.printf("Player status end received!\n");
@@ -1167,9 +1193,9 @@ public class InGameWindowController extends GenericController {
         } 
         while(code != GameType.GAME_ENDS && code != GameType.GAME_KEEPS);
         
-        int sleep_seconds = 3;
-        System.out.printf("%d seconds pause to see the winner...\n", sleep_seconds);
-        Thread.sleep(sleep_seconds * 1000);
+        // Wait to display player cards for the user
+        System.out.printf("%d seconds pause to see the winner...\n", GameType.SHOWDOWN_WAIT_TIME_SEC);
+        Thread.sleep(GameType.SHOWDOWN_WAIT_TIME_SEC * 1000);
 
         return gameEnds;
     }

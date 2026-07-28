@@ -4,6 +4,7 @@ package com.ucm.server.control;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.ucm.common.GameType;
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.server.history.PokerHistory;
