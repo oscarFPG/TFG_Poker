@@ -5,12 +5,14 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ucm.common.BotStruct;
+import com.ucm.common.BotStyle;
 import com.ucm.common.ClientStruct;
 import com.ucm.common.GameConfig;
 import com.ucm.common.GameType;
@@ -81,14 +83,17 @@ public class Game {
         _currentSB = _initialSmallBlind;
         _currentBB = _initialBigBlind;
 
+        // Player list
         _playerList = new PlayerList(config.getTotalPlayers());
         addAllPlayersInitial(players, bots, spectator, config);
 
-        _deck = new Deck();
+        // Deck and cards
+        _deck = new Deck( selectSeed_DEBUG(players, bots) );
         _tableCards = new Card[MAX_CARDS_IN_TABLE];
         _tableCardsCounter = 0;
         _isPreflop = true;
 
+        // Static/dynamic blinds
         if(config._dinamicBlinds) {
             int seconds = Integer.parseInt( config._levelDuration );
             _timer = new Timer(seconds);
@@ -328,7 +333,47 @@ public class Game {
         _tableCardsCounter = 0;
     }
 
-    
+    private long selectSeed_DEBUG(final List<ClientStruct> players, final List<BotStruct> bots) {
+
+        long seed = 1;
+        if(players.size() + bots.size() == 2) { // Heads-up(1vs1)
+
+            BotStyle style = bots.get(0).style();
+            switch (style) {
+                case BotStyle.MANIAC:
+                    seed = 60;
+                    break;
+
+                case BotStyle.LOOSE_AGGRESSIVE:
+                    seed = 50;
+                    break;
+
+                case BotStyle.LOOSE_PASSIVE:
+                    seed = 40;
+                    break;
+
+                case BotStyle.TIGHT_AGGRESSIVE:
+                    seed = 30;
+                    break;
+
+                case BotStyle.TIGHT_PASSIVE:
+                    seed = 20;
+                    break;
+
+                default: // Default
+                    seed = 10; 
+                    break;
+            }
+
+        }
+        else {
+            Random rand = new Random();
+            seed = rand.nextLong();
+        }
+
+        log.debug("Selected SEED: {}", seed);
+        return seed;
+    }
 
     public int getHandCounter() { return _handCounter; }
     public int getCurrentSmallBlind() { return _currentSB; }
