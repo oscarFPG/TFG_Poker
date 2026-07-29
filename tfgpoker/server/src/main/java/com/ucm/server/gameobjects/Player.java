@@ -227,16 +227,11 @@ public class Player implements IPlayerActions {
     }
 
 
-    public void receiveRole(PlayerRole r) {
+    public void receiveRole(PlayerRole r) throws IOException {
 
         _role = r;
-        try {
-            if(_playerInfo != null)
-                _playerInfo.notifyPlayerRole(r);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        if(_playerInfo != null)
+            _playerInfo.notifyPlayerRole(r);
     }
 
     public void receiveCard(Card c) {
