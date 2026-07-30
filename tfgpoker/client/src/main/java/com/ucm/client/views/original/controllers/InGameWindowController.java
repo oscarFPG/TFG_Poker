@@ -236,10 +236,12 @@ public class InGameWindowController extends GenericController {
                 }
                 else {
                     NotificationManager.showError(Messages.Notifications.ERROR_GAME_CANCELED_BY_SERVER);
-                    Platform.runLater(() -> {
-                        next();
-                    });
                 }
+
+                // Go back to the initial view
+                Platform.runLater(() -> {
+                    next();
+                });
             }
             
         });
@@ -962,6 +964,7 @@ public class InGameWindowController extends GenericController {
 				final int maxBet = SocketUtils.receiveInt( socket.getInputStream() );
 				final int offBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
 				final int onBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
+                
                 System.out.printf(
                     "-- Round info --\n SB: %d, BB: %d, MaxBet: %d\n OnBetMoney: %d, OffBetMoney: %d\n", 
                     sb, bb, maxBet, 
@@ -1161,18 +1164,11 @@ public class InGameWindowController extends GenericController {
                     GUI_showCard(rightCard, c2);
                 });
 
-                if(_clientInfo.id == otherPlayerID)
-                    System.out.printf("Player[%d](ME) has cards: %s %s\n", 
-                        otherPlayerID,
-                        c1.toString(), 
-                        c2.toString()
-                    );
-                else
-                    System.out.printf("Other player[%d] has cards: %s %s\n", 
-                        otherPlayerID,
-                        c1.toString(), 
-                        c2.toString()
-                    );
+                System.out.printf("Other player[%d] has cards: %s %s\n", 
+                    otherPlayerID,
+                    c1.toString(), 
+                    c2.toString()
+                );
             }
             else if(code == GameType.PLAYER_STATUS_END) {
                 System.out.printf("Player status end received!\n");
@@ -1321,7 +1317,7 @@ public class InGameWindowController extends GenericController {
 
                 int playerID = SocketUtils.receiveInt(socket.getInputStream());
                 String player = SocketUtils.receiveString(socket.getInputStream());
-                PlayerRole playerRole = PokerGame.receivePlayerRole( socket.getInputStream() );
+                PlayerRole playerRole = PokerGame.receivePlayerRole(socket.getInputStream());
                 boolean isFolded = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
                 boolean isWinner = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
                 boolean isEliminated = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
@@ -1342,6 +1338,10 @@ public class InGameWindowController extends GenericController {
             }
             else if(code == GameType.PLAYER_STATUS_END) {
                 System.out.printf("Exiting player status update loop!\n");
+            }
+            else if(code == GameType.ERROR_GAME_CANCELS) {
+                System.out.printf("All the players left! Cancelling game...\n");
+                throw new CancelGameException();
             }
             else {
                 System.out.printf("ERROR! Code received: %d!\n", code);

@@ -237,8 +237,6 @@ public class Game {
         PokerHistory history = PokerHistory.current();
         if (history != null)
             history.equity(equity);
-
-                
     }
 
     public void finishExperimentData() {
@@ -335,8 +333,13 @@ public class Game {
 
     private long selectSeed_DEBUG(final List<ClientStruct> players, final List<BotStruct> bots) {
 
+        boolean nose = true;
+        if(nose)
+            return 20;
+
+
         long seed = 1;
-        if(players.size() + bots.size() == 2) { // Heads-up(1vs1)
+        if(players.size()  == 1 && bots.size() == 1) { // Heads-up(1vs1)
 
             BotStyle style = bots.get(0).style();
             switch (style) {

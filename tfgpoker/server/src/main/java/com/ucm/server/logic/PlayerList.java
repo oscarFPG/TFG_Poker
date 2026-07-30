@@ -26,6 +26,7 @@ import com.ucm.server.middleclasses.PotDistribution;
 import com.ucm.server.middleclasses.Spectator;
 
 
+
 public class PlayerList implements Iterable<Node> {
 
     private static final Logger log = LogManager.getLogger(PlayerList.class);
@@ -39,6 +40,11 @@ public class PlayerList implements Iterable<Node> {
     private PotManager _potManager;
     private Node _host;
     private Spectator _spectator;
+
+    // IMPORTANT - Variable to know at any point who is the pivot player. 
+    // Needed to pass the pivot player to the next active player in case of any disconnection
+    private Node _currentPivot = null;
+    private boolean _duringHand = false;
 
 
     public PlayerList(int n) {
@@ -165,7 +171,7 @@ public class PlayerList implements Iterable<Node> {
         while( it.hasNext() ) {
 
             Node player = it.next();
-            if(!player._player.isEliminated() && player._player.getCardsCounter() == 0) {
+            if(!player._isDisconnected && !player._player.isEliminated() && player._player.getCardsCounter() == 0) {
 
                 try {
                     player._player.receiveCard(c1);
@@ -174,7 +180,7 @@ public class PlayerList implements Iterable<Node> {
                     log.debug("Player {} receives the cards: {} {}", player._player.getPlayerName(), c1.toString(), c2.toString());
                     return;
                 }
-                catch (Exception e) {
+                catch (IOException e) {
                     
                     player._isDisconnected = true;
                     if( checkIfGameCancel() )
@@ -203,9 +209,12 @@ public class PlayerList implements Iterable<Node> {
                 pNode._player.getPlayerName(), pNode._player.getMoneyOnBet(), pNode._player.getMoneyOffBet()
             );
         }
-        catch(Exception e) {
+        catch(IOException e) {
             
             pNode._isDisconnected = true;
+            if(pNode == this._currentPivot) // In case the player disconnected was the current pivot -> Transfer the pivot
+                this._currentPivot = getNextPlayerActive(this._currentPivot);
+
             if( checkIfGameCancel() )
                 throw new CancelGameException();
         }
@@ -224,9 +233,12 @@ public class PlayerList implements Iterable<Node> {
                 pNode._player.getPlayerName(), pNode._player.getMoneyOnBet(), pNode._player.getMoneyOffBet()
             );
         }
-        catch(Exception e) {
+        catch(IOException e) {
             
             pNode._isDisconnected = true;
+            if(pNode == this._currentPivot)
+                this._currentPivot = getNextPlayerActive(this._currentPivot);
+
             if( checkIfGameCancel() )
                 throw new CancelGameException();
         }
@@ -247,17 +259,20 @@ public class PlayerList implements Iterable<Node> {
         }
 
 
-        int playersRemaining = activePlayersCounter();        
+        int playersRemaining = activePlayersCounter();
         Node playerOnTurn = calculatePlayerOnTurn(playersRemaining, isPreflop);
         Node pivotPlayer = calculatePivotPlayer(playersRemaining, isPreflop, playerOnTurn);
+        this._currentPivot = pivotPlayer;   // IMPORTANT !!
+
         int maxBet = (isPreflop) ? bb : 0;
         int currentBet = maxBet;
         int minRaise = (isPreflop) ? bb - sb : 0;
         int totalPot = 0;
+        this._duringHand = true;
 
         // In case only one player can play -> Cannot play alone
         // E.g: All players all-in except one -> Skip rounds
-        if(playersRemaining == 1) { 
+        if(playersRemaining == 1) {
             notifyRoundEnded();
             return;
         }
@@ -327,6 +342,7 @@ public class PlayerList implements Iterable<Node> {
         _totalPot = totalPot;
         updateHandState();
         notifyRoundEnded();
+        _duringHand = false;
     }
 
     private Command askCommandToPlayer(Node node, final int sb, final int bb, final int maxBet) throws CancelGameException {
@@ -454,7 +470,7 @@ public class PlayerList implements Iterable<Node> {
                 try {
                     player._player.receiveTableCard(card);
                 }
-                catch (Exception e) {
+                catch (IOException e) {
                     
                     player._isDisconnected = true;
                     if( checkIfGameCancel() )
@@ -500,7 +516,9 @@ public class PlayerList implements Iterable<Node> {
 
                 Node receiver = receiverIT.next();
                 try {
-                    receiver._player.notifyOtherPlayerCards(modelPlayer._player);
+
+                    if(receiver._player != modelPlayer._player)
+                        receiver._player.notifyOtherPlayerCards(modelPlayer._player);
                 }
                 catch (IOException e) {
                     
@@ -523,7 +541,7 @@ public class PlayerList implements Iterable<Node> {
         while( it.hasNext() ) {
 
             Node player = it.next();
-            if(!player._player.isEliminated() && !player._player.isFolded())
+            if(!player._isDisconnected && !player._player.isEliminated() && !player._player.isFolded())
                 info.add( new HandInfo(player._player.getPlayerId(), player._player.getPlayerCards()) );
         }
 
@@ -649,6 +667,7 @@ public class PlayerList implements Iterable<Node> {
     } 
 
 
+    /* ------ Notify methods ------ */
     private void notifyWaitExceptTo(final Node playerOnTurn) throws CancelGameException {
 
         Iterator<Node> it = iterator();
@@ -661,7 +680,7 @@ public class PlayerList implements Iterable<Node> {
             try {
                 player._player.notifyTurnWait();
             }
-            catch(Exception e) {
+            catch(IOException e) {
                 
                 player._isDisconnected = true;
                 if( checkIfGameCancel() )
@@ -684,7 +703,7 @@ public class PlayerList implements Iterable<Node> {
             try {
                 player._player.notifyCurrentTurnPlayer(p);
             }
-            catch(Exception e) {
+            catch(IOException e) {
                 
                 player._isDisconnected = true;
                 if( checkIfGameCancel() )
@@ -701,7 +720,7 @@ public class PlayerList implements Iterable<Node> {
         try {
             player._player.notifyOwnState();
         }
-        catch(Exception e) {
+        catch(IOException e) {
             
             player._isDisconnected = true;
             if( checkIfGameCancel() )
@@ -722,7 +741,7 @@ public class PlayerList implements Iterable<Node> {
             try {
                 player._player.notifyOtherPlayerAction(p);
             }
-            catch(Exception e) {
+            catch(IOException e) {
                 
                 player._isDisconnected = true;
                 if( checkIfGameCancel() )
@@ -743,7 +762,7 @@ public class PlayerList implements Iterable<Node> {
             try {
                 player._player.notifyTotalPot(totalPot);
             }
-            catch(Exception e) {
+            catch(IOException e) {
                 
                 player._isDisconnected = true;
                 if( checkIfGameCancel() )
@@ -764,7 +783,7 @@ public class PlayerList implements Iterable<Node> {
             try {
                 player._player.notifyHandEndsByFolds();
             }
-            catch(Exception e) {
+            catch(IOException e) {
                 
                 player._isDisconnected = true;
                 if( checkIfGameCancel() )
@@ -785,7 +804,7 @@ public class PlayerList implements Iterable<Node> {
             try {
                 player._player.notifyRoundEnded();
             }
-            catch(Exception e) {
+            catch(IOException e) {
                 
                 player._isDisconnected = true;
                 if( checkIfGameCancel() )
@@ -811,7 +830,7 @@ public class PlayerList implements Iterable<Node> {
                     else
                         player._player.notifyGameKeeps();
                 }
-                catch(Exception e) {
+                catch(IOException e) {
                     player._isDisconnected = true;
                     if( checkIfGameCancel() )
                         throw new CancelGameException();
@@ -838,7 +857,7 @@ public class PlayerList implements Iterable<Node> {
                 try {
                     receiverPlayer._player.notifyOwnState();
                 }
-                catch(Exception e) {
+                catch(IOException e) {
 
                     receiverPlayer._isDisconnected = true;
                     if( checkIfGameCancel() )
@@ -855,7 +874,7 @@ public class PlayerList implements Iterable<Node> {
                     try {
                         receiverPlayer._player.notifyOtherPlayerState(player._player);
                     }
-                    catch(Exception e) {
+                    catch(IOException e) {
                         
                         receiverPlayer._isDisconnected = true;
                         if( checkIfGameCancel() )
@@ -866,7 +885,7 @@ public class PlayerList implements Iterable<Node> {
                 try {
                     receiverPlayer._player.notifyEndPlayerState();
                 }
-                catch(Exception e) {
+                catch(IOException e) {
                     receiverPlayer._isDisconnected = true;
                     if( checkIfGameCancel() )
                         throw new CancelGameException();
@@ -899,7 +918,7 @@ public class PlayerList implements Iterable<Node> {
                 try {
                     player.notifyEquity(equity);
                 }
-                catch(Exception e) {
+                catch(IOException e) {
                     
                     node._isDisconnected = true;
                     if( checkIfGameCancel() )
@@ -909,6 +928,7 @@ public class PlayerList implements Iterable<Node> {
         }
 
     }
+    /* ------ Notify methods ------ */
 
 
     private boolean checkIfGameCancel() {
@@ -917,15 +937,15 @@ public class PlayerList implements Iterable<Node> {
             return true; 
 
 
-        int connectedPlayers = 0;
+        int playerOnGame = 0;
         Iterator<Node> it = iterator();
         while( it.hasNext() ) {
 
             Node player = it.next();
-            connectedPlayers += (player._isDisconnected) ? 1 : 0;
+            playerOnGame += (!player._isDisconnected && !player._player.isEliminated()) ? 1 : 0;
         }
 
-        return (connectedPlayers <= 1);
+        return (playerOnGame <= 1);
     }
 
     private Node getNextPlayerActive(Node current) {
@@ -979,6 +999,18 @@ public class PlayerList implements Iterable<Node> {
     public boolean isFull() { return size() == max(); }
     public int size() { return _playerCounter; }
     public int max() { return _maxNumberOfPlayers; }
+    public int getTotalPot() { return _totalPot; }
+
+    public List<Player> getPlayers() {
+
+        List<Player> players = new ArrayList<>();
+        Iterator<Node> it = iterator();
+        while ( it.hasNext() ) {
+            players.add(it.next()._player);
+        }
+
+        return players;
+    }
 
 
     // Iterator
@@ -1023,21 +1055,6 @@ public class PlayerList implements Iterable<Node> {
     public Iterator<Node> iterator(Node start) {
         return new PlayerIterator(start);
     }
+    
 
-
-    public List<Player> getPlayers() {
-
-        List<Player> players = new ArrayList<>();
-
-        Iterator<Node> it = iterator();
-        while (it.hasNext()) {
-            players.add(it.next()._player);
-        }
-
-        return players;
-    }
-
-    public int getTotalPot() {
-        return _totalPot;
-    }
 }

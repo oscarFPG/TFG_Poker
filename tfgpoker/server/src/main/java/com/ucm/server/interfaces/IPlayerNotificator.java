@@ -153,7 +153,7 @@ public interface IPlayerNotificator {
     public void notifyEquity(double equity) throws IOException;
     
     /**
-     * Notifies the cards from an specific player. The other player and receiver could be the same
+     * Notifies the cards from an specific player. The other player and this player should not be the same
      * @param other
      * @throws IOException
      */

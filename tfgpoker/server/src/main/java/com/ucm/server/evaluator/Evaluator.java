@@ -132,11 +132,11 @@ public class Evaluator {
 
         // For each player, calculate the best 5 cards hand between all 7 cards(player cards + all table cards)
         final short tableRank = evaluate5hand(
-                encodedTableCards[0],
-                encodedTableCards[1],
-                encodedTableCards[2],
-                encodedTableCards[3],
-                encodedTableCards[4]
+            encodedTableCards[0],
+            encodedTableCards[1],
+            encodedTableCards[2],
+            encodedTableCards[3],
+            encodedTableCards[4]
         );
         for (int i = 0; i < playerHands.size(); i++) {
 

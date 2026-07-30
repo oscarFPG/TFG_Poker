@@ -11,10 +11,10 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import com.ucm.server.FakePlayer;
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.common.gameobjects.PlayerRole;
+import com.ucm.server.FakePlayer;
 import com.ucm.server.middleclasses.PlayerEvaluation;
 
 
@@ -356,5 +356,6 @@ public class PlayerListTest {
             assertEquals(true, false, "This test should not reach this code");
         }
     }
+
 
 }
