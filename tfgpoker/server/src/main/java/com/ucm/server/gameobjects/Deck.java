@@ -132,12 +132,16 @@ public class Deck {
             }
         }
     }
-
+    
     /**
-     * 
-     * 
-     * 
-     * @return 
+     * Returns all cards that are currently available in the deck.
+     * <p>
+     * The returned list contains references to the original {@link Card} objects
+     * managed by the deck. A card is considered available if it has not been
+     * previously taken using {@link #takeRandomCard()} or has been retrieved using
+     * {@link #retrieveCard(Card)}.
+     *
+     * @return a list containing all available cards in the deck
      */
     public List<Card> getAvailableCards() {
 
@@ -153,6 +157,35 @@ public class Deck {
         }
 
         return available;
+    }
+
+    /**
+     * Returns a copy of every card in the deck.
+     * <p>
+     * Unlike {@link #getAvailableCards()}, this method always returns all
+     * 52 cards regardless of their availability. The returned cards are copies of
+     * the originals, so any modification to them does not affect the actual deck.
+     * All copied cards are marked as available.
+     *
+     * @return a list containing copies of all cards in the deck
+     */
+    public List<Card> getAllCards() {
+
+        List<Card> cards = new ArrayList<>(NUM_SUITS * NUM_VALUES);
+
+        for (int i = 0; i < NUM_SUITS; i++) {
+            for (int j = 0; j < NUM_VALUES; j++) {
+
+                Card card = _deck[i][j];
+
+                Card copy = new Card(card.getNumber(), card.getSuit());
+                copy.setAvailable(true);
+
+                cards.add(copy);
+            }
+        }
+
+        return cards;
     }
 
 }
