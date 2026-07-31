@@ -41,13 +41,13 @@ public class CheckCommand extends Command {
             return command.execute(sb, bb, maxBet);
         }
 
-        log.debug("Player {} makes CHECK", _player.getPlayerName());
-
+        
         _player.check();
 
         if(PokerHistory.current() != null)
             PokerHistory.current().check(_player);
         
+        log.debug("Player {} makes CHECK", _player.getPlayerName());
         return CommandResult.continuePlaying(0, false);
     }
 

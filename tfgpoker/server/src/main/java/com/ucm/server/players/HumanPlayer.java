@@ -45,7 +45,7 @@ public class HumanPlayer implements IPlayerNotificator {
 
 
     @Override
-    public String notifyMakePlay(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException {
+    public String notifyMakePlay(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException, TurnTimeoutException {
         if(Game.DEBUG_PLAYERS) {
             System.out.printf("%s hace: ", player.getPlayerName());
             return _scanner.nextLine();
@@ -60,6 +60,7 @@ public class HumanPlayer implements IPlayerNotificator {
 
         _socket.setSoTimeout(60 * 1000);
 
+        // Wait for human response via socket
         String commandInput = null;
         try {
             commandInput = SocketUtils.receiveString( _socket.getInputStream() );

@@ -237,11 +237,6 @@ public class InGameWindowController extends GenericController {
                 else {
                     NotificationManager.showError(Messages.Notifications.ERROR_GAME_CANCELED_BY_SERVER);
                 }
-
-                // Go back to the initial view
-                Platform.runLater(() -> {
-                    next();
-                });
             }
             
         });
@@ -1219,6 +1214,7 @@ public class InGameWindowController extends GenericController {
                     });
                 }
 
+                _commandQueue.clear();
                 String command = _commandQueue.poll(_turnTimerTotal, TimeUnit.SECONDS);
 
                 if(command == null) {

@@ -31,6 +31,7 @@ public class PlayerList implements Iterable<Node> {
 
     private static final Logger log = LogManager.getLogger(PlayerList.class);
 
+
     private Node _first;
     private Node _last;
     private int _playerCounter;
@@ -40,11 +41,6 @@ public class PlayerList implements Iterable<Node> {
     private PotManager _potManager;
     private Node _host;
     private Spectator _spectator;
-
-    // IMPORTANT - Variable to know at any point who is the pivot player. 
-    // Needed to pass the pivot player to the next active player in case of any disconnection
-    private Node _currentPivot = null;
-    private boolean _duringHand = false;
 
 
     public PlayerList(int n) {
@@ -212,9 +208,6 @@ public class PlayerList implements Iterable<Node> {
         catch(IOException e) {
             
             pNode._isDisconnected = true;
-            if(pNode == this._currentPivot) // In case the player disconnected was the current pivot -> Transfer the pivot
-                this._currentPivot = getNextPlayerActive(this._currentPivot);
-
             if( checkIfGameCancel() )
                 throw new CancelGameException();
         }
@@ -236,8 +229,6 @@ public class PlayerList implements Iterable<Node> {
         catch(IOException e) {
             
             pNode._isDisconnected = true;
-            if(pNode == this._currentPivot)
-                this._currentPivot = getNextPlayerActive(this._currentPivot);
 
             if( checkIfGameCancel() )
                 throw new CancelGameException();
@@ -249,7 +240,7 @@ public class PlayerList implements Iterable<Node> {
             _spectator.notifyTotalPot(totalPot);
     }
 
-    public void playHand(final int sb, final int bb, final boolean isPreflop) throws OnlyOnePlayerLeftException, CancelGameException {
+    public void playHand(final int sb, final int bb, boolean isPreflop) throws OnlyOnePlayerLeftException, CancelGameException {
 
         // Avoid asking if all active players have used all their money
         if( checkAllPlayersAllIn() ) {
@@ -259,16 +250,15 @@ public class PlayerList implements Iterable<Node> {
         }
 
 
+        List<Node> queue = new ArrayList<>();   // Used to restore pivot player in case of any problematic disconnection
         int playersRemaining = activePlayersCounter();
+        int playerThatPlayed = playersRemaining;
         Node playerOnTurn = calculatePlayerOnTurn(playersRemaining, isPreflop);
         Node pivotPlayer = calculatePivotPlayer(playersRemaining, isPreflop, playerOnTurn);
-        this._currentPivot = pivotPlayer;   // IMPORTANT !!
-
         int maxBet = (isPreflop) ? bb : 0;
-        int currentBet = maxBet;
         int minRaise = (isPreflop) ? bb - sb : 0;
         int totalPot = 0;
-        this._duringHand = true;
+        boolean endOfHand = false;
 
         // In case only one player can play -> Cannot play alone
         // E.g: All players all-in except one -> Skip rounds
@@ -277,10 +267,12 @@ public class PlayerList implements Iterable<Node> {
             return;
         }
 
+        // Small-blind and big-blind mandatory play
         if(isPreflop)
             smallBlindAndBigBlindPlays(sb, bb, playersRemaining);
 
-        notifyWaitExceptTo(playerOnTurn);
+
+        notifyWaitExceptTo(playerOnTurn);   // Keep all players, except the first to play, waiting
         do {
 
             if(isPreflop)
@@ -289,6 +281,7 @@ public class PlayerList implements Iterable<Node> {
                 log.debug("Last maximum bet is {}", maxBet);
 
 
+            // Skip to the next active player in case the current player went all-in and cannot play
             if(playerOnTurn._player.isAllIn()) {
                 playerOnTurn = getNextPlayerActive(playerOnTurn);
                 continue;
@@ -297,12 +290,10 @@ public class PlayerList implements Iterable<Node> {
             // Notify all about the player state
             notifyTurnPlayer(playerOnTurn._player);
 
-            // Ask player to play and check response time
+            // Ask player to play and check and store response time
             long start = System.nanoTime();
             Command command = askCommandToPlayer(playerOnTurn, sb, bb, maxBet);
             long end = System.nanoTime();
-
-            // Annotate response time
             playerOnTurn._player.getExperimentData().setDecisionTime((end - start) / 1_000_000);
             
             // Execute player action
@@ -322,6 +313,7 @@ public class PlayerList implements Iterable<Node> {
                 pivotPlayer = getNextPlayerActive(playerOnTurn);
                 
                 if (playersRemaining == 1) {
+
                     _totalPot = totalPot;
                     updateHandState();
                     notifyHandEndsByFold();
@@ -330,19 +322,36 @@ public class PlayerList implements Iterable<Node> {
                 }
             }
 
-            currentBet = result.folds() ? 0 : result.bet();
+            // Update table state
             minRaise = Math.max(minRaise, result.bet() - maxBet);
-            maxBet = Math.max(maxBet, currentBet);
+            maxBet = Math.max(maxBet, result.bet());
 
+            // Update next turn and pivot player, if necessary
             pivotPlayer = result.raises() ? playerOnTurn : pivotPlayer;
             playerOnTurn = getNextPlayerActive(playerOnTurn);
+
+            // If raise -> All players have to play minus the current player, who just played
+            // In other case -> One less player remaining
+            playerThatPlayed = result.raises() ? activePlayersCounter() - 1 : playerThatPlayed - 1;
+
+            // Only useful in preflop round to restore the turns and play "normally" : The player that raised is the "pivot"
+            // When its his turn again, it does not play and the round ends
+            if ( isPreflop && result.raises() )
+                isPreflop = false;
+
+            // Check if the hand ends based on the preflop phase
+            // Even IN the preflop phase the "isPreflop" variable can be changed.
+            // This happends because of a raise in that round, changing the way the end of the hand is determined
+            if(isPreflop)    
+                endOfHand = (playerThatPlayed == 0);
+            else
+                endOfHand = (pivotPlayer == playerOnTurn && playerThatPlayed == 0);
         }
-        while(pivotPlayer != playerOnTurn && playersRemaining != 0);
+        while(!endOfHand);
 
         _totalPot = totalPot;
         updateHandState();
         notifyRoundEnded();
-        _duringHand = false;
     }
 
     private Command askCommandToPlayer(Node node, final int sb, final int bb, final int maxBet) throws CancelGameException {
@@ -934,7 +943,7 @@ public class PlayerList implements Iterable<Node> {
     private boolean checkIfGameCancel() {
 
         if(_host != null && _host._isDisconnected)
-            return true; 
+            return true;
 
 
         int playerOnGame = 0;
