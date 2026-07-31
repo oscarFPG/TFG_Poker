@@ -1194,6 +1194,7 @@ public class InGameWindowController extends GenericController {
                     });
                 }
 
+                _commandQueue.clear();
                 String command = _commandQueue.poll(_turnTimerTotal, TimeUnit.SECONDS);
 
                 if(command == null) {
