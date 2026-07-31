@@ -205,7 +205,16 @@ public class Player implements IPlayerActions {
         if(_playerInfo == null)
             return null;
 
+
+        // Player makes an action
+        // Check response time
+        final long start = System.nanoTime();
         String action = _playerInfo.notifyMakePlay(sb, bb, maxBet, this);
+        final long end = System.nanoTime();
+
+        // Save response time
+        _experimentData.setDecisionTime((end - start) / 1_000_000);
+
         return action;
     }
 
@@ -366,8 +375,8 @@ public class Player implements IPlayerActions {
         int bet = Math.min(sb, _offBetMoney);
         _onBetMoney += bet;
         _offBetMoney -= bet;
-
         _lastCommand = "small-blind";
+
         if(_playerInfo != null)
             _playerInfo.notifySmallBlindBet(bet, this);
 

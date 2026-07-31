@@ -64,7 +64,7 @@ public class HumanPlayer implements IPlayerNotificator {
         String commandInput = null;
         try {
             commandInput = SocketUtils.receiveString( _socket.getInputStream() );
-            log.debug("Command received from player {}: {}", player.getPlayerName(), commandInput);
+            log.debug("Player {} wants to: {}", player.getPlayerName(), commandInput);
         }
         catch(SocketTimeoutException e) {
             log.warn("Player {} turn timeout", player.getPlayerName());

@@ -862,7 +862,7 @@ public class InGameWindowController extends GenericController {
                 catch (OnlyOnePlayerLeftException e) {
 
                     System.out.printf("There is only one player left!\n");
-                    NotificationManager.showError(Messages.Notifications.ERROR_ONLY_ONE_PLAYER_LEFT);
+                    NotificationManager.showSuccess(Messages.Notifications.ERROR_ONLY_ONE_PLAYER_LEFT);
                     
                     try {
                         endOfGame = showdown(socket);
@@ -975,7 +975,7 @@ public class InGameWindowController extends GenericController {
                     GUI_putTurnPlayer(_clientInfo.id);
                     GUI_startVisualTimer(_clientInfo.id);
 
-                    int sliderStep = Math.clamp(offBetMoney / 100, 1, offBetMoney);
+                    int sliderStep = Math.clamp(offBetMoney / 100, 1, Math.max(1, offBetMoney));
                     sliderMoney.setMajorTickUnit( sliderStep );
                     sliderMoney.setMin( (double)maxBet );
                     sliderMoney.setMax( (double)(offBetMoney + onBetMoney) );
@@ -1024,10 +1024,9 @@ public class InGameWindowController extends GenericController {
             else if(serverCode == GameType.TURN_BEFORE_PLAY) {
 
                 int currentTurnPlayerId = SocketUtils.receiveInt( socket.getInputStream() );
-                GUI_putTurnPlayer(currentTurnPlayerId);
-
                 Platform.runLater(() -> {
                     buttonsHolder.setVisible(false);
+                    GUI_putTurnPlayer(currentTurnPlayerId);
                     GUI_startVisualTimer(currentTurnPlayerId);
                 });
             }
@@ -1098,11 +1097,10 @@ public class InGameWindowController extends GenericController {
 		System.out.printf("Round has ended!\n\n");    
 
 		if(handEndsByFold) {
-            NotificationManager.showError(Messages.Notifications.ERROR_ONLY_ONE_PLAYER_LEFT);
+            
             Platform.runLater(() -> {
                 buttonsHolder.setVisible(false);
             });
-
 			throw new OnlyOnePlayerLeftException();
         }
     }

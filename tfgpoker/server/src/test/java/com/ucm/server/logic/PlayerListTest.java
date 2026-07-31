@@ -187,6 +187,7 @@ public class PlayerListTest {
 
             p1.commands = new ArrayList<>( List.of("call") );
             p2.commands = new ArrayList<>( List.of("call") );
+            p3.commands = new ArrayList<>( List.of("call") );
             playerList.playHand(SB, BB, true);      // 2 + 2 + 2 = 6$ total - 2$ = 4$ beneficio
 
             p2.commands = new ArrayList<>( List.of("check", "raise 200", "call") );
@@ -233,6 +234,7 @@ public class PlayerListTest {
 
             p1.commands = new ArrayList<>( List.of("call") );
             p2.commands = new ArrayList<>( List.of("call") );
+            p3.commands = new ArrayList<>( List.of("call") );
             playerList.playHand(SB, BB, true);      // 2 + 2 + 2 = 6$ total - 2$ = 4$ beneficio
 
             p2.commands = new ArrayList<>( List.of("check", "call", "all-in") );
