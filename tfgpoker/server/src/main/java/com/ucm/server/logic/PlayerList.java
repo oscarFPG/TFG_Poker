@@ -595,6 +595,7 @@ public class PlayerList implements Iterable<Node> {
         if (history != null) {
             history.winner(winner._player, amount);
         }
+        
         log.debug("Player {} receives {}$ as prize! It has now {}$", winner._player.getPlayerName(), amount, winner._player.getMoneyOffBet());
     }
 

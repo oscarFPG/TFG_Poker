@@ -122,19 +122,6 @@ public class Game {
         }
     }
 
-
-    public void initializeExperimentData() {
-
-        for(Player p : _playerList.getPlayers()) {
-
-            p.getExperimentData().reset();
-
-            p.getExperimentData().setInitialStack(
-                p.getMoneyOffBet()
-            );
-        }
-    }
-
     public void addCardToTable() throws CancelGameException {
 
         if (_tableCardsCounter >= MAX_CARDS_IN_TABLE)
@@ -237,6 +224,18 @@ public class Game {
         PokerHistory history = PokerHistory.current();
         if (history != null)
             history.equity(equity);
+    }
+
+    public void initializeExperimentData() {
+
+        for(Player p : _playerList.getPlayers()) {
+
+            p.getExperimentData().reset();
+
+            p.getExperimentData().setInitialStack(
+                p.getMoneyOffBet()
+            );
+        }
     }
 
     public void finishExperimentData() {
