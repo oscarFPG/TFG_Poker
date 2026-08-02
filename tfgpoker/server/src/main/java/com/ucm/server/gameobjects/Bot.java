@@ -270,8 +270,8 @@ public abstract class Bot implements IPlayerNotificator {
 
     @Override public void notifyPlayerRole(PlayerRole role) throws IOException {}
     @Override public void notifyPlayerCard(Card c) throws IOException {}
-    @Override public void notifyOwnState(IPlayerInfo player) throws IOException {}
-    @Override public void notifyOtherPlayerState(IPlayerInfo other) throws IOException {}
+    @Override public void notifyOwnState(IPlayerInfo player, final boolean receiveRank) throws IOException {}
+    @Override public void notifyOtherPlayerState(IPlayerInfo other, final boolean receiveRank) throws IOException {}
     @Override public void notifyEndPlayerState() throws IOException {}
     @Override public void notifyCurrentTurnPlayer(IPlayerInfo player) throws IOException {}
     @Override public void notifyTurnWait() throws IOException {}

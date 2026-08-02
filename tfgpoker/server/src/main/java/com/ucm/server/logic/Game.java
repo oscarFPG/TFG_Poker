@@ -181,13 +181,18 @@ public class Game {
             _playerList.calculatePrizeForPlayerLeft();
         }
         else {
-            List<PlayerEvaluation> playersEval = Evaluator.evaluateAllHands(playersHands, _tableCards);
-            _playerList.calculatePrizeDistribution(playersEval);
+
+            try {
+                List<PlayerEvaluation> playersEval = Evaluator.getInstance().evaluateAllHands(playersHands, _tableCards);
+                _playerList.calculatePrizeDistribution(playersEval);
+            }
+            catch (EvaluatorException e) {
+                throw new CancelGameException(e.getMessage());
+            }
         }
-        
         _playerList.manageEliminatedPlayers();
 
-
+        
         // Wait to display player cards for the user
         try {
             System.out.printf("%d seconds pause to see the winner...\n", GameType.SHOWDOWN_WAIT_TIME_SEC);

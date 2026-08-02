@@ -121,6 +121,11 @@ public class Player implements IPlayerActions {
     protected String _lastCommand;
 
     /**
+     * Stores the rank of his last hand: Pair, Two-pair, etc...
+     */
+    protected String _lastHandRank;
+
+    /**
      * Interface to access player information.
      * This is used to send notifications to the player about the state of the game and other players.
      */
@@ -160,6 +165,7 @@ public class Player implements IPlayerActions {
         _isEliminated = false;
         _equity = 0;
         _lastCommand = "none";
+        _lastHandRank = "none";
     }
 
 
@@ -277,6 +283,9 @@ public class Player implements IPlayerActions {
         _numCards = 0;
     }
 
+    public void receiveHandRankName(String rankName) {
+        _lastHandRank = (rankName == null) ? "none" : rankName;
+    }
 
     public void notifyTurnPlay() throws IOException {
 
@@ -302,16 +311,16 @@ public class Player implements IPlayerActions {
             _playerInfo.notifyCurrentTurnPlayer(other);
     }
 
-    public void notifyOwnState() throws IOException {
+    public void notifyOwnState(final boolean receiveRank) throws IOException {
 
         if(_playerInfo != null)
-            _playerInfo.notifyOwnState(this);
+            _playerInfo.notifyOwnState(this, receiveRank);
     }
 
-    public void notifyOtherPlayerState(IPlayerInfo other) throws IOException {
+    public void notifyOtherPlayerState(IPlayerInfo other, final boolean receiveRank) throws IOException {
 
         if(_playerInfo != null)
-            _playerInfo.notifyOtherPlayerState(other);
+            _playerInfo.notifyOtherPlayerState(other, receiveRank);
     }
 
     public void notifyEndPlayerState() throws IOException {
@@ -418,6 +427,8 @@ public class Player implements IPlayerActions {
     @Override public boolean isEliminated() { return _isEliminated; }
     @Override public PlayerRole getRole() { return _role; }
     @Override public String getLastCommand() { return _lastCommand; }
+    @Override public String getLastRankName() { return _lastHandRank; }
+
 
     
     public PlayerExperimentData getExperimentData() { return _experimentData; }

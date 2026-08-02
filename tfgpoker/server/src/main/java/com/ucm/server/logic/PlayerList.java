@@ -125,7 +125,7 @@ public class PlayerList implements Iterable<Node> {
                 throw new CancelGameException();
             }
         
-            notifyPlayerStateToAllPlayers();
+            notifyPlayerStateToAllPlayers(false);
             return;
         }
 
@@ -154,7 +154,7 @@ public class PlayerList implements Iterable<Node> {
             }
         }
 
-        notifyPlayerStateToAllPlayers();
+        notifyPlayerStateToAllPlayers(false);
     }
 
     public void shareOutCardsToSomePlayer(Card c1, Card c2) throws CancelGameException {
@@ -298,7 +298,7 @@ public class PlayerList implements Iterable<Node> {
             playerOnTurn._hasActed = true;
             
             // Notify new player state to every other player, even himself
-            notifyPlayerOwnState(playerOnTurn);
+            notifyPlayerOwnState(playerOnTurn, false);  // false 
             notifyOtherPlayerActionToAllPlayers(playerOnTurn._player);
             
             // Calculate total pot and notify to all players
@@ -427,10 +427,10 @@ public class PlayerList implements Iterable<Node> {
 
         List<PotDistribution> distribution = _potManager.calculatePrizeDistribution(players);
         for(PotDistribution dist : distribution) {
-            givePriceToPlayerWithID(dist.playerID(), dist.potPrize());
+            givePotToPlayerWithID(dist.playerID(), dist.potPrize(), dist.rankName());
         }
 
-        notifyPlayerStateToAllPlayers();
+        notifyPlayerStateToAllPlayers(true);
     }
 
     public void calculatePrizeForPlayerLeft() throws CancelGameException {
@@ -445,10 +445,10 @@ public class PlayerList implements Iterable<Node> {
             }
         }
 
-        PotDistribution distribution = _potManager.calculatePrizeForPlayer(winner._player.getPlayerId());
-        givePriceToPlayerWithID(distribution.playerID(), distribution.potPrize());
+        PotDistribution dist = _potManager.calculatePrizeForPlayer(winner._player.getPlayerId());
+        givePotToPlayerWithID(dist.playerID(), dist.potPrize(), dist.rankName());
 
-        notifyPlayerStateToAllPlayers();
+        notifyPlayerStateToAllPlayers(false);
     }
 
     public void sendTableCardToAllPlayers(final Card card) throws CancelGameException {
@@ -576,7 +576,7 @@ public class PlayerList implements Iterable<Node> {
         }
     }
 
-    private void givePriceToPlayerWithID(final int id, final int amount) {
+    private void givePotToPlayerWithID(final int id, final int amount, final String rankName) {
 
         Iterator<Node> it = iterator();
         Node winner = null;
@@ -590,6 +590,7 @@ public class PlayerList implements Iterable<Node> {
         }
 
         winner._player.receivePriceMoney(amount);
+        winner._player.receiveHandRankName(rankName);
         winner._player.wins();
         PokerHistory history = PokerHistory.current();
         if (history != null) {
@@ -679,10 +680,10 @@ public class PlayerList implements Iterable<Node> {
             _spectator.notifyTurnPlayer(p);
     }
 
-    private void notifyPlayerOwnState(Node player) throws CancelGameException {
+    private void notifyPlayerOwnState(Node player, final boolean receiveRank) throws CancelGameException {
 
         try {
-            player._player.notifyOwnState();
+            player._player.notifyOwnState(receiveRank);
         }
         catch(IOException e) {
             
@@ -810,7 +811,7 @@ public class PlayerList implements Iterable<Node> {
         }
     }
 
-    private void notifyPlayerStateToAllPlayers() throws CancelGameException {
+    private void notifyPlayerStateToAllPlayers(final boolean receiveRank) throws CancelGameException {
 
         Iterator<Node> targetIt = iterator();
         while( targetIt.hasNext() ) {
@@ -818,25 +819,23 @@ public class PlayerList implements Iterable<Node> {
             Node receiverPlayer = targetIt.next();
             if( !receiverPlayer._isDisconnected && !receiverPlayer._player.isEliminated() ) {
 
-                try {
-                    receiverPlayer._player.notifyOwnState();
-                }
-                catch(IOException e) {
+                // Notify own state to player
+                notifyPlayerOwnState(receiverPlayer, receiveRank);
 
-                    receiverPlayer._isDisconnected = true;
-                    if( checkIfGameCancel() )
-                        throw new CancelGameException();
-                }
-
+                // Notify player state to the remaining players
                 Iterator<Node> it = iterator();
                 while( it.hasNext() ) {
 
                     Node player = it.next();
+
+                    // Ignore himself
                     if( player.equals(receiverPlayer) )
                         continue;
                 
+
+                    // Notify player state to other player
                     try {
-                        receiverPlayer._player.notifyOtherPlayerState(player._player);
+                        receiverPlayer._player.notifyOtherPlayerState(player._player, receiveRank);
                     }
                     catch(IOException e) {
                         
@@ -846,6 +845,7 @@ public class PlayerList implements Iterable<Node> {
                     }
                 }
 
+                // Notify end of player state to the receiver player in either case (Same/Other player)
                 try {
                     receiverPlayer._player.notifyEndPlayerState();
                 }

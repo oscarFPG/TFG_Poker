@@ -9,6 +9,7 @@ import java.util.Random;
 
 import org.junit.jupiter.api.Test;
 
+import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.server.evaluator.Evaluator;
 import com.ucm.server.gameobjects.Deck;
@@ -36,7 +37,7 @@ public class EquityCalculatorTest {
 
     // ---------------------- SIMULACIÓN COMPLETA ----------------------
 
-    private void runFullGameSimulation(int numPlayers) {
+    private void runFullGameSimulation(int numPlayers) throws CancelGameException {
 
         Deck deck = new Deck();
         List<HandInfo> players = new ArrayList<>();
@@ -88,7 +89,7 @@ public class EquityCalculatorTest {
             List<HandInfo> players,
             Card[] table,
             Deck deck
-    ) {
+    ) throws CancelGameException {
 
         Map<Integer, Double> equity =
                 EquityCalculator.calculateEquity(players, table, deck);

@@ -73,7 +73,7 @@ public interface IPlayerNotificator {
      * Notifies the player about their state after performing an action (e.g., after betting, calling, folding, etc.)
      * @throws IOException
      */
-    public void notifyOwnState(IPlayerInfo player) throws IOException;
+    public void notifyOwnState(IPlayerInfo player, final boolean receiveRank) throws IOException;
 
     /**
      * Notifies the player about their current state in the game. 
@@ -82,7 +82,7 @@ public interface IPlayerNotificator {
      * @param isLast indicates if this is the last player sent
      * @throws IOException
      */
-    public void notifyOtherPlayerState(IPlayerInfo other) throws IOException;
+    public void notifyOtherPlayerState(IPlayerInfo other, final boolean receiveRank) throws IOException;
 
     /**
      * Notifies when server stops sending more player states info
