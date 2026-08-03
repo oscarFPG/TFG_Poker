@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
+import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.Suit;
 import com.ucm.server.evaluator.Evaluator;
@@ -37,7 +38,9 @@ public class EquityCalculatorTest {
         }
     }
 
-    private void runFullGameSimulation(int numPlayers) {
+    // ---------------------- SIMULACIÓN COMPLETA ----------------------
+
+    private void runFullGameSimulation(int numPlayers) throws CancelGameException {
 
         Deck deck = new Deck();
         List<HandInfo> players = new ArrayList<>();
@@ -86,7 +89,8 @@ public class EquityCalculatorTest {
     private void assertEquity(
             List<HandInfo> players,
             Card[] table,
-            Deck deck) {
+            Deck deck
+    ) throws CancelGameException {
 
         Map<Integer, Double> equity =
                 EquityCalculator.calculateEquity(players, table, deck);

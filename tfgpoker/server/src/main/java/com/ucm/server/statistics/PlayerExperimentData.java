@@ -1,5 +1,5 @@
-
 package com.ucm.server.statistics;
+
 
 public class PlayerExperimentData {
 
@@ -190,12 +190,13 @@ public class PlayerExperimentData {
 
     public void setEquity(Street street, double equity) {
 
-    switch (street) {
+        switch (street) {
 
-        case PREFLOP -> preflopEquity = equity;
-        case FLOP    -> flopEquity = equity;
-        case TURN    -> turnEquity = equity;
-        case RIVER   -> riverEquity = equity;
+            case PREFLOP -> preflopEquity = equity;
+            case FLOP    -> flopEquity = equity;
+            case TURN    -> turnEquity = equity;
+            case RIVER   -> riverEquity = equity;
+        }
     }
-}
+
 }

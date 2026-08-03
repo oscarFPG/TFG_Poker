@@ -1,10 +1,11 @@
 package com.ucm.server.evaluator;
 
-import java.nio.charset.StandardCharsets;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import com.ucm.common.gameobjects.Card;
@@ -114,7 +115,7 @@ public class Evaluator {
         }
     }
 
-    public static List<PlayerEvaluation> evaluateAllHands(List<HandInfo> playerHands, Card[] tableCards) {
+    public List<PlayerEvaluation> evaluateAllHands(List<HandInfo> playerHands, Card[] tableCards) {
 
         List<PlayerEvaluation> playersEval = new ArrayList<>( playerHands.size() );
         int encodedPlayerCards[][] = new int[ playerHands.size() ][2];
@@ -132,11 +133,11 @@ public class Evaluator {
 
         // For each player, calculate the best 5 cards hand between all 7 cards(player cards + all table cards)
         final short tableRank = evaluate5hand(
-                encodedTableCards[0],
-                encodedTableCards[1],
-                encodedTableCards[2],
-                encodedTableCards[3],
-                encodedTableCards[4]
+            encodedTableCards[0],
+            encodedTableCards[1],
+            encodedTableCards[2],
+            encodedTableCards[3],
+            encodedTableCards[4]
         );
         for (int i = 0; i < playerHands.size(); i++) {
 
@@ -160,7 +161,7 @@ public class Evaluator {
         return playersEval;
     }
 
-    public static short evaluate5hand(final int card1, final int card2, final int card3, final int card4, final int card5) {
+    public short evaluate5hand(final int card1, final int card2, final int card3, final int card4, final int card5) {
 
         int q = (card1 | card2 | card3 | card4 | card5) >>> 16;
         boolean bIsFlush = (card1 & card2 & card3 & card4 & card5 & 0xF000) != 0;
@@ -188,7 +189,7 @@ public class Evaluator {
      * @param cards
      * @return
      */
-    private static short evaluate7hand(final int[] cards) {
+    private short evaluate7hand(final int[] cards) {
 
         if (cards.length != 7) // TODO : Lanzar excepcion
             return -1;
@@ -226,7 +227,7 @@ public class Evaluator {
         return bestHandValue;
     }
 
-    private static int findFast(int u) {
+    private int findFast(int u) {
 
         int a, b, r;
 
@@ -239,6 +240,12 @@ public class Evaluator {
         r = (a ^ _hashAdjust[b]);
 
         return r;
+    }
+
+    public static String getRankName(short val) {
+
+        RANK rank = handRank(val);
+        return rank.name();
     }
 
     public static RANK handRank(short val) {

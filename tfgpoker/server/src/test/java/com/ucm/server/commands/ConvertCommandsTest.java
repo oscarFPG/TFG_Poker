@@ -2,6 +2,8 @@ package com.ucm.server.commands;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.IOException;
+
 import org.junit.jupiter.api.Test;
 
 import com.ucm.server.FakePlayer;
@@ -66,7 +68,7 @@ public class ConvertCommandsTest {
     }
 
     @Test
-    public void RaiseToCall_WithBet() {
+    public void RaiseToCall_WithBet() throws IOException {
         
         final int MAX_BET = 2*BB;
         String input = "raise " + String.valueOf(MAX_BET);
@@ -102,7 +104,7 @@ public class ConvertCommandsTest {
     }
 
     @Test
-    public void RaiseToAllIn_WithBet() {
+    public void RaiseToAllIn_WithBet() throws IOException {
         
         final int MAX_BET = OFF_BET;
         String input = "raise " + String.valueOf(OFF_BET);

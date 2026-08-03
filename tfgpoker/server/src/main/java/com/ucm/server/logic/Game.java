@@ -5,14 +5,17 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ucm.common.BotStruct;
+import com.ucm.common.BotStyle;
 import com.ucm.common.ClientStruct;
 import com.ucm.common.GameConfig;
+import com.ucm.common.GameType;
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.common.gameobjects.Card;
@@ -80,14 +83,17 @@ public class Game {
         _currentSB = _initialSmallBlind;
         _currentBB = _initialBigBlind;
 
+        // Player list
         _playerList = new PlayerList(config.getTotalPlayers());
         addAllPlayersInitial(players, bots, spectator, config);
 
-        _deck = new Deck();
+        // Deck and cards
+        _deck = new Deck( selectSeed_DEBUG(players, bots) );
         _tableCards = new Card[MAX_CARDS_IN_TABLE];
         _tableCardsCounter = 0;
         _isPreflop = true;
 
+        // Static/dynamic blinds
         if(config._dinamicBlinds) {
             int seconds = Integer.parseInt( config._levelDuration );
             _timer = new Timer(seconds);
@@ -116,39 +122,22 @@ public class Game {
         }
     }
 
-
-    public void initializeExperimentData() {
-
-        for(Player p : _playerList.getPlayers()) {
-
-            p.getExperimentData().reset();
-
-            p.getExperimentData().setInitialStack(
-                p.getMoneyOffBet()
-            );
-        }
-    }
-
     public void addCardToTable() throws CancelGameException {
 
-        if (_tableCardsCounter >= 5)
+        if (_tableCardsCounter >= MAX_CARDS_IN_TABLE)
             return;
 
 
+        // Take a random card from the Deck
         Card c = _deck.takeRandomCard();
         _tableCards[_tableCardsCounter] = c;
         _tableCardsCounter++;
 
+        // Put card on the table and notify all players
         _playerList.sendTableCardToAllPlayers(c);
 
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < MAX_CARDS_IN_TABLE; i++){
-            if(_tableCards[i] == null)
-                sb.append(Card.FlippedDownCardToString()).append(" ");
-            else
-                sb.append(_tableCards[i].toString()).append(" ");
-        }
-        log.debug("Table cards: {}", sb.toString());
+        // Display table cards via console for debug purpose
+        printTableCards();
     }
 
     public void playHand() throws OnlyOnePlayerLeftException, CancelGameException {
@@ -183,16 +172,33 @@ public class Game {
 
     public void giveRewardToWinner() throws CancelGameException {
 
+        // Notify to all players about the other player cards
+        _playerList.broadcastAllPlayerCards();
+
+        // Calculate hand winner. If there is only a player left, give him the prize
         List<HandInfo> playersHands = _playerList.getPlayerHandsInfo();
         if(playersHands.size() == 1) {
             _playerList.calculatePrizeForPlayerLeft();
         }
         else {
-            List<PlayerEvaluation> playersEval = Evaluator.evaluateAllHands(playersHands, _tableCards);
-            _playerList.calculatePrizeDistribution(playersEval);
+
+            try {
+                List<PlayerEvaluation> playersEval = Evaluator.getInstance().evaluateAllHands(playersHands, _tableCards);
+                _playerList.calculatePrizeDistribution(playersEval);
+            }
+            catch (EvaluatorException e) {
+                throw new CancelGameException(e.getMessage());
+            }
         }
-        
         _playerList.manageEliminatedPlayers();
+
+        
+        // Wait to display player cards for the user
+        try {
+            System.out.printf("%d seconds pause to see the winner...\n", GameType.SHOWDOWN_WAIT_TIME_SEC);
+            Thread.sleep(GameType.SHOWDOWN_WAIT_TIME_SEC * 1000);
+        }
+        catch (InterruptedException e) {}
     }
 
     public boolean passTurn() throws CancelGameException {
@@ -210,7 +216,69 @@ public class Game {
         return endOfGame;
     }
 
+    public void updateEquity() throws CancelGameException {
+
+        List<HandInfo> players = _playerList.getPlayerHandsInfo();
+        if (players.size() <= 1)
+            return; 
+
+
+        Map<Integer, Double> equity = EquityCalculator.calculateEquity(players, _tableCards, _deck);
+        _playerList.notifyEquityToPlayers(equity);
+
+        PokerHistory history = PokerHistory.current();
+        if (history != null)
+            history.equity(equity);
+    }
+
+    public void initializeExperimentData() {
+
+        for(Player p : _playerList.getPlayers()) {
+
+            p.getExperimentData().reset();
+
+            p.getExperimentData().setInitialStack(
+                p.getMoneyOffBet()
+            );
+        }
+    }
+
+    public void finishExperimentData() {
+
+        for(Player p : _playerList.getPlayers()) {
+
+            PlayerExperimentData e = p.getExperimentData();
+
+            e.setFinalStack(
+                p.getMoneyOffBet()
+            );
+
+            e.setWonHand(
+                p.isWinner()
+            );
+
+            e.setNetChips(
+                e.getFinalStack() - e.getInitialStack()
+            );
+        }
+    }
+
+
     
+    private void printTableCards() {
+
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < MAX_CARDS_IN_TABLE; i++) {
+
+            if(_tableCards[i] == null)
+                sb.append( Card.FlippedDownCardToString() ).append(" ");
+            else
+                sb.append( _tableCards[i].toString() ).append(" ");
+        }
+
+        log.debug("Table cards: {}", sb.toString());
+    }
+
     private void increaseBlinds() {
 
         double increase = Math.pow( (1 + _hikePercentage) , _level);
@@ -267,65 +335,58 @@ public class Game {
         _tableCardsCounter = 0;
     }
 
-    public void updateEquity() throws CancelGameException {
+    private long selectSeed_DEBUG(final List<ClientStruct> players, final List<BotStruct> bots) {
 
-        List<HandInfo> players = _playerList.getPlayerHandsInfo();
-        if (players.size() <= 1)
-            return; 
+        boolean nose = true;
+        if(nose)
+            return 20;
 
 
-        Map<Integer, Double> equity = EquityCalculator.calculateEquity(players, _tableCards, _deck);
-        _playerList.notifyEquityToPlayers(equity);
+        long seed = 1;
+        if(players.size()  == 1 && bots.size() == 1) { // Heads-up(1vs1)
 
-        PokerHistory history = PokerHistory.current();
-        if (history != null)
-            history.equity(equity);
+            BotStyle style = bots.get(0).style();
+            switch (style) {
+                case BotStyle.MANIAC:
+                    seed = 60;
+                    break;
 
-                
-    }
+                case BotStyle.LOOSE_AGGRESSIVE:
+                    seed = 50;
+                    break;
 
-    public void finishExperimentData() {
+                case BotStyle.LOOSE_PASSIVE:
+                    seed = 40;
+                    break;
 
-        for(Player p : _playerList.getPlayers()) {
+                case BotStyle.TIGHT_AGGRESSIVE:
+                    seed = 30;
+                    break;
 
-            PlayerExperimentData e = p.getExperimentData();
+                case BotStyle.TIGHT_PASSIVE:
+                    seed = 20;
+                    break;
 
-            e.setFinalStack(
-                p.getMoneyOffBet()
-            );
+                default: // Default
+                    seed = 10; 
+                    break;
+            }
 
-            e.setWonHand(
-                p.isWinner()
-            );
-
-            e.setNetChips(
-                e.getFinalStack()
-            - e.getInitialStack());
         }
+        else {
+            Random rand = new Random();
+            seed = rand.nextLong();
+        }
+
+        log.debug("Selected SEED: {}", seed);
+        return seed;
     }
 
-    public int getHandCounter() {
-    return _handCounter;
-    }
+    public int getHandCounter() { return _handCounter; }
+    public int getCurrentSmallBlind() { return _currentSB; }
+    public int getCurrentBigBlind() { return _currentBB; }
+    public PlayerList getPlayerList() { return _playerList; }
+    public String getMatchId() { return _matchId; }
+    public Card[] getTableCards() { return _tableCards; }
 
-    public int getCurrentSmallBlind() {
-        return _currentSB;
-    }
-
-    public int getCurrentBigBlind() {
-        return _currentBB;
-    }
-
-    public PlayerList getPlayerList() {
-        return _playerList;
-    }
-
-    public String getMatchId() {
-        return _matchId;
-    }
-
-    public Card[] getTableCards() {
-        return _tableCards;
-    }
 }
-

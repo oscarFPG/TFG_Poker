@@ -257,7 +257,7 @@ public abstract class Bot implements IPlayerNotificator {
 
             // Wait for a random time amount
             long randomWaitingTime = ThreadLocalRandom.current().nextLong(esperaMinima, esperaMaxima + 1);
-            log.warn("Waiting {} miliseconds to respond", randomWaitingTime);
+            log.warn("Waiting {} seconds to respond", (int)randomWaitingTime / 1000);
 
             try {
                 Thread.sleep(randomWaitingTime);
@@ -270,8 +270,8 @@ public abstract class Bot implements IPlayerNotificator {
 
     @Override public void notifyPlayerRole(PlayerRole role) throws IOException {}
     @Override public void notifyPlayerCard(Card c) throws IOException {}
-    @Override public void notifyOwnState(IPlayerInfo player) throws IOException {}
-    @Override public void notifyOtherPlayerState(IPlayerInfo other) throws IOException {}
+    @Override public void notifyOwnState(IPlayerInfo player, final boolean receiveRank) throws IOException {}
+    @Override public void notifyOtherPlayerState(IPlayerInfo other, final boolean receiveRank) throws IOException {}
     @Override public void notifyEndPlayerState() throws IOException {}
     @Override public void notifyCurrentTurnPlayer(IPlayerInfo player) throws IOException {}
     @Override public void notifyTurnWait() throws IOException {}
@@ -282,6 +282,7 @@ public abstract class Bot implements IPlayerNotificator {
     @Override public void notifyGameKeeps() throws IOException {}
     @Override public void notifyGameWinner() throws IOException {}
     @Override public void notifyGameLoser() throws IOException {}
+    @Override public void notifyOtherPlayerCards(IPlayerInfo other) throws IOException {}
 
     @Override
     public String getPlayerType() {

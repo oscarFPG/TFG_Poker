@@ -61,6 +61,11 @@ public class Deck {
         initializeDeck();
     }
 
+    public Deck(final long seed) {
+        _random = new Random(seed);
+        initializeDeck();
+    }
+
     /**
      * Initializes the deck of cards.
      * Creates a new {@link Card} object for each combination of suit and value.

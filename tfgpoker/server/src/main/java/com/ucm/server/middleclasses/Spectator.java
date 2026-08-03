@@ -8,6 +8,7 @@ import com.ucm.common.SocketUtils;
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.server.gameobjects.Player;
+import com.ucm.server.interfaces.IPlayerInfo;
 
 
 public class Spectator {
@@ -127,6 +128,22 @@ public class Spectator {
 
         try {
             SocketUtils.sendInteger(_socket.getOutputStream(), GameType.GAME_KEEPS);
+        }
+        catch(IOException e) {
+            throw new CancelGameException();
+        }
+    }
+
+    public void notifyOtherPlayerCards(IPlayerInfo other) throws CancelGameException {
+
+        Card c1 = other.getPlayerCards()[0];
+        Card c2 = other.getPlayerCards()[1];
+
+        try {
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.PLAYER_CARDS);
+            SocketUtils.sendInteger(_socket.getOutputStream(), other.getPlayerId());
+            SocketUtils.sendInteger(_socket.getOutputStream(), c1.getCardValueNetworkCode());
+            SocketUtils.sendInteger(_socket.getOutputStream(), c2.getCardValueNetworkCode());
         }
         catch(IOException e) {
             throw new CancelGameException();

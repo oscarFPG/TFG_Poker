@@ -7,8 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.server.evaluator.Evaluator;
+import com.ucm.server.exceptions.EvaluatorException;
 import com.ucm.server.gameobjects.Deck;
 import com.ucm.server.middleclasses.HandInfo;
 import com.ucm.server.middleclasses.PlayerEvaluation;
@@ -42,41 +44,153 @@ public class EquityCalculator {
     public static Map<Integer, Double> calculateEquity(
             List<HandInfo> players,
             Card[] tableCards,
-            Deck deck) {
+            Deck deck
+    ) throws CancelGameException {
 
-        Map<Integer, Double> equity = new HashMap<>();
-
-        if (players.size() <= 1) {
-            for (HandInfo player : players) {
-                equity.put(player.playerID(), 1.0);
-            }
-            return equity;
+        Map<Integer, Double> map;
+        int missing = countMissingCards(tableCards);
+        try {
+            
+            if (missing == 0)
+                map = calculateRiver(players, tableCards);
+            else if (missing == 1)
+                map = calculateTurn(players, tableCards, deck);
+            else if (missing == 2)
+                map = calculateFlop(players, tableCards, deck);
+            else
+                map = calculateMonteCarlo(players, tableCards, deck);
+        }
+        catch (EvaluatorException e) {
+            throw new CancelGameException( e.getMessage() );
         }
 
-        for (HandInfo hero : players) {
-            equity.put(
-                    hero.playerID(),
-                    calculateMonteCarlo(hero, players, tableCards, deck)
-            );
-        }
-
-        return equity;
+        return map;
     }
 
     /**
-     * Estimates the equity of a single player using Monte Carlo simulation.
+     * Calculates exact equity on river (no unknown cards).
+     * 
+     * @param players players in the hand
+     * @param tableCards full board (5 cards)
+     * @return equity distribution
+     * @throws EvaluatorException 
+     */
+    private static Map<Integer, Double> calculateRiver(
+            List<HandInfo> players,
+            Card[] tableCards
+    ) throws EvaluatorException {
+
+        Map<Integer, Double> result = initResult(players);
+
+        List<PlayerEvaluation> evals =
+                Evaluator.getInstance().evaluateAllHands(players, tableCards);
+
+        List<Integer> winners = getWinners(evals);
+
+        for (int id : winners) {
+            result.put(id, 1.0 / winners.size());
+        }
+
+        return result;
+    }
+
+   /**
+     * Calculates equity on turn by iterating all possible river cards.
      *
-     * @param hero       player whose equity is being estimated
-     * @param players    active players
-     * @param tableCards current community cards
-     * @param deck       game deck
-     * @return estimated equity of the hero
+     * @param players players
+     * @param tableCards board with 4 known cards
+     * @param deck remaining deck
+     * @return normalized equity
+ * @throws EvaluatorException 
      */
     private static double calculateMonteCarlo(
             HandInfo hero,
             List<HandInfo> players,
             Card[] tableCards,
-            Deck deck) {
+            Deck deck
+    ) throws EvaluatorException {
+
+        Map<Integer, Integer> wins = initWins(players);
+        List<Card> available = deck.getAvailableCards();
+
+        for (Card river : available) {
+
+            Card[] board = completeBoard(tableCards, river);
+
+            List<PlayerEvaluation> evals =
+                    Evaluator.getInstance().evaluateAllHands(players, board);
+
+            List<Integer> winners = getWinners(evals);
+
+            for (int id : winners) {
+                wins.put(id, wins.get(id) + 1);
+            }
+        }
+
+        return normalize(wins);
+    }
+
+   /**
+     * Calculates equity on flop by iterating all possible turn and river combinations.
+     *
+     * @param players players
+     * @param tableCards board with 3 known cards
+     * @param deck remaining deck
+     * @return normalized equity
+ * @throws EvaluatorException 
+     */
+    private static Map<Integer, Double> calculateFlop(
+            List<HandInfo> players,
+            Card[] tableCards,
+            Deck deck
+    ) throws EvaluatorException {
+
+        Map<Integer, Integer> wins = initWins(players);
+        List<Card> available = deck.getAvailableCards();
+
+        int n = available.size();
+
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+
+                Card turn = available.get(i);
+                Card river = available.get(j);
+
+                Card[] board = completeBoard(tableCards, turn, river);
+
+                List<PlayerEvaluation> evals =
+                        Evaluator.getInstance().evaluateAllHands(players, board);
+
+                List<Integer> winners = getWinners(evals);
+
+                for (int id : winners) {
+                    wins.put(id, wins.get(id) + 1);
+                }
+            }
+        }
+
+        return normalize(wins);
+    }
+
+    /**
+     * Calculates equity using Monte Carlo simulation.
+     * Used for preflop or incomplete boards with many unknown cards.
+     *
+     * @param players players
+     * @param tableCards partial board
+     * @param deck remaining deck
+     * @return approximated equity
+     * @throws EvaluatorException 
+     */
+    private static Map<Integer, Double> calculateMonteCarlo(
+            List<HandInfo> players,
+            Card[] tableCards,
+            Deck deck
+    ) throws EvaluatorException {
+
+        Map<Integer, Integer> wins = initWins(players);
+        List<Card> available = deck.getAvailableCards();
+        Random rnd = new Random();
 
         double heroWins = 0.0;
         int missing = countMissingCards(tableCards);
@@ -99,10 +213,8 @@ public class EquityCalculator {
 
             for (Card card : baseDeck) {
 
-                if (card.getAvailable()) {
-                    available.add(card);
-                }
-            }
+            List<PlayerEvaluation> evals =
+                    Evaluator.getInstance().evaluateAllHands(players, board);
 
             Collections.shuffle(available, RANDOM);
 
@@ -149,6 +261,30 @@ public class EquityCalculator {
 
         return count;
     }
+
+    /**
+    * Initializes equity result map with 0.0 values.
+    */
+    private static Map<Integer, Double> initResult(List<HandInfo> players) {
+        Map<Integer, Double> map = new HashMap<>();
+        for (HandInfo h : players) {
+            map.put(h.playerID(), 0.0);
+        }
+        return map;
+    }
+
+
+    /**
+     * Initializes win counter map.
+     */
+    private static Map<Integer, Integer> initWins(List<HandInfo> players) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (HandInfo h : players) {
+            map.put(h.playerID(), 0);
+        }
+        return map;
+    }
+
 
     /**
      * Returns the identifiers of all players sharing the best hand.

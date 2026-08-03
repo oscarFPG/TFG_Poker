@@ -20,5 +20,6 @@ public interface IPlayerInfo {
     public boolean isEliminated();
     public PlayerRole getRole();
     public String getLastCommand();
+    public String getLastRankName();
 
 }
