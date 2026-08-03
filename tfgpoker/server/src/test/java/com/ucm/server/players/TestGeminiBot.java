@@ -31,7 +31,7 @@ public class TestGeminiBot {
 
         String action;
         try {
-            action = player.makePlay(5, 10, 10);
+            action = player.makePlay(5, 10, 10, 10);
             
             System.out.println("Preflop action: " + action);
 
@@ -63,7 +63,7 @@ public class TestGeminiBot {
 
         String action;
         try {
-            action = player.makePlay(5, 10, 20);
+            action = player.makePlay(5, 10, 20, 20);
 
             System.out.println("Flop action: " + action);
 
@@ -95,7 +95,7 @@ public class TestGeminiBot {
 
         String action;
         try {
-            action = player.makePlay(5, 10, 20);
+            action = player.makePlay(5, 10, 20, 20);
 
             System.out.println("Low equity action: " + action);
 

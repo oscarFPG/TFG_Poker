@@ -1,5 +1,4 @@
 package com.ucm.server.statistics;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,30 +15,34 @@ import com.ucm.server.middleclasses.HandInfo;
 import com.ucm.server.middleclasses.PlayerEvaluation;
 
 /**
- * Utility class responsible for estimating the equity (win probability) of
- * players in a Texas Hold'em hand.
- *
+ * Utility class responsible for calculating equity (win probability)
+ * of players in a Texas Hold'em game.
+ * 
  * <p>
- * Equity is estimated using Monte Carlo simulation. Each player is evaluated
- * independently as the hero, while the opponents' hole cards are randomly
- * generated for every simulation from the remaining unseen cards.
- * </p>
+ * The calculation method depends on the current game street:
+ * <ul>
+ *   <li>River → exact evaluation</li>
+ *   <li>Turn → iterate all possible rivers</li>
+ *   <li>Flop → iterate all possible turn + river combinations</li>
+ *   <li>Preflop / partial → Monte Carlo simulation</li>
+ * </ul>
+ * 
+ * <p>
+ * Equity is returned as a probability between 0.0 and 1.0 for each player.
  */
+
 public class EquityCalculator {
 
-    /** Number of Monte Carlo simulations performed for each player. */
+     /** Number of simulations used in Monte Carlo approximation */
     private static final int MONTE_CARLO_SIMULATIONS = 30000;
 
-    /** Random number generator used for shuffling cards. */
-    private static final Random RANDOM = new Random();
-
     /**
-     * Calculates the equity of every active player.
+     * Calculates equity for all players given current board state.
      *
-     * @param players    active players with their hole cards
-     * @param tableCards current community cards (missing cards are {@code null})
-     * @param deck       game deck
-     * @return map containing the estimated equity of each player
+     * @param players list of players with their hole cards
+     * @param tableCards community cards (can contain nulls)
+     * @param deck remaining deck
+     * @return map of playerID → equity (0.0 - 1.0)
      */
     public static Map<Integer, Double> calculateEquity(
             List<HandInfo> players,
@@ -103,8 +106,7 @@ public class EquityCalculator {
      * @return normalized equity
  * @throws EvaluatorException 
      */
-    private static double calculateMonteCarlo(
-            HandInfo hero,
+    private static Map<Integer, Double> calculateTurn(
             List<HandInfo> players,
             Card[] tableCards,
             Deck deck
@@ -192,73 +194,36 @@ public class EquityCalculator {
         List<Card> available = deck.getAvailableCards();
         Random rnd = new Random();
 
-        double heroWins = 0.0;
         int missing = countMissingCards(tableCards);
-
-        final List<Card> baseDeck = deck.getAllCards();
-
-        setUnavailable(baseDeck, hero.cards()[0]);
-        setUnavailable(baseDeck, hero.cards()[1]);
-
-
-        for (Card card : tableCards) {
-            if (card != null) {
-                setUnavailable(baseDeck, card);
-            }
-        }
 
         for (int sim = 0; sim < MONTE_CARLO_SIMULATIONS; sim++) {
 
-            List<Card> available = new ArrayList<>();
+            Collections.shuffle(available, rnd);
 
-            for (Card card : baseDeck) {
+            Card[] board = fillRandomBoard(tableCards, available, missing);
 
             List<PlayerEvaluation> evals =
                     Evaluator.getInstance().evaluateAllHands(players, board);
 
-            Collections.shuffle(available, RANDOM);
+            List<Integer> winners = getWinners(evals);
 
-
-            List<HandInfo> simulationPlayers =
-                    buildSimulationPlayers(hero, players, available);
-
-            int offset = (players.size() - 1) * 2;
-
-            Card[] board = fillRandomBoard(
-                    tableCards,
-                    available.subList(offset, available.size()),
-                    missing
-            );
-
-            List<PlayerEvaluation> evaluations =
-                    Evaluator.evaluateAllHands(simulationPlayers, board);
-
-            List<Integer> winners = getWinners(evaluations);
-
-            if (winners.contains(hero.playerID())) {
-                heroWins += 1.0 / winners.size();
+            for (int id : winners) {
+                wins.put(id, wins.get(id) + 1);
             }
         }
 
-        return heroWins / MONTE_CARLO_SIMULATIONS;
+        return normalize(wins);
     }
 
+
     /**
-     * Counts the number of unknown community cards.
-     *
-     * @param tableCards current community cards
-     * @return number of missing cards
+     * Counts missing (null) cards in the board.
      */
     private static int countMissingCards(Card[] tableCards) {
-
         int count = 0;
-
-        for (Card card : tableCards) {
-            if (card == null) {
-                count++;
-            }
+        for (Card c : tableCards) {
+            if (c == null) count++;
         }
-
         return count;
     }
 
@@ -287,122 +252,87 @@ public class EquityCalculator {
 
 
     /**
-     * Returns the identifiers of all players sharing the best hand.
+     * Converts win counts into normalized probabilities.
      *
-     * @param evaluations evaluated hands
-     * @return list of winning player identifiers
+     * @param wins map of playerID → number of wins
+     * @return map of playerID → equity (0.0 - 1.0)
      */
-    private static List<Integer> getWinners(List<PlayerEvaluation> evaluations) {
+    private static Map<Integer, Double> normalize(Map<Integer, Integer> wins) {
 
-        int bestRank = evaluations.stream()
-                .mapToInt(PlayerEvaluation::playerRank)
-                .min()
-                .orElse(Integer.MAX_VALUE);
+        Map<Integer, Double> result = new HashMap<>();
 
-        
+        int total = wins.values().stream().mapToInt(i -> i).sum();
 
-        List<Integer> winners = new ArrayList<>();
-
-        for (PlayerEvaluation evaluation : evaluations) {
-            if (evaluation.playerRank() == bestRank) {
-                winners.add(evaluation.playerID());
-            }
+        for (Map.Entry<Integer, Integer> e : wins.entrySet()) {
+            result.put(e.getKey(), e.getValue() / (double) total);
         }
 
-        return winners;
+        return result;
     }
 
+
     /**
-     * Completes the board by filling the missing community cards with cards
-     * taken from the available deck.
-     *
-     * @param tableCards current community cards
-     * @param available  available cards
-     * @param missing    number of missing cards
-     * @return completed board
+     * Returns the list of winning players (handles ties).
      */
-    private static Card[] fillRandomBoard(
-            Card[] tableCards,
-            List<Card> available,
-            int missing) {
+   private static List<Integer> getWinners(List<PlayerEvaluation> evals) {
+
+    int best = evals.stream()
+            .mapToInt(e -> e.playerRank()) 
+            .min()
+            .orElse(Integer.MAX_VALUE);
+
+    List<Integer> winners = new ArrayList<>();
+
+    for (PlayerEvaluation e : evals) {
+        if (e.playerRank() == best) {
+            winners.add(e.playerID());
+        }
+    }
+
+    return winners;
+}
+
+
+     /**
+     * Completes board with given extra cards.
+     */
+    private static Card[] completeBoard(Card[] tableCards, Card... extra) {
 
         Card[] board = new Card[5];
-        int index = 0;
+        int idx = 0;
 
-        for (Card card : tableCards) {
-            if (card != null) {
-                board[index++] = card;
-            }
+        for (Card c : tableCards) {
+            if (c != null) board[idx++] = c;
         }
 
-        for (int i = 0; i < missing; i++) {
-            board[index++] = available.get(i);
+        for (Card c : extra) {
+            board[idx++] = c;
         }
 
         return board;
     }
 
-    /**
-     * Builds the player list used in a simulation by keeping the hero's real
-     * hole cards and assigning random hole cards to every opponent.
-     *
-     * @param hero      hero player
-     * @param players   active players
-     * @param available remaining available cards
-     * @return simulated player list
+
+     /**
+     * Fills missing board cards randomly from available deck.
      */
-    private static List<HandInfo> buildSimulationPlayers(
-            HandInfo hero,
-            List<HandInfo> players,
-            List<Card> available) {
+    private static Card[] fillRandomBoard(
+            Card[] tableCards,
+            List<Card> available,
+            int missing
+    ) {
 
-        List<HandInfo> simulationPlayers = new ArrayList<>(players.size());
+        Card[] board = new Card[5];
+        int idx = 0;
 
-        simulationPlayers.add(hero);
-
-        int position = 0;
-
-        for (HandInfo player : players) {
-
-            if (player.playerID() == hero.playerID()) {
-                continue;
-            }
-
-            simulationPlayers.add(
-                    new HandInfo(
-                            player.playerID(),
-                            new Card[]{
-                                    available.get(position++),
-                                    available.get(position++)
-                            }
-                    )
-            );
+        for (Card c : tableCards) {
+            if (c != null) board[idx++] = c;
         }
 
-        return simulationPlayers;
-    }
-
-
-    /**
-     * Marks the specified card as unavailable in the given deck.
-     * <p>
-     * The target card is identified by matching its rank and suit. Once found,
-     * its availability is set to {@code false}. If the card is not present in the
-     * deck, no changes are made.
-     *
-     * @param deck   list of cards where the target card will be searched
-     * @param target card to mark as unavailable
-     */
-    private static void setUnavailable(List<Card> deck, Card target) {
-
-        for (Card card : deck) {
-
-            if (card.getNumber() == target.getNumber()
-                    && card.getSuit() == target.getSuit()) {
-
-                card.setAvailable(false);
-                return;
-            }
+        for (int i = 0; i < missing; i++) {
+            board[idx++] = available.get(i);
         }
+
+        return board;
     }
 }

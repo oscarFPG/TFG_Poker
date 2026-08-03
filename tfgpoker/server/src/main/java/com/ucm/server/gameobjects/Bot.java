@@ -237,7 +237,7 @@ public abstract class Bot implements IPlayerNotificator {
     }
 
     @Override
-    public String notifyMakePlay(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException {
+    public String notifyMakePlay(int sb, int bb, int maxBet, int minRaise, IPlayerInfo player) throws IOException {
         
         long startTime = System.currentTimeMillis();
         long responseTime;
