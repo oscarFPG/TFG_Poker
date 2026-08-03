@@ -206,7 +206,7 @@ public class Player implements IPlayerActions {
 
 
     /* Player methods */
-    public String makePlay(int sb, int bb, int maxBet) throws IOException {
+    public String makePlay(int sb, int bb, int maxBet, int minRaise) throws IOException {
 
         if(_playerInfo == null)
             return null;
@@ -215,7 +215,7 @@ public class Player implements IPlayerActions {
         // Player makes an action
         // Check response time
         final long start = System.nanoTime();
-        String action = _playerInfo.notifyMakePlay(sb, bb, maxBet, this);
+        String action = _playerInfo.notifyMakePlay(sb, bb, maxBet, minRaise, this);
         final long end = System.nanoTime();
 
         // Save response time

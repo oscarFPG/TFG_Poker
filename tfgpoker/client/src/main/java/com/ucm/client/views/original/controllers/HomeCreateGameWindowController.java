@@ -108,12 +108,11 @@ public class HomeCreateGameWindowController extends GenericController {
 
     private void initializeLevelDuration() {
         comboLevelDuration.getItems().addAll(
+            "5",
+            "10",
             "15",
             "20",
-            "30",
-            "60",
-            "120",
-            "180"
+            "30"
         );
         String restoreLevelDuration = _clientInfo.gameConfig._levelDuration;
         if( restoreLevelDuration != null  && !comboLevelDuration.isDisable()) {

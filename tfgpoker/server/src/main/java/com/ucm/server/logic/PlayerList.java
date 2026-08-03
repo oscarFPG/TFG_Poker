@@ -269,7 +269,7 @@ public class PlayerList implements Iterable<Node> {
 
         Node playerOnTurn = calculatePlayerOnTurn(playersRemaining, isPreflop);
         int maxBet = (isPreflop) ? bb : 0;
-        int minRaise = (isPreflop) ? bb - sb : 0;
+        int minRaise = (isPreflop) ? bb + (bb - 0) : 0;
         int totalPot = 0;
         notifyWaitExceptTo(playerOnTurn);   // Keep all players, except the first one to play, waiting
         do {
@@ -291,7 +291,7 @@ public class PlayerList implements Iterable<Node> {
             notifyTurnPlayer(playerOnTurn._player);
 
             // Ask player to play
-            Command command = askCommandToPlayer(playerOnTurn, sb, bb, maxBet);
+            Command command = askCommandToPlayer(playerOnTurn, sb, bb, maxBet, minRaise);
             
             // Execute player action
             CommandResult result = command.execute(sb, bb, maxBet);
@@ -326,7 +326,7 @@ public class PlayerList implements Iterable<Node> {
             }
 
             // Update table state
-            minRaise = Math.max(minRaise, result.bet() - maxBet);
+            minRaise = Math.max(maxBet, result.bet()) + (Math.max(maxBet, result.bet()) - maxBet);
             maxBet = Math.max(maxBet, result.bet());
 
             // Pass turn to the next active player
@@ -339,7 +339,7 @@ public class PlayerList implements Iterable<Node> {
         notifyRoundEnded();
     }
 
-    private Command askCommandToPlayer(Node node, final int sb, final int bb, final int maxBet) throws CancelGameException {
+    private Command askCommandToPlayer(Node node, final int sb, final int bb, final int maxBet, final int minRaise) throws CancelGameException {
 
         Player player = node._player;
         Command command = null;
@@ -349,7 +349,7 @@ public class PlayerList implements Iterable<Node> {
             node._player.notifyTurnPlay();
             while (command == null) {
          
-                String commandString = player.makePlay(sb, bb, maxBet);
+                String commandString = player.makePlay(sb, bb, maxBet, minRaise);
                 String[] commandFormatted = commandString.split(" ");
 
                 command = Command.parseCommand(commandFormatted, player);

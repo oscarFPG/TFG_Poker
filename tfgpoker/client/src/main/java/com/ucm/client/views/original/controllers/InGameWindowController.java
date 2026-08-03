@@ -183,7 +183,7 @@ public class InGameWindowController extends GenericController {
     private ScheduledFuture<?> _task;
     private int _secondsLeft;
     private Integer _timerPlayerId;
-    
+    private int _bigBlind;
 
     
     @Override
@@ -596,8 +596,7 @@ public class InGameWindowController extends GenericController {
 
     @FXML
     private void minBetAction() {
-        int MIN_VALUE = 10;
-        sliderMoney.setValue(MIN_VALUE);
+        sliderMoney.setValue(sliderMoney.getMin());
     }
 
     @FXML
@@ -614,7 +613,7 @@ public class InGameWindowController extends GenericController {
 
     @FXML
     private void decreaseMoneyAction() {
-        double newValue = sliderMoney.getValue() - 10;
+        double newValue = sliderMoney.getValue() - _bigBlind;
         newValue = Math.clamp(newValue, sliderMoney.getMin(), sliderMoney.getMax());
         sliderMoney.setValue(newValue);
     }
@@ -622,7 +621,7 @@ public class InGameWindowController extends GenericController {
     @FXML
     private void increaseMoneyAction() {
         
-        double newValue = sliderMoney.getValue() + 10;
+        double newValue = sliderMoney.getValue() + _bigBlind;
         newValue = Math.clamp(newValue, sliderMoney.getMin(), sliderMoney.getMax());
         sliderMoney.setValue(newValue);
     }
@@ -994,15 +993,17 @@ public class InGameWindowController extends GenericController {
 				final int sb = SocketUtils.receiveInt( socket.getInputStream() );
 				final int bb = SocketUtils.receiveInt( socket.getInputStream() );
 				final int maxBet = SocketUtils.receiveInt( socket.getInputStream() );
+                final int minRaise = SocketUtils.receiveInt( socket.getInputStream() );
 				final int offBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
 				final int onBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
                 
                 System.out.printf(
-                    "-- Round info --\n SB: %d, BB: %d, MaxBet: %d\n OnBetMoney: %d, OffBetMoney: %d\n", 
-                    sb, bb, maxBet, 
+                    "-- Round info --\n SB: %d, BB: %d, MaxBet: %d, MinRaise: %d\n OnBetMoney: %d, OffBetMoney: %d\n", 
+                    sb, bb, maxBet, minRaise,
                     onBetMoney, offBetMoney
                 );
 
+                _bigBlind = bb;
                 // Do not allow to bet less than the current max bet
                 Platform.runLater(() -> {
 
@@ -1010,9 +1011,9 @@ public class InGameWindowController extends GenericController {
                     GUI_putTurnPlayer(_clientInfo.id);
                     GUI_startVisualTimer(_clientInfo.id);
 
-                    int sliderStep = Math.clamp(offBetMoney / 100, 1, Math.max(1, offBetMoney));
-                    sliderMoney.setMajorTickUnit( sliderStep );
-                    sliderMoney.setMin( (double)maxBet );
+                    sliderMoney.setMajorTickUnit( bb );
+                    sliderMoney.setBlockIncrement( bb );
+                    sliderMoney.setMin( (double)minRaise );
                     sliderMoney.setMax( (double)(offBetMoney + onBetMoney) );
                     sliderMoney.setValue( sliderMoney.getMin() );
                 });
