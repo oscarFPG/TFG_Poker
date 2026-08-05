@@ -28,8 +28,8 @@ import com.ucm.server.history.PokerHistory;
 import com.ucm.server.managers.BotManager;
 import com.ucm.server.middleclasses.HandInfo;
 import com.ucm.server.middleclasses.PlayerEvaluation;
-import com.ucm.server.middleclasses.Spectator;
 import com.ucm.server.players.HumanPlayer;
+import com.ucm.server.players.Spectator;
 import com.ucm.server.statistics.EquityCalculator;
 import com.ucm.server.statistics.PlayerExperimentData;
 
@@ -320,7 +320,8 @@ public class Game {
             }
         }
     
-        if(spectator._socket != null) {
+        if(spectator._spectatorSocket != null) {
+            spectator = new Spectator(spectator._spectatorSocket);  // Important !!
             _playerList.addSpectator(spectator);
         }
     }

@@ -666,6 +666,7 @@ public class InGameWindowController extends GenericController {
                     boolean readRank = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
                     String rankName = "None";
 
+                    System.out.printf("Player[%d] %s with rank %s\n", playerID, playerName, role);
                     if(readRank) {
                         rankName = SocketUtils.receiveString(socket.getInputStream());
                         System.out.printf("%s has a %s\n", playerName, rankName);
@@ -676,35 +677,49 @@ public class InGameWindowController extends GenericController {
                     });
                 }
                 else if(serverCode == GameType.TABLE_CARD) {
-                    System.out.printf("Waiting a table card!\n");
-
+                    
                     Card card = PokerGame.receiveCard(socket.getInputStream());
                     final int counter = cardCounter;
                     tableCards[cardCounter++] = card;
 
+                    System.out.printf("Received table card[%d]: %s\n", counter, card.toLetterString());
                     Platform.runLater(() -> {
 
-                        if(counter == 0) {
+                        if(counter == 0)
                             GUI_showCard(tableCard0, tableCards[0]);
-                        }
-                        else if(counter == 1) {
+                        else if(counter == 1)
                             GUI_showCard(tableCard1, tableCards[1]);
-                        }
-                        else if(counter == 2) {
+                        else if(counter == 2)
                             GUI_showCard(tableCard2, tableCards[2]);
-                        }
-                        else if(counter == 3) {
+                        else if(counter == 3)
                             GUI_showCard(tableCard3, tableCards[3]);
-                        }
-                        else if(counter == 4) {
+                        else if(counter == 4)
                             GUI_showCard(tableCard4, tableCards[4]);
-                        }
-                        else {
+                        else
                             System.out.printf("Error with cards counter\n");
-                        }
+                    });
+                }
+                else if (serverCode == GameType.PLAYER_CARDS) {
+                
+                    final int otherPlayerID = SocketUtils.receiveInt(socket.getInputStream());
+                    final Card c1 = PokerGame.receiveCard(socket.getInputStream());
+                    final Card c2 = PokerGame.receiveCard(socket.getInputStream());
+                
+                    Platform.runLater(() -> {
+                        
+                        final int seatID = _playerSeatMap.get(otherPlayerID);
+                        ImageView leftCard = (ImageView) _listPaintCards.get(seatID * 2);
+                        ImageView rightCard = (ImageView) _listPaintCards.get(seatID * 2 + 1);
+
+                        GUI_showCard(leftCard, c1);
+                        GUI_showCard(rightCard, c2);
                     });
 
-                    System.out.printf("Received table card: %s", card.toLetterString());
+                    System.out.printf("Player[%d] has cards: %s %s\n", 
+                        otherPlayerID,
+                        c1.toString(), 
+                        c2.toString()
+                    );
                 }
                 else if(serverCode == GameType.TOTAL_POT) {
                     System.out.printf("Waiting current total pot!\n");
@@ -718,9 +733,8 @@ public class InGameWindowController extends GenericController {
                     System.out.printf("Waiting to know which player is next!\n");
 
                     int playerID = SocketUtils.receiveInt(socket.getInputStream());
-                    GUI_putTurnPlayer(playerID);
-
                     Platform.runLater(() -> {
+                        GUI_putTurnPlayer(playerID);
                         buttonsHolder.setVisible(false);
                         GUI_startVisualTimer(playerID);
                     });
@@ -748,6 +762,13 @@ public class InGameWindowController extends GenericController {
                 }
                 else if(serverCode == GameType.HAND_ENDS_BY_FOLD) {
 
+                    tableCards[0] = null;
+                    tableCards[1] = null;
+                    tableCards[2] = null;
+                    tableCards[3] = null;
+                    tableCards[4] = null;
+                    cardCounter = 0;
+
                     System.out.printf("Hand ended because all players except one folded\n");
                     Platform.runLater(() -> {
                         buttonsHolder.setVisible(false);
@@ -755,8 +776,8 @@ public class InGameWindowController extends GenericController {
                     });
                 }
                 else if(serverCode == GameType.ROUND_ENDS) {
-                    System.out.printf("Round ends!\n");
 
+                    System.out.printf("Round ends!\n");
                     Platform.runLater(() -> {
                         buttonsHolder.setVisible(false);
                         GUI_stopVisualTimer();
@@ -764,8 +785,15 @@ public class InGameWindowController extends GenericController {
                     });
                 }
                 else if(serverCode == GameType.GAME_ENDS) {
-                    System.out.printf("Game ends!\n");
 
+                    tableCards[0] = null;
+                    tableCards[1] = null;
+                    tableCards[2] = null;
+                    tableCards[3] = null;
+                    tableCards[4] = null;
+                    cardCounter = 0;
+
+                    System.out.printf("Game ends!\n");
                     Platform.runLater(() -> {
                         buttonsHolder.setVisible(false);
                         GUI_stopVisualTimer();
@@ -773,13 +801,23 @@ public class InGameWindowController extends GenericController {
                     });
                 }
                 else if(serverCode == GameType.GAME_KEEPS) {
-                    System.out.printf("Game keeps!\n");
 
+                    tableCards[0] = null;
+                    tableCards[1] = null;
+                    tableCards[2] = null;
+                    tableCards[3] = null;
+                    tableCards[4] = null;
+                    cardCounter = 0;
+
+                    System.out.printf("Game keeps!\n");
                     Platform.runLater(() -> {
                         buttonsHolder.setVisible(false);
                         GUI_stopVisualTimer();
                         GUI_clearPlayerBets();
                     });
+                }
+                else if(serverCode == GameType.PLAYER_STATUS_END) {
+                    System.out.printf("Player status end received!\n");
                 }
                 else {
                     System.out.printf("Server response %d unknown\n", serverCode);
@@ -1134,6 +1172,10 @@ public class InGameWindowController extends GenericController {
                     GUI_stopVisualTimer();
                 });
             }
+            else if (serverCode == GameType.GAME_ENDS || serverCode == GameType.GAME_KEEPS) {
+                System.out.printf("Waiting for the showdown to end...\n");
+                waitShowdown();
+            }
             else {
 
 				System.out.printf("Unknown turn code %d\n", serverCode);
@@ -1248,10 +1290,8 @@ public class InGameWindowController extends GenericController {
         } 
         while(code != GameType.GAME_ENDS && code != GameType.GAME_KEEPS);
         
-        // Wait to display player cards for the user
-        System.out.printf("%d seconds pause to see the winner...\n", GameType.SHOWDOWN_WAIT_TIME_SEC);
-        Thread.sleep(GameType.SHOWDOWN_WAIT_TIME_SEC * 1000);
-
+        
+        waitShowdown();
         return gameEnds;
     }
     
@@ -1423,6 +1463,13 @@ public class InGameWindowController extends GenericController {
     }
 
 
+    private void waitShowdown() throws InterruptedException {
+
+        // Wait to display player cards for the user
+        System.out.printf("%d seconds pause to see the winner...\n", GameType.SHOWDOWN_WAIT_TIME_SEC);
+        Thread.sleep(GameType.SHOWDOWN_WAIT_TIME_SEC * 1000);
+    }
+
     /* GUI auxiliar methods : MUST be called by the JavaFX Thread */
     private void GUI_updatePlayerInfo(
         int playerID, 
@@ -1442,7 +1489,7 @@ public class InGameWindowController extends GenericController {
         Label betLabel = _listOnBetMoney.get(seatID);
 
         // Draw dealers button if necessary
-        if(isShowdown && role == PlayerRole.DEALER) {
+        if(role == PlayerRole.DEALER) {
             GUI_putDealerButton(playerID);
         }
 

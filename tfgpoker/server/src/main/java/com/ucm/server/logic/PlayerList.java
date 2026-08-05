@@ -23,7 +23,7 @@ import com.ucm.server.middleclasses.CommandResult;
 import com.ucm.server.middleclasses.HandInfo;
 import com.ucm.server.middleclasses.PlayerEvaluation;
 import com.ucm.server.middleclasses.PotDistribution;
-import com.ucm.server.middleclasses.Spectator;
+import com.ucm.server.players.Spectator;
 
 
 
@@ -109,16 +109,12 @@ public class PlayerList implements Iterable<Node> {
 
                 // Give SB role to first player
                 current._player.receiveRole(PlayerRole.SMALL_BLIND);
-                if(_spectator != null)
-                    _spectator.notifyOtherPlayerState(current._player);
                 log.debug("Player {} receives role {}", current._player.getPlayerName(), PlayerRole.SMALL_BLIND.name());
             
                 current = getNextPlayerActive(current);
 
                 // Give BB role to first player
                 current._player.receiveRole(PlayerRole.BIG_BLIND);
-                if(_spectator != null)
-                    _spectator.notifyOtherPlayerState(current._player);
                 log.debug("Player {} receives role {}", current._player.getPlayerName(), PlayerRole.BIG_BLIND.name());
             }
             catch (IOException e) {
@@ -141,8 +137,6 @@ public class PlayerList implements Iterable<Node> {
                 try {
                     currentRole = roles.removeFirst();
                     player._player.receiveRole(currentRole);
-                    if(_spectator != null)
-                        _spectator.notifyOtherPlayerState(player._player);
 
                     log.debug("Player {} receives role {}", player._player.getPlayerName(), currentRole.name());
                 }
@@ -173,6 +167,8 @@ public class PlayerList implements Iterable<Node> {
                     player._player.receiveCard(c1);
                     player._player.receiveCard(c2);
 
+                    _spectator.notifyOtherPlayerCards(player._player);
+
                     log.debug("Player {} receives the cards: {} {}", player._player.getPlayerName(), c1.toString(), c2.toString());
                     return;
                 }
@@ -198,8 +194,6 @@ public class PlayerList implements Iterable<Node> {
             current._hasActed = false;
             current._player.putSmallBlindBet(sb);
             notifyOtherPlayerActionToAllPlayers(current._player);
-            if(_spectator != null)
-                _spectator.notifyOtherPlayerState(current._player);
 
             log.debug(
                 "Player {} puts {}$ as SMALL_BLIND. Now it has {}$", 
@@ -221,8 +215,6 @@ public class PlayerList implements Iterable<Node> {
             current._hasActed = false;
             current._player.putBigBlindBet(bb);
             notifyOtherPlayerActionToAllPlayers(current._player);
-            if(_spectator != null)
-                _spectator.notifyOtherPlayerState(current._player);
 
             log.debug(
                 "Player {} puts {}$ as BIG_BLIND. Now it has {}$", 
@@ -240,8 +232,6 @@ public class PlayerList implements Iterable<Node> {
         // Calculate and notify total pot
         int totalPot = calculateTotalPot();
         notifyTotalPotToAllPlayers(totalPot);
-        if(_spectator != null)
-            _spectator.notifyTotalPot(totalPot);
     }
 
     public void playHand(final int sb, final int bb, boolean isPreflop) throws OnlyOnePlayerLeftException, CancelGameException {
@@ -381,9 +371,9 @@ public class PlayerList implements Iterable<Node> {
 
             Node player = it.next();
 
-            // Keep false to players only folded so they can play in next hand
-            // If the player is disconnected, eliminated or made an all-in, it cannot play -> keep in true for next hand
-            player._hasActed = !(!player._isDisconnected && !player._player.isEliminated() && !player._player.isAllIn());
+            // If the player has folded, is eliminated or made all-in -> Already played, cannot play in next round
+            if(!player._isDisconnected)
+                player._hasActed = (player._player.isFolded() || player._player.isEliminated() || player._player.isAllIn());
         }
     }
 
@@ -471,9 +461,15 @@ public class PlayerList implements Iterable<Node> {
             }
         }
 
-        if(_spectator != null)
-            _spectator.notifyTableCard(card);
+        if(_spectator != null) {
 
+            try {
+                _spectator.notifyTableCard(card);
+            }
+            catch (IOException e) {
+                throw new CancelGameException();
+            }
+        }
     }
 
     public void manageEliminatedPlayers() {
@@ -499,8 +495,15 @@ public class PlayerList implements Iterable<Node> {
 
 
             // Send cards from modelPlayer to spectator
-            if(_spectator != null)
-                _spectator.notifyOtherPlayerCards(modelPlayer._player);
+            if(_spectator != null) {
+
+                try {
+                    _spectator.notifyOtherPlayerCards(modelPlayer._player);
+                }
+                catch (IOException e) {
+                    throw new CancelGameException();
+                }
+            }
 
             // Send cards from modelPlayer to every player
             Iterator<Node> receiverIT = iterator();
@@ -676,8 +679,16 @@ public class PlayerList implements Iterable<Node> {
             }
         }
 
-        if(_spectator != null)
-            _spectator.notifyTurnPlayer(p);
+        
+        if(_spectator != null) {
+            try {
+                _spectator.notifyCurrentTurnPlayer(p);
+            }
+            catch (IOException e) {
+                throw new CancelGameException();
+            }
+        }
+        
     }
 
     private void notifyPlayerOwnState(Node player, final boolean receiveRank) throws CancelGameException {
@@ -714,8 +725,14 @@ public class PlayerList implements Iterable<Node> {
             }
         }
 
-        if(_spectator != null)
-            _spectator.notifyOtherPlayerAction(p);
+        if(_spectator != null) {
+            try {
+                _spectator.notifyOtherPlayerAction(p);
+            }
+            catch (IOException e) {
+                throw new CancelGameException();
+            }
+        }
     }
 
     private void notifyTotalPotToAllPlayers(final int totalPot) throws CancelGameException {
@@ -735,8 +752,15 @@ public class PlayerList implements Iterable<Node> {
             }
         }
 
-        if(_spectator != null)
-            _spectator.notifyTotalPot(totalPot);
+        
+        if(_spectator != null) {
+            try {
+                _spectator.notifyTotalPot(totalPot);
+            }
+            catch (IOException e) {
+                throw new CancelGameException();
+            }
+        }
     }
 
     private void notifyHandEndsByFold() throws CancelGameException {
@@ -756,8 +780,14 @@ public class PlayerList implements Iterable<Node> {
             }
         }
 
-        if(_spectator != null)
-            _spectator.notifyHandEndsByFolds();
+        if(_spectator != null) {
+            try {
+                _spectator.notifyHandEndsByFolds();
+            }
+            catch (IOException e) {
+                throw new CancelGameException();
+            }
+        }
     }
 
     private void notifyRoundEnded() throws CancelGameException {
@@ -777,8 +807,14 @@ public class PlayerList implements Iterable<Node> {
             }
         }
 
-        if(_spectator != null)
-            _spectator.notifyRoundEnded();
+        if(_spectator != null) {
+            try {
+                _spectator.notifyRoundEnded();
+            }
+            catch (IOException e) {
+                throw new CancelGameException();
+            }
+        }
     }
 
     public void notifyGameEnds(final boolean gameEnds) throws CancelGameException {
@@ -804,10 +840,16 @@ public class PlayerList implements Iterable<Node> {
         }
 
         if(_spectator != null) {
-            if(gameEnds)
-                _spectator.notifyGameEnded();
-            else
-                _spectator.notifyGameKeeps();
+            try {
+
+                if(gameEnds)
+                    _spectator.notifyGameEnded();
+                else
+                    _spectator.notifyGameKeeps();
+            }
+            catch (IOException e) {
+                throw new CancelGameException();
+            }
         }
     }
 
@@ -835,6 +877,10 @@ public class PlayerList implements Iterable<Node> {
 
                     // Notify player state to other player
                     try {
+
+                        if(_spectator != null)
+                            _spectator.notifyOtherPlayerState(player._player, receiveRank);
+
                         receiverPlayer._player.notifyOtherPlayerState(player._player, receiveRank);
                     }
                     catch(IOException e) {
@@ -1056,13 +1102,8 @@ public class PlayerList implements Iterable<Node> {
 
     }
 
-    public Iterator<Node> iterator() {
-        return new PlayerIterator();
-    }
-
-    public Iterator<Node> iterator(Node start) {
-        return new PlayerIterator(start);
-    }
+    @Override
+    public Iterator<Node> iterator() { return new PlayerIterator(); }
+    public Iterator<Node> iterator(Node start) { return new PlayerIterator(start); }
     
-
 }
