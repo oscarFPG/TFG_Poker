@@ -6,6 +6,7 @@ import java.util.Map;
 import com.ucm.common.GameType;
 import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.players.AgentCFR;
+import com.ucm.server.players.ClassifierFSM;
 import com.ucm.server.players.GeminiLLM;
 import com.ucm.server.players.LlamaPokerLLM;
 
@@ -20,6 +21,7 @@ public class BotManager {
         register(GameType.BOT_GEMINI, new GeminiLLM(null));
         register(GameType.BOT_LLAMA, new LlamaPokerLLM(null));
         register(GameType.BOT_NN_MODEL_1, new AgentCFR());
+        register(GameType.BOT_FSM_1, new ClassifierFSM());
     }
 
     private static void register(int botId, Bot bot){

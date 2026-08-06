@@ -5,6 +5,7 @@ import java.util.List;
 public final class BotRegistry {
 
     public static final int MAX_BOT_NAME_LENGTH = 10;
+    private static final String BOT_IMAGE_PATH = "/images/bot.png";
     
     private BotRegistry() {}
 
@@ -15,11 +16,33 @@ public final class BotRegistry {
                 normalizeBotName("Gemini LLM"), 
                 "Gemini Poker LLM", 
                 "This bot is powered by Google's Gemini large language model (LLM). It reasons about the game state, evaluates possible actions, and selects moves dynamically instead of following fixed rules.", 
-                "/images/bot.png", 
+                BOT_IMAGE_PATH,
                 true
             ),
-            new BotDescriptor(GameType.BOT_LLAMA, normalizeBotName("LlamaPokerBot"), "Llama Poker LLM (Ollama)", "This bot uses a locally executed AI language model (LLaMA) to analyze the current game state and make decisions. It runs entirely on the local machine, providing self-contained gameplay without requiring an internet connection.", "/images/bot.png", true),
-            new BotDescriptor(GameType.BOT_NN_MODEL_1, normalizeBotName("DeepCFR"), "Red neuronal", "Red neuronal CFR", "/images/bot.png", false)
+            new BotDescriptor(
+                GameType.BOT_LLAMA, 
+                normalizeBotName("LlamaPokerBot"), 
+                "Llama Poker LLM (Ollama)", 
+                "This bot uses a locally executed AI language model (LLaMA) to analyze the current game state and make decisions. It runs entirely on the local machine, providing self-contained gameplay without requiring an internet connection.", 
+                BOT_IMAGE_PATH, 
+                true
+            ),
+            new BotDescriptor(
+                GameType.BOT_NN_MODEL_1, 
+                normalizeBotName("DeepCFR"), 
+                "Red neuronal", 
+                "Red neuronal CFR", 
+                BOT_IMAGE_PATH, 
+                false
+            ),
+            new BotDescriptor(
+                GameType.BOT_FSM_1,
+                normalizeBotName("BotFSM"),
+                "Finit State Machine(SFM)",
+                "Bot that uses a Finit State Machine(FSM)",
+                BOT_IMAGE_PATH,
+                false
+            )
         );
     }
 
@@ -28,6 +51,7 @@ public final class BotRegistry {
             case GameType.BOT_GEMINI -> "GeminiLLM#" + botIdentifier + "-" + style.name();
             case GameType.BOT_LLAMA -> "LlamaPokerLLM#" + botIdentifier + "-" + style.name();
             case GameType.BOT_NN_MODEL_1 -> "DeepCFR#" + botIdentifier + "-" + style.name();
+            case GameType.BOT_FSM_1 -> "FSM#" + botIdentifier + "-" + style.name();
             default -> "Bot-" + botId + "-" + botIdentifier;
         };
     }
