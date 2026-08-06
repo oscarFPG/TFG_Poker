@@ -334,7 +334,7 @@ public class InGameWindowController extends GenericController {
             imgLeftCard8, imgRightCard8
         );
 
-        _listAvatarProfiles = List.of(
+        _listAvatarProfiles = List.of(        
             imgAvatarProfile0,
             imgAvatarProfile1,
             imgAvatarProfile2,
@@ -416,6 +416,7 @@ public class InGameWindowController extends GenericController {
         _listDealer.forEach(iv -> {
             iv.setImage(DealerImage);
             iv.setVisible(false);
+            iv.setOpacity(1.0f);
         });
     }
 
@@ -773,6 +774,8 @@ public class InGameWindowController extends GenericController {
                     Platform.runLater(() -> {
                         buttonsHolder.setVisible(false);
                         GUI_stopVisualTimer();
+                        GUI_clearTableCards();
+                        GUI_clearDealer();
                     });
                 }
                 else if(serverCode == GameType.ROUND_ENDS) {
@@ -798,6 +801,8 @@ public class InGameWindowController extends GenericController {
                         buttonsHolder.setVisible(false);
                         GUI_stopVisualTimer();
                         GUI_clearPlayerBets();
+                        GUI_clearTableCards();
+                        GUI_clearDealer();
                     });
                 }
                 else if(serverCode == GameType.GAME_KEEPS) {
@@ -814,6 +819,8 @@ public class InGameWindowController extends GenericController {
                         buttonsHolder.setVisible(false);
                         GUI_stopVisualTimer();
                         GUI_clearPlayerBets();
+                        GUI_clearTableCards();
+                        GUI_clearDealer();
                     });
                 }
                 else if(serverCode == GameType.PLAYER_STATUS_END) {
@@ -1462,6 +1469,12 @@ public class InGameWindowController extends GenericController {
         while(code != GameType.PLAYER_STATUS_END);
     }
 
+    private void handleEquity(Socket socket) throws IOException {
+
+        int code = SocketUtils.receiveInt(socket.getInputStream());
+        _myEquity = SocketUtils.receiveString(socket.getInputStream());
+        Platform.runLater(this::GUI_putEquityToPlayer);
+    }
 
     private void waitShowdown() throws InterruptedException {
 
@@ -1469,6 +1482,7 @@ public class InGameWindowController extends GenericController {
         System.out.printf("%d seconds pause to see the winner...\n", GameType.SHOWDOWN_WAIT_TIME_SEC);
         Thread.sleep(GameType.SHOWDOWN_WAIT_TIME_SEC * 1000);
     }
+
 
     /* GUI auxiliar methods : MUST be called by the JavaFX Thread */
     private void GUI_updatePlayerInfo(
@@ -1489,9 +1503,10 @@ public class InGameWindowController extends GenericController {
         Label betLabel = _listOnBetMoney.get(seatID);
 
         // Draw dealers button if necessary
-        if(role == PlayerRole.DEALER) {
-            GUI_putDealerButton(playerID);
-        }
+        if(role == PlayerRole.DEALER)
+            GUI_putDealerButton(playerID, true);
+        else
+            GUI_putDealerButton(playerID, false);
 
         // Draw player as folded if necessary
         if(isFolded) {
@@ -1510,10 +1525,12 @@ public class InGameWindowController extends GenericController {
             NotificationManager.showSuccess(String.format(Messages.Notifications.CONFIRMATION_WINNER_GAME, nameLabel.getText()));
              
             // Change winners name during 3 seconds
-            PauseTransition transition = new PauseTransition( Duration.seconds(3) );
-            nameLabel.setText( nameLabel.getText() + " (Winner)" );
+            final String originalText = String.copyValueOf( nameLabel.getText().toCharArray() );
+            nameLabel.setText(originalText + " (Winner)");
+
+            PauseTransition transition = new PauseTransition(Duration.seconds(3));
             transition.setOnFinished(event -> {
-                nameLabel.setText( nameLabel.getText().replace(" (Winner)", "") );
+                nameLabel.setText(originalText);
             });
             transition.play();
         }
@@ -1525,6 +1542,8 @@ public class InGameWindowController extends GenericController {
             // Set text as <name> (Eliminated) if necessary
             if(!nameLabel.getText().contains("(Eliminated)"))
                 nameLabel.setText( nameLabel.getText() + " (Eliminated)" );
+
+            // View as eliminated
             _listPlayerStackPanes.get(seatID).setOpacity(ELIMINATED_OPACITY);
         }
 
@@ -1583,13 +1602,6 @@ public class InGameWindowController extends GenericController {
         imageView.setImage( cardImage );
     }
 
-    private void handleEquity(Socket socket) throws IOException {
-
-        int code = SocketUtils.receiveInt(socket.getInputStream());
-        _myEquity = SocketUtils.receiveString(socket.getInputStream());
-        Platform.runLater(this::GUI_putEquityToPlayer);
-    }
-
     private void GUI_putMyCards(int playerID, Card card1, Card card2) {
         int seatID = _playerSeatMap.get(playerID);
         ImageView leftCard = (ImageView) _listPaintCards.get(seatID * 2);
@@ -1603,11 +1615,11 @@ public class InGameWindowController extends GenericController {
         btnRound.setText(round);
     }
 
-    private void GUI_putDealerButton(int playerID) {
+    private void GUI_putDealerButton(int playerID, final boolean show) {
 
         Integer seatID = _playerSeatMap.get(playerID);
         if(seatID != null)
-            _listDealer.get(seatID).setVisible(true);
+            _listDealer.get(seatID).setVisible(show);
     }
 
     private void GUI_putPlayerBet(int playerID, int amountOnBet, int amountOffBet, boolean isFolded) {
@@ -1752,7 +1764,7 @@ public class InGameWindowController extends GenericController {
             buttonsHolder.setVisible(false);
     }
 
-
+    /* GUI methods for the player timer  */
     private synchronized void GUI_startVisualTimer(int playerID) {
 
         GUI_stopVisualTimer();
@@ -1801,6 +1813,5 @@ public class InGameWindowController extends GenericController {
         _scheduler.shutdownNow();
     }
 
-    
     
 }

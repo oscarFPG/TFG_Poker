@@ -866,6 +866,7 @@ public class PlayerList implements Iterable<Node> {
 
                 // Notify player state to the remaining players
                 Iterator<Node> it = iterator();
+                boolean spectatorReceivedInfo = false;
                 while( it.hasNext() ) {
 
                     Node player = it.next();
@@ -878,8 +879,10 @@ public class PlayerList implements Iterable<Node> {
                     // Notify player state to other player
                     try {
 
-                        if(_spectator != null)
+                        if(_spectator != null && !spectatorReceivedInfo) {
+                            spectatorReceivedInfo = true;
                             _spectator.notifyOtherPlayerState(player._player, receiveRank);
+                        }
 
                         receiverPlayer._player.notifyOtherPlayerState(player._player, receiveRank);
                     }

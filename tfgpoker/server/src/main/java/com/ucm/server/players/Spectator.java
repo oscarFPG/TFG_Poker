@@ -1,6 +1,12 @@
 package com.ucm.server.players;
 
+import java.io.IOException;
 import java.net.Socket;
+
+import com.ucm.common.GameType;
+import com.ucm.common.SocketUtils;
+import com.ucm.common.gameobjects.Card;
+import com.ucm.server.logic.Game;
 
 
 public class Spectator extends HumanPlayer {
@@ -17,4 +23,13 @@ public class Spectator extends HumanPlayer {
         _spectatorSocket = socket;
     }
 
+
+    @Override
+    public void notifyTableCard(final Card c) throws IOException {
+        if(Game.DEBUG_PLAYERS) return;
+
+        SocketUtils.sendInteger(_spectatorSocket.getOutputStream(), GameType.TABLE_CARD);
+        SocketUtils.sendInteger(_spectatorSocket.getOutputStream(), c.getCardValueNetworkCode());
+        SocketUtils.sendInteger(_spectatorSocket.getOutputStream(), c.getSuit().getNetworkCode());
+    }
 }
