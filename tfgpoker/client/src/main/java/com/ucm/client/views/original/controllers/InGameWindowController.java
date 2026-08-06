@@ -1442,7 +1442,7 @@ public class InGameWindowController extends GenericController {
         Label betLabel = _listOnBetMoney.get(seatID);
 
         // Draw dealers button if necessary
-        if(isShowdown && role == PlayerRole.DEALER) {
+        if(role == PlayerRole.DEALER || (role == PlayerRole.SMALL_BLIND && _clientInfo.playerPositions.size() == 2)) {
             GUI_putDealerButton(playerID);
         }
 
@@ -1570,12 +1570,15 @@ public class InGameWindowController extends GenericController {
             Label betLabel = _listOnBetMoney.get(seatID);
             Label moneyLabel = _listMoneyLabels.get(seatID);
 
-            _listHandBet.get(seatID).setVisible(true);
-            _listHandBet.get(seatID).setOpacity(1);
-
             betLabel.setText( String.valueOf(amountOnBet) );
-            betLabel.setVisible(true);
-
+            
+            //Draw if the player makes an action that not requires bet money
+            if(amountOnBet != 0){
+                _listHandBet.get(seatID).setVisible(true);
+                _listHandBet.get(seatID).setOpacity(1);
+                betLabel.setVisible(true);
+            }
+            
             moneyLabel.setText( String.valueOf(amountOffBet) );
         }
         else {
