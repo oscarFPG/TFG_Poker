@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.ucm.server.evaluator.Evaluator;
 import com.ucm.server.middleclasses.PlayerEvaluation;
 import com.ucm.server.middleclasses.PotDistribution;
 
@@ -86,11 +87,11 @@ public class PotManager {
                             .get();
 
         int total = 0;
-        for(PlayerInfo p : _pots){
+        for(PlayerInfo p : _pots) {
             total += p.playerPot;
         }
 
-        return new PotDistribution(winner.playerID, total);
+        return new PotDistribution(winner.playerID, total, "none");
     }
 
     public List<PotDistribution> calculatePrizeDistribution(final List<PlayerEvaluation> players) {
@@ -147,6 +148,7 @@ public class PotManager {
         );
 
         final short bestRank = players.getFirst().playerRank;
+        final String rankName = Evaluator.getRankName(bestRank);
         List<PlayerInfo> winners = players
                                     .stream()
                                     .filter( p -> p.playerRank == bestRank )
@@ -154,7 +156,7 @@ public class PotManager {
 
         final int prizePerPlayer = totalPot / winners.size();
         for(PlayerInfo p : winners) {
-            dist.add( new PotDistribution(p.playerID, prizePerPlayer) );
+            dist.add( new PotDistribution(p.playerID, prizePerPlayer, rankName) );
         }
 
         return dist;

@@ -1,6 +1,7 @@
 package com.ucm.server.players;
 
 import java.io.IOException;
+import java.util.concurrent.ThreadLocalRandom;
 
 import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
@@ -24,11 +25,33 @@ public class ClassifierFSM extends BotFSM {
     public String play(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException {
         
         // Get table cards values -> Zero if there is no card on the table
-        int valueTC1 = table.get(0) != null ? table.get(0).getNumber() : 0;
-        int valueTC2 = table.get(1) != null ? table.get(1).getNumber() : 0;
-        int valueTC3 = table.get(2) != null ? table.get(2).getNumber() : 0;
-        int valueTC4 = table.get(3) != null ? table.get(3).getNumber() : 0;
-        int valueTC5 = table.get(4) != null ? table.get(4).getNumber() : 0;
+        int valueTC1 = 0;
+        int valueTC2 = 0;
+        int valueTC3 = 0;
+        int valueTC4 = 0;
+        int valueTC5 = 0;
+        switch (table.size()) {
+            case 3:
+                valueTC1 = table.get(0).getNumber();
+                valueTC2 = table.get(1).getNumber();
+                valueTC3 = table.get(2).getNumber();
+                break;
+            case 4:
+                valueTC1 = table.get(0).getNumber();
+                valueTC2 = table.get(1).getNumber();
+                valueTC3 = table.get(2).getNumber();
+                valueTC4 = table.get(3).getNumber();
+                break;
+            case 5:
+                valueTC1 = table.get(0).getNumber();
+                valueTC2 = table.get(1).getNumber();
+                valueTC3 = table.get(2).getNumber();
+                valueTC4 = table.get(3).getNumber();
+                valueTC5 = table.get(0).getNumber();
+                break;
+            default:    // Empty table : All zeros
+                break;
+        }
 
         // Get player cards values
         int valueC1 = player.getPlayerCards()[0].getNumber();
@@ -45,14 +68,25 @@ public class ClassifierFSM extends BotFSM {
         // We split up equally the decision between them -> 95/4 = 23 'points' for each action
         // Order: FOLD < CALL/CHECK < RAISE 'amount' < ALL_IN             
         final int points_per_action = 95 / 4;
-        if(totalValue < points_per_action) {    // FOLD - x < 23
+        if(totalValue == 0) {   // In case there is no cards on the table
+             
+            String actions[] = {
+                GameType.FOLD_ACTION_FULL, 
+                GameType.CALL_ACTION_FULL, 
+                GameType.RAISE_ACTION_FULL + " " + String.valueOf(2 * maxBet), 
+                GameType.ALL_IN_ACTION_FULL
+            };
+
+            return actions[ ThreadLocalRandom.current().nextInt(actions.length) ];
+        }
+        else if(totalValue < points_per_action) {    // FOLD - x < 23
             return GameType.FOLD_ACTION_FULL;
         }
         else if(points_per_action <= totalValue && totalValue < 2 * points_per_action) {    // CALL/CHECK - 23 <= x < 46
             return GameType.CALL_ACTION_FULL;
         }
         else if(2 * points_per_action <= totalValue && totalValue < 3 * points_per_action) {    // RAISE - 46 <= x < 69
-            return GameType.RAISE_ACTION_FULL + String.valueOf(2 * maxBet);
+            return GameType.RAISE_ACTION_FULL + " " + String.valueOf(2 * maxBet);
         }
         else {  // ALL_IN
             return GameType.ALL_IN_ACTION_FULL;

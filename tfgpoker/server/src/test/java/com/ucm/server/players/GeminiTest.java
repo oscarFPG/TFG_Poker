@@ -26,7 +26,7 @@ public class GeminiTest {
             player.receiveCard( new Card(2, Suit.CLUBS) );
             player.receiveCard( new Card(4, Suit.CLUBS) );
             player.receiveRole(PlayerRole.DEALER);
-            String response = player.makePlay(1, 2, 2);
+            String response = player.makePlay(1, 2, 2, 2);
 
             System.out.printf("Gemini response: %s\n", response);
             

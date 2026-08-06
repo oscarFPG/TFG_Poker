@@ -45,7 +45,7 @@ public class HumanPlayer implements IPlayerNotificator {
 
 
     @Override
-    public String notifyMakePlay(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException {
+    public String notifyMakePlay(int sb, int bb, int maxBet, int minRaise, IPlayerInfo player) throws IOException, TurnTimeoutException {
         if(Game.DEBUG_PLAYERS) {
             System.out.printf("%s hace: ", player.getPlayerName());
             return _scanner.nextLine();
@@ -55,15 +55,17 @@ public class HumanPlayer implements IPlayerNotificator {
         SocketUtils.sendInteger(_socket.getOutputStream(), sb);
         SocketUtils.sendInteger(_socket.getOutputStream(), bb);
         SocketUtils.sendInteger(_socket.getOutputStream(), maxBet);
+        SocketUtils.sendInteger(_socket.getOutputStream(), minRaise);
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOffBet());
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOnBet());
 
         _socket.setSoTimeout(60 * 1000);
 
+        // Wait for human response via socket
         String commandInput = null;
         try {
             commandInput = SocketUtils.receiveString( _socket.getInputStream() );
-            log.debug("Command received from player {}: {}", player.getPlayerName(), commandInput);
+            log.debug("Player {} wants to: {}", player.getPlayerName(), commandInput);
         }
         catch(SocketTimeoutException e) {
             log.warn("Player {} turn timeout", player.getPlayerName());
@@ -200,7 +202,7 @@ public class HumanPlayer implements IPlayerNotificator {
     }
 
     @Override
-    public void notifyOwnState(IPlayerInfo player) throws IOException {
+    public void notifyOwnState(IPlayerInfo player, final boolean receiveRank) throws IOException {
         if(Game.DEBUG_PLAYERS) return;
 
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.MY_PLAYER_STATUS);
@@ -211,10 +213,18 @@ public class HumanPlayer implements IPlayerNotificator {
         SocketUtils.sendInteger(_socket.getOutputStream(), player.isFolded() ? GameType.TRUE : GameType.FALSE);
         SocketUtils.sendInteger(_socket.getOutputStream(), player.isWinner() ? GameType.TRUE : GameType.FALSE);
         SocketUtils.sendInteger(_socket.getOutputStream(), player.isEliminated() ? GameType.TRUE : GameType.FALSE);
+
+        if(receiveRank) {
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TRUE);
+            SocketUtils.sendString(_socket.getOutputStream(), player.getLastRankName());
+        }
+        else {
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.FALSE);
+        }
     }
 
     @Override
-    public void notifyOtherPlayerState(IPlayerInfo player) throws IOException {
+    public void notifyOtherPlayerState(IPlayerInfo player, final boolean receiveRank) throws IOException {
         if(Game.DEBUG_PLAYERS) return;
 
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.OTHER_PLAYER_STATUS);
@@ -226,6 +236,14 @@ public class HumanPlayer implements IPlayerNotificator {
         SocketUtils.sendInteger(_socket.getOutputStream(), player.isEliminated() ? GameType.TRUE : GameType.FALSE);
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOffBet());
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOnBet());
+
+        if(receiveRank) {
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TRUE);
+            SocketUtils.sendString(_socket.getOutputStream(), player.getLastRankName());
+        }
+        else {
+            SocketUtils.sendInteger(_socket.getOutputStream(), GameType.FALSE);
+        }
     }
 
     @Override
@@ -252,20 +270,25 @@ public class HumanPlayer implements IPlayerNotificator {
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getPlayerId());
     }
 
-
     @Override
-    public BotStyle getStyle() {
-        return BotStyle.DEFAULT;
+    public void notifyOtherPlayerCards(IPlayerInfo other) throws IOException {
+        if(Game.DEBUG_PLAYERS) return;
+
+        SocketUtils.sendInteger(_socket.getOutputStream(), GameType.PLAYER_CARDS);
+        SocketUtils.sendInteger(_socket.getOutputStream(), other.getPlayerId());
+
+        Card c1 = other.getPlayerCards()[0];
+        SocketUtils.sendInteger(_socket.getOutputStream(), c1.getCardValueNetworkCode());
+        SocketUtils.sendInteger(_socket.getOutputStream(), c1.getSuit().getNetworkCode());
+
+        Card c2 = other.getPlayerCards()[1];
+        SocketUtils.sendInteger(_socket.getOutputStream(), c2.getCardValueNetworkCode());
+        SocketUtils.sendInteger(_socket.getOutputStream(), c2.getSuit().getNetworkCode());
     }
 
-    @Override
-    public String getPlayerType() {
-        return "HUMAN";
-    }
 
-    @Override
-    public String getPlayerModel() {
-        return "-";
-    }
+    @Override public BotStyle getStyle() { return BotStyle.DEFAULT; }
+    @Override public String getPlayerType() { return "HUMAN"; }
+    @Override public String getPlayerModel() { return "-"; }
 
 }

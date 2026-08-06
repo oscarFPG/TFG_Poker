@@ -18,7 +18,7 @@ public interface IPlayerNotificator {
      * @param maxBet current maximum bet
      * @return {@link String} representing the chosen action
      */
-    public String notifyMakePlay(final int sb, final int bb, final int maxBet, IPlayerInfo player) throws IOException;
+    public String notifyMakePlay(final int sb, final int bb, final int maxBet, final int minRaise, IPlayerInfo player) throws IOException;
 
     /**
      * Notifies the player the small blind bet made automatically made by him
@@ -73,7 +73,7 @@ public interface IPlayerNotificator {
      * Notifies the player about their state after performing an action (e.g., after betting, calling, folding, etc.)
      * @throws IOException
      */
-    public void notifyOwnState(IPlayerInfo player) throws IOException;
+    public void notifyOwnState(IPlayerInfo player, final boolean receiveRank) throws IOException;
 
     /**
      * Notifies the player about their current state in the game. 
@@ -82,7 +82,7 @@ public interface IPlayerNotificator {
      * @param isLast indicates if this is the last player sent
      * @throws IOException
      */
-    public void notifyOtherPlayerState(IPlayerInfo other) throws IOException;
+    public void notifyOtherPlayerState(IPlayerInfo other, final boolean receiveRank) throws IOException;
 
     /**
      * Notifies when server stops sending more player states info
@@ -152,6 +152,13 @@ public interface IPlayerNotificator {
      */
     public void notifyEquity(double equity) throws IOException;
     
+    /**
+     * Notifies the cards from an specific player. The other player and this player should not be the same
+     * @param other
+     * @throws IOException
+     */
+    public void notifyOtherPlayerCards(IPlayerInfo other) throws IOException;
+
     public BotStyle getStyle();
     public String getPlayerType();
     public String getPlayerModel();

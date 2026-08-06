@@ -28,6 +28,7 @@ public class ClientInfo {
 
     private Map<Integer, Image> avatarCache = new HashMap<>();
 
+
     private ClientInfo() {}
 
     public static ClientInfo getInstance() {
@@ -56,6 +57,10 @@ public class ClientInfo {
     public void onNameChanged(String newName) {
         this.name = newName;
         avatarCache.clear();
+    }
+
+    public void clearInfo() {
+        instance = null;
     }
 
 }

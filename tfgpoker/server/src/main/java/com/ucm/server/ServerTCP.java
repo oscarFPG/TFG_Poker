@@ -27,7 +27,7 @@ import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.server.control.Controller;
 import com.ucm.server.exceptions.EvaluatorException;
 import com.ucm.server.logic.Game;
-import com.ucm.server.middleclasses.Spectator;
+import com.ucm.server.players.Spectator;
 
 
 public class ServerTCP {
@@ -53,7 +53,7 @@ public class ServerTCP {
 
         _roomPlayers = Collections.synchronizedList( new ArrayList<>() );
         _roomBots = Collections.synchronizedList( new ArrayList<>() );
-        _spectator = new Spectator(null, null);
+        _spectator = new Spectator(null);
         _gameConfig = new GameConfig();
 
         log.debug("Server public IP: {}", _serverIP);

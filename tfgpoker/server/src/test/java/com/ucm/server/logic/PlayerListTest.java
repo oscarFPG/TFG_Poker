@@ -11,10 +11,10 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import com.ucm.server.FakePlayer;
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.common.gameobjects.PlayerRole;
+import com.ucm.server.FakePlayer;
 import com.ucm.server.middleclasses.PlayerEvaluation;
 
 
@@ -187,6 +187,7 @@ public class PlayerListTest {
 
             p1.commands = new ArrayList<>( List.of("call") );
             p2.commands = new ArrayList<>( List.of("call") );
+            p3.commands = new ArrayList<>( List.of("call") );
             playerList.playHand(SB, BB, true);      // 2 + 2 + 2 = 6$ total - 2$ = 4$ beneficio
 
             p2.commands = new ArrayList<>( List.of("check", "raise 200", "call") );
@@ -233,6 +234,7 @@ public class PlayerListTest {
 
             p1.commands = new ArrayList<>( List.of("call") );
             p2.commands = new ArrayList<>( List.of("call") );
+            p3.commands = new ArrayList<>( List.of("call") );
             playerList.playHand(SB, BB, true);      // 2 + 2 + 2 = 6$ total - 2$ = 4$ beneficio
 
             p2.commands = new ArrayList<>( List.of("check", "call", "all-in") );
@@ -356,5 +358,6 @@ public class PlayerListTest {
             assertEquals(true, false, "This test should not reach this code");
         }
     }
+
 
 }

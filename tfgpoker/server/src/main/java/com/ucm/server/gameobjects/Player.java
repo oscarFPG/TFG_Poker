@@ -2,6 +2,9 @@ package com.ucm.server.gameobjects;
 
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
 import com.ucm.common.gameobjects.Card;
@@ -37,6 +40,9 @@ import com.ucm.server.statistics.PlayerExperimentData;
  * </p>
  */
 public class Player implements IPlayerActions {
+
+    private static final Logger log = LogManager.getLogger(Player.class);
+
 
     /**
      * Player's unique identifier
@@ -115,6 +121,11 @@ public class Player implements IPlayerActions {
     protected String _lastCommand;
 
     /**
+     * Stores the rank of his last hand: Pair, Two-pair, etc...
+     */
+    protected String _lastHandRank;
+
+    /**
      * Interface to access player information.
      * This is used to send notifications to the player about the state of the game and other players.
      */
@@ -154,6 +165,7 @@ public class Player implements IPlayerActions {
         _isEliminated = false;
         _equity = 0;
         _lastCommand = "none";
+        _lastHandRank = "none";
     }
 
 
@@ -194,12 +206,21 @@ public class Player implements IPlayerActions {
 
 
     /* Player methods */
-    public String makePlay(int sb, int bb, int maxBet) throws IOException {
+    public String makePlay(int sb, int bb, int maxBet, int minRaise) throws IOException {
 
         if(_playerInfo == null)
             return null;
 
-        String action = _playerInfo.notifyMakePlay(sb, bb, maxBet, this);
+
+        // Player makes an action
+        // Check response time
+        final long start = System.nanoTime();
+        String action = _playerInfo.notifyMakePlay(sb, bb, maxBet, minRaise, this);
+        final long end = System.nanoTime();
+
+        // Save response time
+        _experimentData.setDecisionTime((end - start) / 1_000_000);
+
         return action;
     }
 
@@ -227,43 +248,28 @@ public class Player implements IPlayerActions {
     }
 
 
-    public void receiveRole(PlayerRole r) {
+    public void receiveRole(PlayerRole r) throws IOException {
 
         _role = r;
-        try {
-            if(_playerInfo != null)
-                _playerInfo.notifyPlayerRole(r);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        if(_playerInfo != null)
+            _playerInfo.notifyPlayerRole(r);
     }
 
-    public void receiveCard(Card c) {
+    public void receiveCard(Card c) throws IOException {
 
         if(_numCards >= 2) {
             return;
         }
 
         _cards[_numCards++] = c;
-        try {
-            if(_playerInfo != null)
-                _playerInfo.notifyPlayerCard(c);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        if(_playerInfo != null)
+            _playerInfo.notifyPlayerCard(c);
     }
 
-    public void receiveTableCard(Card c) {
+    public void receiveTableCard(Card c) throws IOException {
 
-        try {
-            if(_playerInfo != null)
-                _playerInfo.notifyTableCard(c);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        if(_playerInfo != null)
+            _playerInfo.notifyTableCard(c);
     }
 
     public void receivePriceMoney(int amount) {
@@ -277,190 +283,124 @@ public class Player implements IPlayerActions {
         _numCards = 0;
     }
 
-
-    public void notifyTurnPlay() {
-
-        try {
-            if(_playerInfo != null)
-                _playerInfo.notifyTurnPlay();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void receiveHandRankName(String rankName) {
+        _lastHandRank = (rankName == null) ? "none" : rankName;
     }
 
-    public void notifyTurnWait() {
+    public void notifyTurnPlay() throws IOException {
 
-        try {
-            if(_playerInfo != null)
-                _playerInfo.notifyTurnWait();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        if(_playerInfo != null)
+            _playerInfo.notifyTurnPlay();
     }
 
-    public void notifyOtherPlayerAction(IPlayerInfo other) {
+    public void notifyTurnWait() throws IOException {
 
-        try {
-            if(_playerInfo != null)
-                _playerInfo.notifyOtherPlayerAction(other);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        if(_playerInfo != null)
+            _playerInfo.notifyTurnWait();
     }
 
-    public void notifyCurrentTurnPlayer(IPlayerInfo other) {
+    public void notifyOtherPlayerAction(IPlayerInfo other) throws IOException {
+
+        if(_playerInfo != null)
+            _playerInfo.notifyOtherPlayerAction(other);
+    }
+
+    public void notifyCurrentTurnPlayer(IPlayerInfo other) throws IOException {
         
-        try {
-            if(_playerInfo != null)
-                _playerInfo.notifyCurrentTurnPlayer(other);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
+        if(_playerInfo != null)
+            _playerInfo.notifyCurrentTurnPlayer(other);
+    }
+
+    public void notifyOwnState(final boolean receiveRank) throws IOException {
+
+        if(_playerInfo != null)
+            _playerInfo.notifyOwnState(this, receiveRank);
+    }
+
+    public void notifyOtherPlayerState(IPlayerInfo other, final boolean receiveRank) throws IOException {
+
+        if(_playerInfo != null)
+            _playerInfo.notifyOtherPlayerState(other, receiveRank);
+    }
+
+    public void notifyEndPlayerState() throws IOException {
+
+        if(_playerInfo != null)
+            _playerInfo.notifyEndPlayerState();
+    }
+
+    public void notifyTotalPot(int total) throws IOException {
+
+        if(_playerInfo != null)
+            _playerInfo.notifyTotalPot(total);
+    }
+
+    public void notifyHandEndsByFolds() throws IOException {
+
+        if(_playerInfo != null)
+            _playerInfo.notifyHandEndsByFolds();
+    }
+
+    public void notifyRoundEnded() throws IOException {
+
+        if(_playerInfo != null)
+            _playerInfo.notifyRoundEnded();
+    }
+
+    public void notifyGameEnded() throws IOException {
+
+        if(_playerInfo != null) {
+
+            _playerInfo.notifyGameEnded();
+
+            if(isWinner())
+                _playerInfo.notifyGameWinner();
+            else
+                _playerInfo.notifyGameLoser();
         }
     }
 
-    public void notifyOwnState() {
+    public void notifyGameKeeps() throws IOException {
 
-        try {
-            if(_playerInfo != null)
-                _playerInfo.notifyOwnState(this);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        if(_playerInfo != null)
+            _playerInfo.notifyGameKeeps();
     }
 
-    public void notifyOtherPlayerState(IPlayerInfo other) {
-
-        try {
-            if(_playerInfo != null)
-                _playerInfo.notifyOtherPlayerState(other);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void notifyEndPlayerState() {
-
-        try {
-            if(_playerInfo != null)
-                _playerInfo.notifyEndPlayerState();
-        }
-        catch(IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void notifyTotalPot(int total) {
-
-        try {
-            if(_playerInfo != null)
-                _playerInfo.notifyTotalPot(total);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void notifyHandEndsByFolds() {
-
-        try {
-            if(_playerInfo != null)
-                _playerInfo.notifyHandEndsByFolds();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void notifyRoundEnded() {
-
-        try {
-            if(_playerInfo != null)
-                _playerInfo.notifyRoundEnded();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void notifyGameEnded() {
-
-        try {
-            if(_playerInfo != null) {
-
-                _playerInfo.notifyGameEnded();
-                if(isWinner())
-                    _playerInfo.notifyGameWinner();
-                else
-                    _playerInfo.notifyGameLoser();
-            }
-            
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void notifyGameKeeps() {
-
-        try {
-            if(_playerInfo != null)
-                _playerInfo.notifyGameKeeps();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void notifyEquity(double equity) {
+    public void notifyEquity(double equity) throws IOException {
 
         _equity = equity;
-        try {
-            if(_playerInfo != null)
-                _playerInfo.notifyEquity(equity);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        if(_playerInfo != null)
+            _playerInfo.notifyEquity(equity);
     }
 
-    public int putSmallBlindBet(int sb) {
+    public void notifyOtherPlayerCards(IPlayerInfo other) throws IOException {
+
+        if(_playerInfo != null)
+            _playerInfo.notifyOtherPlayerCards(other);
+    }
+
+    public int putSmallBlindBet(int sb) throws IOException {
         
         int bet = Math.min(sb, _offBetMoney);
         _onBetMoney += bet;
         _offBetMoney -= bet;
+        _lastCommand = "small-blind";
 
-        try {
-            _lastCommand = "small-blind";
-            if(_playerInfo != null)
-                _playerInfo.notifySmallBlindBet(bet, this);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        if(_playerInfo != null)
+            _playerInfo.notifySmallBlindBet(bet, this);
 
         return bet;
     }
 
-    public int putBigBlindBet(int bb) {
+    public int putBigBlindBet(int bb) throws IOException {
 
         int bet = Math.min(bb, _offBetMoney);
         _onBetMoney += bet;
         _offBetMoney -= bet;
 
-        try {
-            _lastCommand = "big-blind";
-            if(_playerInfo != null)
-                _playerInfo.notifyBigBlindBet(bet, this);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        _lastCommand = "big-blind";
+        if(_playerInfo != null)
+            _playerInfo.notifyBigBlindBet(bet, this);
 
         return bet;
     }
@@ -475,82 +415,25 @@ public class Player implements IPlayerActions {
 
     
     /* Info methods */
-    @Override
-    public int getMoneyOnBet() {
-        return _onBetMoney;
-    }
+    @Override public int getMoneyOnBet() { return _onBetMoney; }
+    @Override public int getMoneyOffBet() { return _offBetMoney; }
+    @Override public int getPlayerId() { return _id; }
+    @Override public String getPlayerName() { return _name; }
+    @Override public Card[] getPlayerCards() { return _cards.clone(); }
+    @Override public int getCardsCounter() { return _numCards; }
+    @Override public boolean isFolded() { return _isFold; }
+    @Override public boolean isWinner() { return _isWinner; }
+    @Override public boolean isAllIn() { return _isAllIn; }
+    @Override public boolean isEliminated() { return _isEliminated; }
+    @Override public PlayerRole getRole() { return _role; }
+    @Override public String getLastCommand() { return _lastCommand; }
+    @Override public String getLastRankName() { return _lastHandRank; }
 
-    @Override
-    public int getMoneyOffBet() {
-        return _offBetMoney;
-    }
-
-    @Override
-    public int getPlayerId() {
-        return _id;
-    }
-
-    @Override
-    public String getPlayerName() {
-        return _name;
-    }
-
-    @Override
-    public Card[] getPlayerCards() {
-        return _cards.clone();
-    }
-
-    @Override
-    public int getCardsCounter() {
-        return _numCards;
-    }
-
-    @Override
-    public boolean isFolded() {
-        return _isFold;
-    }
-
-    @Override
-    public boolean isWinner() {
-        return _isWinner;
-    }
-
-    @Override
-    public boolean isAllIn() {
-        return _isAllIn;
-    }
-
-    @Override
-    public boolean isEliminated() {
-        return _isEliminated;
-    }
-
-    @Override
-    public PlayerRole getRole() {
-        return _role;
-    }
-
-    @Override
-    public String getLastCommand() {
-        return _lastCommand;
-    }
 
     
-
-    public PlayerExperimentData getExperimentData() {
-        return _experimentData;
-    }
-
-    public BotStyle getStyle() {
-        return _playerInfo.getStyle();
-    }
-
-    public String getPlayerType() {
-        return _playerInfo.getPlayerType();
-    }
-
-    public String getPlayerModel() {
-        return _playerInfo.getPlayerModel();
-    }
+    public PlayerExperimentData getExperimentData() { return _experimentData; }
+    public BotStyle getStyle() { return _playerInfo.getStyle(); }
+    public String getPlayerType() { return _playerInfo.getPlayerType(); }
+    public String getPlayerModel() { return _playerInfo.getPlayerModel(); }
    
 }

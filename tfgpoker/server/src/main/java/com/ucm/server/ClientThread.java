@@ -20,7 +20,7 @@ import com.ucm.common.GameType;
 import com.ucm.common.PlayerInfo;
 import com.ucm.common.PokerPreGame;
 import com.ucm.common.SocketUtils;
-import com.ucm.server.middleclasses.Spectator;
+import com.ucm.server.players.Spectator;
 
 
 public class ClientThread implements Runnable {
@@ -132,8 +132,8 @@ public class ClientThread implements Runnable {
                         // Si el host es espectador no lo incluimos en la lista de jugadores pero si en el socket de espectador
                         if(_gameConfig._joinedAsSpectator) {
                             _playerID = -1;
-                            _spectator._name = _playerName;
-                            _spectator._socket = _socket;
+                            _spectator._name = String.copyValueOf( _playerName.toCharArray() );
+                            _spectator._spectatorSocket = _socket;
                         }
                         else {
                             _playerID = _id.getAndIncrement();
@@ -141,7 +141,7 @@ public class ClientThread implements Runnable {
                         }
 
 
-                        // Instanciate ever bot
+                        // Instanciate every bot
                         for(var entry : _gameConfig._botsByType.entrySet()) {
                             Integer botID = entry.getKey();
                             Integer botCount = entry.getValue();
@@ -213,7 +213,7 @@ public class ClientThread implements Runnable {
                     
                     int playersCounter = _roomPlayerList.size() + _roomBotsList.size();
 
-                    if(_spectator._socket != null || (0 < playersCounter && _roomPlayerList.size() < _gameConfig._numPlayers)) {
+                    if(_spectator._spectatorSocket != null || (0 < playersCounter && _roomPlayerList.size() < _gameConfig._numPlayers)) {
 
                         SocketUtils.sendInteger(output, GameType.CONFIRMATION_WAITING_GAME);
                         PokerPreGame.sendGameConfigToJoinedPlayer(_gameConfig, output);
@@ -246,7 +246,7 @@ public class ClientThread implements Runnable {
 
                         if(2 <= _roomPlayerList.size() + _roomBotsList.size()) {
 
-                            if(_spectator._socket != null)
+                            if(_spectator._spectatorSocket != null)
                                 SocketUtils.sendInteger(output, GameType.CONFIRMATION_GAME_STARTS);
 
                             for(ClientThread ct : _roomPlayerList) {
@@ -310,16 +310,16 @@ public class ClientThread implements Runnable {
                         return;
 
 
-                    if(_spectator._socket != null) {
+                    if(_spectator._spectatorSocket != null) {
 
-                        SocketUtils.sendInteger(_spectator._socket.getOutputStream(), GameType.EVENT_PLAYER_JOINED);
-                        SocketUtils.sendInteger(_spectator._socket.getOutputStream(), roomSize);
+                        SocketUtils.sendInteger(_spectator._spectatorSocket.getOutputStream(), GameType.EVENT_PLAYER_JOINED);
+                        SocketUtils.sendInteger(_spectator._spectatorSocket.getOutputStream(), roomSize);
                         for (ClientThread ct : _roomPlayerList) {
-                            PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(ct._playerID, ct._playerName), _spectator._socket);
+                            PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(ct._playerID, ct._playerName), _spectator._spectatorSocket);
                             log.debug("Player {} on waiting room", ct._playerName);
                         }
                         for(BotStruct bs : _roomBotsList) {
-                            PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(bs.matchId(), bs.botName()), _spectator._socket);
+                            PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(bs.matchId(), bs.botName()), _spectator._spectatorSocket);
                             log.debug("Bot {} on waiting room", bs.botName());
                         }
                     }

@@ -48,14 +48,13 @@ public class CallCommand extends Command {
             return command.execute(sb, bb, maxBet);
         }
         
-        log.debug("Player {} makes CALL", _player.getPlayerName());
         
-
         _player.call(maxBet);
 
         if(PokerHistory.current() != null)
             PokerHistory.current().call(_player);
         
+        log.debug("Player {} makes CALL", _player.getPlayerName());
         return CommandResult.continuePlaying(maxBet, false);
     }
 
