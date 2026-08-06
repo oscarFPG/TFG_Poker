@@ -471,7 +471,7 @@ public class InGameWindowController extends GenericController {
         _playerSeatMap = new HashMap<>(players.size());
         if(myIndex == -1) {
          
-            int seatIndex = 0;
+            int seatIndex = 8;
             for(int i = players.size() - 1; 0 <= i; i--) {
 
                 PlayerInfo p = players.get(i);
@@ -490,7 +490,7 @@ public class InGameWindowController extends GenericController {
                 onBetHBox.setVisible(true);
                 GUI_getAvatarPosition(seatIndex, p.name);
 
-                seatIndex++;
+                seatIndex--;
             }
 
             return;
@@ -506,7 +506,7 @@ public class InGameWindowController extends GenericController {
         _listHandBet.get(0).setVisible(true);
 
         // Show players behind me(in the list) : position 1, 2, 3, ...
-        int beforePosition = 1;
+        int beforePosition = 8;
         for(int i = myIndex - 1; 0 <= i; i--) {
 
             PlayerInfo p = players.get(i);
@@ -525,11 +525,11 @@ public class InGameWindowController extends GenericController {
             onBetHBox.setVisible(true);
             GUI_getAvatarPosition(beforePosition, p.name);
 
-            ++beforePosition;
+            --beforePosition;
         }
 
         // Show players ahead of me(in the list) : position 8, 7, 6, ...
-        int nextPosition = 8;
+        int nextPosition = 1;
         for(int i = myIndex + 1; i < players.size(); i++) {
 
             PlayerInfo p = players.get(i);
@@ -548,7 +548,7 @@ public class InGameWindowController extends GenericController {
             onBetHBox.setVisible(true);
             GUI_getAvatarPosition(nextPosition, p.name);
 
-            --nextPosition;
+            ++nextPosition;
         }
     }
 
@@ -673,6 +673,7 @@ public class InGameWindowController extends GenericController {
 
                     Platform.runLater(() -> {
                         GUI_updatePlayerInfo(playerID, role, moneyOnBet, moneyOffBet, isFolded, isWinner, isEliminated, true);
+                        buttonsHolder.setVisible(false);
                     });
                 }
                 else if(serverCode == GameType.TABLE_CARD) {
@@ -712,16 +713,17 @@ public class InGameWindowController extends GenericController {
                     final int totalPot = SocketUtils.receiveInt(socket.getInputStream());
                     Platform.runLater(() -> {
                         labelTotalPot.setText( String.valueOf(totalPot) );
+                        buttonsHolder.setVisible(false);
                     });
                 }
                 else if(serverCode == GameType.TURN_BEFORE_PLAY) {
                     System.out.printf("Waiting to know which player is next!\n");
 
                     int playerID = SocketUtils.receiveInt(socket.getInputStream());
-                    GUI_putTurnPlayer(playerID);
 
                     Platform.runLater(() -> {
                         buttonsHolder.setVisible(false);
+                        GUI_putTurnPlayer(playerID);
                         GUI_startVisualTimer(playerID);
                     });
                 }
@@ -741,9 +743,7 @@ public class InGameWindowController extends GenericController {
 
                         GUI_stopVisualTimer();
                         GUI_putPlayerBet(otherPlayerID, otherPlayerOnBetMoney, otherPlayerOffBetMoney, otherPlayerIsFolded);
-                        
-                        int seatID = _playerSeatMap.get(otherPlayerID);
-                        _listPlayerStackPanes.get(seatID).getStyleClass().remove("tourn-player-color");
+                        buttonsHolder.setVisible(false);
                     });
                 }
                 else if(serverCode == GameType.HAND_ENDS_BY_FOLD) {
