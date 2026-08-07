@@ -202,11 +202,21 @@ public abstract class Bot implements IPlayerNotificator {
     @Override
     public void notifySmallBlindBet(int amount, IPlayerInfo player) throws IOException {
         _smallBlind = amount;
+        actionHistory.add(
+            String.format(
+                "You made a small-blind bet of %d chips", amount
+            )
+        );
     }
 
     @Override
     public void notifyBigBlindBet(int amount, IPlayerInfo player) throws IOException {
         _bigBlind = amount;
+        actionHistory.add(
+            String.format(
+                "You made a big-blind bet of %d chips", amount
+            )
+        );
     }
 
     @Override
@@ -225,6 +235,9 @@ public abstract class Bot implements IPlayerNotificator {
         String action = other.getLastCommand();
         if(action.equals(GameType.RAISE_ACTION_FULL) || action.equals(GameType.ALL_IN_ACTION_FULL)) {
             actionHistory.add( mapRole(other.getRole()) + " " + action + " " + other.getMoneyOnBet() );
+        }
+        else if(action.equals(GameType.SMALL_BLIND_ACTION) || action.equals(GameType.BIG_BLIND_ACTION)) {
+            actionHistory.add( mapRole(other.getRole()) + " puts " + other.getMoneyOnBet() + " chips" );
         }
         else {
             actionHistory.add( mapRole(other.getRole()) + " " + action );

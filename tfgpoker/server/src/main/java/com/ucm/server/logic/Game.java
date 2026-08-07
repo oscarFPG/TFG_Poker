@@ -63,7 +63,7 @@ public class Game {
     private Timer _timer;
     private int _level;
     private int _handCounter = 0;
-    private boolean _firstHand = true;
+    private boolean _firstHand = true;  // ONLY for activating the timer at the very first hand
 
     public Game(
         List<ClientStruct> players, 
@@ -94,9 +94,9 @@ public class Game {
         _isPreflop = true;
 
         // Static/dynamic blinds
-        if(config._dinamicBlinds) {
+        if(config._dynamicBlinds) {
             int seconds = Integer.parseInt( config._levelDuration );
-            _timer = new Timer(seconds);
+            _timer = new Timer(seconds * 60);
             log.debug("Dynamic blinds enabled! Level duration: {} seconds", seconds);
         }
         else {
@@ -145,13 +145,14 @@ public class Game {
         ++_handCounter;
         try {
 
-            if(_isPreflop && _gameConfig._dinamicBlinds) {
+            if(_isPreflop && _gameConfig._dynamicBlinds) {
 
                 if( !_timer.isRunning() ) {
 
                     // Start timer and increase blinds only if it is enabled and it is NOT the first hand
                     if(_firstHand) {
                         _firstHand = false;
+                        _timer.start();
                     }
                     else {
                         increaseBlinds();
@@ -288,7 +289,7 @@ public class Game {
         _currentSB = (int)Math.round(newSB);
         _currentBB = _currentSB * 2;
 
-        log.debug("Blinds increased to {}/{}", _currentSB, _currentBB);
+        log.debug("Blinds will increase to {}/{}", _currentSB, _currentBB);
     }
 
     private void addAllPlayersInitial(List<ClientStruct> players, List<BotStruct> bots, Spectator spectator, GameConfig config) {
@@ -338,13 +339,8 @@ public class Game {
 
     private long selectSeed_DEBUG(final List<ClientStruct> players, final List<BotStruct> bots) {
 
-        boolean nose = true;
-        if(nose)
-            return 20;
-
-
         long seed = 1;
-        if(players.size()  == 1 && bots.size() == 1) { // Heads-up(1vs1)
+        if(players.size()  == 1 && bots.size() == 1) {          // Heads-up(1vs1)       - Prueba 1
 
             BotStyle style = bots.get(0).style();
             switch (style) {
@@ -374,12 +370,21 @@ public class Game {
             }
 
         }
+        else if (players.size() == 1 && bots.size() == 4) {     // 1 humano vs 4 bots   - Prueba 2
+            seed = 1777;
+        }
+        else if (players.size() == 0 && bots.size() == 6) {     // 6 bots               - Prueba 3
+            seed = 2732;
+        }
+        else if(players.size() == 0 && bots.size() == 2) {      // 1 bot vs 1 bot       - Prueba 4
+            seed = 3387;
+        }
         else {
             Random rand = new Random();
             seed = rand.nextLong();
         }
 
-        log.debug("Selected SEED: {}", seed);
+        log.debug("Selected seed for the deck: {}", seed);
         return seed;
     }
 

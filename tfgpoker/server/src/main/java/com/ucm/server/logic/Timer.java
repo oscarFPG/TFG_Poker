@@ -33,7 +33,6 @@ public class Timer {
             return;
 
 
-        log.debug("Timer started!");
         _isRunning.set(true);
         _task = _scheduler.scheduleAtFixedRate(() -> {
             int current = _seconds.incrementAndGet();
@@ -45,8 +44,6 @@ public class Timer {
                 if (localTask != null) {
                     localTask.cancel(false);
                 }
-
-                log.debug("Timer stopped at {} seconds", _max);
             }
 
         }, 0, 1, TimeUnit.SECONDS);

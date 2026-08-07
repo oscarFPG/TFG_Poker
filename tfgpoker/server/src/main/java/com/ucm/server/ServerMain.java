@@ -1,21 +1,18 @@
 package com.ucm.server;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.ucm.server.control.Controller;
-import com.ucm.server.exceptions.EvaluatorException;
-import com.ucm.server.logic.Game;
-import com.ucm.server.players.Spectator;
 import com.ucm.common.BotStruct;
 import com.ucm.common.ClientStruct;
 import com.ucm.common.GameConfig;
 import com.ucm.common.GameType;
 import com.ucm.common.exceptions.CancelGameException;
+import com.ucm.server.exceptions.EvaluatorException;
+import com.ucm.server.players.Spectator;
 
 
 public class ServerMain {
@@ -38,25 +35,6 @@ public class ServerMain {
      *      .\mvnw.cmd test
      */
     public static void main(String[] args) throws EvaluatorException, CancelGameException {
-
-        if(Game.DEBUG_PLAYERS) {
-
-            List<ClientStruct> players = new ArrayList<>(
-                List.of(
-                    ClientStruct.createGuestPlayer("PL1", null),
-                    ClientStruct.createGuestPlayer("PL2", null),
-                    ClientStruct.createGuestPlayer("PL3", null)
-                )
-            );
-            List<BotStruct> bots = new ArrayList<>();
-            GameConfig config = new GameConfig();
-            config.reset();
-
-            Game game = new Game(players, bots, null, config);
-            Controller controller = new Controller(game);
-            controller.run();
-            return; 
-        }
 
         while(true) {
 

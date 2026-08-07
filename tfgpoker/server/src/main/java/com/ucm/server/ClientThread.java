@@ -113,7 +113,7 @@ public class ClientThread implements Runnable {
                         _gameConfig._initialMoney = config._initialMoney;
                         _gameConfig._allowBots = config._allowBots;
                         _gameConfig._blindsValue = config._blindsValue;
-                        _gameConfig._dinamicBlinds = config._dinamicBlinds;
+                        _gameConfig._dynamicBlinds = config._dynamicBlinds;
                         _gameConfig._levelDuration = config._levelDuration;
                         _gameConfig._hikePercentage = config._hikePercentage;
                         _gameConfig._turnTimerPlayer = config._turnTimerPlayer;

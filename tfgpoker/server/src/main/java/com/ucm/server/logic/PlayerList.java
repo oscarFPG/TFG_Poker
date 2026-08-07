@@ -96,6 +96,7 @@ public class PlayerList implements Iterable<Node> {
     public void assignRolesToAllPlayers() throws CancelGameException {
 
         int numPlayers = activePlayersCounter();
+        Player.CURRENT_PLAYERS = numPlayers;
 
         // Cannot be possible
         if (numPlayers == 0 || numPlayers == 1)
@@ -167,7 +168,8 @@ public class PlayerList implements Iterable<Node> {
                     player._player.receiveCard(c1);
                     player._player.receiveCard(c2);
 
-                    _spectator.notifyOtherPlayerCards(player._player);
+                    if(_spectator != null)
+                        _spectator.notifyOtherPlayerCards(player._player);
 
                     log.debug("Player {} receives the cards: {} {}", player._player.getPlayerName(), c1.toString(), c2.toString());
                     return;

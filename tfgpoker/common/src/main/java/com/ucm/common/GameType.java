@@ -111,6 +111,8 @@ public class GameType {
     public static final String CALL_ACTION_SHORTCUT = "c";
     public static final String RAISE_ACTION_FULL = "raise"; // This requires an amount parameter: e.g: "raise 100"
     public static final String RAISE_ACTION_SHORTCUT = "r"; // This requires an amount parameter: e.g: "raise 100"
+    public static final String SMALL_BLIND_ACTION = "small-blind";
+    public static final String BIG_BLIND_ACTION = "big-blind";
 
     // Bots identifier
     public static final int BOT_GEMINI = 10000;

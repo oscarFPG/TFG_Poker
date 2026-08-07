@@ -81,7 +81,7 @@ public abstract class BotLLM extends Bot {
 
             %s
 
-            This is a 9-handed table.
+            This is a %d-handed table.
             Only the players mentioned in the action history are still in the hand.
 
             The table positions are: UTG (early), HJ (hijack), CO (late), BTN (dealer), SB, BB.
@@ -114,6 +114,7 @@ public abstract class BotLLM extends Bot {
             <action>raise AMOUNT</action>
             """,
             _style.getPromptDescription(),
+            Player.CURRENT_PLAYERS,
             mapRole( player.getRole() ),
             formatCards( List.of(player.getPlayerCards()) ),
             table.isEmpty() ? "[]" : formatCards(table),

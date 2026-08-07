@@ -19,6 +19,7 @@ import com.ucm.common.GameType;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.gameobjects.BotLLM;
+import com.ucm.server.gameobjects.Player;
 import com.ucm.server.interfaces.IPlayerInfo;
 
 
@@ -151,20 +152,29 @@ public class LlamaPokerLLM extends BotLLM {
 
         StringBuilder strBuilder = new StringBuilder();
 
-        strBuilder.append("You are a specialist in playing 9-handed No Limit Texas Holdem. ");
+        strBuilder.append("You are a specialist in playing ");
+        strBuilder.append(Player.CURRENT_PLAYERS);
+        strBuilder.append("-handed Poker No Limit Texas Holdem. ");
         strBuilder.append("The following will be a game scenario and you need to make the optimal decision.\n\n");
 
         strBuilder.append("Here is a game summary:\n\n");
-        strBuilder.append("The small blind is ").append(_smallBlind)
-                  .append(" chips and the big blind is ").append(_bigBlind)
-                  .append(" chips. Everyone started with 100 chips.\n");
+        strBuilder.append("The small blind is ").append(_smallBlind).append(" chips.\n");
+        strBuilder.append("The big blind is ").append(_bigBlind).append(" chips.\n");
+        strBuilder.append("Everyone started with ").append(Player.getInitialMoney()).append(" chips.\n");
 
-        strBuilder.append("The player positions involved in this game are UTG, HJ, CO, BTN, SB, BB.\n");
-        strBuilder.append("In this hand, your position is ")
-          .append(mapRole( player.getRole() ))
-          .append(", and your holding is ")
-          .append(formatCardsVerbose( List.of(player.getPlayerCards()) ))
-          .append(".\n");
+        //strBuilder.append("The player positions involved in this game are UTG, HJ, CO, BTN, SB, BB.\n");
+        try {
+            String myCards = formatCardsVerbose( List.of(player.getPlayerCards()) );
+            strBuilder.append("In this hand, your position is ")
+                .append(mapRole( player.getRole() ))
+                .append(", and your holding is ")
+                .append(myCards)
+                .append(".\n");
+        }
+        catch (Exception e) {
+            log.error("Cause: {}", e.getMessage());
+        }
+        
 
         strBuilder.append("Before the flop, ")
           .append(getPreflopHistory())
@@ -195,7 +205,6 @@ public class LlamaPokerLLM extends BotLLM {
         }
 
         strBuilder.append("\nNow it is your turn to make a move.\n");
-
         strBuilder.append("To remind you, the current pot size is ")
           .append(_totalPot)
           .append(" chips, and your holding is ")
@@ -243,8 +252,8 @@ public class LlamaPokerLLM extends BotLLM {
 
 
     private String formatCardsVerbose(List<Card> cards) {
+        
         List<String> result = new ArrayList<>();
-
         for (Card c : cards) {
 
             String value = switch (c.getNumber()) {
@@ -318,4 +327,5 @@ public class LlamaPokerLLM extends BotLLM {
     public String getPlayerModel() {
         return "Llama3-8B";
     }
+
 }

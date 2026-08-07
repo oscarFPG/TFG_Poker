@@ -43,6 +43,8 @@ public class Player implements IPlayerActions {
 
     private static final Logger log = LogManager.getLogger(Player.class);
 
+    public static int CURRENT_PLAYERS = 0;
+    private static int INITIAL_MONEY = 0;
 
     /**
      * Player's unique identifier
@@ -166,6 +168,8 @@ public class Player implements IPlayerActions {
         _equity = 0;
         _lastCommand = "none";
         _lastHandRank = "none";
+
+        INITIAL_MONEY = money;
     }
 
 
@@ -384,7 +388,7 @@ public class Player implements IPlayerActions {
         int bet = Math.min(sb, _offBetMoney);
         _onBetMoney += bet;
         _offBetMoney -= bet;
-        _lastCommand = "small-blind";
+        _lastCommand = GameType.SMALL_BLIND_ACTION;
 
         if(_playerInfo != null)
             _playerInfo.notifySmallBlindBet(bet, this);
@@ -397,8 +401,8 @@ public class Player implements IPlayerActions {
         int bet = Math.min(bb, _offBetMoney);
         _onBetMoney += bet;
         _offBetMoney -= bet;
+        _lastCommand = GameType.BIG_BLIND_ACTION;
 
-        _lastCommand = "big-blind";
         if(_playerInfo != null)
             _playerInfo.notifyBigBlindBet(bet, this);
 
@@ -419,7 +423,6 @@ public class Player implements IPlayerActions {
     @Override public int getMoneyOffBet() { return _offBetMoney; }
     @Override public int getPlayerId() { return _id; }
     @Override public String getPlayerName() { return _name; }
-    @Override public Card[] getPlayerCards() { return _cards.clone(); }
     @Override public int getCardsCounter() { return _numCards; }
     @Override public boolean isFolded() { return _isFold; }
     @Override public boolean isWinner() { return _isWinner; }
@@ -428,12 +431,12 @@ public class Player implements IPlayerActions {
     @Override public PlayerRole getRole() { return _role; }
     @Override public String getLastCommand() { return _lastCommand; }
     @Override public String getLastRankName() { return _lastHandRank; }
+    @Override public Card[] getPlayerCards() { return _cards.clone(); }
 
-
-    
     public PlayerExperimentData getExperimentData() { return _experimentData; }
     public BotStyle getStyle() { return _playerInfo.getStyle(); }
     public String getPlayerType() { return _playerInfo.getPlayerType(); }
     public String getPlayerModel() { return _playerInfo.getPlayerModel(); }
    
+    public static int getInitialMoney() { return INITIAL_MONEY; }
 }
