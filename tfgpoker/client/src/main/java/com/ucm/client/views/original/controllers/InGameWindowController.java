@@ -77,7 +77,7 @@ public class InGameWindowController extends GenericController {
     
     /* All poker players seats */
     @FXML private StackPane pokerPlayer0;           // Always playing-client seat
-    @FXML private Label playerName0, playerMoney0, labelOnBetMoney0;  // Always playing-client seat
+    @FXML private Label playerName0, playerMoney0, labelOnBetMoney0, playerAction0 ;  // Always playing-client seat
     @FXML private Label labelEquity0;
     @FXML private HBox hboxImageCards0, hboxHandBet0, hboxTimer0;
     @FXML private ImageView imgLeftCard0, imgRightCard0, imgAvatarProfile0;
@@ -85,7 +85,7 @@ public class InGameWindowController extends GenericController {
     @FXML private Rectangle rectFirstTimer0, rectSecondTimer0, rectThirdTimer0, rectFourthTimer0, rectFifthTimer0, rectSixthTimer0;
 
     @FXML private StackPane pokerPlayer1;
-    @FXML private Label playerName1, playerMoney1, labelOnBetMoney1;
+    @FXML private Label playerName1, playerMoney1, labelOnBetMoney1, playerAction1;
     @FXML private Label labelEquity1;
     @FXML private HBox hboxImageCards1, hboxHandBet1, hboxTimer1;
     @FXML private ImageView imgLeftCard1, imgRightCard1, imgAvatarProfile1;
@@ -93,7 +93,7 @@ public class InGameWindowController extends GenericController {
     @FXML private Rectangle rectFirstTimer1, rectSecondTimer1, rectThirdTimer1, rectFourthTimer1, rectFifthTimer1, rectSixthTimer1;
 
     @FXML private StackPane pokerPlayer2;
-    @FXML private Label playerName2, playerMoney2, labelOnBetMoney2;
+    @FXML private Label playerName2, playerMoney2, labelOnBetMoney2, playerAction2;
     @FXML private Label labelEquity2;
     @FXML private HBox hboxImageCards2, hboxHandBet2, hboxTimer2;
     @FXML private ImageView imgLeftCard2, imgRightCard2, imgAvatarProfile2;
@@ -101,7 +101,7 @@ public class InGameWindowController extends GenericController {
     @FXML private Rectangle rectFirstTimer2, rectSecondTimer2, rectThirdTimer2, rectFourthTimer2, rectFifthTimer2, rectSixthTimer2;
 
     @FXML private StackPane pokerPlayer3;
-    @FXML private Label playerName3, playerMoney3, labelOnBetMoney3;
+    @FXML private Label playerName3, playerMoney3, labelOnBetMoney3, playerAction3;
     @FXML private Label labelEquity3;
     @FXML private HBox hboxImageCards3, hboxHandBet3, hboxTimer3;
     @FXML private ImageView imgLeftCard3, imgRightCard3, imgAvatarProfile3;
@@ -109,7 +109,7 @@ public class InGameWindowController extends GenericController {
     @FXML private Rectangle rectFirstTimer3, rectSecondTimer3, rectThirdTimer3, rectFourthTimer3, rectFifthTimer3, rectSixthTimer3;
 
     @FXML private StackPane pokerPlayer4;
-    @FXML private Label playerName4, playerMoney4, labelOnBetMoney4;
+    @FXML private Label playerName4, playerMoney4, labelOnBetMoney4, playerAction4;
     @FXML private Label labelEquity4;
     @FXML private HBox hboxImageCards4, hboxHandBet4, hboxTimer4;
     @FXML private ImageView imgLeftCard4, imgRightCard4, imgAvatarProfile4;
@@ -117,7 +117,7 @@ public class InGameWindowController extends GenericController {
     @FXML private Rectangle rectFirstTimer4, rectSecondTimer4, rectThirdTimer4, rectFourthTimer4, rectFifthTimer4, rectSixthTimer4;
 
     @FXML private StackPane pokerPlayer5;
-    @FXML private Label playerName5, playerMoney5, labelOnBetMoney5;
+    @FXML private Label playerName5, playerMoney5, labelOnBetMoney5, playerAction5;
     @FXML private Label labelEquity5;
     @FXML private HBox hboxImageCards5, hboxHandBet5, hboxTimer5;
     @FXML private ImageView imgLeftCard5, imgRightCard5, imgAvatarProfile5;
@@ -125,7 +125,7 @@ public class InGameWindowController extends GenericController {
     @FXML private Rectangle rectFirstTimer5, rectSecondTimer5, rectThirdTimer5, rectFourthTimer5, rectFifthTimer5, rectSixthTimer5;
 
     @FXML private StackPane pokerPlayer6;
-    @FXML private Label playerName6, playerMoney6, labelOnBetMoney6;
+    @FXML private Label playerName6, playerMoney6, labelOnBetMoney6, playerAction6;
     @FXML private Label labelEquity6;
     @FXML private HBox hboxImageCards6, hboxHandBet6, hboxTimer6;
     @FXML private ImageView imgLeftCard6, imgRightCard6, imgAvatarProfile6;
@@ -133,7 +133,7 @@ public class InGameWindowController extends GenericController {
     @FXML private Rectangle rectFirstTimer6, rectSecondTimer6, rectThirdTimer6, rectFourthTimer6, rectFifthTimer6, rectSixthTimer6;
 
     @FXML private StackPane pokerPlayer7;
-    @FXML private Label playerName7, playerMoney7, labelOnBetMoney7;
+    @FXML private Label playerName7, playerMoney7, labelOnBetMoney7, playerAction7;
     @FXML private Label labelEquity7;
     @FXML private HBox hboxImageCards7, hboxHandBet7, hboxTimer7;
     @FXML private ImageView imgLeftCard7, imgRightCard7, imgAvatarProfile7;
@@ -141,7 +141,7 @@ public class InGameWindowController extends GenericController {
     @FXML private Rectangle rectFirstTimer7, rectSecondTimer7, rectThirdTimer7, rectFourthTimer7, rectFifthTimer7, rectSixthTimer7;
 
     @FXML private StackPane pokerPlayer8;
-    @FXML private Label playerName8, playerMoney8, labelOnBetMoney8;
+    @FXML private Label playerName8, playerMoney8, labelOnBetMoney8, playerAction8;
     @FXML private Label labelEquity8;
     @FXML private HBox hboxImageCards8, hboxHandBet8, hboxTimer8;
     @FXML private ImageView imgLeftCard8, imgRightCard8, imgAvatarProfile8;
@@ -150,7 +150,7 @@ public class InGameWindowController extends GenericController {
     
     /* Member variables to group all players variables */
     private List<StackPane> _listPlayerStackPanes;  // Player stackpanes
-    private List<Label> _listNameLabels, _listMoneyLabels; // Player names and money OFF bet
+    private List<Label> _listNameLabels, _listMoneyLabels, _listPlayerAction; // Player names and money OFF bet
     private List<HBox> _listHandBet;    // Player money ON bet + chips image
     private List<Label> _listOnBetMoney;    // Player money ON bet number
     private List<Label> _listEquity;    // Player equities
@@ -308,6 +308,18 @@ public class InGameWindowController extends GenericController {
             playerMoney6,
             playerMoney7,
             playerMoney8
+        );
+
+        _listPlayerAction = List.of (
+            playerAction0,
+            playerAction1,
+            playerAction2,
+            playerAction3,
+            playerAction4,
+            playerAction5,
+            playerAction6,
+            playerAction7,
+            playerAction8
         );
 
         _listImageCards = List.of (
