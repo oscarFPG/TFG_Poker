@@ -654,7 +654,6 @@ public class InGameWindowController extends GenericController {
 
                 serverCode = SocketUtils.receiveInt(socket.getInputStream());
                 if(serverCode == GameType.OTHER_PLAYER_STATUS) {
-                    System.out.printf("Waiting other player status!\n");
 
                     int playerID = SocketUtils.receiveInt(socket.getInputStream());
                     String playerName = SocketUtils.receiveString(socket.getInputStream());
@@ -667,7 +666,13 @@ public class InGameWindowController extends GenericController {
                     boolean readRank = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
                     String rankName = "None";
 
-                    System.out.printf("Player[%d] %s with rank %s\n", playerID, playerName, role);
+                    System.out.printf(
+                        "Player[%d] %s with role %s - Folded: %s\n", 
+                        playerID, 
+                        playerName, 
+                        role, 
+                        (isFolded) ? "YES" : "NO"
+                    );
                     if(readRank) {
                         rankName = SocketUtils.receiveString(socket.getInputStream());
                         System.out.printf("%s has a %s\n", playerName, rankName);
@@ -723,16 +728,14 @@ public class InGameWindowController extends GenericController {
                     );
                 }
                 else if(serverCode == GameType.TOTAL_POT) {
-                    System.out.printf("Waiting current total pot!\n");
-
+                    
                     final int totalPot = SocketUtils.receiveInt(socket.getInputStream());
                     Platform.runLater(() -> {
                         labelTotalPot.setText( String.valueOf(totalPot) );
                     });
                 }
                 else if(serverCode == GameType.TURN_BEFORE_PLAY) {
-                    System.out.printf("Waiting to know which player is next!\n");
-
+                    
                     int playerID = SocketUtils.receiveInt(socket.getInputStream());
                     Platform.runLater(() -> {
                         GUI_putTurnPlayer(playerID);
@@ -741,8 +744,7 @@ public class InGameWindowController extends GenericController {
                     });
                 }
                 else if(serverCode == GameType.TURN_OTHER_PLAYER) {
-                    System.out.printf("Waiting to receive other player current action!\n");
-
+                    
                     int otherPlayerID = SocketUtils.receiveInt( socket.getInputStream() );
                     String otherPlayerName = SocketUtils.receiveString( socket.getInputStream() );
                     PlayerRole otherPlayerRole = PokerGame.receivePlayerRole( socket.getInputStream() );
@@ -775,7 +777,10 @@ public class InGameWindowController extends GenericController {
                         buttonsHolder.setVisible(false);
                         GUI_stopVisualTimer();
                         GUI_clearTableCards();
+                        GUI_flipDownAllPlayerCards();
+                        GUI_clearPlayerBets();
                         GUI_clearDealer();
+                        GUI_clearTurnPlayer();
                     });
                 }
                 else if(serverCode == GameType.ROUND_ENDS) {
@@ -800,9 +805,11 @@ public class InGameWindowController extends GenericController {
                     Platform.runLater(() -> {
                         buttonsHolder.setVisible(false);
                         GUI_stopVisualTimer();
-                        GUI_clearPlayerBets();
                         GUI_clearTableCards();
+                        GUI_flipDownAllPlayerCards();
+                        GUI_clearPlayerBets();
                         GUI_clearDealer();
+                        GUI_clearTurnPlayer();
                     });
                 }
                 else if(serverCode == GameType.GAME_KEEPS) {
@@ -818,9 +825,11 @@ public class InGameWindowController extends GenericController {
                     Platform.runLater(() -> {
                         buttonsHolder.setVisible(false);
                         GUI_stopVisualTimer();
-                        GUI_clearPlayerBets();
                         GUI_clearTableCards();
+                        GUI_flipDownAllPlayerCards();
+                        GUI_clearPlayerBets();
                         GUI_clearDealer();
+                        GUI_clearTurnPlayer();
                     });
                 }
                 else if(serverCode == GameType.PLAYER_STATUS_END) {
@@ -1502,7 +1511,7 @@ public class InGameWindowController extends GenericController {
         Label moneyLabel = _listMoneyLabels.get(seatID);
         Label betLabel = _listOnBetMoney.get(seatID);
 
-        // Draw dealers button if necessary
+        // Draw dealer button if necessary
         if(role == PlayerRole.DEALER)
             GUI_putDealerButton(playerID, true);
         else
@@ -1520,6 +1529,7 @@ public class InGameWindowController extends GenericController {
             _listImageCards.get(seatID).setOpacity(DEFAULT_OPACITY);
         }
 
+        // Show player as winner of the current hand
         if(isShowdown && isWinner) {
             System.out.printf("Player %s is the winner of the hand!\n", nameLabel.getText());
             NotificationManager.showSuccess(String.format(Messages.Notifications.CONFIRMATION_WINNER_GAME, nameLabel.getText()));
@@ -1535,6 +1545,7 @@ public class InGameWindowController extends GenericController {
             transition.play();
         }
 
+        // Show player as eliminated
         if(isEliminated) {
             System.out.printf("Player %s has been eliminated from the game!\n", nameLabel.getText());
             NotificationManager.showSuccess(String.format(Messages.Notifications.CONFIRMATION_PLAYER_ELIMINATED, nameLabel.getText()));
@@ -1547,6 +1558,7 @@ public class InGameWindowController extends GenericController {
             _listPlayerStackPanes.get(seatID).setOpacity(ELIMINATED_OPACITY);
         }
 
+        // Player bet and current money
         betLabel.setText( String.valueOf(onBetMoney) );
         moneyLabel.setText( String.valueOf(offBetMoney) );
     }
