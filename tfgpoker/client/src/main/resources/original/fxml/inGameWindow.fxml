@@ -502,7 +502,7 @@
                               <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
                               <HBox prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                    <HBox prefHeight="100.0" prefWidth="200.0">
+                                    <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
                                        <children>
                                           <Label fx:id="playerAction5" styleClass="bold-general-text-font" />
                                        </children>
@@ -612,7 +612,7 @@
                               <Region prefHeight="2.0" prefWidth="80.0" styleClass="spacer" />
                               <HBox prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                    <HBox prefHeight="100.0" prefWidth="200.0">
+                                    <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
                                        <children>
                                           <Label fx:id="playerAction4" styleClass="bold-general-text-font" />
                                        </children>
@@ -722,7 +722,7 @@
                               <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
                               <HBox prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                    <HBox prefHeight="100.0" prefWidth="200.0">
+                                    <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
                                        <children>
                                           <Label fx:id="playerAction3" styleClass="bold-general-text-font" />
                                        </children>
@@ -832,7 +832,7 @@
                               <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
                               <HBox prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                    <HBox prefHeight="100.0" prefWidth="200.0">
+                                    <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
                                        <children>
                                           <Label fx:id="playerAction2" styleClass="bold-general-text-font" />
                                        </children>
@@ -942,7 +942,7 @@
                               <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
                               <HBox prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                    <HBox prefHeight="100.0" prefWidth="200.0">
+                                    <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
                                        <children>
                                           <Label fx:id="playerAction1" styleClass="bold-general-text-font" />
                                        </children>
@@ -1051,7 +1051,7 @@
                               <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
                               <HBox prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                    <HBox prefHeight="100.0" prefWidth="200.0">
+                                    <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
                                        <children>
                                           <Label fx:id="playerAction0" styleClass="bold-general-text-font" />
                                        </children>
@@ -1161,7 +1161,7 @@
                               <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
                               <HBox prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                    <HBox prefHeight="100.0" prefWidth="200.0">
+                                    <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
                                        <children>
                                           <Label fx:id="playerAction8" styleClass="bold-general-text-font" />
                                        </children>
@@ -1271,7 +1271,7 @@
                               <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
                               <HBox prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                    <HBox prefHeight="100.0" prefWidth="200.0">
+                                    <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
                                        <children>
                                           <Label fx:id="playerAction7" styleClass="bold-general-text-font" />
                                        </children>
@@ -1381,7 +1381,7 @@
                               <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
                               <HBox prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                    <HBox prefHeight="100.0" prefWidth="200.0">
+                                    <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
                                        <children>
                                           <Label fx:id="playerAction6" styleClass="bold-general-text-font" />
                                        </children>

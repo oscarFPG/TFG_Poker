@@ -754,7 +754,7 @@ public class InGameWindowController extends GenericController {
                     Platform.runLater(() -> {
 
                         GUI_stopVisualTimer();
-                        GUI_putPlayerBet(otherPlayerID, otherPlayerOnBetMoney, otherPlayerOffBetMoney, otherPlayerIsFolded);
+                        GUI_putPlayerBet(otherPlayerID, otherPlayerOnBetMoney, otherPlayerOffBetMoney, otherPlayerIsFolded, otherPlayerLastCommand);
                         buttonsHolder.setVisible(false);
                     });
                 }
@@ -968,7 +968,7 @@ public class InGameWindowController extends GenericController {
 
                 Platform.runLater(() -> {
 
-                    GUI_putPlayerBet(_clientInfo.id, onBetMoney, offBetMoney, false);
+                    GUI_putPlayerBet(_clientInfo.id, onBetMoney, offBetMoney, false, "");
                     GUI_putTurnPlayer(_clientInfo.id);
                 });
 
@@ -982,7 +982,7 @@ public class InGameWindowController extends GenericController {
 
                 Platform.runLater(() -> {
 
-                    GUI_putPlayerBet(_clientInfo.id, onBetMoney, offBetMoney, false);
+                    GUI_putPlayerBet(_clientInfo.id, onBetMoney, offBetMoney, false, "");
                     GUI_putTurnPlayer(_clientInfo.id);
                 });
 			}
@@ -1075,7 +1075,7 @@ public class InGameWindowController extends GenericController {
                         _listHandBet.get( seatID ).setOpacity(FOLDED_OPACITY);
                     }
                     else {
-                        GUI_putPlayerBet(_clientInfo.id, myOnBetMoney, myOffBetMoney, iAmFolded);
+                        GUI_putPlayerBet(_clientInfo.id, myOnBetMoney, myOffBetMoney, iAmFolded, "");
                     }
 
                     buttonsHolder.setVisible(false);
@@ -1112,7 +1112,7 @@ public class InGameWindowController extends GenericController {
                 Platform.runLater(() -> {
                     
                     GUI_stopVisualTimer();
-                    GUI_putPlayerBet(otherPlayerID, otherPlayerOnBetMoney, otherPlayerOffBetMoney, otherPlayerIsFolded);
+                    GUI_putPlayerBet(otherPlayerID, otherPlayerOnBetMoney, otherPlayerOffBetMoney, otherPlayerIsFolded, otherPlayerLastCommand);
 
                     int seatID = _playerSeatMap.get(otherPlayerID);
                     _listPlayerStackPanes.get(seatID).getStyleClass().remove("tourn-player-color");
@@ -1311,28 +1311,28 @@ public class InGameWindowController extends GenericController {
 
                     Platform.runLater(() -> {
                         int targetBet = Integer.parseInt(command.split(" ")[1]);
-                        GUI_putPlayerBet(_clientInfo.id, targetBet, offBetMoney, false);
+                        GUI_putPlayerBet(_clientInfo.id, targetBet, offBetMoney, false, "Raise");
                     });
                 }
                 else if (baseCommand.equalsIgnoreCase("fold") || baseCommand.equalsIgnoreCase("f")) {
                     SocketUtils.sendString(socket.getOutputStream(), command);
 
                     Platform.runLater(() -> {
-                        GUI_putPlayerBet(_clientInfo.id, onBetMoney, offBetMoney, true);
+                        GUI_putPlayerBet(_clientInfo.id, onBetMoney, offBetMoney, true, "Fold");
                     });
                 }
                 else if (baseCommand.equalsIgnoreCase("check") || baseCommand.equalsIgnoreCase("k")) {
                     SocketUtils.sendString(socket.getOutputStream(), command);
 
                     Platform.runLater(() -> {
-                        GUI_putPlayerBet(_clientInfo.id, 0, offBetMoney, false);
+                        GUI_putPlayerBet(_clientInfo.id, 0, offBetMoney, false, "Check");
                     });
                 }
                 else if (baseCommand.equalsIgnoreCase("call") || baseCommand.equalsIgnoreCase("c")) {
                     SocketUtils.sendString(socket.getOutputStream(), command);
 
                     Platform.runLater(() -> {
-                        GUI_putPlayerBet(_clientInfo.id, maxBet, offBetMoney, false);
+                        GUI_putPlayerBet(_clientInfo.id, maxBet, offBetMoney, false, "Call");
                     });
                 }
                 else if (baseCommand.equalsIgnoreCase("all in") || baseCommand.equalsIgnoreCase("a")) {
@@ -1575,9 +1575,11 @@ public class InGameWindowController extends GenericController {
             _listDealer.get(seatID).setVisible(true);
     }
 
-    private void GUI_putPlayerBet(int playerID, int amountOnBet, int amountOffBet, boolean isFolded) {
+    private void GUI_putPlayerBet(int playerID, int amountOnBet, int amountOffBet, boolean isFolded, String PlayerLastCommand) {
 
         int seatID = _playerSeatMap.get(playerID);
+        Label actionLabel = _listPlayerAction.get(seatID);
+
         if(!isFolded) {
             Label betLabel = _listOnBetMoney.get(seatID);
             Label moneyLabel = _listMoneyLabels.get(seatID);
@@ -1592,6 +1594,7 @@ public class InGameWindowController extends GenericController {
             }
             
             moneyLabel.setText( String.valueOf(amountOffBet) );
+            
         }
         else {
             StackPane playerStackPane = _listPlayerStackPanes.get(seatID);
@@ -1601,6 +1604,8 @@ public class InGameWindowController extends GenericController {
             _listHandBet.get(seatID).setOpacity(FOLDED_OPACITY);
             cards.setOpacity(FOLDED_OPACITY);
         }
+
+        actionLabel.setText( String.valueOf(PlayerLastCommand) );
     }
 
     private void GUI_putTurnPlayer(int playerID) {
