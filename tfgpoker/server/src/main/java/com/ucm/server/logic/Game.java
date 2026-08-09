@@ -42,30 +42,37 @@ public class Game {
     private static final Logger log = LogManager.getLogger(Game.class);
     private static final AtomicInteger NEXT_MATCH_ID = new AtomicInteger(1);
     private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss_SSS");
-    private final String _matchId;
+    
     
 
     public static final boolean DEBUG = true;
     public static final int MAX_CARDS_IN_TABLE = 5;
 
+    // Poker history
+    PokerHistory _history = null;
+    private final String _matchId;
+    private int _handCounter = 1;
+
+    // Game state and config
     private GameConfig _gameConfig;
+    private PokerStreet _currentStreet;
     private int _initialSmallBlind;
     private int _initialBigBlind;
     private int _currentSB;
     private int _currentBB;
     private float _hikePercentage;
+    private int _level;
 
+    //  Game objects
     private PlayerList _playerList;
     private Deck _deck;
     private Card[] _tableCards;
     private int _tableCardsCounter;
     private boolean _isPreflop;
 
-    private Timer _timer;
-    private int _level;
-    private int _handCounter = 0;
+    private Timer _timer = null;
     private boolean _firstHand = true;  // ONLY for activating the timer at the very first hand
-    private PokerStreet _currentStreet;
+
 
     public Game(
         List<ClientStruct> players, 
@@ -74,18 +81,20 @@ public class Game {
         GameConfig config
     ) throws EvaluatorException {
 
-        _matchId = String.format("%s_%03d",LocalDateTime.now().format(FORMAT), NEXT_MATCH_ID.getAndIncrement());
+        // Initialize history
+        _matchId = String.format("%s_%03d", LocalDateTime.now().format(FORMAT), NEXT_MATCH_ID.getAndIncrement());
+        PokerHistory.startMatch(_matchId);
 
+        // Initial state
         _gameConfig = config;
-
-        // Initial config
         String[] parts = config._blindsValue.split("/");
+        _currentStreet = PokerStreet.PREFLOP;
         _initialSmallBlind = Integer.parseInt(parts[0]);    // TODO : Controlar errores de formato
         _initialBigBlind = Integer.parseInt(parts[1]);      // TODO : Controlar errores de formato
         _currentSB = _initialSmallBlind;
         _currentBB = _initialBigBlind;
         _hikePercentage =  Float.parseFloat( config._hikePercentage ) / 100;
-        _currentStreet = PokerStreet.PREFLOP;
+        _level = 1;
 
         // Player list
         _playerList = new PlayerList(config.getTotalPlayers());
@@ -103,18 +112,15 @@ public class Game {
             _timer = new Timer(seconds * 60);
             log.debug("Dynamic blinds enabled! Level duration: {} seconds", seconds);
         }
-        else {
-            _timer = null;
-        }
-        _level = 1;
-
+        
+        // Instanciate poker-hand evaluator
         Evaluator.getInstance();
     }
 
     
 
     public void assignRolesToAllPlayers() throws CancelGameException {
-       _playerList.assignRolesToAllPlayers();
+        _playerList.assignRolesToAllPlayers();
     }
 
     public void shareOutCardsToAllPlayers() throws CancelGameException {
@@ -146,7 +152,6 @@ public class Game {
 
     public void playHand() throws OnlyOnePlayerLeftException, CancelGameException {
 
-        ++_handCounter;
         try {
 
             if(_isPreflop && _gameConfig._dynamicBlinds) {
@@ -168,7 +173,22 @@ public class Game {
             // Calculate current street
             _currentStreet = (_isPreflop) ? PokerStreet.PREFLOP : PokerStreet.nextRound(_currentStreet);
             
-            // Update 
+            // Update history
+            if(_currentStreet == PokerStreet.PREFLOP) {
+                initializeExperimentData();
+                _history = new PokerHistory(this, _handCounter);
+                PokerHistory.set(_history);
+                _history.startHand();
+            }
+            else if (_currentStreet == PokerStreet.FLOP) {
+                _history.flop( _tableCards );
+            }
+            else if (_currentStreet == PokerStreet.TURN) {
+                _history.turn( _tableCards );
+            }
+            else if (_currentStreet == PokerStreet.RIVER) {
+                _history.river( _tableCards );
+            }
 
             // Play hand
             _playerList.playHand(_currentSB, _currentBB, _currentStreet);
@@ -182,6 +202,9 @@ public class Game {
     }
 
     public void showdown() throws CancelGameException {
+
+        // Game history
+        _history.showdown();
 
         // Notify to all players about the other player cards
         _playerList.broadcastAllPlayerCards();
@@ -202,6 +225,10 @@ public class Game {
             }
         }
         _playerList.manageEliminatedPlayers();
+        ++_handCounter;
+
+        // Game history
+        finishExperimentData();
 
         
         // Wait to display player cards for the user
@@ -214,6 +241,13 @@ public class Game {
 
     public boolean passTurn() throws CancelGameException {
 
+        // Game history
+        _history.summary( _tableCards );
+        _history.experimentData();
+        _history.endHand();
+        PokerHistory.clear(); 
+
+        // Pass turn for the next round
         boolean endOfGame = _playerList.checkEndOfGame();
         _playerList.notifyGameEnds(endOfGame);
 
@@ -222,6 +256,9 @@ public class Game {
             _deck.resetDeck();
             _playerList.passTurn();
             _isPreflop = true;
+        }
+        else {
+            PokerHistory.endMatch();    // End game history
         }
 
         return endOfGame;
@@ -242,7 +279,7 @@ public class Game {
             history.equity(equity);
     }
 
-    public void initializeExperimentData() {
+    private void initializeExperimentData() {
 
         for(Player p : _playerList.getPlayers()) {
 
@@ -254,7 +291,7 @@ public class Game {
         }
     }
 
-    public void finishExperimentData() {
+    private void finishExperimentData() {
 
         for(Player p : _playerList.getPlayers()) {
 
@@ -398,11 +435,9 @@ public class Game {
         return seed;
     }
 
-    public int getHandCounter() { return _handCounter; }
+
     public int getCurrentSmallBlind() { return _currentSB; }
     public int getCurrentBigBlind() { return _currentBB; }
     public PlayerList getPlayerList() { return _playerList; }
-    public String getMatchId() { return _matchId; }
-    public Card[] getTableCards() { return _tableCards; }
 
 }

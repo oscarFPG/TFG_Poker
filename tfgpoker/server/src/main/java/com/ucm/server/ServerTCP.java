@@ -26,6 +26,7 @@ import com.ucm.common.SocketUtils;
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.server.control.Controller;
 import com.ucm.server.exceptions.EvaluatorException;
+import com.ucm.server.history.PokerHistory;
 import com.ucm.server.logic.Game;
 import com.ucm.server.players.Spectator;
 
@@ -176,18 +177,21 @@ public class ServerTCP {
             }
         }
 
+        log.debug("Closing game history...");
+        PokerHistory.endMatch();
+
+        log.debug("Closing server socket...");
         try {
             if (!_serverSocket.isClosed()) {
                 _serverSocket.close();
-                log.debug("Server socket closed!");
             }
         }
         catch (IOException e) {
             log.warn("Minor error trying to close server socket: {}", e.getMessage());
         }
 
-        _executor.shutdownNow();
         log.debug("Executor service shutdown!");
+        _executor.shutdownNow();
     }
 
 }

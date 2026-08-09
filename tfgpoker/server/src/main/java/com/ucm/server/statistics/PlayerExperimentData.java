@@ -1,5 +1,6 @@
 package com.ucm.server.statistics;
 
+import com.ucm.common.PokerStreet;
 
 public class PlayerExperimentData {
 
@@ -188,7 +189,7 @@ public class PlayerExperimentData {
         this.riverEquity = riverEquity;
     }
 
-    public void setEquity(Street street, double equity) {
+    public void setEquity(PokerStreet street, double equity) {
 
         switch (street) {
 
