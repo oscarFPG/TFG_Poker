@@ -1,6 +1,7 @@
 package com.ucm.server.logic;
 
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -16,6 +17,7 @@ import com.ucm.common.BotStyle;
 import com.ucm.common.ClientStruct;
 import com.ucm.common.GameConfig;
 import com.ucm.common.GameType;
+import com.ucm.common.PokerStreet;
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.common.gameobjects.Card;
@@ -44,7 +46,6 @@ public class Game {
     
 
     public static final boolean DEBUG = true;
-    public static final boolean DEBUG_PLAYERS = false;
     public static final int MAX_CARDS_IN_TABLE = 5;
 
     private GameConfig _gameConfig;
@@ -64,6 +65,7 @@ public class Game {
     private int _level;
     private int _handCounter = 0;
     private boolean _firstHand = true;  // ONLY for activating the timer at the very first hand
+    private PokerStreet _currentStreet;
 
     public Game(
         List<ClientStruct> players, 
@@ -72,22 +74,24 @@ public class Game {
         GameConfig config
     ) throws EvaluatorException {
 
-       _matchId = String.format("%s_%03d",LocalDateTime.now().format(FORMAT), NEXT_MATCH_ID.getAndIncrement());
+        _matchId = String.format("%s_%03d",LocalDateTime.now().format(FORMAT), NEXT_MATCH_ID.getAndIncrement());
 
         _gameConfig = config;
 
+        // Initial config
         String[] parts = config._blindsValue.split("/");
         _initialSmallBlind = Integer.parseInt(parts[0]);    // TODO : Controlar errores de formato
         _initialBigBlind = Integer.parseInt(parts[1]);      // TODO : Controlar errores de formato
-        _hikePercentage =  Float.parseFloat( config._hikePercentage ) / 100;
         _currentSB = _initialSmallBlind;
         _currentBB = _initialBigBlind;
+        _hikePercentage =  Float.parseFloat( config._hikePercentage ) / 100;
+        _currentStreet = PokerStreet.PREFLOP;
 
         // Player list
         _playerList = new PlayerList(config.getTotalPlayers());
         addAllPlayersInitial(players, bots, spectator, config);
 
-        // Deck and cards
+        // Deck and table cards
         _deck = new Deck( selectSeed_DEBUG(players, bots) );
         _tableCards = new Card[MAX_CARDS_IN_TABLE];
         _tableCardsCounter = 0;
@@ -161,7 +165,13 @@ public class Game {
                 }
             }
 
-            _playerList.playHand(_currentSB, _currentBB, _isPreflop);
+            // Calculate current street
+            _currentStreet = (_isPreflop) ? PokerStreet.PREFLOP : PokerStreet.nextRound(_currentStreet);
+            
+            // Update 
+
+            // Play hand
+            _playerList.playHand(_currentSB, _currentBB, _currentStreet);
             _isPreflop = false;
         }
         // Collect remaining bets only if the round ended because all players folded
@@ -171,7 +181,7 @@ public class Game {
         }
     }
 
-    public void giveRewardToWinner() throws CancelGameException {
+    public void showdown() throws CancelGameException {
 
         // Notify to all players about the other player cards
         _playerList.broadcastAllPlayerCards();

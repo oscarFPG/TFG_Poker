@@ -19,6 +19,7 @@ import com.ucm.client.utils.NotificationManager;
 import com.ucm.common.GameType;
 import com.ucm.common.PlayerInfo;
 import com.ucm.common.PokerGame;
+import com.ucm.common.PokerStreet;
 import com.ucm.common.SocketUtils;
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
@@ -646,6 +647,7 @@ public class InGameWindowController extends GenericController {
     private void spectateGame(Socket socket) {
 
         Card[] tableCards = new Card[5];
+        PokerStreet street;
         int cardCounter = 0;
         int serverCode;
         try {
@@ -681,6 +683,17 @@ public class InGameWindowController extends GenericController {
                     Platform.runLater(() -> {
                         GUI_updatePlayerInfo(playerID, role, moneyOnBet, moneyOffBet, isFolded, isWinner, isEliminated, true);
                     });
+                }
+                else if(serverCode == GameType.NEW_ROUND) {
+
+                    street = PokerGame.receiveStreet(socket.getInputStream());
+                    if(street == null) {
+                        System.out.printf("Server sent a poker street unrecognised\n");
+                    }
+                    
+                    // TODO : logica
+                    //
+                    System.out.printf("Poker street: %s\n", street.name());
                 }
                 else if(serverCode == GameType.TABLE_CARD) {
                     

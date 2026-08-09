@@ -11,6 +11,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import com.ucm.common.PokerStreet;
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.common.gameobjects.PlayerRole;
@@ -151,7 +152,7 @@ public class PlayerListTest {
 
             p1.commands = new ArrayList<>( List.of("fold") );
             p2.commands = new ArrayList<>( List.of("fold") );
-            playerList.playHand(SB, BB, true);      // 2 + 2 + 2 = 6$ total - 2$ = 4$ beneficio
+            playerList.playHand(SB, BB, PokerStreet.PREFLOP);      // 2 + 2 + 2 = 6$ total - 2$ = 4$ beneficio
 
             assertEquals(true, false, "This test should not reach this code");
         }
@@ -188,12 +189,12 @@ public class PlayerListTest {
             p1.commands = new ArrayList<>( List.of("call") );
             p2.commands = new ArrayList<>( List.of("call") );
             p3.commands = new ArrayList<>( List.of("call") );
-            playerList.playHand(SB, BB, true);      // 2 + 2 + 2 = 6$ total - 2$ = 4$ beneficio
+            playerList.playHand(SB, BB, PokerStreet.PREFLOP);      // 2 + 2 + 2 = 6$ total - 2$ = 4$ beneficio
 
             p2.commands = new ArrayList<>( List.of("check", "raise 200", "call") );
             p3.commands = new ArrayList<>( List.of("check", "raise 300") );
             p1.commands = new ArrayList<>( List.of("raise 100", "call") );
-            playerList.playHand(SB, BB, false);     // 300 + 300 + 300 = 900$ total - 300$ = 600$ beneficio
+            playerList.playHand(SB, BB, PokerStreet.FLOP);     // 300 + 300 + 300 = 900$ total - 300$ = 600$ beneficio
             
             PlayerEvaluation p1Ev = new PlayerEvaluation(0, (short)20);
             PlayerEvaluation p2Ev = new PlayerEvaluation(1, (short)50);
@@ -235,12 +236,12 @@ public class PlayerListTest {
             p1.commands = new ArrayList<>( List.of("call") );
             p2.commands = new ArrayList<>( List.of("call") );
             p3.commands = new ArrayList<>( List.of("call") );
-            playerList.playHand(SB, BB, true);      // 2 + 2 + 2 = 6$ total - 2$ = 4$ beneficio
+            playerList.playHand(SB, BB, PokerStreet.PREFLOP);      // 2 + 2 + 2 = 6$ total - 2$ = 4$ beneficio
 
             p2.commands = new ArrayList<>( List.of("check", "call", "all-in") );
             p3.commands = new ArrayList<>( List.of("check", "all-in") );
             p1.commands = new ArrayList<>( List.of("raise 500", "raise 1200") );
-            playerList.playHand(SB, BB, false);
+            playerList.playHand(SB, BB, PokerStreet.FLOP);
             
             PlayerEvaluation p1Ev = new PlayerEvaluation(0, (short)20);
             PlayerEvaluation p2Ev = new PlayerEvaluation(1, (short)50);
@@ -283,9 +284,9 @@ public class PlayerListTest {
             p3.commands = new ArrayList<>( List.of("all-in") );  // 1000
             p4.commands = new ArrayList<>( List.of("all-in") );  // 2000
             p1.commands = new ArrayList<>( List.of("all-in") );  // 2000
-            playerList.playHand(SB, BB, false);
+            playerList.playHand(SB, BB, PokerStreet.FLOP);
 
-            playerList.playHand(SB, BB, false); // No player should play here because all went all-in
+            playerList.playHand(SB, BB, PokerStreet.TURN); // No player should play here because all went all-in
             
             PlayerEvaluation p1Ev = new PlayerEvaluation(0, (short)20);     // Winner of the first pot between all players (1000, 1000, 1000, 1000)
             PlayerEvaluation p2Ev = new PlayerEvaluation(1, (short)50);
@@ -334,10 +335,10 @@ public class PlayerListTest {
             p0.commands = new ArrayList<>( List.of("call", "call") );    // 1000 (1000$ restantes)
             
             // P0 and P3 all-in but P2 and P4 have 1000$ left : 4000$ in total
-            playerList.playHand(SB, BB, false);
+            playerList.playHand(SB, BB, PokerStreet.FLOP);
 
             // ONLY P2 and P4 play : both bet 500$ : 1000$ in total
-            playerList.playHand(SB, BB, false);
+            playerList.playHand(SB, BB, PokerStreet.TURN);
             
             // P2 wins the first pot (1000, 1000, 1000, 1000)
             // P1 wins the second pot (500, 500)
@@ -358,6 +359,5 @@ public class PlayerListTest {
             assertEquals(true, false, "This test should not reach this code");
         }
     }
-
 
 }

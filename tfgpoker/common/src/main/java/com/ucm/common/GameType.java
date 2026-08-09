@@ -40,9 +40,16 @@ public class GameType {
     public static final int ERROR_GAME_NOT_JOINED = 504;
     public static final int ERROR_GAME_CANNOT_START = 505;
     public static final int ERROR_GAME_CANCELS = 506;
-     public static final int ERROR_NAME_ALREADY_USED = 507;
+    public static final int ERROR_NAME_ALREADY_USED = 507;
 
     /* ---------------- GAME CODES ----------------  */
+    // Game rounds
+    public static final int GAME_ROUND_PREFLOP = 70;
+    public static final int GAME_ROUND_FLOP = 71;
+    public static final int GAME_ROUND_TURN = 72;
+    public static final int GAME_ROUND_RIVER = 73;
+    public static final int GAME_ROUND_SHOWDOWN = 74;
+
     // Player roles
     public static final int PLAYER_ROLE_UNDER_THE_GUN = 80;
     public static final int PLAYER_ROLE_UNDER_THE_GUN_1 = 81;

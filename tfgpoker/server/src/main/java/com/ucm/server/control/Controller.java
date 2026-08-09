@@ -52,7 +52,6 @@ public class Controller {
         PokerHistory history = null;
         while (!endOfGame) {
 
-           
             log.debug("---- HAND_{} ----", handCounter);
             try {
 
@@ -98,7 +97,7 @@ public class Controller {
                 // Showdown (6)
                 log.debug("---- SHOWDOWN ----");
                 history.showdown();
-                _game.giveRewardToWinner();
+                _game.showdown();
                 _game.finishExperimentData();
             }
             catch (OnlyOnePlayerLeftException e) {
@@ -107,7 +106,7 @@ public class Controller {
                 if (history != null) 
                     history.showdown();
 
-                _game.giveRewardToWinner();
+                _game.showdown();
                 _game.finishExperimentData();
             }
 

@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ucm.common.GameType;
+import com.ucm.common.PokerStreet;
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.common.gameobjects.Card;
@@ -236,7 +237,18 @@ public class PlayerList implements Iterable<Node> {
         notifyTotalPotToAllPlayers(totalPot);
     }
 
-    public void playHand(final int sb, final int bb, boolean isPreflop) throws OnlyOnePlayerLeftException, CancelGameException {
+    public void playHand(final int sb, final int bb, final PokerStreet street) throws OnlyOnePlayerLeftException, CancelGameException {
+
+        // Only the spectator needs to receive this info
+        // IN-GAME players infer this information, so there is no need so send it to them
+        if(_spectator != null) {
+            try {
+                _spectator.notifyGameRound(street);
+            }
+            catch (IOException e) {
+                throw new CancelGameException();
+            }
+        }
 
         // Avoid asking if all active players have used all their money
         if( checkAllPlayersAllIn() ) {
@@ -254,19 +266,19 @@ public class PlayerList implements Iterable<Node> {
             return;
         }
 
-        // Small-blind and big-blind mandatory play !! Does not count as "play"
-        if(isPreflop)
+        // Small-blind and big-blind mandatory play !! Does not count as "play", it is done automatically
+        if(street == PokerStreet.PREFLOP)
             smallBlindAndBigBlindPlays(sb, bb, playersRemaining);
 
 
-        Node playerOnTurn = calculatePlayerOnTurn(playersRemaining, isPreflop);
-        int maxBet = (isPreflop) ? bb : 0;
-        int minRaise = (isPreflop) ? bb + (bb - 0) : 0;
+        Node playerOnTurn = calculatePlayerOnTurn(playersRemaining, street);
+        int maxBet = (street == PokerStreet.PREFLOP) ? bb : 0;
+        int minRaise = (street == PokerStreet.PREFLOP) ? bb + (bb - 0) : 0;
         int totalPot = 0;
         notifyWaitExceptTo(playerOnTurn);   // Keep all players, except the first one to play, waiting
         do {
 
-            if(isPreflop)
+            if(street == PokerStreet.PREFLOP)
                 log.debug("Current small blind: {}, current big blind: {}, current max bet: {}", sb, bb, maxBet);
             else
                 log.debug("Last maximum bet is {}", maxBet);
@@ -417,6 +429,16 @@ public class PlayerList implements Iterable<Node> {
 
     public void calculatePrizeDistribution(final List<PlayerEvaluation> players) throws CancelGameException {
 
+        // Notify spectator about showdown round
+        if(_spectator != null) {
+            try {
+                _spectator.notifyGameRound(PokerStreet.SHOWDOWN);
+            }
+            catch (IOException e) {
+                throw new CancelGameException();
+            }
+        }
+
         List<PotDistribution> distribution = _potManager.calculatePrizeDistribution(players);
         for(PotDistribution dist : distribution) {
             givePotToPlayerWithID(dist.playerID(), dist.potPrize(), dist.rankName());
@@ -426,6 +448,16 @@ public class PlayerList implements Iterable<Node> {
     }
 
     public void calculatePrizeForPlayerLeft() throws CancelGameException {
+
+        // Notify spectator about showdown round
+        if(_spectator != null) {
+            try {
+                _spectator.notifyGameRound(PokerStreet.SHOWDOWN);
+            }
+            catch (IOException e) {
+                throw new CancelGameException();
+            }
+        }
 
         Iterator<Node> it = iterator();
         Node winner = null;
@@ -560,9 +592,9 @@ public class PlayerList implements Iterable<Node> {
         return total;
     }
 
-    private Node calculatePlayerOnTurn(final int numPlayers, final boolean isPreflop) {
+    private Node calculatePlayerOnTurn(final int numPlayers, final PokerStreet street) {
 
-        if(isPreflop) {
+        if(street == PokerStreet.PREFLOP) {
 
             if(numPlayers == 2) {
                 return getPlayerByRole(PlayerRole.SMALL_BLIND);

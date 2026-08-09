@@ -29,8 +29,6 @@ public class HumanPlayer implements IPlayerNotificator {
      */
     private Socket _socket;
 
-    private Scanner _scanner = (Game.DEBUG_PLAYERS) ? new Scanner(System.in) : null;
-
     /**
      * Constructor for the Player class.
      * 
@@ -46,10 +44,6 @@ public class HumanPlayer implements IPlayerNotificator {
 
     @Override
     public String notifyMakePlay(int sb, int bb, int maxBet, int minRaise, IPlayerInfo player) throws IOException, TurnTimeoutException {
-        if(Game.DEBUG_PLAYERS) {
-            System.out.printf("%s hace: ", player.getPlayerName());
-            return _scanner.nextLine();
-        }
 
         // Send round info
         SocketUtils.sendInteger(_socket.getOutputStream(), sb);
@@ -80,31 +74,23 @@ public class HumanPlayer implements IPlayerNotificator {
 
     @Override
     public void notifyPlayerRole(final PlayerRole role) throws IOException {
-        if(Game.DEBUG_PLAYERS) return;
-        
         SocketUtils.sendInteger(_socket.getOutputStream(), role.getNetworkCode());
     }
 
     @Override
     public void notifyPlayerCard(final Card c) throws IOException {
-        if(Game.DEBUG_PLAYERS) return;
-
         SocketUtils.sendInteger(_socket.getOutputStream(), c.getCardValueNetworkCode());
         SocketUtils.sendInteger(_socket.getOutputStream(), c.getSuit().getNetworkCode());
     }
 
     @Override
     public void notifyTableCard(final Card c) throws IOException {
-        if(Game.DEBUG_PLAYERS) return;
-
         SocketUtils.sendInteger(_socket.getOutputStream(), c.getCardValueNetworkCode());
         SocketUtils.sendInteger(_socket.getOutputStream(), c.getSuit().getNetworkCode());
     }
 
     @Override
     public void notifySmallBlindBet(final int amount, IPlayerInfo player) throws IOException {
-        if(Game.DEBUG_PLAYERS) return;
-
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_FORCED_SB);
         SocketUtils.sendInteger(_socket.getOutputStream(), amount);
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOnBet());
@@ -114,8 +100,6 @@ public class HumanPlayer implements IPlayerNotificator {
 
     @Override
     public void notifyBigBlindBet(final int amount, IPlayerInfo player) throws IOException {
-        if(Game.DEBUG_PLAYERS) return;
-
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_FORCED_BB);
         SocketUtils.sendInteger(_socket.getOutputStream(), amount);
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOnBet());
@@ -124,16 +108,12 @@ public class HumanPlayer implements IPlayerNotificator {
 
     @Override
     public void notifyTotalPot(int total) throws IOException {
-        if(Game.DEBUG_PLAYERS) return;
-
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TOTAL_POT);
         SocketUtils.sendInteger(_socket.getOutputStream(), total);
     }
 
     @Override
     public void notifyOtherPlayerAction(IPlayerInfo other) throws IOException {
-        if(Game.DEBUG_PLAYERS) return;
-            
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_OTHER_PLAYER);
         SocketUtils.sendInteger(_socket.getOutputStream(), other.getPlayerId());
         SocketUtils.sendString(_socket.getOutputStream(), other.getPlayerName());
@@ -147,64 +127,46 @@ public class HumanPlayer implements IPlayerNotificator {
 
     @Override
     public void notifyTurnWait() throws IOException {
-        if(Game.DEBUG_PLAYERS) return;
-
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_WAIT);
     }
 
     @Override
     public void notifyTurnPlay() throws IOException {
-        if(Game.DEBUG_PLAYERS) return;
-
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_PLAY);
     }
 
     @Override
     public void notifyRoundEnded() throws IOException {
-        if(Game.DEBUG_PLAYERS) return;
-
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.ROUND_ENDS);
     }
 
     @Override
     public void notifyHandEndsByFolds() throws IOException {
-        if(Game.DEBUG_PLAYERS) return;
-
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.HAND_ENDS_BY_FOLD);
     }
 
     @Override
     public void notifyGameEnded() throws IOException {
-        if(Game.DEBUG_PLAYERS) return;
-
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.GAME_ENDS);
     }
 
     @Override
     public void notifyGameKeeps() throws IOException {
-        if(Game.DEBUG_PLAYERS) return;
-
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.GAME_KEEPS);
     }
     
     @Override
     public void notifyGameWinner() throws IOException {
-        if(Game.DEBUG_PLAYERS) return;
-
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.PLAYER_WINS_GAME);
     }
 
     @Override
     public void notifyGameLoser() throws IOException {
-        if(Game.DEBUG_PLAYERS) return;
-        
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.PLAYER_LOSES_GAME);
     }
 
     @Override
     public void notifyOwnState(IPlayerInfo player, final boolean receiveRank) throws IOException {
-        if(Game.DEBUG_PLAYERS) return;
-
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.MY_PLAYER_STATUS);
         SocketUtils.sendString(_socket.getOutputStream(), player.getPlayerName());
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getMoneyOffBet());
@@ -225,8 +187,6 @@ public class HumanPlayer implements IPlayerNotificator {
 
     @Override
     public void notifyOtherPlayerState(IPlayerInfo player, final boolean receiveRank) throws IOException {
-        if(Game.DEBUG_PLAYERS) return;
-
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.OTHER_PLAYER_STATUS);
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getPlayerId());
         SocketUtils.sendString(_socket.getOutputStream(), player.getPlayerName());
@@ -248,15 +208,11 @@ public class HumanPlayer implements IPlayerNotificator {
 
     @Override
     public void notifyEndPlayerState() throws IOException {
-        if(Game.DEBUG_PLAYERS) return;
-
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.PLAYER_STATUS_END);
     }
 
     @Override
     public void notifyEquity(double equity) throws IOException {
-        if(Game.DEBUG_PLAYERS) return;
-
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.EQUITY_UPDATE);
         String equityStr = String.format("%.2f%%", equity * 100);
         SocketUtils.sendString(_socket.getOutputStream(), equityStr);
@@ -264,16 +220,12 @@ public class HumanPlayer implements IPlayerNotificator {
 
     @Override
     public void notifyCurrentTurnPlayer(IPlayerInfo player) throws IOException {
-        if(Game.DEBUG_PLAYERS) return;
-
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TURN_BEFORE_PLAY);
         SocketUtils.sendInteger(_socket.getOutputStream(), player.getPlayerId());
     }
 
     @Override
     public void notifyOtherPlayerCards(IPlayerInfo other) throws IOException {
-        if(Game.DEBUG_PLAYERS) return;
-
         SocketUtils.sendInteger(_socket.getOutputStream(), GameType.PLAYER_CARDS);
         SocketUtils.sendInteger(_socket.getOutputStream(), other.getPlayerId());
 

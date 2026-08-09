@@ -475,6 +475,7 @@ public final class PokerHistory {
         }
     }
 
+    
     public void summary(Card[] tableCards) {
 
         blankLine();

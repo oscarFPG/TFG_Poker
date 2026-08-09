@@ -30,4 +30,14 @@ public class PokerGame {
 		return c;
     }
 
+    public static PokerStreet receiveStreet(InputStream in) throws IOException {
+        
+        int networkCode = SocketUtils.receiveInt(in);
+        for(PokerStreet street : PokerStreet.values()) {
+            if(street.getNetworkCode() == networkCode)
+                return street;
+        }
+
+        return null;
+    }
 }
