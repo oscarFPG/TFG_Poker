@@ -457,4 +457,5 @@ public class WaitingGameWindowController extends GenericController {
             });
         }
     }
+
 }

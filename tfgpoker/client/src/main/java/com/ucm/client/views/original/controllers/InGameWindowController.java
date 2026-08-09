@@ -1652,11 +1652,11 @@ public class InGameWindowController extends GenericController {
         btnRound.setText(round);
     }
 
-    private void GUI_putDealerButton(int playerID, final boolean show) {
+    private void GUI_putDealerButton(int playerID) {
 
         Integer seatID = _playerSeatMap.get(playerID);
         if(seatID != null)
-            _listDealer.get(seatID).setVisible(show);
+            _listDealer.get(seatID).setVisible(true);
     }
 
     private void GUI_putPlayerBet(int playerID, int amountOnBet, int amountOffBet, boolean isFolded, String PlayerLastCommand) {
