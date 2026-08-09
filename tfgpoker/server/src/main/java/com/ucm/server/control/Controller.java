@@ -39,6 +39,8 @@ public class Controller {
         int handCounter = 0;
         boolean endOfGame = false;
 
+        _game.initialize();
+
         log.debug("Game starts!");
         while (!endOfGame) {
 

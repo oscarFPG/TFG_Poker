@@ -7,7 +7,7 @@ import com.ucm.common.GameType;
 import com.ucm.common.PokerStreet;
 import com.ucm.common.SocketUtils;
 import com.ucm.common.gameobjects.Card;
-import com.ucm.server.logic.Game;
+import com.ucm.server.interfaces.IPlayerInfo;
 
 
 public class Spectator extends HumanPlayer {
@@ -26,6 +26,9 @@ public class Spectator extends HumanPlayer {
 
 
     @Override
+    public void notifyPlayerID(IPlayerInfo player) throws IOException {}
+
+    @Override
     public void notifyTableCard(final Card c) throws IOException {
         SocketUtils.sendInteger(_spectatorSocket.getOutputStream(), GameType.TABLE_CARD);
         SocketUtils.sendInteger(_spectatorSocket.getOutputStream(), c.getCardValueNetworkCode());
@@ -36,4 +39,6 @@ public class Spectator extends HumanPlayer {
         SocketUtils.sendInteger(_spectatorSocket.getOutputStream(), GameType.NEW_ROUND);
         SocketUtils.sendInteger(_spectatorSocket.getOutputStream(), street.getNetworkCode());
     }
+
+
 }

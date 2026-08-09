@@ -117,6 +117,9 @@ public class Game {
     }
 
     
+    public void initialize() throws CancelGameException {
+        _playerList.initialize();
+    }
 
     public void assignRolesToAllPlayers() throws CancelGameException {
         _playerList.assignRolesToAllPlayers();

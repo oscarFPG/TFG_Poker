@@ -291,6 +291,13 @@ public class Player implements IPlayerActions {
         _lastHandRank = (rankName == null) ? "none" : rankName;
     }
 
+
+    public void notifyPlayerID() throws IOException {
+
+        if(_playerInfo != null)
+            _playerInfo.notifyPlayerID(this);
+    }
+
     public void notifyTurnPlay() throws IOException {
 
         if(_playerInfo != null)

@@ -888,6 +888,11 @@ public class InGameWindowController extends GenericController {
         try {
 
             InputStream input = socket.getInputStream();
+
+            // Player id IN GAME !!!
+            _clientInfo.id = SocketUtils.receiveInt(input);
+            System.out.printf("My ID is %d\n", _clientInfo.id);
+
             boolean endOfGame = false;
             while(!endOfGame) {
 
@@ -1539,20 +1544,6 @@ public class InGameWindowController extends GenericController {
         boolean isEliminated, 
         boolean isShowdown
     ) {
-
-        System.out.printf("Trying to get player with id %d\n", playerID);
-        System.out.printf("List\n");
-        for(PlayerInfo pl : _clientInfo.playerPositions) {
-            System.out.printf("Player %s[%d]\n", pl.name, pl.id);
-        }
-        System.out.printf("\n");
-
-        System.out.printf("Seat map\n");
-        for(var entry : _playerSeatMap.entrySet()) {
-            System.out.printf("ID %d and seat %d\n", entry.getKey(), entry.getValue());
-        }
-        System.out.printf("\n");
-        
 
         final int seatID = _playerSeatMap.get(playerID);
         StackPane playerStackPane = _listPlayerStackPanes.get(seatID);

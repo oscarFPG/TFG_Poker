@@ -94,6 +94,23 @@ public class PlayerList implements Iterable<Node> {
     }
 
 
+    public void initialize() throws CancelGameException {
+
+        // Send all player IDs to identify themselves
+        Iterator<Node> it = iterator();
+        while( it.hasNext() ) {
+
+            Node player = it.next();
+            try {
+                player._player.notifyPlayerID();
+            }
+            catch (IOException e) {
+                throw new CancelGameException();
+            }
+        }
+
+    }
+
     public void assignRolesToAllPlayers() throws CancelGameException {
 
         int numPlayers = activePlayersCounter();

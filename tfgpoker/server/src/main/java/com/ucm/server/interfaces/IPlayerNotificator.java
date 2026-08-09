@@ -159,6 +159,8 @@ public interface IPlayerNotificator {
      */
     public void notifyOtherPlayerCards(IPlayerInfo other) throws IOException;
 
+    public void notifyPlayerID(IPlayerInfo player) throws IOException;
+
     public BotStyle getStyle();
     public String getPlayerType();
     public String getPlayerModel();

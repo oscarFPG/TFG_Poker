@@ -281,6 +281,8 @@ public abstract class Bot implements IPlayerNotificator {
         return action;
     }
 
+    
+    @Override public void notifyPlayerID(IPlayerInfo player) throws IOException {}
     @Override public void notifyPlayerRole(PlayerRole role) throws IOException {}
     @Override public void notifyPlayerCard(Card c) throws IOException {}
     @Override public void notifyOwnState(IPlayerInfo player, final boolean receiveRank) throws IOException {}
