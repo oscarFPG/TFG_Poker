@@ -615,8 +615,7 @@ public class InGameWindowController extends GenericController {
 
     @FXML
     private void halfBetAction() {
-        int HALF_VALUE = 50;
-        sliderMoney.setValue(HALF_VALUE);
+        sliderMoney.setValue(sliderMoney.getMax()/2);
     }
 
     @FXML
@@ -1036,7 +1035,7 @@ public class InGameWindowController extends GenericController {
 
                 Platform.runLater(() -> {
 
-                    GUI_putPlayerBet(_clientInfo.id, onBetMoney, offBetMoney, false, "Small Blind");
+                    GUI_putPlayerBet(_clientInfo.id, onBetMoney, offBetMoney, false,  GameType.SMALL_BLIND_ACTION);
                     GUI_putTurnPlayer(_clientInfo.id);
                 });
 
@@ -1050,7 +1049,7 @@ public class InGameWindowController extends GenericController {
 
                 Platform.runLater(() -> {
 
-                    GUI_putPlayerBet(_clientInfo.id, onBetMoney, offBetMoney, false, "Big Blind");
+                    GUI_putPlayerBet(_clientInfo.id, onBetMoney, offBetMoney, false, GameType.BIG_BLIND_ACTION);
                     GUI_putTurnPlayer(_clientInfo.id);
                 });
 			}
@@ -1127,6 +1126,7 @@ public class InGameWindowController extends GenericController {
                 boolean iAmFolded = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
                 boolean iAmWinner = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
                 boolean iAmEliminated = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
+                String playerLastCommand = SocketUtils.receiveString( socket.getInputStream() );
                 boolean readRank = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
                 String rankName = "None";
 
@@ -1143,7 +1143,7 @@ public class InGameWindowController extends GenericController {
                         _listHandBet.get( seatID ).setOpacity(FOLDED_OPACITY);
                     }
                     else {
-                        GUI_putPlayerBet(_clientInfo.id, myOnBetMoney, myOffBetMoney, iAmFolded, "");
+                        GUI_putPlayerBet(_clientInfo.id, myOnBetMoney, myOffBetMoney, iAmFolded, playerLastCommand);
                     }
 
                     buttonsHolder.setVisible(false);
@@ -1253,6 +1253,7 @@ public class InGameWindowController extends GenericController {
                 boolean iAmFolded = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
                 boolean iAmWinner = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
                 boolean iAmEliminated = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
+                String playerLastCommand = SocketUtils.receiveString( socket.getInputStream() );
                 boolean readRank = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
                 String rankName = "None";
 
@@ -1359,6 +1360,13 @@ public class InGameWindowController extends GenericController {
                     });
                 }
 
+                if(maxBet == onBetMoney && bb == onBetMoney) {
+                    _swapCallToCheck = true;
+                    Platform.runLater(() -> {
+                        btnCall.setText("CHECK");
+                    });
+                }
+
                 _commandQueue.clear();
                 String command = _commandQueue.poll(_turnTimerTotal, TimeUnit.SECONDS);
 
@@ -1381,28 +1389,28 @@ public class InGameWindowController extends GenericController {
 
                     Platform.runLater(() -> {
                         int targetBet = Integer.parseInt(command.split(" ")[1]);
-                        GUI_putPlayerBet(_clientInfo.id, targetBet, offBetMoney, false, "Raise");
+                        GUI_putPlayerBet(_clientInfo.id, targetBet, offBetMoney, false, GameType.RAISE_ACTION_FULL);
                     });
                 }
                 else if (baseCommand.equalsIgnoreCase("fold") || baseCommand.equalsIgnoreCase("f")) {
                     SocketUtils.sendString(socket.getOutputStream(), command);
 
                     Platform.runLater(() -> {
-                        GUI_putPlayerBet(_clientInfo.id, onBetMoney, offBetMoney, true, "Fold");
+                        GUI_putPlayerBet(_clientInfo.id, onBetMoney, offBetMoney, true, GameType.FOLD_ACTION_FULL);
                     });
                 }
                 else if (baseCommand.equalsIgnoreCase("check") || baseCommand.equalsIgnoreCase("k")) {
                     SocketUtils.sendString(socket.getOutputStream(), command);
 
                     Platform.runLater(() -> {
-                        GUI_putPlayerBet(_clientInfo.id, 0, offBetMoney, false, "Check");
+                        GUI_putPlayerBet(_clientInfo.id, 0, offBetMoney, false, GameType.CHECK_ACTION_FULL);
                     });
                 }
                 else if (baseCommand.equalsIgnoreCase("call") || baseCommand.equalsIgnoreCase("c")) {
                     SocketUtils.sendString(socket.getOutputStream(), command);
 
                     Platform.runLater(() -> {
-                        GUI_putPlayerBet(_clientInfo.id, maxBet, offBetMoney, false, "Call");
+                        GUI_putPlayerBet(_clientInfo.id, maxBet, offBetMoney, false, GameType.CALL_ACTION_FULL);
                     });
                 }
                 else if (baseCommand.equalsIgnoreCase("all in") || baseCommand.equalsIgnoreCase("a")) {
@@ -1442,6 +1450,7 @@ public class InGameWindowController extends GenericController {
                 boolean iAmFolded = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
                 boolean iAmWinner = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
                 boolean iAmEliminated = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
+                String playerLastCommand = SocketUtils.receiveString( socket.getInputStream() );
                 boolean readRank = SocketUtils.receiveInt(socket.getInputStream()) == GameType.TRUE;
                 String rankName = "None";
 
@@ -1584,7 +1593,10 @@ public class InGameWindowController extends GenericController {
         }
 
         // Player bet and current money
-        betLabel.setText( String.valueOf(onBetMoney) );
+        if(onBetMoney > 0){
+            betLabel.setText( String.valueOf(onBetMoney) );
+        }
+        
         moneyLabel.setText( String.valueOf(offBetMoney) );
     }
 
@@ -1652,11 +1664,11 @@ public class InGameWindowController extends GenericController {
         btnRound.setText(round);
     }
 
-    private void GUI_putDealerButton(int playerID, final boolean show) {
+    private void GUI_putDealerButton(int playerID) {
 
         Integer seatID = _playerSeatMap.get(playerID);
         if(seatID != null)
-            _listDealer.get(seatID).setVisible(show);
+            _listDealer.get(seatID).setVisible(true);
     }
 
     private void GUI_putPlayerBet(int playerID, int amountOnBet, int amountOffBet, boolean isFolded, String PlayerLastCommand) {
@@ -1671,9 +1683,9 @@ public class InGameWindowController extends GenericController {
             betLabel.setText( String.valueOf(amountOnBet) );
             
             //Draw if the player makes an action that not requires bet money
-            if(amountOnBet != 0){
+            if(amountOnBet > 0){
                 _listHandBet.get(seatID).setVisible(true);
-                _listHandBet.get(seatID).setOpacity(1);
+                _listHandBet.get(seatID).setOpacity(DEFAULT_OPACITY);
                 betLabel.setVisible(true);
             }
             
@@ -1689,7 +1701,8 @@ public class InGameWindowController extends GenericController {
             cards.setOpacity(FOLDED_OPACITY);
         }
 
-        actionLabel.setText( String.valueOf(PlayerLastCommand) );
+        String lastAction = Character.toUpperCase( PlayerLastCommand.charAt(0) ) + PlayerLastCommand.substring(1);
+        actionLabel.setText( String.valueOf(lastAction) );
     }
 
     private void GUI_putTurnPlayer(int playerID) {

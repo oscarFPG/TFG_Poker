@@ -31,6 +31,10 @@ public enum BotStyle {
                 - Make decisions that maximize expected value (EV).
                 """;
         }
+
+        public String getShorcut() {
+            return GameType.DEFAULT_SHORTCUT;
+        }
     },
 
     /**
@@ -51,6 +55,10 @@ public enum BotStyle {
                 - Be patient and disciplined.
                 - Prefer survival over taking unnecessary risks.
                 """;
+        }
+        
+        public String getShorcut() {
+            return GameType.TIGHT_PASSIVE_SHORTCUT;
         }
     },
 
@@ -73,6 +81,9 @@ public enum BotStyle {
                 - Be disciplined and consistent.
                 """;
         }
+        public String getShorcut() {
+            return GameType.TIGHT_AGGRESSIVE_SHORCUT;
+        }
     },
 
     /**
@@ -93,6 +104,9 @@ public enum BotStyle {
                 - Continue with speculative hands more often than average.
                 """;
         }
+        public String getShorcut() {
+            return GameType.LOOSE_PASSIVE_SHORCUT;
+        }
     },
 
     /**
@@ -112,6 +126,9 @@ public enum BotStyle {
                 - Force opponents into difficult decisions.
                 - Take calculated risks to accumulate chips.
                 """;
+        }
+        public String getShorcut() {
+            return GameType.LOOSE_AGGRESSIVE_SHORCUT;
         }
     },
 
@@ -135,6 +152,9 @@ public enum BotStyle {
                 - However, always choose legal poker actions and never intentionally make irrational decisions.
                 """;
         }
+        public String getShorcut() {
+            return GameType.MANIAC_SHORCUT;
+        }
     };
 
     /**
@@ -143,6 +163,12 @@ public enum BotStyle {
      * @return style description to inject into the LLM prompt
      */
     public abstract String getPromptDescription();
+
+    /**
+     * Returns the shortcut of each style
+     * @return style shortcut
+     */
+    public abstract String getShorcut();
 
     public static BotStyle createByOrdinal(final int ordinal) {
 
