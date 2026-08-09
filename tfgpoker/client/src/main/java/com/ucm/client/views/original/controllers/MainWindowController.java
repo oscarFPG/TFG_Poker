@@ -85,7 +85,7 @@ public class MainWindowController extends GenericController {
     @Override
     protected void onViewShown() {
         cardBack.setRotate(180);
-        imgAvatarProfile.setImage(_clientInfo.getAvatar(_clientInfo.name,64));
+        imgAvatarProfile.setImage(_clientInfo.getAvatar(_clientInfo.name,64, false));
         setupInitialState();
         setupListeners();
     }

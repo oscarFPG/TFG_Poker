@@ -315,11 +315,11 @@ public class ClientThread implements Runnable {
                         SocketUtils.sendInteger(_spectator._spectatorSocket.getOutputStream(), GameType.EVENT_PLAYER_JOINED);
                         SocketUtils.sendInteger(_spectator._spectatorSocket.getOutputStream(), roomSize);
                         for (ClientThread ct : _roomPlayerList) {
-                            PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(ct._playerID, ct._playerName), _spectator._spectatorSocket);
+                            PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(ct._playerID, ct._playerName, false), _spectator._spectatorSocket);
                             log.debug("Player {} on waiting room", ct._playerName);
                         }
                         for(BotStruct bs : _roomBotsList) {
-                            PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(bs.matchId(), bs.botName()), _spectator._spectatorSocket);
+                            PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(bs.matchId(), bs.botName(), true), _spectator._spectatorSocket);
                             log.debug("Bot {} on waiting room", bs.botName());
                         }
                     }
@@ -346,11 +346,11 @@ public class ClientThread implements Runnable {
             SocketUtils.sendInteger(targetSocket.getOutputStream(), GameType.EVENT_PLAYER_JOINED);
             SocketUtils.sendInteger(targetSocket.getOutputStream(), roomSize);
             for (ClientThread ct : _roomPlayerList) {
-                PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(ct._playerID, ct._playerName), targetSocket);
+                PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(ct._playerID, ct._playerName, false), targetSocket);
                 log.debug("Player {} on waiting room", ct._playerName);
             }
             for(BotStruct bs : _roomBotsList) {
-                PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(bs.matchId(), bs.botName()), targetSocket);
+                PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(bs.matchId(), bs.botName(), true), targetSocket);
                 log.debug("Bot {} on waiting room", bs.botName());
             }
             

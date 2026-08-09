@@ -3,6 +3,9 @@ package com.ucm.client;
 import java.security.MessageDigest;
 import java.util.Random;
 
+import com.ucm.common.BotStyle;
+import com.ucm.common.GameType;
+
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -15,8 +18,19 @@ public class AvatarGenerator {
         return generate(see, size);
     }
 
-    public static Image generateBot(AvatarType type, int size) {
-        switch (type) {
+    public static Image generateBot(String name, int size) {
+
+        BotStyle style = BotStyle.createByName(name);
+        String type;
+
+        if(name.startsWith("GeminiLLM")){
+            type = GameType.GEMINI_NAME;
+        }
+        else if (){
+            
+        }
+        
+        switch (name) {
             case GEMINI_BOT:
                 return generateBotAvatar("GEMINI_BOT", size, Color.web("#7B61FF"));
             case LLAMA_BOT:

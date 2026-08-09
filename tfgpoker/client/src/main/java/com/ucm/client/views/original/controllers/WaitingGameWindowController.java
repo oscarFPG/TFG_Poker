@@ -205,7 +205,7 @@ public class WaitingGameWindowController extends GenericController {
                         playerName0.setText(_clientInfo.name);
                         playerMoney0.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
                         pokerPlayer0.setOpacity(1);
-                        updateAvatarPosition(0, _clientInfo.name, false);
+                        updateAvatarPosition(0, _clientInfo.name, false, false);
                     });
                 }
 
@@ -224,7 +224,7 @@ public class WaitingGameWindowController extends GenericController {
                     playerName0.setText(_clientInfo.name);
                     playerMoney0.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
                     pokerPlayer0.setOpacity(1);
-                    updateAvatarPosition(0, _clientInfo.name, false);
+                    updateAvatarPosition(0, _clientInfo.name, false, false);
                     startButton.setVisible(false);
                 });
             }
@@ -314,10 +314,10 @@ public class WaitingGameWindowController extends GenericController {
         }
     }
 
-    private void updateAvatarPosition(final int position, String name, boolean clear) {
+    private void updateAvatarPosition(final int position, String name, boolean clear, boolean isBot) {
 
         ImageView avatarImage = _listaAvatarProfiles.get(position);
-        Image avatar = _clientInfo.getAvatar(name, 80);
+        Image avatar = _clientInfo.getAvatar(name, 80, isBot);
 
         avatarImage.setImage(avatar);
         avatarImage.setFitWidth(80);
@@ -357,7 +357,7 @@ public class WaitingGameWindowController extends GenericController {
                     nameLabel.setText(p.name);
                     moneyLabel.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
                     playerStackPane.setOpacity(1);
-                    updateAvatarPosition(pos, p.name, false);
+                    updateAvatarPosition(pos, p.name, false, p.isBot);
                 });
 
                 seatIndex--;
@@ -381,7 +381,7 @@ public class WaitingGameWindowController extends GenericController {
                 nameLabel.setText(p.name);
                 moneyLabel.setText(String.valueOf(_clientInfo.gameConfig._initialMoney));
                 playerStackPane.setOpacity( 1 );
-                updateAvatarPosition(pos, p.name, false);
+                updateAvatarPosition(pos, p.name, false, p.isBot);
             });
 
             --beforePosition;
@@ -402,7 +402,7 @@ public class WaitingGameWindowController extends GenericController {
                 nameLabel.setText(p.name);
                 moneyLabel.setText(String.valueOf(_clientInfo.gameConfig._initialMoney));
                 playerStackPane.setOpacity( 1 );
-                updateAvatarPosition(pos, p.name, false);
+                updateAvatarPosition(pos, p.name, false, p.isBot);
             });
 
             ++nextPosition;
@@ -432,7 +432,7 @@ public class WaitingGameWindowController extends GenericController {
                     nameLabel.setText("");
                     moneyLabel.setText("");
                     playerStackPane.setOpacity(0.6);
-                    updateAvatarPosition(pos, _clientInfo.name, true);
+                    updateAvatarPosition(pos, _clientInfo.name, true, false);
                 });
 
                 seatIndex++;
@@ -453,7 +453,7 @@ public class WaitingGameWindowController extends GenericController {
                 nameLabel.setText("");
                 moneyLabel.setText("");
                 playerStackPane.setOpacity(0.6);
-                updateAvatarPosition(pos, _clientInfo.name, true);
+                updateAvatarPosition(pos, _clientInfo.name, true, false);
             });
         }
     }
