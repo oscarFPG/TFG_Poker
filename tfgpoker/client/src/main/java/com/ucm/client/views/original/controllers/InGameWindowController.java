@@ -564,6 +564,13 @@ public class InGameWindowController extends GenericController {
 
             ++nextPosition;
         }
+
+
+        System.out.printf("Players in the waiting room:\n");
+        for(PlayerInfo cl : players) {
+            System.out.printf("Player %s[%d] in waiting room\n", cl.name, cl.id);
+        }
+        System.out.printf("\n");
     }
 
     
@@ -1046,8 +1053,8 @@ public class InGameWindowController extends GenericController {
 				final int amountBB = SocketUtils.receiveInt(socket.getInputStream());
                 final int onBetMoney = SocketUtils.receiveInt(socket.getInputStream());
                 final int offBetMoney = SocketUtils.receiveInt(socket.getInputStream());
-				System.out.printf("Forced play as the big blind with %d chips\n", amountBB);
 
+				System.out.printf("Forced play as the big blind with %d chips\n", amountBB);
                 Platform.runLater(() -> {
 
                     GUI_putPlayerBet(_clientInfo.id, onBetMoney, offBetMoney, false, "Big Blind");
@@ -1056,8 +1063,9 @@ public class InGameWindowController extends GenericController {
 			}
 			else if(serverCode == GameType.TURN_WAIT) {
 
+                System.out.printf("Wait for the other players to play...\n");
+
                 int seatID = _playerSeatMap.get(_clientInfo.id);
-				System.out.printf("Wait for the other players to play...\n");
                 Platform.runLater(() -> {
                     buttonsHolder.setVisible(false);
                     _listPlayerStackPanes.get(seatID).getStyleClass().remove("tourn-player-color");
@@ -1076,6 +1084,7 @@ public class InGameWindowController extends GenericController {
                 final int minRaise = SocketUtils.receiveInt( socket.getInputStream() );
 				final int offBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
 				final int onBetMoney = SocketUtils.receiveInt( socket.getInputStream() );
+                _bigBlind = bb;
                 
                 System.out.printf(
                     "-- Round info --\n SB: %d, BB: %d, MaxBet: %d, MinRaise: %d\n OnBetMoney: %d, OffBetMoney: %d\n", 
@@ -1083,7 +1092,6 @@ public class InGameWindowController extends GenericController {
                     onBetMoney, offBetMoney
                 );
 
-                _bigBlind = bb;
                 // Do not allow to bet less than the current max bet
                 Platform.runLater(() -> {
 
@@ -1190,6 +1198,7 @@ public class InGameWindowController extends GenericController {
             else if(serverCode == GameType.TOTAL_POT) {
 
                 final int totalPot = SocketUtils.receiveInt( socket.getInputStream() );
+
                 System.out.printf("Total pot now is %d$\n", totalPot);
                 Platform.runLater(() -> {
                     labelTotalPot.setText( String.valueOf(totalPot) );
@@ -1207,8 +1216,7 @@ public class InGameWindowController extends GenericController {
             }
             else if(serverCode == GameType.ROUND_ENDS) {
 
-                System.out.printf("ROUND_ENDS received!\n");
-
+                System.out.printf("Round ends!\n");
                 Platform.runLater(() -> {
                     buttonsHolder.setVisible(false);
                     GUI_stopVisualTimer();
@@ -1233,6 +1241,7 @@ public class InGameWindowController extends GenericController {
             Platform.runLater(() -> {
                 buttonsHolder.setVisible(false);
             });
+
 			throw new OnlyOnePlayerLeftException();
         }
     }
@@ -1530,6 +1539,20 @@ public class InGameWindowController extends GenericController {
         boolean isEliminated, 
         boolean isShowdown
     ) {
+
+        System.out.printf("Trying to get player with id %d\n", playerID);
+        System.out.printf("List\n");
+        for(PlayerInfo pl : _clientInfo.playerPositions) {
+            System.out.printf("Player %s[%d]\n", pl.name, pl.id);
+        }
+        System.out.printf("\n");
+
+        System.out.printf("Seat map\n");
+        for(var entry : _playerSeatMap.entrySet()) {
+            System.out.printf("ID %d and seat %d\n", entry.getKey(), entry.getValue());
+        }
+        System.out.printf("\n");
+        
 
         final int seatID = _playerSeatMap.get(playerID);
         StackPane playerStackPane = _listPlayerStackPanes.get(seatID);

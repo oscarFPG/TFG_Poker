@@ -115,6 +115,7 @@ public class WaitingGameWindowController extends GenericController {
 
     private Thread _infoThread;
 
+    
     @FXML
     private void startGame() {
         
@@ -130,18 +131,23 @@ public class WaitingGameWindowController extends GenericController {
     @Override
     protected void onViewShown() {
 
-        clearAllLabels();
         initializeAvatarProfiles();
+        GUI_clearAllLabels();
+        
+        // Background table img
         imgTableInGame.setImage( new Image(getClass().getResource(_clientInfo.gameConfig._selectedTable).toExternalForm()) );
         
+        // Room name and id from top-right corner
         roomNamePlaceholder.setText( _clientInfo.gameConfig._roomName );
         roomIdPlaceholder.setText( String.valueOf( _clientInfo.gameConfig._roomId ) );
 
+        // Thread to wait for more players
         _infoThread = new Thread(() -> {
-            waitNewPlayersInfo();
+            waitToStartGame();
         });
         _infoThread.start();
     
+        // Action listener to close the socket when client closes the window
         _stage.setOnCloseRequest(event -> {
 
             try {
@@ -167,106 +173,6 @@ public class WaitingGameWindowController extends GenericController {
             imgAvatarProfile7,
             imgAvatarProfile8
         );
-    }
-
-    private void clearAllLabels() {
-
-        for(int i = 0; i < 9; i++) {
-
-            Label nameLabel = getNameLabelByPosition(i);
-            Label moneyLabel = getMoneyLabelByPosition(i);
-            StackPane playerStackPane = getPlayerStackPaneByPosition(i);
-
-            playerStackPane.setOpacity( 0.6 );
-            nameLabel.setText("");
-            moneyLabel.setText("");
-        }
-    }
-
-    private void waitNewPlayersInfo() {
-
-        try {
-
-            InputStream input = _clientInfo.socket.getInputStream();
-            OutputStream output = _clientInfo.socket.getOutputStream();
-
-            if(_clientInfo.isHost) {
-
-                _clientInfo.id = SocketUtils.receiveInt(input);
-                System.out.printf("Player host ID is %d\n", _clientInfo.id);
-
-                if(_clientInfo.gameConfig._joinedAsSpectator) {
-                    // TODO : Mostrar como espectador
-                    System.out.printf("Player host is specting!\n");
-                }
-                else {
-                    System.out.printf("Player host is playing!\n");
-                    Platform.runLater(() -> {
-                        playerName0.setText(_clientInfo.name);
-                        playerMoney0.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
-                        pokerPlayer0.setOpacity(1);
-                        updateAvatarPosition(0, _clientInfo.name, false);
-                    });
-                }
-
-                System.out.printf("Server response: This client is the host of the game!\n");
-                NotificationManager.showSuccess(Messages.Notifications.PLAYER_IS_HOST);
-            }
-            else {
-
-                _clientInfo.id = SocketUtils.receiveInt(input);
-                System.out.printf("Player guest ID is %d\n", _clientInfo.id);
-
-                System.out.printf("Server response: This client is a guest!\n");
-                NotificationManager.showSuccess(Messages.Notifications.PLAYER_IS_GUEST);
-                
-                Platform.runLater(() -> {
-                    playerName0.setText(_clientInfo.name);
-                    playerMoney0.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
-                    pokerPlayer0.setOpacity(1);
-                    updateAvatarPosition(0, _clientInfo.name, false);
-                    startButton.setVisible(false);
-                });
-            }
-
-            boolean kepWaiting = true;
-            while(kepWaiting) {
-
-                int event = SocketUtils.receiveInt(input);
-                if(event == GameType.EVENT_PLAYER_JOINED) {
-
-                    _clientInfo.playerPositions = PokerPreGame.receivePlayerListWaiting(input, output);
-                    Platform.runLater(() -> {
-                        resetPlayers(_clientInfo.playerPositions);
-                        showPlayers(_clientInfo.playerPositions);
-                    });    
-                }
-                else if(event == GameType.CONFIRMATION_GAME_STARTS) {
-                    System.out.printf("Event GAME_STARTS!\n");
-                    kepWaiting = false;
-                }
-                else if(event == GameType.ERROR_GAME_CANNOT_START) {
-                    System.out.printf("Game cannot start! Missing players\n");
-                    NotificationManager.showError(Messages.Notifications.ERROR_MISSING_PLAYERS);
-                }
-                else {
-                    System.out.printf("Waiting phase: event %d unknown!\n", event);
-                    NotificationManager.showError(Messages.Notifications.ERROR_UNKNOWN_EVENT);
-                }
-            }
-            System.out.printf("Game ready to start!\n");
-            SocketUtils.sendInteger(output, GameType.CONFIRMATION_PLAYER_STARTS);
-
-            Platform.runLater(() -> {
-                next();
-            });
-        }
-        catch(IOException e) {
-            System.out.printf("Error: %s\n", e.getMessage());
-            NotificationManager.showError(e.getMessage());
-        }
-
-        System.out.printf("Finished waiting for players info!\n");
     }
 
     private StackPane getPlayerStackPaneByPosition(final int position) {
@@ -314,7 +220,112 @@ public class WaitingGameWindowController extends GenericController {
         }
     }
 
-    private void updateAvatarPosition(final int position, String name, boolean clear) {
+    
+    /* Main game thread */
+    private void waitToStartGame() {
+
+        try {
+
+            InputStream input = _clientInfo.socket.getInputStream();
+            OutputStream output = _clientInfo.socket.getOutputStream();
+
+            if(_clientInfo.isHost) {
+
+                _clientInfo.id = SocketUtils.receiveInt(input);
+                System.out.printf("Player host ID is %d\n", _clientInfo.id);
+
+                if(_clientInfo.gameConfig._joinedAsSpectator) {
+                    // TODO : Mostrar como espectador
+                    System.out.printf("Player host is specting!\n");
+                }
+                else {
+                    System.out.printf("Player host is playing!\n");
+                    Platform.runLater(() -> {
+                        playerName0.setText(_clientInfo.name);
+                        playerMoney0.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
+                        pokerPlayer0.setOpacity(1);
+                        GUI_updateAvatarPosition(0, _clientInfo.name);
+                    });
+                }
+
+                System.out.printf("Server response: This client is the host of the game!\n");
+                NotificationManager.showSuccess(Messages.Notifications.PLAYER_IS_HOST);
+            }
+            else {
+
+                _clientInfo.id = SocketUtils.receiveInt(input);
+                System.out.printf("Player guest ID is %d\n", _clientInfo.id);
+
+                System.out.printf("Server response: This client is a guest!\n");
+                NotificationManager.showSuccess(Messages.Notifications.PLAYER_IS_GUEST);
+                
+                Platform.runLater(() -> {
+                    playerName0.setText(_clientInfo.name);
+                    playerMoney0.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
+                    pokerPlayer0.setOpacity(1);
+                    GUI_updateAvatarPosition(0, _clientInfo.name);
+                    startButton.setVisible(false);
+                });
+            }
+
+            boolean kepWaiting = true;
+            while(kepWaiting) {
+
+                int event = SocketUtils.receiveInt(input);
+                if(event == GameType.EVENT_PLAYER_JOINED) {
+
+                    _clientInfo.playerPositions.clear();
+                    _clientInfo.playerPositions = PokerPreGame.receivePlayerListWaiting(input, output);
+
+                    Platform.runLater(() -> {
+                        GUI_resetPlayers();
+                        GUI_showPlayers(_clientInfo.playerPositions);
+                    });    
+                }
+                else if(event == GameType.CONFIRMATION_GAME_STARTS) {
+                    System.out.printf("Event GAME_STARTS!\n");
+                    kepWaiting = false;
+                }
+                else if(event == GameType.ERROR_GAME_CANNOT_START) {
+                    System.out.printf("Game cannot start! Missing players\n");
+                    NotificationManager.showError(Messages.Notifications.ERROR_MISSING_PLAYERS);
+                }
+                else {
+                    System.out.printf("Waiting phase: event %d unknown!\n", event);
+                    NotificationManager.showError(Messages.Notifications.ERROR_UNKNOWN_EVENT);
+                }
+            }
+            System.out.printf("Game ready to start!\n");
+            SocketUtils.sendInteger(output, GameType.CONFIRMATION_PLAYER_STARTS);
+
+            Platform.runLater(() -> {
+                next();
+            });
+        }
+        catch(IOException e) {
+            System.out.printf("Error: %s\n", e.getMessage());
+            NotificationManager.showError(e.getMessage());
+        }
+
+        System.out.printf("Finished waiting for players info!\n");
+    }
+    
+    /* GUI methods : MUST be called inside JavaFX Thread */
+    private void GUI_clearAllLabels() {
+
+        for(int i = 0; i < 9; i++) {
+
+            Label nameLabel = getNameLabelByPosition(i);
+            Label moneyLabel = getMoneyLabelByPosition(i);
+            StackPane playerStackPane = getPlayerStackPaneByPosition(i);
+
+            playerStackPane.setOpacity( 0.6 );
+            nameLabel.setText("");
+            moneyLabel.setText("");
+        }
+    }
+
+    private void GUI_updateAvatarPosition(final int position, String name) {
 
         ImageView avatarImage = _listaAvatarProfiles.get(position);
         Image avatar = _clientInfo.getAvatar(name, 80);
@@ -330,10 +341,15 @@ public class WaitingGameWindowController extends GenericController {
         clip.radiusProperty().bind(avatarImage.fitWidthProperty().divide(2));
 
         avatarImage.setClip(clip);
-        avatarImage.setVisible(!clear);
+        avatarImage.setVisible(true);
     }
 
-    private void showPlayers(final List<PlayerInfo> players) {
+    private void GUI_showPlayers(final List<PlayerInfo> players) {
+
+        if(players == null || players.isEmpty()) {
+            GUI_resetPlayers();
+            return;
+        }
 
         int myID = _clientInfo.id;
         int myIndex = IntStream.range(0, players.size())
@@ -341,48 +357,32 @@ public class WaitingGameWindowController extends GenericController {
                         .findFirst()
                         .orElse(-1);
 
+        // Current player is an spectator
         if(myID == -1) {
          
             int seatIndex = 8;
             for(int i = players.size() - 1; 0 <= i; i--) {
 
                 PlayerInfo p = players.get(i);
-
-                Label nameLabel = getNameLabelByPosition(seatIndex);
-                Label moneyLabel = getMoneyLabelByPosition(seatIndex);
-                StackPane playerStackPane = getPlayerStackPaneByPosition(seatIndex);
-                final int pos = seatIndex;
-
-                Platform.runLater(() -> {
-                    nameLabel.setText(p.name);
-                    moneyLabel.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
-                    playerStackPane.setOpacity(1);
-                    updateAvatarPosition(pos, p.name, false);
-                });
-
+                GUI_drawPlayer(p, seatIndex);
+                
                 seatIndex--;
             }
 
             return;
         }
 
+
+        // Show myself
+        PlayerInfo me = players.get(myIndex);
+        GUI_drawPlayer(me, 0);
+
         // Show players behind me(in the list) : position 1, 2, 3, ...
         int beforePosition = 8;
         for(int i = myIndex - 1; i >= 0; i--) {
 
             PlayerInfo p = players.get(i);
-
-            Label nameLabel = getNameLabelByPosition(beforePosition);
-            Label moneyLabel = getMoneyLabelByPosition(beforePosition);
-            StackPane playerStackPane = getPlayerStackPaneByPosition(beforePosition);
-            
-            final int pos = beforePosition;
-            Platform.runLater(() -> {
-                nameLabel.setText(p.name);
-                moneyLabel.setText(String.valueOf(_clientInfo.gameConfig._initialMoney));
-                playerStackPane.setOpacity( 1 );
-                updateAvatarPosition(pos, p.name, false);
-            });
+            GUI_drawPlayer(p, beforePosition);
 
             --beforePosition;
         }
@@ -392,69 +392,44 @@ public class WaitingGameWindowController extends GenericController {
         for(int i = myIndex + 1; i < players.size(); i++) {
 
             PlayerInfo p = players.get(i);
-
-            Label nameLabel = getNameLabelByPosition(nextPosition);
-            Label moneyLabel = getMoneyLabelByPosition(nextPosition);
-            StackPane playerStackPane = getPlayerStackPaneByPosition(nextPosition);
-
-            final int pos = nextPosition;
-            Platform.runLater(() -> {
-                nameLabel.setText(p.name);
-                moneyLabel.setText(String.valueOf(_clientInfo.gameConfig._initialMoney));
-                playerStackPane.setOpacity( 1 );
-                updateAvatarPosition(pos, p.name, false);
-            });
+            GUI_drawPlayer(p, nextPosition);
 
             ++nextPosition;
         }
 
+
+        System.out.printf("Players in the waiting room:\n");
         for(PlayerInfo cl : players) {
-            System.out.printf("Player [%d]%s in waiting room\n", cl.id, cl.name);
+            System.out.printf("Player %s[%d] in waiting room\n", cl.name, cl.id);
         }
         System.out.printf("\n");
     }
 
-    private void resetPlayers(final List<PlayerInfo> players) {
+    private void GUI_drawPlayer(final PlayerInfo player, final int pos) {
 
-        int myID = _clientInfo.id;
-        if(myID == -1) {
-         
-            int seatIndex = 0;
-            for(int i = players.size() - 1; 0 <= i; i--) {
+        Label nameLabel = getNameLabelByPosition(pos);
+        Label moneyLabel = getMoneyLabelByPosition(pos);
+        StackPane playerStackPane = getPlayerStackPaneByPosition(pos);
 
-                Label nameLabel = getNameLabelByPosition(seatIndex);
-                Label moneyLabel = getMoneyLabelByPosition(seatIndex);
-                StackPane playerStackPane = getPlayerStackPaneByPosition(seatIndex);
+        nameLabel.setText(player.name);
+        moneyLabel.setText(String.valueOf(_clientInfo.gameConfig._initialMoney));
+        playerStackPane.setOpacity( 1 );
+        GUI_updateAvatarPosition(pos, player.name);
+    }
 
-                final int pos = i;
+    private void GUI_resetPlayers() {
 
-                Platform.runLater(() -> {
-                    nameLabel.setText("");
-                    moneyLabel.setText("");
-                    playerStackPane.setOpacity(0.6);
-                    updateAvatarPosition(pos, _clientInfo.name, true);
-                });
-
-                seatIndex++;
-            }
-
-            return;
-        }
-
-        for(int seatIndex = 1; seatIndex < 9; seatIndex++) {
+        for(int seatIndex = 0; seatIndex < 9; seatIndex++) {
             
             Label nameLabel = getNameLabelByPosition(seatIndex);
             Label moneyLabel = getMoneyLabelByPosition(seatIndex);
             StackPane playerStackPane = getPlayerStackPaneByPosition(seatIndex);
+            ImageView avatarImage = _listaAvatarProfiles.get(seatIndex);
 
-            final int pos = seatIndex;
-
-            Platform.runLater(() -> {
-                nameLabel.setText("");
-                moneyLabel.setText("");
-                playerStackPane.setOpacity(0.6);
-                updateAvatarPosition(pos, _clientInfo.name, true);
-            });
+            nameLabel.setText("");
+            moneyLabel.setText("");
+            playerStackPane.setOpacity(0.6);
+            avatarImage.setVisible(false);
         }
     }
 

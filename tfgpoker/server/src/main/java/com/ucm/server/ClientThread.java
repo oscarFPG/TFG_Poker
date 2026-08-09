@@ -212,7 +212,6 @@ public class ClientThread implements Runnable {
                 case GameType.PETITION_JOIN_GAME:
                     
                     int playersCounter = _roomPlayerList.size() + _roomBotsList.size();
-
                     if(_spectator._spectatorSocket != null || (0 < playersCounter && _roomPlayerList.size() < _gameConfig._numPlayers)) {
 
                         SocketUtils.sendInteger(output, GameType.CONFIRMATION_WAITING_GAME);
@@ -280,21 +279,28 @@ public class ClientThread implements Runnable {
             log.error("Handling client connection: {}", e.getMessage());
             if(_isHost) {
 
+                log.warn("Host {} left the waiting room! Cancelling game!", _playerName);
+
+                // Close connection with all players
+                // Match is cancelled
                 synchronized(_roomPlayerList) {
                     for(ClientThread ct : _roomPlayerList) {
                         closeConnection(ct._socket);
                     }
+
+                    _roomPlayerList.clear();
                 }
+                
             }
             else {
                 closeConnection(_socket);
                 _roomPlayerList.remove(this);
                 broadcastPlayerJoined();
-                log.warn("Cliente {} sale de la waiting room", _playerName);
+                log.warn("Client {} lef the waiting room", _playerName);
             }
         }
+        
         log.debug("Client thread terminating...");
-
     }
 
     private void broadcastPlayerJoined() {
@@ -310,20 +316,7 @@ public class ClientThread implements Runnable {
                         return;
 
 
-                    if(_spectator._spectatorSocket != null) {
-
-                        SocketUtils.sendInteger(_spectator._spectatorSocket.getOutputStream(), GameType.EVENT_PLAYER_JOINED);
-                        SocketUtils.sendInteger(_spectator._spectatorSocket.getOutputStream(), roomSize);
-                        for (ClientThread ct : _roomPlayerList) {
-                            PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(ct._playerID, ct._playerName), _spectator._spectatorSocket);
-                            log.debug("Player {} on waiting room", ct._playerName);
-                        }
-                        for(BotStruct bs : _roomBotsList) {
-                            PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(bs.matchId(), bs.botName()), _spectator._spectatorSocket);
-                            log.debug("Bot {} on waiting room", bs.botName());
-                        }
-                    }
-
+                    broadcastPlayerInfoToSpectator();
                     broadcastPlayerInfoToRoomPlayers();
                 }
                 catch(IOException e) {
@@ -338,6 +331,8 @@ public class ClientThread implements Runnable {
 
     private void broadcastPlayerInfoToRoomPlayers() throws IOException {
 
+        log.debug("----- Sending players info to in game players -----");
+
         int roomSize = _roomPlayerList.size() + _roomBotsList.size();
         for (ClientThread target : _roomPlayerList) {
 
@@ -349,11 +344,36 @@ public class ClientThread implements Runnable {
                 PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(ct._playerID, ct._playerName), targetSocket);
                 log.debug("Player {} on waiting room", ct._playerName);
             }
+
             for(BotStruct bs : _roomBotsList) {
                 PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(bs.matchId(), bs.botName()), targetSocket);
                 log.debug("Bot {} on waiting room", bs.botName());
             }
             
+            log.debug("All player info sent to {}\n", target._playerName);
+        }
+    }
+
+    private void broadcastPlayerInfoToSpectator() throws IOException {
+
+
+        if(_spectator._spectatorSocket != null) {
+
+            log.debug("----- Sending players info to spectator -----");
+
+            int roomSize = _roomPlayerList.size() + _roomBotsList.size();
+
+            SocketUtils.sendInteger(_spectator._spectatorSocket.getOutputStream(), GameType.EVENT_PLAYER_JOINED);
+            SocketUtils.sendInteger(_spectator._spectatorSocket.getOutputStream(), roomSize);
+            for (ClientThread ct : _roomPlayerList) {
+                PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(ct._playerID, ct._playerName), _spectator._spectatorSocket);
+                log.debug("Player {} on waiting room", ct._playerName);
+            }
+
+            for(BotStruct bs : _roomBotsList) {
+                PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(bs.matchId(), bs.botName()), _spectator._spectatorSocket);
+                log.debug("Bot {} on waiting room", bs.botName());
+            }
         }
     }
 
@@ -402,6 +422,7 @@ public class ClientThread implements Runnable {
     }
 
 
+    public int getPlayerID() { return _playerID; }
     public Socket getPlayerSocket() { return _socket; }
     public String getPlayerName() { return _playerName; }
     public boolean getIsHost() { return _isHost; }
