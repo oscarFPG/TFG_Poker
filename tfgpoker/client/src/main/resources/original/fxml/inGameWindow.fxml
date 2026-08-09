@@ -23,7 +23,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.shape.Rectangle?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.InGameWindowController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1344.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ucm.client.views.original.controllers.InGameWindowController">
    <top>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="1292.0" BorderPane.alignment="CENTER">
          <children>
@@ -51,23 +51,10 @@
                   </HBox>
                </children>
             </StackPane>
-            <HBox alignment="CENTER_LEFT" minWidth="-Infinity" prefHeight="110.0" prefWidth="293.0" styleClass="semi-oval-pane">
+            <HBox alignment="CENTER_LEFT" minWidth="-Infinity" prefHeight="110.0" prefWidth="219.0" styleClass="semi-oval-pane">
                <children>
-                  <HBox fx:id="hboxMenuItems" maxHeight="-Infinity" prefHeight="88.0" prefWidth="170.0" spacing="5.0">
+                  <HBox fx:id="hboxMenuItems" maxHeight="-Infinity" prefHeight="88.0" prefWidth="96.0" spacing="5.0">
                      <children>
-                        <Button fx:id="btnExitGame" mnemonicParsing="false" prefHeight="66.0" prefWidth="62.0">
-                           <graphic>
-                              <ImageView fitHeight="48.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../../images/iconoExit.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                           <styleClass>
-                              <String fx:value="semi-oval-pane" />
-                              <String fx:value="container-gradiant-colors" />
-                           </styleClass>
-                        </Button>
                         <ToggleButton fx:id="btnEquity" mnemonicParsing="false" onAction="#seeEquity" prefHeight="66.0" prefWidth="62.0">
                            <styleClass>
                               <String fx:value="semi-oval-pane" />
@@ -513,7 +500,20 @@
                            <children>
                               <Label fx:id="playerName5" styleClass="bold-general-text-font" text="Label" />
                               <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
-                              <Label fx:id="playerMoney5" styleClass="bold-general-text-font" text="Label" />
+                              <HBox prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <Label fx:id="playerAction5" styleClass="bold-general-text-font" />
+                                       </children>
+                                    </HBox>
+                                    <HBox prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <Label fx:id="playerMoney5" styleClass="bold-general-text-font" text="Label" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </HBox>
                            </children>
                         </VBox>
                      </children>
@@ -610,7 +610,20 @@
                            <children>
                               <Label fx:id="playerName4" styleClass="bold-general-text-font" text="Label" />
                               <Region prefHeight="2.0" prefWidth="80.0" styleClass="spacer" />
-                              <Label fx:id="playerMoney4" styleClass="bold-general-text-font" text="Label" />
+                              <HBox prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <Label fx:id="playerAction4" styleClass="bold-general-text-font" />
+                                       </children>
+                                    </HBox>
+                                    <HBox prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <Label fx:id="playerMoney4" styleClass="bold-general-text-font" text="Label" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </HBox>
                            </children>
                         </VBox>
                      </children>
@@ -707,7 +720,20 @@
                            <children>
                               <Label fx:id="playerName3" styleClass="bold-general-text-font" text="Label" />
                               <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
-                              <Label fx:id="playerMoney3" styleClass="bold-general-text-font" text="Label" />
+                              <HBox prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <Label fx:id="playerAction3" styleClass="bold-general-text-font" />
+                                       </children>
+                                    </HBox>
+                                    <HBox prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <Label fx:id="playerMoney3" styleClass="bold-general-text-font" text="Label" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </HBox>
                            </children>
                         </VBox>
                      </children>
@@ -804,7 +830,20 @@
                            <children>
                               <Label fx:id="playerName2" styleClass="bold-general-text-font" text="Label" />
                               <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
-                              <Label fx:id="playerMoney2" styleClass="bold-general-text-font" text="Label" />
+                              <HBox prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <Label fx:id="playerAction2" styleClass="bold-general-text-font" />
+                                       </children>
+                                    </HBox>
+                                    <HBox prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <Label fx:id="playerMoney2" styleClass="bold-general-text-font" text="Label" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </HBox>
                            </children>
                         </VBox>
                      </children>
@@ -901,7 +940,20 @@
                            <children>
                               <Label fx:id="playerName1" styleClass="bold-general-text-font" text="Label" />
                               <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
-                              <Label fx:id="playerMoney1" styleClass="bold-general-text-font" text="Label" />
+                              <HBox prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <Label fx:id="playerAction1" styleClass="bold-general-text-font" />
+                                       </children>
+                                    </HBox>
+                                    <HBox prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <Label fx:id="playerMoney1" styleClass="bold-general-text-font" text="Label" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </HBox>
                            </children>
                         </VBox>
                      </children>
@@ -997,7 +1049,20 @@
                            <children>
                               <Label fx:id="playerName0" styleClass="bold-general-text-font" text="Label" />
                               <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
-                              <Label fx:id="playerMoney0" styleClass="bold-general-text-font" text="Label" />
+                              <HBox prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <Label fx:id="playerAction0" styleClass="bold-general-text-font" />
+                                       </children>
+                                    </HBox>
+                                    <HBox prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <Label fx:id="playerMoney0" styleClass="bold-general-text-font" text="Label" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </HBox>
                            </children>
                         </VBox>
                      </children>
@@ -1094,7 +1159,20 @@
                            <children>
                               <Label fx:id="playerName8" styleClass="bold-general-text-font" text="Label" />
                               <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
-                              <Label fx:id="playerMoney8" styleClass="bold-general-text-font" text="Label" />
+                              <HBox prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <Label fx:id="playerAction8" styleClass="bold-general-text-font" />
+                                       </children>
+                                    </HBox>
+                                    <HBox prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <Label fx:id="playerMoney8" styleClass="bold-general-text-font" text="Label" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </HBox>
                            </children>
                         </VBox>
                      </children>
@@ -1191,7 +1269,20 @@
                            <children>
                               <Label fx:id="playerName7" styleClass="bold-general-text-font" text="Label" />
                               <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
-                              <Label fx:id="playerMoney7" styleClass="bold-general-text-font" text="Label" />
+                              <HBox prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <Label fx:id="playerAction7" styleClass="bold-general-text-font" />
+                                       </children>
+                                    </HBox>
+                                    <HBox prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <Label fx:id="playerMoney7" styleClass="bold-general-text-font" text="Label" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </HBox>
                            </children>
                         </VBox>
                      </children>
@@ -1288,7 +1379,20 @@
                            <children>
                               <Label fx:id="playerName6" styleClass="bold-general-text-font" text="Label" />
                               <Region prefHeight="2.0" prefWidth="100.0" styleClass="spacer" />
-                              <Label fx:id="playerMoney6" styleClass="bold-general-text-font" text="Label" />
+                              <HBox prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <Label fx:id="playerAction6" styleClass="bold-general-text-font" />
+                                       </children>
+                                    </HBox>
+                                    <HBox prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <Label fx:id="playerMoney6" styleClass="bold-general-text-font" text="Label" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </HBox>
                            </children>
                         </VBox>
                      </children>

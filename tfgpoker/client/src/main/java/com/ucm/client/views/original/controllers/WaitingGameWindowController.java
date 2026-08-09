@@ -343,7 +343,7 @@ public class WaitingGameWindowController extends GenericController {
 
         if(myID == -1) {
          
-            int seatIndex = 0;
+            int seatIndex = 8;
             for(int i = players.size() - 1; 0 <= i; i--) {
 
                 PlayerInfo p = players.get(i);
@@ -360,14 +360,14 @@ public class WaitingGameWindowController extends GenericController {
                     updateAvatarPosition(pos, p.name, false);
                 });
 
-                seatIndex++;
+                seatIndex--;
             }
 
             return;
         }
 
         // Show players behind me(in the list) : position 1, 2, 3, ...
-        int beforePosition = 1;
+        int beforePosition = 8;
         for(int i = myIndex - 1; i >= 0; i--) {
 
             PlayerInfo p = players.get(i);
@@ -384,11 +384,11 @@ public class WaitingGameWindowController extends GenericController {
                 updateAvatarPosition(pos, p.name, false);
             });
 
-            ++beforePosition;
+            --beforePosition;
         }
 
         // Show players ahead of me(in the list) : position 8, 7, 6, ...
-        int nextPosition = 8;
+        int nextPosition = 1;
         for(int i = myIndex + 1; i < players.size(); i++) {
 
             PlayerInfo p = players.get(i);
@@ -405,7 +405,7 @@ public class WaitingGameWindowController extends GenericController {
                 updateAvatarPosition(pos, p.name, false);
             });
 
-            --nextPosition;
+            ++nextPosition;
         }
 
         for(PlayerInfo cl : players) {
