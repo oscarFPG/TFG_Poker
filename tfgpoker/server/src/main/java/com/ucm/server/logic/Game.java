@@ -340,17 +340,15 @@ public class Game {
 
     private void addAllPlayersInitial(List<ClientStruct> players, List<BotStruct> bots, Spectator spectator, GameConfig config) {
 
-        int id = 0;
         for(ClientStruct cs : players) {
 
             HumanPlayer hp = new HumanPlayer(cs.socket());
-            Player p = new Player(id, cs.name(), config._initialMoney, hp);
+            Player p = new Player(cs.playerID(), cs.name(), config._initialMoney, hp);
             
             if( cs.isHost() )
                 _playerList.assignHost(p);
 
             _playerList.addPlayer( p );
-            ++id;
         }
 
         for(BotStruct bs : bots) {
@@ -358,9 +356,8 @@ public class Game {
             Bot bot = BotManager.createBot( bs.botId() );
             if(bot != null) {
                 Bot specificBot = bot.create(bs.style());
-                String botName = String.format("%s#%d", bs.botName(), id);
-                _playerList.addPlayer( new Player(id, botName, config._initialMoney, specificBot) );
-                ++id;
+                String botName = String.format("%s#%d", bs.botName(), bs.matchId());
+                _playerList.addPlayer( new Player(bs.matchId(), botName, config._initialMoney, specificBot) );
             }
             else {
                 log.error("Bot with ID {} could not be found! Ignoring request", bs.botId());

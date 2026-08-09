@@ -124,10 +124,10 @@ public class ServerTCP {
         for(ClientThread ct : _roomPlayers) {
             
             if( ct.getIsHost() ) {
-                players.add( ClientStruct.createHostPlayer(ct.getPlayerName(), ct.getPlayerSocket()) );
+                players.add( ClientStruct.createHostPlayer(ct.getPlayerID(), ct.getPlayerName(), ct.getPlayerSocket()) );
             }
             else {
-                players.add( ClientStruct.createGuestPlayer(ct.getPlayerName(), ct.getPlayerSocket()) );
+                players.add( ClientStruct.createGuestPlayer(ct.getPlayerID(), ct.getPlayerName(), ct.getPlayerSocket()) );
             }
         }
 

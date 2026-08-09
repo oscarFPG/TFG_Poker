@@ -288,14 +288,21 @@ public class ClientThread implements Runnable {
                         closeConnection(ct._socket);
                     }
 
+                    _id.set(0);
                     _roomPlayerList.clear();
                 }
                 
             }
             else {
                 closeConnection(_socket);
-                _roomPlayerList.remove(this);
+
+                // Update global game state
+                _id.getAndDecrement();          // IMPORTANT !!
+                _roomPlayerList.remove(this);   // IMPORTANT !!
+
+                // Notify all players about new game room
                 broadcastPlayerJoined();
+                
                 log.warn("Client {} lef the waiting room", _playerName);
             }
         }
