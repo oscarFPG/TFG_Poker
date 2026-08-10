@@ -3,14 +3,20 @@ package com.ucm.server.players;
 import java.io.IOException;
 import java.util.concurrent.ThreadLocalRandom;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
+import com.ucm.server.exceptions.TurnTimeoutException;
 import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.gameobjects.BotFSM;
 import com.ucm.server.interfaces.IPlayerInfo;
 
 
 public class ClassifierFSM extends BotFSM {
+
+    private static final Logger log = LogManager.getLogger(ClassifierFSM.class);
 
     private static final int FSM_ID = GameType.BOT_FSM_1;
 
@@ -22,8 +28,17 @@ public class ClassifierFSM extends BotFSM {
 
 
     @Override
-    public String play(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException {
+    public String play(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException, TurnTimeoutException {
         
+        // wait 80 seconds
+        try {
+            log.warn("Waiting for 80 seconds to response...");
+            Thread.sleep(80 * 1000);
+        }
+        catch (InterruptedException e) {
+            throw new TurnTimeoutException();
+        }
+
         // Get table cards values -> Zero if there is no card on the table
         int valueTC1 = 0;
         int valueTC2 = 0;

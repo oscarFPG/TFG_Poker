@@ -34,6 +34,14 @@ public class ServerMain {
      * Run the tests
      *      .\mvnw.cmd test
      */
+
+    /**
+     * Full server initialization point.
+     * 
+     * @hidden @param args
+     * @throws EvaluatorException when the evaluator fails. It stops the server.
+     * @throws CancelGameException when the game has been cancelled by multiple reasons. It stops the server.
+     */
     public static void main(String[] args) throws EvaluatorException, CancelGameException {
 
         while(true) {

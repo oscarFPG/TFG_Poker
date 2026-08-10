@@ -35,17 +35,58 @@ public class ServerTCP {
 
     private static final Logger log = LogManager.getLogger(ServerTCP.class);
 
+    /**
+     * Server public IP address
+     */
     private String _serverIP;
+
+    /**
+     * Socket used by the server to accept new client connections
+     */
     private ServerSocket _serverSocket;
+
+    /**
+     * Service that admits up to 9 players simultaneously
+     */
     private ExecutorService _executor;
+
+    /**
+     * ID generator for in-game player IDs
+     */
     private AtomicInteger _idGenerator;
 
+
+    /**
+     * List of human clients in the room game list
+     * @see ClientThread
+     */
     private List<ClientThread> _roomPlayers;
+
+    /**
+     * List of bots in the room game list
+     * @see BotStruct
+     */
     private List<BotStruct> _roomBots;
+
+    /**
+     * Human spectator. It does not play but it can watch the game in real-time
+     * @see Spectator
+     */
     private Spectator _spectator;
+
+    /**
+     * Current game configuration
+     * @see GameConfig
+     */
     private GameConfig _gameConfig;
 
 
+    /**
+     * Full server constructor
+     * @param port used by the server. Ex.: 8000
+     * @throws IOException caused by some error with the server socket
+     * @throws InterruptedException caused by the server trying to see his public IP address
+     */
     public ServerTCP(final int port) throws IOException, InterruptedException {
         _serverIP = showServerIP();
         _serverSocket = new ServerSocket(port);
@@ -62,6 +103,12 @@ public class ServerTCP {
     }
 
 
+    /**
+     * Pregame of poker game.
+     * Users can join or left the waiting room and wait until the game starts.
+     * This methods return only if there is some fatal error or the server socket is closed.
+     * This server socket can be closed by the host to start the game
+     */
     public void startPregame() {
 
         while(!_serverSocket.isClosed()) {
@@ -85,6 +132,14 @@ public class ServerTCP {
         log.debug("Terminating pregame phase...");
     }
 
+    /**
+     * Poker game method. This methods only return if the game finishes or there is some fatal error.
+     * In any case, all the connections are closed
+     * @param players connected and ready to play.
+     * @param bots selected to play.
+     * @param spectator in the game, if selected
+     * @param config Game configuration for the game
+     */
     public void startGame(final List<ClientStruct> players, final List<BotStruct> bots, final Spectator spectator, final GameConfig config) {
 
         log.debug("--- Poker game ---");
@@ -118,6 +173,10 @@ public class ServerTCP {
     }
 
 
+    /**
+     * Get the human players list
+     * @return list of players
+     */
     public List<ClientStruct> getRoomPlayers() {
 
         List<ClientStruct> players = new ArrayList<>();
@@ -134,19 +193,36 @@ public class ServerTCP {
         return players;
     }
 
+    /**
+     * Get the bot list
+     * @return list of bots
+     */
     public List<BotStruct> getRoomBots () {
         return new ArrayList<>(_roomBots);
     }
 
+    /**
+     * Get the spectator. Can be null.
+     * @return spectator reference
+     */
     public Spectator getSpectator() {
         return _spectator;
     }
 
+    /**
+     * Generates a deep copy of the current game configuration
+     * @return a new @link{GameConfig} object
+     */
     public GameConfig getGameConfigDeepCopy() {
         return new GameConfig(_gameConfig);
     }
 
-    
+    /**
+     * Checks and returns the public IP address of this machine executing the server program
+     * @return an @link{String} of the server public IP address
+     * @throws IOException
+     * @throws InterruptedException
+     */
     private String showServerIP() throws IOException, InterruptedException {
 
         HttpClient client = HttpClient.newHttpClient();
@@ -162,6 +238,10 @@ public class ServerTCP {
         return serverIP;
     }
 
+    /**
+     * Disconnects all the human player sockets in the game room and closes the server socket 
+     * @param players joined to the game
+     */
     private void cleanUp(final List<ClientStruct> players) {
 
         log.debug("Cleaning up server resources...");

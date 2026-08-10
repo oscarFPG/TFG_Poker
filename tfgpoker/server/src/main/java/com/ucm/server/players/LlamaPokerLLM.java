@@ -1,9 +1,11 @@
 package com.ucm.server.players;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +19,7 @@ import org.json.JSONObject;
 import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
 import com.ucm.common.gameobjects.Card;
+import com.ucm.server.exceptions.TurnTimeoutException;
 import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.gameobjects.BotLLM;
 import com.ucm.server.gameobjects.Player;
@@ -37,8 +40,9 @@ public class LlamaPokerLLM extends BotLLM {
 
     
     @Override
-    protected String callModel(String prompt) {
+    protected String callModel(String prompt) throws IOException, TurnTimeoutException {
         
+        String cleanResponse;
         try {
 
             // Make HTTP connection
@@ -47,6 +51,10 @@ public class LlamaPokerLLM extends BotLLM {
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setDoOutput(true);
+
+            // Add timeout for response
+            conn.setConnectTimeout(10 * 1000);
+            conn.setReadTimeout(Bot.SECONDS_TIMEOUT * 1000);
 
             // Sanitize prompt
             String safePrompt = prompt
@@ -92,18 +100,18 @@ public class LlamaPokerLLM extends BotLLM {
             // Extract action from JSON
             String raw = response.toString();
             JSONObject obj = new JSONObject(raw);
-            String cleanResponse = obj.getString("response");
+            cleanResponse = obj.getString("response");
 
             // Replace special characters
             cleanResponse = cleanResponse.replace("\\u003c", "<")
                             .replace("\\u003e", ">");
-
-            return cleanResponse;
         } 
-        catch (Exception e) {
-            log.error("Ollama bot {} could not be reached! Action made in this case: FOLD", MODEL_NAME);
-            return GameType.FOLD_ACTION_FULL;
+        catch(SocketTimeoutException e) {
+            log.error("Ollama bot {} took too much time to respond! Action made in this case: FOLD", MODEL_NAME);
+            throw new TurnTimeoutException();
         }
+
+        return cleanResponse;
     }
 
     @Override

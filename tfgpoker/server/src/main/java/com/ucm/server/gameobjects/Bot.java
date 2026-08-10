@@ -3,7 +3,13 @@ package com.ucm.server.gameobjects;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,6 +18,7 @@ import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
+import com.ucm.server.exceptions.TurnTimeoutException;
 import com.ucm.server.interfaces.IPlayerInfo;
 import com.ucm.server.interfaces.IPlayerNotificator;
 
@@ -43,7 +50,9 @@ import com.ucm.server.interfaces.IPlayerNotificator;
 public abstract class Bot implements IPlayerNotificator {
 
     public static final int MIN_DECISION_TIME_SEC = 4;
-    public static final int MAX_DECISION_TIME_SEC = 10; 
+    public static final int MAX_DECISION_TIME_SEC = 10;
+
+    public static final int SECONDS_TIMEOUT = 60;
 
     private static final Logger log = LogManager.getLogger(Bot.class);
 
@@ -98,6 +107,8 @@ public abstract class Bot implements IPlayerNotificator {
      * By default, bots use a balanced playing style.
      */
     protected BotStyle _style = BotStyle.DEFAULT;
+
+    private final ExecutorService _playExec = Executors.newCachedThreadPool();
 
 
     public Bot(final int botID) {
@@ -196,7 +207,7 @@ public abstract class Bot implements IPlayerNotificator {
      * @param player
      * @return
      */
-    public abstract String play(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException;
+    public abstract String play(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException, TurnTimeoutException;
 
     /* ============== Communication methods ============== */
     @Override
@@ -250,26 +261,75 @@ public abstract class Bot implements IPlayerNotificator {
     }
 
     @Override
-    public String notifyMakePlay(int sb, int bb, int maxBet, int minRaise, IPlayerInfo player) throws IOException {
+    public String notifyMakePlay(int sb, int bb, int maxBet, int minRaise, IPlayerInfo player) throws IOException, TurnTimeoutException {
         
+        // Time before waiting for the bot response
         long startTime = System.currentTimeMillis();
-        long responseTime;
 
-        // Wait for bot response
-        String action = play(sb, bb, maxBet, player);
 
-        // Check stop time
-        responseTime = System.currentTimeMillis() - startTime;
+        // Wait bot response with timeout
+        String action = GameType.FOLD_ACTION_FULL;
+        Future<String> future = _playExec.submit(
+            () -> play(sb, bb, maxBet, player)
+        );
+        try {
+            // El bot tiene como máximo 60 segundos para responder
+            action = future.get(SECONDS_TIMEOUT, TimeUnit.SECONDS);
+        }
+        catch (TimeoutException e) {
+
+            future.cancel(true);
+
+            log.warn(
+            "Bot {} exceeded the maximum decision time of {} seconds. Action: FOLD",
+                SECONDS_TIMEOUT,
+                player.getPlayerName()
+            );
+
+            throw new TurnTimeoutException();
+        }
+        catch (InterruptedException e) {
+
+            Thread.currentThread().interrupt();
+            future.cancel(true);
+
+            log.warn(
+            "Bot {} decision was interrupted. Action: FOLD",
+                player.getPlayerName()
+            );
+
+            throw new TurnTimeoutException();
+        }
+        catch (ExecutionException e) {
+
+            log.error(
+            "Error while bot {} was making a decision: {}",
+                player.getPlayerName(), 
+                e.getMessage()
+            );
+
+            throw new TurnTimeoutException();
+        }
+
+        // Check response time
+        long responseTime = System.currentTimeMillis() - startTime;
         log.warn("Bot {} response took {} miliseconds", player.getPlayerName(), responseTime);
         
+        waitExtraTime(responseTime);
+
+        return action;
+    }
+
+    private void waitExtraTime(final long responseTime) {
+
         // If response took less than MIN_DECISION_TIME_SEC seconds, wait up to MAX_DECISION_TIME_SEC seconds to respond
         if(responseTime < MIN_DECISION_TIME_SEC * 1000) {
 
-            long esperaMinima = MIN_DECISION_TIME_SEC * 1000 - responseTime;
-            long esperaMaxima = MAX_DECISION_TIME_SEC * 1000 - responseTime;
+            long minWait = MIN_DECISION_TIME_SEC * 1000 - responseTime;
+            long maxWait = MAX_DECISION_TIME_SEC * 1000 - responseTime;
 
             // Wait for a random time amount
-            long randomWaitingTime = ThreadLocalRandom.current().nextLong(esperaMinima, esperaMaxima + 1);
+            long randomWaitingTime = ThreadLocalRandom.current().nextLong(minWait, maxWait + 1);
             log.warn("Waiting {} seconds to respond", (int)randomWaitingTime / 1000);
 
             try {
@@ -277,11 +337,12 @@ public abstract class Bot implements IPlayerNotificator {
             }
             catch (InterruptedException e) {}
         }
-
-        return action;
     }
 
-    
+
+    @Override public String getPlayerType() { return "BOT"; }
+    @Override public String getPlayerModel() { return "-"; }
+
     @Override public void notifyPlayerID(IPlayerInfo player) throws IOException {}
     @Override public void notifyPlayerRole(PlayerRole role) throws IOException {}
     @Override public void notifyPlayerCard(Card c) throws IOException {}
@@ -299,13 +360,4 @@ public abstract class Bot implements IPlayerNotificator {
     @Override public void notifyGameLoser() throws IOException {}
     @Override public void notifyOtherPlayerCards(IPlayerInfo other) throws IOException {}
 
-    @Override
-    public String getPlayerType() {
-        return "BOT";
-    }
-
-    @Override
-    public String getPlayerModel() {
-        return "-";
-    }
 }

@@ -1,11 +1,14 @@
 package com.ucm.server.players;
 
 
+import java.time.Duration;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
+import com.ucm.server.exceptions.TurnTimeoutException;
 import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.gameobjects.BotLLMOnline;
 
@@ -54,6 +57,7 @@ public class GeminiLLM extends BotLLMOnline {
         gemini = GoogleAiGeminiChatModel.builder()
                 .apiKey(_apiKey)
                 .modelName("gemini-2.5-flash")
+                .timeout(Duration.ofSeconds(Bot.SECONDS_TIMEOUT))
                 .build();
     }
 
@@ -65,7 +69,7 @@ public class GeminiLLM extends BotLLMOnline {
      * @return model response as {@link String}
      */
     @Override
-    protected String callModel(String prompt) {
+    protected String callModel(String prompt) throws TurnTimeoutException {
         
         String response = GameType.FOLD_ACTION_FULL;
         try {

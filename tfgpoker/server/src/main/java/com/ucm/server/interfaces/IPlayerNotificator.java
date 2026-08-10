@@ -5,6 +5,7 @@ import java.io.IOException;
 import com.ucm.common.BotStyle;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
+import com.ucm.server.exceptions.TurnTimeoutException;
 
 
 
@@ -18,7 +19,7 @@ public interface IPlayerNotificator {
      * @param maxBet current maximum bet
      * @return {@link String} representing the chosen action
      */
-    public String notifyMakePlay(final int sb, final int bb, final int maxBet, final int minRaise, IPlayerInfo player) throws IOException;
+    public String notifyMakePlay(final int sb, final int bb, final int maxBet, final int minRaise, IPlayerInfo player) throws IOException, TurnTimeoutException;
 
     /**
      * Notifies the player the small blind bet made automatically made by him

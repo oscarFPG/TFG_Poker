@@ -9,6 +9,7 @@ import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
+import com.ucm.server.exceptions.TurnTimeoutException;
 import com.ucm.server.interfaces.IPlayerActions;
 import com.ucm.server.interfaces.IPlayerInfo;
 import com.ucm.server.interfaces.IPlayerNotificator;
@@ -210,7 +211,7 @@ public class Player implements IPlayerActions {
 
 
     /* Player methods */
-    public String makePlay(int sb, int bb, int maxBet, int minRaise) throws IOException {
+    public String makePlay(int sb, int bb, int maxBet, int minRaise) throws IOException, TurnTimeoutException {
 
         if(_playerInfo == null)
             return null;

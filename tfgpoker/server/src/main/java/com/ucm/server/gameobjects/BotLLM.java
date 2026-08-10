@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
 import com.ucm.common.gameobjects.Card;
+import com.ucm.server.exceptions.TurnTimeoutException;
 import com.ucm.server.interfaces.IPlayerInfo;
 
 /**
@@ -59,7 +60,7 @@ public abstract class BotLLM extends Bot {
      * @param prompt input prompt describing the game state
      * @return raw response from the model
      */
-    protected abstract String callModel(String prompt);
+    protected abstract String callModel(String prompt) throws IOException, TurnTimeoutException;
 
 
     /**
@@ -211,7 +212,7 @@ public abstract class BotLLM extends Bot {
      * @return sanitized poker action (fold, call, check or raise X)
      */
     @Override
-    public String play(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException {
+    public String play(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException, TurnTimeoutException {
         
         _smallBlind = sb;
         _bigBlind = bb;
@@ -229,4 +230,5 @@ public abstract class BotLLM extends Bot {
     public String getPlayerType() {
         return "BOT_LLM";
     }
+
 }

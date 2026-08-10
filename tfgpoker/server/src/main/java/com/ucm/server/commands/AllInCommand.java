@@ -17,6 +17,7 @@ public class AllInCommand extends Command {
 
     private static final Logger log = LogManager.getLogger(AllInCommand.class);
 
+    
     public AllInCommand() {}
 
     /**

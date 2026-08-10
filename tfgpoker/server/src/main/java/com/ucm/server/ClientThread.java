@@ -28,16 +28,56 @@ public class ClientThread implements Runnable {
 
     private static final Logger log = LogManager.getLogger(ClientThread.class);
 
+    
+    /**
+     * Current player ID
+     */
     private int _playerID;
+
+    /**
+     * The socket connected to the client
+     */
     private Socket _socket;
+
+    /**
+     * Players name
+     */
     private String _playerName;
+
+    /**
+     * Indicates if the player is the host of the game
+     */
     private boolean _isHost;
 
+
+    /**
+     * The server socket for the game. This is closed by the host to stop allowing players to join and start the game
+     */
     private ServerSocket _serverSocket;
+
+    /**
+     * The unique ID generator for all the players
+     */
     private AtomicInteger _id;
+
+    /**
+     * List of players in the room
+     */
     private List<ClientThread> _roomPlayerList;
+
+    /**
+     * List of bots in the room
+     */
     private List<BotStruct> _roomBotsList;
+
+    /**
+     * Game spectator. This can be null
+     */
     private Spectator _spectator;
+
+    /**
+     * Selected game configuration by the host
+     */
     private GameConfig _gameConfig;
 
 
