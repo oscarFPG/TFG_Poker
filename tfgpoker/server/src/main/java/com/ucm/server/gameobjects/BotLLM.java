@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
 import com.ucm.common.gameobjects.Card;
@@ -38,6 +41,9 @@ import com.ucm.server.interfaces.IPlayerInfo;
  * @see BotLLMOnline
  */
 public abstract class BotLLM extends Bot {
+
+
+    private static final Logger log = LogManager.getLogger(BotLLM.class);
 
 
     /**
@@ -217,11 +223,14 @@ public abstract class BotLLM extends Bot {
         _smallBlind = sb;
         _bigBlind = bb;
         _maxBet = maxBet;
+        _player = player;
 
         String prompt = buildPrompt(sb, bb, maxBet, player);
         String response = callModel(prompt);
         String action = extractAction(response);
         String sanitized = sanitize(action, player);
+
+        log.warn("---- Bot {} response is {} ----", player.getPlayerName(), sanitized);
 
         return sanitized;
     }

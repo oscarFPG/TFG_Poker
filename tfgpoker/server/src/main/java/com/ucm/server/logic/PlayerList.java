@@ -292,7 +292,7 @@ public class PlayerList implements Iterable<Node> {
         // Select as small blind:
         // 1. First player if there is only two players -> playsToMake == 1
         // 2. Next player from first if there is more than two players -> playsToMake > 1
-        Node current = (playersRemaining == 2) ? _first : _first._next;
+        Node current = (playersRemaining == 2) ? _first : getNextPlayerActive(_first);
         try {
 
             current._hasActed = false;

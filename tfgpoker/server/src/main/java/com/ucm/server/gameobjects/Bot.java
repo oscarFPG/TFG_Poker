@@ -322,9 +322,9 @@ public abstract class Bot implements IPlayerNotificator {
 
         // Check response time
         long responseTime = System.currentTimeMillis() - startTime;
-        log.warn("Bot {} response took {} miliseconds", player.getPlayerName(), responseTime);
+        //log.warn("Bot {} response took {} miliseconds", player.getPlayerName(), responseTime);
         
-        waitExtraTime(responseTime);
+        //waitExtraTime(responseTime);
 
         return action;
     }
@@ -344,7 +344,7 @@ public abstract class Bot implements IPlayerNotificator {
 
             // Wait for a random time amount
             long randomWaitingTime = ThreadLocalRandom.current().nextLong(minWait, maxWait + 1);
-            log.warn("Waiting {} seconds to respond", (int)randomWaitingTime / 1000);
+            //log.warn("Waiting {} seconds to respond", (int)randomWaitingTime / 1000);
 
             try {
                 Thread.sleep(randomWaitingTime);

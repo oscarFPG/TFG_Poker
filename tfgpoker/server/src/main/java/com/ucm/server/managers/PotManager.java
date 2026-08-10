@@ -216,6 +216,8 @@ public class PotManager {
                 distribution.add(aux);
         }
 
+        distribution.removeIf( dist -> dist.potPrize() == 0);
+
         return distribution;
     }
 

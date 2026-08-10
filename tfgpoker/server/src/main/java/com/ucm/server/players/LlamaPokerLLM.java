@@ -9,8 +9,6 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -123,7 +121,7 @@ public class LlamaPokerLLM extends BotLLM {
 
             // Replace special characters
             cleanResponse = cleanResponse.replace("\\u003c", "<")
-                            .replace("\\u003e", ">");
+                                .replace("\\u003e", ">");
         } 
         catch(SocketTimeoutException e) {
             log.error("Ollama bot {} took too much time to respond! Action made in this case: FOLD", MODEL_NAME);
@@ -136,14 +134,15 @@ public class LlamaPokerLLM extends BotLLM {
     @Override
     protected String extractAction(String text) {
 
-        Pattern p = Pattern.compile("<action>(.*?)</action>", Pattern.DOTALL);
-        Matcher m = p.matcher(text);
+        // Replace special characters
+        text = text
+                .replaceAll("<action>", "")
+                .replaceAll("</action>", "")
+                .replaceAll("answer", "")
+                .replaceAll("chips", "")
+                .replaceAll("\\s+", "");
 
-        if (m.find()) {
-            return m.group(1).trim();
-        }
-
-        return "fold";
+        return text;
     }
 
     @Override
@@ -159,15 +158,13 @@ public class LlamaPokerLLM extends BotLLM {
             return GameType.CHECK_ACTION_FULL;
 
         
-        // Raise action
+        // Raise action as -> raise <amount>
         action = action.replace("bet", "raise");
+        action = action.replaceFirst("^(raise)(\\d+)$", "$1 $2");
 
-        Pattern p = Pattern.compile("^raise\\s+(\\d+(\\.\\d+)?)$");
-        Matcher m = p.matcher(action);
-        if (m.find()) {
-            String targetBet = m.group(1);
-            return GameType.RAISE_ACTION_FULL + " " + targetBet;
-        }
+        if( action.matches("raise \\d+") )
+            return action;
+        
 
         return GameType.FOLD_ACTION_FULL;
     }

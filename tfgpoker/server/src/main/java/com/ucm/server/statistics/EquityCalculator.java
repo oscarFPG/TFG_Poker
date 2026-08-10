@@ -33,7 +33,7 @@ import com.ucm.server.middleclasses.PlayerEvaluation;
 
 public class EquityCalculator {
 
-     /** Number of simulations used in Monte Carlo approximation */
+    /** Number of simulations used in Monte Carlo approximation */
     private static final int MONTE_CARLO_SIMULATIONS = 30000;
 
     /**
@@ -97,14 +97,14 @@ public class EquityCalculator {
         return result;
     }
 
-   /**
+    /**
      * Calculates equity on turn by iterating all possible river cards.
      *
      * @param players players
      * @param tableCards board with 4 known cards
      * @param deck remaining deck
      * @return normalized equity
- * @throws EvaluatorException 
+     * @throws EvaluatorException 
      */
     private static Map<Integer, Double> calculateTurn(
             List<HandInfo> players,
@@ -132,14 +132,14 @@ public class EquityCalculator {
         return normalize(wins);
     }
 
-   /**
+    /**
      * Calculates equity on flop by iterating all possible turn and river combinations.
      *
      * @param players players
      * @param tableCards board with 3 known cards
      * @param deck remaining deck
      * @return normalized equity
- * @throws EvaluatorException 
+     * @throws EvaluatorException 
      */
     private static Map<Integer, Double> calculateFlop(
             List<HandInfo> players,
@@ -274,26 +274,26 @@ public class EquityCalculator {
     /**
      * Returns the list of winning players (handles ties).
      */
-   private static List<Integer> getWinners(List<PlayerEvaluation> evals) {
+    private static List<Integer> getWinners(List<PlayerEvaluation> evals) {
 
-    int best = evals.stream()
-            .mapToInt(e -> e.playerRank()) 
-            .min()
-            .orElse(Integer.MAX_VALUE);
+        int best = evals.stream()
+                .mapToInt(e -> e.playerRank()) 
+                .min()
+                .orElse(Integer.MAX_VALUE);
 
-    List<Integer> winners = new ArrayList<>();
+        List<Integer> winners = new ArrayList<>();
 
-    for (PlayerEvaluation e : evals) {
-        if (e.playerRank() == best) {
-            winners.add(e.playerID());
+        for (PlayerEvaluation e : evals) {
+            if (e.playerRank() == best) {
+                winners.add(e.playerID());
+            }
         }
+
+        return winners;
     }
 
-    return winners;
-}
 
-
-     /**
+    /**
      * Completes board with given extra cards.
      */
     private static Card[] completeBoard(Card[] tableCards, Card... extra) {
@@ -313,7 +313,7 @@ public class EquityCalculator {
     }
 
 
-     /**
+    /**
      * Fills missing board cards randomly from available deck.
      */
     private static Card[] fillRandomBoard(
@@ -335,4 +335,5 @@ public class EquityCalculator {
 
         return board;
     }
+
 }
