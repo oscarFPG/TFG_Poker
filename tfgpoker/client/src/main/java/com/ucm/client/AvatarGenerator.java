@@ -21,7 +21,7 @@ public class AvatarGenerator {
     public static Image generateBot(String name, int size) {
 
         String type = getTypeBot(name);
-        BotStyle style = BotStyle.createByName(name);
+        String style = name.substring(name.length() - 2);
         
         return generateBotAvatar(size, generateBotColor(type), style);
     }
@@ -53,7 +53,7 @@ public class AvatarGenerator {
         return Color.hsb(hue, 0.7, 0.9);
     }
 
-    private static Image generateBotAvatar(int size, Color mainColor, BotStyle style) {
+    private static Image generateBotAvatar(int size, Color mainColor, String style) {
 
         Canvas canvas = new Canvas(size, size);
         GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -79,54 +79,74 @@ public class AvatarGenerator {
         return image;
     }
 
-    private static void generateEyesByStyle(GraphicsContext gc, int size, BotStyle style){
+    private static void generateEyesByStyle(GraphicsContext gc, int size, String style){
         switch (style) {
-            case DEFAULT -> {
+            case GameType.DEFAULT_SHORTCUT -> {
                 gc.setFill(Color.CYAN);
-                gc.fillOval(size * 0.28, size * 0.33, size * 0.10, size * 0.10);
-
+                double eyeSize = size * 10;
+                gc.fillRect(size * 0.30, size * 0.37, eyeSize, eyeSize);
+                gc.fillRect(size * 0.30, size * 0.37, eyeSize, eyeSize);
             }
-            case TIGHT_PASSIVE -> {
+            case GameType.TIGHT_PASSIVE_SHORTCUT -> {
                 gc.setStroke(Color.CYAN);
-                gc.strokeLine(size * 0.28, size * 0.38, size * 0.38, size * 0.38);
+                gc.strokeLine(size * 0.28, size * 0.42, size * 0.38, size * 0.42);
+                gc.strokeLine(size * 0.62, size * 0.42, size * 0.72, size * 0.42);
             }
-            case TIGHT_AGGRESSIVE -> {
+            case GameType.TIGHT_AGGRESSIVE_SHORCUT -> {
                 gc.setStroke(Color.ORANGE);
-                gc.strokeLine(size * 0.28, size * 0.42, size * 0.38, size * 0.35);
+                gc.strokeLine(size * 0.28, size * 0.43, size * 0.38, size * 0.36);
             }
-            case LOOSE_PASSIVE -> {
+            case GameType.LOOSE_PASSIVE_SHORCUT -> {
                 gc.setFill(Color.LIMEGREEN);
-                gc.fillOval(size * 0.28, size * 0.32, size * 0.12, size * 0.12);
+                double eyeWidth = size * 0.14;
+                double eyeHeight = size * 0.08;
+                gc.fillRoundRect(size * 0.28, size * 0.36, eyeWidth, eyeHeight, 3, 3);
+                gc.fillRoundRect(size * 0.58, size * 0.36, eyeWidth, eyeHeight, 3, 3);
             }
-            case LOOSE_AGGRESSIVE -> {
+            case GameType.LOOSE_AGGRESSIVE_SHORCUT -> {
                 gc.setFill(Color.YELLOW);
-                gc.fillOval(size * 0.26, size * 0.30, size * 0.14, size * 0.14);
+                double eyeWidth = size * 0.16;
+                double eyeHeight = size * 0.10;
+                gc.fillRect(size * 0.26, size * 0.34, eyeWidth, eyeHeight);
+
+                gc.setStroke(Color.ORANGE);
+                gc.setLineWidth(size * 0.02);
+
+                gc.strokeLine(size * 0.24, size * 0.31, size * 0.43, size * 0.31);
+                gc.strokeLine(size * 0.57, size * 0.31, size * 0.76, size * 0.31);
             }
-            case MANIAC -> {
+            case GameType.MANIAC_SHORCUT -> {
                 gc.setFill(Color.RED);
-                gc.fillOval(size * 0.24, size * 0.28, size * 0.16, size * 0.16);
+                double eyeSize = size * 0.16;
+                gc.fillRect(size * 0.22, size * 0.30, eyeSize, eyeSize);
+                gc.fillRect(size * 0.62, size * 0.30, eyeSize, eyeSize);
+
+                gc.setStroke(Color.RED.brighter());
+
+                gc.strokeRect(size * 0.21, size * 0.29, eyeSize + 2, eyeSize + 2);
+                gc.strokeRect(size * 0.61, size * 0.29, eyeSize + 2, eyeSize + 2);
             }
         }
     }
 
-    private static void  generateMouthByStyle(GraphicsContext gc, int size, BotStyle style){
+    private static void  generateMouthByStyle(GraphicsContext gc, int size, String style){
         switch (style) {
-            case DEFAULT -> {
+            case GameType.DEFAULT_SHORTCUT -> {
                 gc.strokeLine(size * 0.35, size * 0.65, size * 0.65, size * 0.65);
             }
-            case TIGHT_PASSIVE -> {
+            case GameType.TIGHT_PASSIVE_SHORTCUT -> {
                 gc.strokeLine(size * 0.38, size * 0.67, size * 0.62, size * 0.67);
             }
-            case TIGHT_AGGRESSIVE -> {
+            case GameType.TIGHT_AGGRESSIVE_SHORCUT -> {
                 gc.strokeLine(size * 0.35, size * 0.68, size * 0.65, size * 0.62);
             }
-            case LOOSE_PASSIVE -> {
+            case GameType.LOOSE_PASSIVE_SHORCUT -> {
                 gc.strokeArc(size * 0.35, size * 0.58, size * 0.30, size * 0.15, 180, 180, javafx.scene.shape.ArcType.OPEN);
             }
-            case LOOSE_AGGRESSIVE -> {
+            case GameType.LOOSE_AGGRESSIVE_SHORCUT -> {
                 gc.strokeArc(size * 0.30, size * 0.55, size * 0.40, size * 0.20, 180, 180, javafx.scene.shape.ArcType.OPEN);
             }
-            case MANIAC -> {
+            case GameType.MANIAC_SHORCUT -> {
                 gc.setStroke(Color.RED);
                 gc.strokeArc(size * 0.28, size * 0.54, size * 0.44, size * 0.22, 180, 180, javafx.scene.shape.ArcType.OPEN);
                 for(int i = 0; i < 5; i++) {
