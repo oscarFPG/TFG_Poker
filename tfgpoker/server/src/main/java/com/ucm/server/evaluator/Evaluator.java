@@ -28,6 +28,10 @@ import com.ucm.server.middleclasses.PlayerEvaluation;
  */
 public class Evaluator {
 
+    /**
+     * Enumeration representing the different ranks of poker hands.
+     * The ranks are ordered from lowest to highest.
+     */
     public enum RANK {
         HIGH_CARD,
         ONE_PAIR,
@@ -40,20 +44,67 @@ public class Evaluator {
         STRAIGHT_FLUSH
     }
 
+    /**
+     * Array of prime numbers used for encoding card values in the hand evaluation algorithm.
+     * Each prime number corresponds to a card rank, starting from 2 (for rank 2) to 14 (for rank Ace).
+     * The prime numbers are used to create a unique product for each combination of card ranks, allowing for efficient hand evaluation.
+     */
     private static final  int PRIME_NUMBERS[] = { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41 };
 
+    /**
+     * Lookup tables used for evaluating poker hands.
+     * Is used to determine the rank of flush hands, while the {@link #_unique5} array is used for unique 5-card combinations.
+     * These tables are used in conjunction with the {@link #evaluate5hand(int, int, int, int, int)} and {@link #evaluate7hand(int[])} methods to efficiently determine the best hand value for a given set of cards.
+     */
     private static short _flushes[];
+
+    /**
+     * Lookup tables used for evaluating poker hands.
+     * The {@link #_hashAdjust} array is used for adjusting the hash values of card combinations, while the {@link #_hashValues} array is used to store the final hand values for different card combinations.
+     * These tables are used in conjunction with the {@link #evaluate5hand(int, int, int, int, int)} and {@link #evaluate7hand(int[])} methods to efficiently determine the best hand value for a given set of cards.
+     */
     private static short _unique5[];
+
+    /**
+     * Lookup tables used for evaluating poker hands.
+     * The {@link #_hashAdjust} array is used for adjusting the hash values of card combinations, while the {@link #_hashValues} array is used to store the final hand values for different card combinations.
+     * These tables are used in conjunction with the {@link #evaluate5hand(int, int, int, int, int)} and {@link #evaluate7hand(int[])} methods to efficiently determine the best hand value for a given set of cards.
+     */
     private static short _hashAdjust[];
+
+    /**
+     * Lookup tables used for evaluating poker hands.
+     * The {@link #_hashAdjust} array is used for adjusting the hash values of card combinations, while the {@link #_hashValues} array is used to store the final hand values for different card combinations.
+     * These tables are used in conjunction with the {@link #evaluate5hand(int, int, int, int, int)} and {@link #evaluate7hand(int[])} methods to efficiently determine the best hand value for a given set of cards.
+     */
     private static short _hashValues[];
 
+    /**
+     * Singleton instance of the Evaluator class.
+     * This instance is used to ensure that only one instance of the Evaluator class is created and shared across the application, allowing for efficient hand evaluation without the need to repeatedly load the lookup tables.
+     * The instance is initialized when the {@link #getInstance()} method is called for the first time, and subsequent calls to this method will return the same instance.
+     * @see #getInstance()
+     */
     private static Evaluator instance;
 
 
+
+    /**
+     * Private constructor for the Evaluator class.
+     * This constructor is responsible for loading the lookup tables used for hand evaluation.
+     * @throws EvaluatorException if there is an error loading the lookup tables, such as missing or malformed files.
+     */
     private Evaluator() throws EvaluatorException {
         loadEvaluator();
     }
 
+    /**
+     * Returns the singleton instance of the Evaluator class.
+     * If the instance has not been created yet, it will be initialized by calling the private constructor, which loads the lookup tables used for hand evaluation.
+     * @see #Evaluator()
+     * @return the singleton instance of the Evaluator class
+     * @throws EvaluatorException if there is an error loading the lookup tables, such as missing or malformed files.
+     */
     public static Evaluator getInstance() throws EvaluatorException {
 
         if (instance == null) {
@@ -64,6 +115,12 @@ public class Evaluator {
     }
 
 
+    /**
+     * Reads a resource file from the classpath and returns its contents as a list of strings, where each string represents a line in the file.
+     * The resource file is expected to be located in the "/arrays/" directory within the classpath.
+     * @param fileName the name of the resource file to read (e.g., "flushes.txt", "unique.txt", etc.)
+     * @return a list of strings representing the lines in the resource file
+     */
     private static List<String> getFileResource(String fileName) {
 
         String resourcePath = "/arrays/" + fileName;
@@ -81,6 +138,11 @@ public class Evaluator {
         }
     }
 
+    /**
+     * Loads the lookup tables used for evaluating poker hands from resource files.
+     * The method reads the contents of the "flushes.txt", "unique.txt", "hash_adjust.txt", and "hash_values.txt" files, and populates the corresponding arrays used for hand evaluation.
+     * @throws EvaluatorException if there is an error loading the lookup tables, such as missing or malformed files.
+     */
     private void loadEvaluator() throws EvaluatorException {
 
         try {
@@ -115,6 +177,13 @@ public class Evaluator {
         }
     }
 
+    /**
+     * Evaluates the best poker hand for each player based on their hole cards and the community cards on the table.
+     * The method calculates the best 5-card hand for each player by considering all possible combinations of their hole cards and the community cards, and returns a list of PlayerEvaluation objects containing the player ID and their best hand value.
+     * @param playerHands a list of HandInfo objects representing the hole cards of each player, where each HandInfo object contains the player ID and their two hole cards
+     * @param tableCards an array of Card objects representing the community cards on the table (flop, turn, and river)
+     * @return a list of {@link PlayerEvaluation} objects, where each object contains the player ID and their best hand value based on the evaluated hands
+     */
     public List<PlayerEvaluation> evaluateAllHands(List<HandInfo> playerHands, Card[] tableCards) {
 
         List<PlayerEvaluation> playersEval = new ArrayList<>( playerHands.size() );
@@ -161,6 +230,16 @@ public class Evaluator {
         return playersEval;
     }
 
+    /**
+     * Evaluates the best 5-card poker hand from the given 5 encoded card values.
+     * The method uses precomputed lookup tables to efficiently determine the rank of the hand based on the encoded card values, which include information about the card ranks and suits.
+     * @param card1 the encoded value of the first card
+     * @param card2 the encoded value of the second card
+     * @param card3 the encoded value of the third card
+     * @param card4 the encoded value of the fourth card
+     * @param card5 the encoded value of the fifth card
+     * @return a short value representing the rank of the best 5-card hand, where lower values indicate stronger hands (e.g., a straight flush has a lower value than a high card)
+     */
     public short evaluate5hand(final int card1, final int card2, final int card3, final int card4, final int card5) {
 
         int q = (card1 | card2 | card3 | card4 | card5) >>> 16;
@@ -186,8 +265,8 @@ public class Evaluator {
      * including at least one of players card
      * Both cards must be the first two on the array
      * 
-     * @param cards
-     * @return
+     * @param cards the array of encoded card values
+     * @return the best hand value among all possible 5-card combinations
      */
     private short evaluate7hand(final int[] cards) {
 
@@ -227,6 +306,12 @@ public class Evaluator {
         return bestHandValue;
     }
 
+    /**
+     * This method calculates a hash value for the given integer input using a series of bitwise operations and adjustments based on precomputed lookup tables.
+     * The resulting hash value is used for efficient hand evaluation in the poker hand evaluator.
+     * @param u the integer input for which to calculate the hash value
+     * @return an integer representing the calculated hash value based on the input and the lookup tables
+     */
     private int findFast(int u) {
 
         int a, b, r;
@@ -242,12 +327,23 @@ public class Evaluator {
         return r;
     }
 
+    /**
+     * Returns the name of the poker hand rank corresponding to the given hand value.
+     * The method uses the {@link #handRank(short)} method to determine the rank of the hand based on the provided hand value, and then returns the name of the rank as a string.
+     * @param val the hand value for which to determine the rank name
+     * @return the name of the poker hand rank
+     */
     public static String getRankName(short val) {
 
         RANK rank = handRank(val);
         return rank.name();
     }
 
+    /**
+     * Determines the rank of a poker hand based on the given hand value.
+     * @param val the hand value for which to determine the rank
+     * @return the {@link RANK} enumeration value representing the rank of the hand
+     */
     public static RANK handRank(short val) {
 
         if (val > 6185)
@@ -270,6 +366,12 @@ public class Evaluator {
             return RANK.STRAIGHT_FLUSH; // 10 straight-flushes
     }
 
+    /**
+     * Encodes a Card object into an integer representation used for hand evaluation.
+     * The encoding includes information about the card's rank, suit, and a unique prime number associated with the card's rank, allowing for efficient hand evaluation using precomputed lookup tables.
+     * @param c the {@link Card} object to encode, which contains the card's rank and suit
+     * @return the encoded integer value representing the card
+     */
     public static int encodeCard(Card c) {
 
         int prime = Evaluator.PRIME_NUMBERS[c.getNumber() - 2];
@@ -280,6 +382,12 @@ public class Evaluator {
         return prime | (rank << 8) | (suit << 12) | (bitmask << 16);
     }
 
+    /**
+     * Encodes a Suit enumeration value into an integer representation used for hand evaluation.
+     * The encoding assigns a unique integer value to each suit, allowing for efficient hand evaluation using precomputed lookup tables.
+     * @param suit the {@link Suit} enumeration value to encode, which represents the suit of a card (e.g., SPADES, HEARTS, DIAMONDS, CLUBS)
+     * @return the encoded integer value representing the suit
+     */
     private static int encodeSuit(Suit suit) {
 
         switch (suit) {

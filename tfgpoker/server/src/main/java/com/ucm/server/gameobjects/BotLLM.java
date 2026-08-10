@@ -226,6 +226,10 @@ public abstract class BotLLM extends Bot {
         return sanitized;
     }
     
+    /**
+     * Returns the type of player, which is "BOT_LLM" for all large language model based bot instances.
+     * @return "BOT_LLM"
+     */
     @Override
     public String getPlayerType() {
         return "BOT_LLM";

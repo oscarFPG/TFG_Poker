@@ -1,5 +1,12 @@
 # TFG_Poker
 
+# Generar Javadoc
+- Desde tfgpoker/
+  - Crear Javadoc de server
+    - mvn -pl server javadoc:javadoc
+- Abrir el archivo de la carpeta tfgpoker/server/documentation/javadoc/apidocs/index.html
+
+
 # Indice
 Seccion [integrantes](#integrantes)\
 Seccion [requisitos del proyecto](#requisitos-del-proyecto)\
@@ -10,7 +17,6 @@ Seccion [canvas](#canvas)\
 Seccion [interfaz](#interfaz)\
 Seccion [ideas](#ideas)\
 Seccion [patrones de diseño empleados](#patrones-de-diseño-empleados)
-
 
 # Integrantes
 - Óscar Fabian Pineda German

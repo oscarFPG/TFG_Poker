@@ -17,7 +17,10 @@ public class AllInCommand extends Command {
 
     private static final Logger log = LogManager.getLogger(AllInCommand.class);
 
-    
+    /**
+     * Default constructor for the AllInCommand class.
+     * This constructor is used to create an instance of the AllInCommand without specifying a player.
+     */
     public AllInCommand() {}
 
     /**
@@ -31,11 +34,17 @@ public class AllInCommand extends Command {
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
 	protected Command createCommand(final String[] commandFormat, final IPlayerActions player){
 		return new AllInCommand(player);
 	}
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
 
@@ -67,11 +76,17 @@ public class AllInCommand extends Command {
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getCommandFormat() {
         return GameType.ALL_IN_ACTION_FULL;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getCommandFormatShortcut() {
         return GameType.ALL_IN_ACTION_SHORTCUT;

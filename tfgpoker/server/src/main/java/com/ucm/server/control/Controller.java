@@ -8,32 +8,35 @@ import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.server.logic.Game;
 
-
+/**
+ * Class that represents the Controller of the poker game.
+ * It is responsible for managing the flow of the game, including player actions and game state transitions.
+ */
 public class Controller {
 
     private static final Logger log = LogManager.getLogger(Controller.class);
 
     /**
-     * Atributo que referencia la clase Game
+     * Reference to the game instance that this controller will manage.
+     * @see Game
      */
     private Game _game;
 
-
+    /**
+     * Constructor for the Controller class.
+     * @param game the game instance that this controller will manage
+     */
     public Controller(Game game) {
         _game = game;
     }
 
+
     /**
-     * Controller constructor only for debugging purposes.
-     * It will be used in the local mode of the server, where no clients are needed.
-     * @param game The game instance to control.
-     * @param numPlayers The number of local players to add to the game.
+     * Runs the poker game, managing the flow of hands and player actions until the game ends.
+     * This method handles the different stages of a poker hand, including pre-flop, flop, turn, river, and showdown.
+     * It also manages the transition between hands and checks for end-of-game conditions.
+     * @throws CancelGameException if the game is cancelled by any reason or error
      */
-    public Controller(Game game, int numPlayers) {
-        _game = game;
-    }
-
-
     public void run() throws CancelGameException {
 
         int handCounter = 0;

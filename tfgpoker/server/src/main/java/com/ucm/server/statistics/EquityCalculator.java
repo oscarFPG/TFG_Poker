@@ -8,9 +8,9 @@ import java.util.Random;
 
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.Deck;
 import com.ucm.server.evaluator.Evaluator;
 import com.ucm.server.exceptions.EvaluatorException;
-import com.ucm.server.gameobjects.Deck;
 import com.ucm.server.middleclasses.HandInfo;
 import com.ucm.server.middleclasses.PlayerEvaluation;
 

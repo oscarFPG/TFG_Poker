@@ -16,7 +16,9 @@ public class CheckCommand extends Command {
 
     private static final Logger log = LogManager.getLogger(CheckCommand.class);
 
-
+    /**
+     * Default constructor for the CheckCommand class.
+     */
     public CheckCommand() {}
 
     /**
@@ -28,11 +30,19 @@ public class CheckCommand extends Command {
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
 	protected Command createCommand(final String[] commandFormat, final IPlayerActions player){
 		return new CheckCommand(player);
 	}
 
+    /**
+     * {@inheritDoc}
+     * 
+     * This method can create a {@link CallCommand} and execute it under the right conditions, and execute it instead of the CheckCommand.
+     */
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
 
@@ -51,21 +61,33 @@ public class CheckCommand extends Command {
         return CommandResult.continuePlaying(0, false);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getCommandName() {
         return "CHECK";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getCommandDescription() {
         return "If there is no bet just pass your turn without betting.";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getCommandFormat() {
         return GameType.CHECK_ACTION_FULL;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getCommandFormatShortcut() {
         return GameType.CHECK_ACTION_SHORTCUT;

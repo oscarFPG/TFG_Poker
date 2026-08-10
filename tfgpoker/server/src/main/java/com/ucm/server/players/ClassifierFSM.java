@@ -14,31 +14,38 @@ import com.ucm.server.gameobjects.BotFSM;
 import com.ucm.server.interfaces.IPlayerInfo;
 
 
+
+/**
+ * This class represents a bot that uses a finite state machine (FSM) to decide its next move in a poker game.
+ * The bot evaluates the total value of the cards on the table and in its hand to determine its action, which can be folding, calling/checking, raising, or going all-in.
+ */
 public class ClassifierFSM extends BotFSM {
 
     private static final Logger log = LogManager.getLogger(ClassifierFSM.class);
 
+    /**
+     * The unique identifier for this FSM bot, which is used to distinguish it from other types of bots in the game.
+     */
     private static final int FSM_ID = GameType.BOT_FSM_1;
 
 
 
+    /**
+     * Constructs a new instance of the ClassifierFSM bot with a unique identifier.
+     * The constructor initializes the bot by calling the superclass constructor with the {@link #FSM_ID}.
+     */
     public ClassifierFSM() {
         super(FSM_ID);
     }
 
 
+    /**
+     * Plays the next move for the bot based on the current game state, including the small blind (sb), big blind (bb), maximum bet (maxBet), and player information (player).
+     * The bot evaluates the total value of the cards on the table and in its hand to determine its action, which can be folding, calling/checking, raising, or going all-in.
+     */
     @Override
     public String play(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException, TurnTimeoutException {
         
-        // wait 80 seconds
-        try {
-            log.warn("Waiting for 80 seconds to response...");
-            Thread.sleep(80 * 1000);
-        }
-        catch (InterruptedException e) {
-            throw new TurnTimeoutException();
-        }
-
         // Get table cards values -> Zero if there is no card on the table
         int valueTC1 = 0;
         int valueTC2 = 0;

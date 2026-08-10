@@ -1,12 +1,8 @@
-package com.ucm.server.gameobjects;
+package com.ucm.common.gameobjects;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import com.ucm.common.gameobjects.Card;
-import com.ucm.common.gameobjects.Suit;
-import com.ucm.server.logic.Game;
 
 
 /**
@@ -17,7 +13,9 @@ import com.ucm.server.logic.Game;
  */
 public class Deck {
 
-
+    /**
+     * Debug seed for testing purposes.
+     */
     private static final int DEBUG_SEED = 123;
 
     /**
@@ -52,15 +50,15 @@ public class Deck {
      * Class constructor, initializes the deck and the random object.
      */
     public Deck() {
-
-        if(Game.DEBUG)
-            _random = new Random(DEBUG_SEED);
-        else
-            _random = new Random();
-        
+        _random = new Random();
         initializeDeck();
     }
 
+    /**
+     * Class constructor, initializes the deck and the random object with a specific seed.
+     * This method is useful for testing purposes, as it allows to reproduce the same sequence of random cards.
+     * @param seed seed used to initialize the random object, useful for testing purposes.
+     */
     public Deck(final long seed) {
         _random = new Random(seed);
         initializeDeck();

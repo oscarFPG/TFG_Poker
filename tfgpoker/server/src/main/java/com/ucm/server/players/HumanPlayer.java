@@ -17,6 +17,13 @@ import com.ucm.server.interfaces.IPlayerInfo;
 import com.ucm.server.interfaces.IPlayerNotificator;
 
 
+/**
+ * Represents a human player in the poker game, responsible for handling communication with the player's client via a socket connection.
+ * This class implements the {@link IPlayerNotificator} interface to send game state updates and receive player actions.
+ * It manages the player's turn, notifies them of game events, and processes their responses.
+ * 
+ * This is directly related to the implementation of the client-side logic, which is expected to handle the messages sent by this class and respond accordingly.
+ */
 public class HumanPlayer implements IPlayerNotificator {
 
     private static final Logger log = LogManager.getLogger(HumanPlayer.class);

@@ -19,17 +19,21 @@ public class RaiseCommand extends Command {
 
     private static final Logger log = LogManager.getLogger(RaiseCommand.class);
 
+    /**
+     * The target bet amount that the player wants to raise to.
+     */
     protected int _targetBet;
     
 
+    /**
+     * Default constructor for the RaiseCommand class.
+     */
     public RaiseCommand() {}
 
     /**
      * Constructor for the RaiseCommand class.
      * @param p the player who is raising
-     * @param newBet the new bet amount that the player wants to raise to
-     * @param money the total amount of money that the player has not bet yet.
-     * @param pocketMoney the amount of money that the player has already bet in the current hand.
+     * @param targetBet the new bet amount that the player wants to raise to
      */
     public RaiseCommand(IPlayerActions p, int targetBet) {
         super(p);
@@ -37,6 +41,11 @@ public class RaiseCommand extends Command {
     }
     
 
+    /**
+     * {@inheritDoc}
+     * 
+     * The format to create a RaiseCommand is "RAISE <amount>", where <amount> is the new bet amount that the player wants to raise to.
+     */
     @Override
     protected Command createCommand(String[] commandFormat, IPlayerActions player) {
         
@@ -56,6 +65,11 @@ public class RaiseCommand extends Command {
     }
 
 
+    /**
+     * {@inheritDoc}
+     * 
+     * This method can create an {@link AllInCommand}, a {@link CheckCommand}, or a {@link CallCommand} under the right conditions, and execute them instead of the RaiseCommand.
+     */
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
 
@@ -100,11 +114,17 @@ public class RaiseCommand extends Command {
         return "Increase the current bet to a new amount.";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getCommandFormat() {
         return GameType.RAISE_ACTION_FULL;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getCommandFormatShortcut() {
         return GameType.RAISE_ACTION_SHORTCUT;

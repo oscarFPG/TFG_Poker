@@ -26,14 +26,33 @@ import com.ucm.server.gameobjects.Player;
 import com.ucm.server.interfaces.IPlayerInfo;
 
 
+/**
+ * Concrete implementation of a poker bot powered by the Llama3 LLM.
+ */
 public class LlamaPokerLLM extends BotLLM {
 
     private static final Logger log = LogManager.getLogger(LlamaPokerLLM.class);
 
+    /**
+     * The unique identifier for this Llama LLM bot, which is used to distinguish it from other types of bots in the game.
+     */
     private static final String OLLAMA_URL = "http://localhost:11434/api/generate";
+
+    /**
+     * The unique identifier for this Llama LLM bot, which is used to distinguish it from other types of bots in the game.
+     */
     private static final int LLAMA_ID = GameType.BOT_LLAMA;
+
+    /**
+     * The name of the bot, which is used for display purposes in the game interface.
+     */
     public static final String MODEL_NAME = "llamaPokerBot";
 
+
+    /**
+     * Constructs a new instance of the LlamaPokerLLM bot with a unique identifier and a specified style.
+     * @param style the style of the bot, which can influence its decision-making behavior
+     */
     public LlamaPokerLLM(BotStyle style) {
         super(LLAMA_ID, style);
     }
@@ -226,39 +245,12 @@ public class LlamaPokerLLM extends BotLLM {
         return strBuilder.toString();
     }
 
-    // VA MAS RAPIDO PERO ACIERTA CON MENOS FRECUENCIA 
-    private String reducedPrompt(int sb, int bb, int maxBet, IPlayerInfo player) {
-
-        StringBuilder strBuilder = new StringBuilder();
-
-        strBuilder.append("You are a specialist in playing 9-handed No Limit Texas Holdem.\n\n");
-
-        strBuilder.append("Here is a game summary:\n\n");
-
-        strBuilder.append("Position: ").append(mapRole( player.getRole() )).append("\n");
-        strBuilder.append("Hand: ").append(formatCardsVerbose( List.of(player.getPlayerCards()) )).append("\n");
-
-        if (!table.isEmpty()) {
-            strBuilder.append("Board: ").append(formatCardsVerbose(table)).append("\n");
-        }
-
-        strBuilder.append("Stack: ").append( player.getMoneyOffBet() ).append("\n");
-        strBuilder.append("Pot: ").append(_totalPot).append("\n");
-        strBuilder.append("Blinds: ").append(sb / 2.0).append("/").append(bb).append("\n\n");
-
-        strBuilder.append("Action history: ").append(getPreflopHistory()).append(".\n");
-        strBuilder.append("Assume that all other players that is not mentioned folded.\n\n");
-
-        strBuilder.append("It is your turn.\n\n");
-
-        strBuilder.append("Decide on an action based on the strength of your hand on this board, your position, and actions before you. ");
-        strBuilder.append("Do not explain your answer.\n");
-        strBuilder.append("Write your optimal action between this tags <action>answer</action>:");
-
-        return strBuilder.toString();
-    }
-
-
+    /**
+     * Formats a list of cards into a verbose string representation, describing each card's value and suit in a human-readable format.
+     * The output is structured to clearly indicate the cards held by the player or present on the
+     * @param cards the list of {@link Card} objects to be formatted
+     * @return a {@link String} representing the verbose description of the cards
+     */
     private String formatCardsVerbose(List<Card> cards) {
         
         List<String> result = new ArrayList<>();
@@ -295,6 +287,12 @@ public class LlamaPokerLLM extends BotLLM {
         return "[" + String.join(" and ", result) + "]";
     }
 
+    /**
+     * Formats the cards on the table for a specific street (flop, turn, river) into a string representation.
+     * @param start the starting index of the cards on the table for the street
+     * @param end the ending index (exclusive) of the cards on the table for the street
+     * @return a {@link String} representing the formatted cards for the specified street
+     */
     private String formatStreet(int start, int end) {
         List<String> parts = new ArrayList<>();
 
@@ -307,10 +305,19 @@ public class LlamaPokerLLM extends BotLLM {
         return String.join(", ", parts);
     }
 
+    /**
+     * Retrieves the history of actions taken before the flop.
+     * @return a {@link String} representing the preflop action history
+     */
     private String getPreflopHistory() {
         return actionHistory.isEmpty() ? "None" : String.join(", ", actionHistory);
     }
 
+    /**
+     * Retrieves the history of actions taken after the flop, including the turn and river.
+     * If there are no actions recorded, it returns "None".
+     * @return a {@link String} representing the postflop action history
+     */
     private String getPostflopHistory() {
         return actionHistory.isEmpty() ? "None" : String.join(", ", actionHistory);
     }

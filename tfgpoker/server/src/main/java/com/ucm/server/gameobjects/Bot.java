@@ -108,9 +108,17 @@ public abstract class Bot implements IPlayerNotificator {
      */
     protected BotStyle _style = BotStyle.DEFAULT;
 
+    /**
+     * Executor service used to manage bot decision-making tasks with timeouts.
+     * This allows the bot to make decisions asynchronously and ensures that it does not exceed the maximum allowed decision time.
+     */
     private final ExecutorService _playExec = Executors.newCachedThreadPool();
 
 
+    /**
+     * Constructs a bot with a given identifier.
+     * @param botID unique identifier for the bot
+     */
     public Bot(final int botID) {
         _botID = botID;
         table = new ArrayList<>();
@@ -119,9 +127,10 @@ public abstract class Bot implements IPlayerNotificator {
     }
 
     /**
-     * Constructs a bot with a given identifier.
-      *
+     * Constructs a bot with a given identifier and playing style.
      * @param botID unique identifier for the bot
+     * @param style playing style for the bot; if null, defaults to {@link BotStyle#DEFAULT}
+     * @see BotStyle
      */
     public Bot(final int botID, BotStyle style) {
         _botID = botID;
@@ -320,6 +329,11 @@ public abstract class Bot implements IPlayerNotificator {
         return action;
     }
 
+    /**
+     * Waits for a random amount of time between {@link #MIN_DECISION_TIME_SEC} and {@link #MAX_DECISION_TIME_SEC} seconds if the bot's response time was less than {@link #MIN_DECISION_TIME_SEC} seconds.
+     * This is to simulate a more human-like response time and avoid bots responding too quickly.
+     * @param responseTime the time taken by the bot to respond, in milliseconds
+     */
     private void waitExtraTime(final long responseTime) {
 
         // If response took less than MIN_DECISION_TIME_SEC seconds, wait up to MAX_DECISION_TIME_SEC seconds to respond
@@ -340,7 +354,16 @@ public abstract class Bot implements IPlayerNotificator {
     }
 
 
+    /**
+     * Returns the type of player, which is "BOT" for all bot instances.
+     * @return "BOT"
+     */
     @Override public String getPlayerType() { return "BOT"; }
+
+    /**
+     * Returns the player model, which is "-" for all bot instances.
+     * @return "-"
+     */
     @Override public String getPlayerModel() { return "-"; }
 
     @Override public void notifyPlayerID(IPlayerInfo player) throws IOException {}
