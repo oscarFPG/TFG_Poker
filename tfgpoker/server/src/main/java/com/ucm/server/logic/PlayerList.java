@@ -782,7 +782,8 @@ public class PlayerList implements Iterable<Node> {
         else {
 
             Node sb = getPlayerByRole(PlayerRole.SMALL_BLIND);
-            return !sb._player.isFolded() && !sb._isDisconnected ? sb : getNextPlayerActive(sb);
+            return !sb._player.isEliminated() && !sb._player.isFolded() && !sb._isDisconnected ? 
+                sb : getNextPlayerActive(sb);
         }
     }
 

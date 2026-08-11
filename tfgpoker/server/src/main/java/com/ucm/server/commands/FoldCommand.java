@@ -44,7 +44,7 @@ public class FoldCommand extends Command {
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
 
-        log.debug("Player {} makes FOLD", _player.getPlayerName());
+        log.debug("{} makes FOLD", _player.getPlayerName());
 
         _player.fold();
 

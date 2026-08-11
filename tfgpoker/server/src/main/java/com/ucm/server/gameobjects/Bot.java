@@ -112,7 +112,7 @@ public abstract class Bot implements IPlayerNotificator {
      * Executor service used to manage bot decision-making tasks with timeouts.
      * This allows the bot to make decisions asynchronously and ensures that it does not exceed the maximum allowed decision time.
      */
-    private final ExecutorService _playExec = Executors.newCachedThreadPool();
+    private ExecutorService _playExec;
 
 
     /**
@@ -124,6 +124,7 @@ public abstract class Bot implements IPlayerNotificator {
         table = new ArrayList<>();
         actionHistory = new ArrayList<>();
         _style = BotStyle.DEFAULT;
+        _playExec = Executors.newSingleThreadExecutor();
     }
 
     /**
@@ -137,6 +138,7 @@ public abstract class Bot implements IPlayerNotificator {
         table = new ArrayList<>();
         actionHistory = new ArrayList<>();
         _style = (style == null) ? BotStyle.DEFAULT : style;
+        _playExec = Executors.newSingleThreadExecutor();
     }
 
 
@@ -312,9 +314,9 @@ public abstract class Bot implements IPlayerNotificator {
         catch (ExecutionException e) {
 
             log.error(
-            "Error while bot {} was making a decision: {}",
+            "Error while bot {} was making a decision",
                 player.getPlayerName(), 
-                e.getMessage()
+                e
             );
 
             throw new TurnTimeoutException();

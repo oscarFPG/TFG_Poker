@@ -80,9 +80,9 @@ public class ClassifierFSM extends BotFSM {
         int valueC2 = player.getPlayerCards()[1].getNumber();
 
         // Add up table cards and player cards values
-        int totalValue = 
-            valueTC1 + valueTC2 + valueTC3 + valueTC4 + valueTC5 + 
-            valueC1 + valueC2;
+        final int tableValue = valueTC1 + valueTC2 + valueTC3 + valueTC4 + valueTC5;
+        final int handValue = valueC1 + valueC2;
+        final int totalValue = tableValue + handValue;
 
         
         // Max sum possible is (A, A, A, A, K + K, K) = (14 + 14 + 14 + 14 + 13) + (13 + 13) = 95
@@ -90,7 +90,7 @@ public class ClassifierFSM extends BotFSM {
         // We split up equally the decision between them -> 95/4 = 23 'points' for each action
         // Order: FOLD < CALL/CHECK < RAISE 'amount' < ALL_IN             
         final int points_per_action = 95 / 4;
-        if(totalValue == 0) {   // In case there is no cards on the table
+        if(tableValue == 0) {   // In case there is no cards on the table
              
             String actions[] = {
                 GameType.FOLD_ACTION_FULL, 

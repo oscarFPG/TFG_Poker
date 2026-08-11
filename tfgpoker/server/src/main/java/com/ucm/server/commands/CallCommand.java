@@ -64,7 +64,7 @@ public class CallCommand extends Command {
         if(PokerHistory.current() != null)
             PokerHistory.current().call(_player);
         
-        log.debug("Player {} makes CALL", _player.getPlayerName());
+        log.debug("{} makes CALL", _player.getPlayerName());
         return CommandResult.continuePlaying(maxBet, false);
     }
 

@@ -88,7 +88,7 @@ public class RaiseCommand extends Command {
         
         
         // Normal raise
-        log.debug("Player {} makes RAISE {}", _player.getPlayerName(), _targetBet);
+        log.debug("{} makes RAISE {}", _player.getPlayerName(), _targetBet);
 
         _player.raise(_targetBet);
 

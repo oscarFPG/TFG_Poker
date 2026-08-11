@@ -48,7 +48,7 @@ public class AllInCommand extends Command {
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
 
-        log.debug("Player {} makes ALL-IN", _player.getPlayerName());
+        log.debug("{} makes ALL-IN", _player.getPlayerName());
 
         _player.allIn();
 

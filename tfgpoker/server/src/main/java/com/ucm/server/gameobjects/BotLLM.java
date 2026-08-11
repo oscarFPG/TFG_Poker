@@ -230,7 +230,7 @@ public abstract class BotLLM extends Bot {
         String action = extractAction(response);
         String sanitized = sanitize(action, player);
 
-        log.warn("---- Bot {} response is {} ----", player.getPlayerName(), sanitized);
+        log.warn("{} response is {}", player.getPlayerName(), sanitized.toUpperCase());
 
         return sanitized;
     }

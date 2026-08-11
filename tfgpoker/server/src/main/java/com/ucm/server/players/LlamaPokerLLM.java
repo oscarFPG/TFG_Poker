@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,9 @@ import com.ucm.server.interfaces.IPlayerInfo;
 public class LlamaPokerLLM extends BotLLM {
 
     private static final Logger log = LogManager.getLogger(LlamaPokerLLM.class);
+
+    private static final int CONN_TIMEOUT = 10;
+    private static final int READ_TIMEOUT = Bot.SECONDS_TIMEOUT - 5;
 
     /**
      * The unique identifier for this Llama LLM bot, which is used to distinguish it from other types of bots in the game.
@@ -60,18 +64,20 @@ public class LlamaPokerLLM extends BotLLM {
     protected String callModel(String prompt) throws IOException, TurnTimeoutException {
         
         String cleanResponse;
+        HttpURLConnection conn = null;
         try {
 
             // Make HTTP connection
             URL url = new URL(OLLAMA_URL);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn = (HttpURLConnection) url.openConnection();
+
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setDoOutput(true);
 
             // Add timeout for response
-            conn.setConnectTimeout(10 * 1000);
-            conn.setReadTimeout(Bot.SECONDS_TIMEOUT * 1000);
+            conn.setConnectTimeout(CONN_TIMEOUT * 1000);
+            conn.setReadTimeout(READ_TIMEOUT * 1000);
 
             // Sanitize prompt
             String safePrompt = prompt
@@ -95,24 +101,23 @@ public class LlamaPokerLLM extends BotLLM {
             .formatted(MODEL_NAME, safePrompt);
 
             // Send request via JSON
-            OutputStream os = conn.getOutputStream();
-            os.write(json.getBytes());
-            os.flush();
-            os.close();
-
-            BufferedReader br = new BufferedReader(
-                new InputStreamReader(
-                    conn.getInputStream()
-                )
-            );
+            try ( OutputStream os = conn.getOutputStream() ) {
+                os.write(json.getBytes());
+                os.flush();
+            }
 
             // Receive model response
             StringBuilder response = new StringBuilder();
-            String line;
-            while ((line = br.readLine()) != null) {
-                response.append(line);
-            }   
-            conn.disconnect();
+            try (BufferedReader br = new BufferedReader(
+                    new InputStreamReader(
+                        conn.getInputStream(),
+                        StandardCharsets.UTF_8))) {
+
+                String line;
+                while ((line = br.readLine()) != null) {
+                    response.append(line);
+                }
+            }
 
             // Extract action from JSON
             String raw = response.toString();
@@ -126,6 +131,11 @@ public class LlamaPokerLLM extends BotLLM {
         catch(SocketTimeoutException e) {
             log.error("Ollama bot {} took too much time to respond! Action made in this case: FOLD", MODEL_NAME);
             throw new TurnTimeoutException();
+        }
+        finally {
+
+            if(conn != null)
+                conn.disconnect();
         }
 
         return cleanResponse;
