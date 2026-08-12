@@ -6,4 +6,7 @@ public class CancelGameException extends Exception {
         super("The game has been cancelled");
     }
     
+    public CancelGameException(final String msg) {
+        super(msg);
+    }
 }

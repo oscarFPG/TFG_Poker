@@ -1,12 +1,8 @@
-package com.ucm.server.gameobjects;
+package com.ucm.common.gameobjects;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import com.ucm.common.gameobjects.Card;
-import com.ucm.common.gameobjects.Suit;
-import com.ucm.server.logic.Game;
 
 
 /**
@@ -17,7 +13,9 @@ import com.ucm.server.logic.Game;
  */
 public class Deck {
 
-
+    /**
+     * Debug seed for testing purposes.
+     */
     private static final int DEBUG_SEED = 123;
 
     /**
@@ -52,12 +50,17 @@ public class Deck {
      * Class constructor, initializes the deck and the random object.
      */
     public Deck() {
+        _random = new Random();
+        initializeDeck();
+    }
 
-        if(Game.DEBUG)
-            _random = new Random(DEBUG_SEED);
-        else
-            _random = new Random();
-        
+    /**
+     * Class constructor, initializes the deck and the random object with a specific seed.
+     * This method is useful for testing purposes, as it allows to reproduce the same sequence of random cards.
+     * @param seed seed used to initialize the random object, useful for testing purposes.
+     */
+    public Deck(final long seed) {
+        _random = new Random(seed);
         initializeDeck();
     }
 
@@ -132,12 +135,16 @@ public class Deck {
             }
         }
     }
-
+    
     /**
-     * 
-     * 
-     * 
-     * @return 
+     * Returns all cards that are currently available in the deck.
+     * <p>
+     * The returned list contains references to the original {@link Card} objects
+     * managed by the deck. A card is considered available if it has not been
+     * previously taken using {@link #takeRandomCard()} or has been retrieved using
+     * {@link #retrieveCard(Card)}.
+     *
+     * @return a list containing all available cards in the deck
      */
     public List<Card> getAvailableCards() {
 
@@ -153,6 +160,35 @@ public class Deck {
         }
 
         return available;
+    }
+
+    /**
+     * Returns a copy of every card in the deck.
+     * <p>
+     * Unlike {@link #getAvailableCards()}, this method always returns all
+     * 52 cards regardless of their availability. The returned cards are copies of
+     * the originals, so any modification to them does not affect the actual deck.
+     * All copied cards are marked as available.
+     *
+     * @return a list containing copies of all cards in the deck
+     */
+    public List<Card> getAllCards() {
+
+        List<Card> cards = new ArrayList<>(NUM_SUITS * NUM_VALUES);
+
+        for (int i = 0; i < NUM_SUITS; i++) {
+            for (int j = 0; j < NUM_VALUES; j++) {
+
+                Card card = _deck[i][j];
+
+                Card copy = new Card(card.getNumber(), card.getSuit());
+                copy.setAvailable(true);
+
+                cards.add(copy);
+            }
+        }
+
+        return cards;
     }
 
 }

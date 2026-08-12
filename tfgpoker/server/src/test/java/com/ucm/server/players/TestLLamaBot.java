@@ -67,7 +67,7 @@ public class TestLLamaBot {
         //bot.notifyPlayerAction(PlayerRole.DEALER, "bet", 23);
 
         try {
-            System.out.println("SCENARIO 1: " + player.makePlay(1, 1, 100));
+            System.out.println("SCENARIO 1: " + player.makePlay(1, 1, 100, 2));
         } catch (TurnTimeoutException e) {
             e.printStackTrace();
         }
@@ -103,7 +103,7 @@ public class TestLLamaBot {
         //bot.notifyPlayerAction(PlayerRole.BIG_BLIND, "raise", 41);
 
         try {
-            System.out.println("SCENARIO 2: " + player.makePlay(1, 1, 100));
+            System.out.println("SCENARIO 2: " + player.makePlay(1, 1, 100, 2));
         } catch (TurnTimeoutException e) {
             e.printStackTrace();
         }
@@ -124,7 +124,7 @@ public class TestLLamaBot {
         //bot.notifyPlayerAction(PlayerRole.DEALER, "fold", 0);
 
         try {
-            System.out.println("SCENARIO 3: " + player.makePlay(1, 1, 100));
+            System.out.println("SCENARIO 3: " + player.makePlay(1, 1, 100, 2));
         } catch (TurnTimeoutException e) {
             e.printStackTrace();
         }
@@ -142,7 +142,7 @@ public class TestLLamaBot {
         //bot.notifyPlayerAction(PlayerRole.DEALER, "raise", 2.5);
 
         try {
-            System.out.println("SCENARIO 4: " + player.makePlay(1, 1, 100));
+            System.out.println("SCENARIO 4: " + player.makePlay(1, 1, 100, 2));
         } catch (TurnTimeoutException e) {
             e.printStackTrace();
         }

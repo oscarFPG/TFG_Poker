@@ -9,9 +9,10 @@ import java.util.Random;
 
 import org.junit.jupiter.api.Test;
 
+import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.Deck;
 import com.ucm.server.evaluator.Evaluator;
-import com.ucm.server.gameobjects.Deck;
 import com.ucm.server.middleclasses.HandInfo;
 
 public class EquityCalculatorTest {
@@ -36,7 +37,7 @@ public class EquityCalculatorTest {
 
     // ---------------------- SIMULACIÓN COMPLETA ----------------------
 
-    private void runFullGameSimulation(int numPlayers) {
+    private void runFullGameSimulation(int numPlayers) throws CancelGameException {
 
         Deck deck = new Deck();
         List<HandInfo> players = new ArrayList<>();
@@ -88,7 +89,7 @@ public class EquityCalculatorTest {
             List<HandInfo> players,
             Card[] table,
             Deck deck
-    ) {
+    ) throws CancelGameException {
 
         Map<Integer, Double> equity =
                 EquityCalculator.calculateEquity(players, table, deck);
@@ -106,7 +107,7 @@ public class EquityCalculatorTest {
 
         System.out.printf("TOTAL: %.4f\n", total);
 
-        // 🔥 ASSERT CLAVE
+        //ASSERT CLAVE
         assertTrue(Math.abs(total - 1.0) <= 0.01,
                 "Equity total no suma 1. Valor: " + total);
     }

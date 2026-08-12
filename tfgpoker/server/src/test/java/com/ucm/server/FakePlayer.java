@@ -23,7 +23,7 @@ public class FakePlayer extends Player {
     }
 
     @Override
-    public String makePlay(int sb, int bb, int maxBet) {
+    public String makePlay(int sb, int bb, int maxBet, int minRaise) {
         return commands.removeFirst(); 
     }
 

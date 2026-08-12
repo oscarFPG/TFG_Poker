@@ -41,9 +41,6 @@ public class AddBotsCreateGameWindowController extends GenericController {
     @Override
     protected void onViewShown() {
 
-        int botCount = BotRegistry.getAvailableBots().size();
-        System.out.println("Available bots: " + botCount);
-
         // Restart previous information
         btnStartAddBots.setDisable(true);
         botsContainer.getChildren().clear();

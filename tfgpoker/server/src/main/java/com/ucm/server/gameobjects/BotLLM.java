@@ -6,9 +6,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
 import com.ucm.common.gameobjects.Card;
+import com.ucm.server.exceptions.TurnTimeoutException;
 import com.ucm.server.interfaces.IPlayerInfo;
 
 /**
@@ -39,6 +43,9 @@ import com.ucm.server.interfaces.IPlayerInfo;
 public abstract class BotLLM extends Bot {
 
 
+    private static final Logger log = LogManager.getLogger(BotLLM.class);
+
+
     /**
      * Default constructor.
      * 
@@ -59,7 +66,7 @@ public abstract class BotLLM extends Bot {
      * @param prompt input prompt describing the game state
      * @return raw response from the model
      */
-    protected abstract String callModel(String prompt);
+    protected abstract String callModel(String prompt) throws IOException, TurnTimeoutException;
 
 
     /**
@@ -81,7 +88,7 @@ public abstract class BotLLM extends Bot {
 
             %s
 
-            This is a 9-handed table.
+            This is a %d-handed table.
             Only the players mentioned in the action history are still in the hand.
 
             The table positions are: UTG (early), HJ (hijack), CO (late), BTN (dealer), SB, BB.
@@ -114,6 +121,7 @@ public abstract class BotLLM extends Bot {
             <action>raise AMOUNT</action>
             """,
             _style.getPromptDescription(),
+            Player.CURRENT_PLAYERS,
             mapRole( player.getRole() ),
             formatCards( List.of(player.getPlayerCards()) ),
             table.isEmpty() ? "[]" : formatCards(table),
@@ -210,22 +218,30 @@ public abstract class BotLLM extends Bot {
      * @return sanitized poker action (fold, call, check or raise X)
      */
     @Override
-    public String play(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException {
+    public String play(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException, TurnTimeoutException {
         
         _smallBlind = sb;
         _bigBlind = bb;
         _maxBet = maxBet;
+        _player = player;
 
         String prompt = buildPrompt(sb, bb, maxBet, player);
         String response = callModel(prompt);
         String action = extractAction(response);
         String sanitized = sanitize(action, player);
 
+        log.warn("{} response is {}", player.getPlayerName(), sanitized.toUpperCase());
+
         return sanitized;
     }
     
+    /**
+     * Returns the type of player, which is "BOT_LLM" for all large language model based bot instances.
+     * @return "BOT_LLM"
+     */
     @Override
     public String getPlayerType() {
         return "BOT_LLM";
     }
+
 }

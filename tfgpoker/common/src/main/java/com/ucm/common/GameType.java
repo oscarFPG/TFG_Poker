@@ -8,6 +8,7 @@ public class GameType {
     /* ---------------- SERVER PROPERTIES ----------------  */
     public static final int PORT = 5005;
     public static final int MAX_PLAYERS = 9;
+    public static final int SHOWDOWN_WAIT_TIME_SEC = 5; 
 
     /* ---------------- BOOLEAN TYPES ----------------*/
     public static final int TRUE = 1;
@@ -39,9 +40,16 @@ public class GameType {
     public static final int ERROR_GAME_NOT_JOINED = 504;
     public static final int ERROR_GAME_CANNOT_START = 505;
     public static final int ERROR_GAME_CANCELS = 506;
-     public static final int ERROR_NAME_ALREADY_USED = 507;
+    public static final int ERROR_NAME_ALREADY_USED = 507;
 
     /* ---------------- GAME CODES ----------------  */
+    // Game rounds
+    public static final int GAME_ROUND_PREFLOP = 70;
+    public static final int GAME_ROUND_FLOP = 71;
+    public static final int GAME_ROUND_TURN = 72;
+    public static final int GAME_ROUND_RIVER = 73;
+    public static final int GAME_ROUND_SHOWDOWN = 74;
+
     // Player roles
     public static final int PLAYER_ROLE_UNDER_THE_GUN = 80;
     public static final int PLAYER_ROLE_UNDER_THE_GUN_1 = 81;
@@ -97,6 +105,7 @@ public class GameType {
     public static final int PLAYER_WINS_GAME = 330;
     public static final int PLAYER_LOSES_GAME = 331;
     public static final int TOTAL_POT = 332;
+    public static final int PLAYER_CARDS = 333;
 
     // Player actions
     public static final String FOLD_ACTION_FULL = "fold";
@@ -109,6 +118,8 @@ public class GameType {
     public static final String CALL_ACTION_SHORTCUT = "c";
     public static final String RAISE_ACTION_FULL = "raise"; // This requires an amount parameter: e.g: "raise 100"
     public static final String RAISE_ACTION_SHORTCUT = "r"; // This requires an amount parameter: e.g: "raise 100"
+    public static final String SMALL_BLIND_ACTION = "small-blind";
+    public static final String BIG_BLIND_ACTION = "big-blind";
 
     // Bots identifier
     public static final int BOT_GEMINI = 10000;
@@ -116,9 +127,9 @@ public class GameType {
     public static final int BOT_NN_MODEL_1 = 10002;
     public static final int BOT_FSM_1 = 10003;
 
-    //Equity identifier
+    // Equity identifier
     public static final int EQUITY_UPDATE = 40000;
 
-    //Turn timer left identifier
+    // Turn timer left identifier
     public static final int TURN_TIMER_UPDATE = 40100;
 }

@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ucm.common.GameType;
+import com.ucm.common.PokerStreet;
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
 import com.ucm.common.gameobjects.Card;
@@ -23,24 +24,74 @@ import com.ucm.server.middleclasses.CommandResult;
 import com.ucm.server.middleclasses.HandInfo;
 import com.ucm.server.middleclasses.PlayerEvaluation;
 import com.ucm.server.middleclasses.PotDistribution;
-import com.ucm.server.middleclasses.Spectator;
+import com.ucm.server.players.Spectator;
 
 
+/**
+ * Represents a circular doubly linked list of players in the game, managing their states, actions, and interactions during the game.
+ * This list must be allways keep a circular structure, where the last node points to the first node and vice versa.
+ * It provides methods to add players, assign roles, manage betting rounds, and notify players of game events.
+ * It also handles the distribution of pots and the management of player eliminations.
+ * The {@link #_first} @link Node} must be allways the player with the dealer role. In case of a two-player game, it must be the small blind player.
+ * @see {@link PlayerList#passTurn()} for more details.
+ */
 public class PlayerList implements Iterable<Node> {
 
     private static final Logger log = LogManager.getLogger(PlayerList.class);
 
+
+    /**
+     * The first node in the linked list, representing the player with the dealer role.
+     * If there are only two players, this node represents the small blind player.
+     */
     private Node _first;
+
+    /**
+     * The last node in the linked list, representing the player who is last in the turn order.
+     */
     private Node _last;
+
+    /**
+     * The amount of players added at the start of the game.
+     * This value must not be changed after, even if a player is eliminated or disconnected
+     */
     private int _playerCounter;
+
+    /**
+     * The maximum number of players that can participate in the game.
+     */
     private int _maxNumberOfPlayers;
 
+
+    /**
+     * The total amount of money in the pot for the current hand.
+     */
     private int _totalPot;
+
+    /**
+     * The PotManager instance responsible for managing the distribution of pots among players.
+     * @see PotManager
+     */
     private PotManager _potManager;
+
+
+    /**
+     * The host player of the game, who may have special privileges or responsibilities.
+     * If the host is disconnected, the game is cancelled.
+     */
     private Node _host;
+
+    /**
+     * The spectator of the game, who can observe the game without participating.
+     * If there is a spectator it means it is also the host of the game, and if it is disconnected, the game is cancelled.
+     */
     private Spectator _spectator;
 
 
+    /**
+     * Constructs a new PlayerList with a specified maximum number of players.
+     * @param n the maximum number of players that can be added to the list
+     */
     public PlayerList(int n) {
         _first = null;
         _last = null;
@@ -54,6 +105,10 @@ public class PlayerList implements Iterable<Node> {
     }
 
     
+    /**
+     * Adds a new player to the list. If the list is full, the player is not added.
+     * @param p the player to be added to the list
+     */
     public void addPlayer(Player p) {
 
         if(isFull())
@@ -82,81 +137,115 @@ public class PlayerList implements Iterable<Node> {
         log.debug("Player {} added!", p.getPlayerName());
     }
 
+    /**
+     * Assigns a spectator to the game. The spectator can observe the game without participating.
+     * @param p the spectator to be assigned to the game
+     */
     public void addSpectator(Spectator p) {
         _spectator = p;
     }
 
+    /**
+     * Assigns a host player to the game. The host may have special privileges or responsibilities.
+     * @param p the player to be assigned as the host of the game
+     */
     public void assignHost(Player p) {
-        _host = new Node(null, p,null);
+        _host = new Node(null, p, null);
     }
 
+    /**
+     * Initializes the game by notifying all players of their player IDs.
+     * @throws CancelGameException if any player fails to receive their player ID, indicating a potential disconnection or error
+     */
+    public void initialize() throws CancelGameException {
 
+        // Send all player IDs to identify themselves
+        Iterator<Node> it = iterator();
+        while( it.hasNext() ) {
+
+            Node player = it.next();
+            try {
+                player._player.notifyPlayerID();
+            }
+            catch (IOException e) {
+                throw new CancelGameException();
+            }
+        }
+
+    }
+
+    /**
+     * Assigns roles to all players in the game based on the number of active players.
+     * Roles are assigned according to the rules of the game, with special handling for two-player games (small blind and big blind).
+     * This method also notifies all players about their role and the other players' roles.
+     * @throws CancelGameException if the game cannot proceed due to insufficient active players or if any player fails to receive their role, indicating a potential disconnection or error
+     */
     public void assignRolesToAllPlayers() throws CancelGameException {
 
         int numPlayers = activePlayersCounter();
+        Player.CURRENT_PLAYERS = numPlayers;
 
+        // Cannot be possible
         if (numPlayers == 0 || numPlayers == 1)
             throw new CancelGameException();
 
-
-        List<PlayerRole> roles = PlayerRole.getRolesDistribution(numPlayers);
+        // Only SB and BB
         if (numPlayers == 2) {
 
             Node current = _first;
             try {
+
+                // Give SB role to first player
                 current._player.receiveRole(PlayerRole.SMALL_BLIND);
-                if(_spectator != null)
-                    _spectator.notifyOtherPlayerState(current._player);
-
                 log.debug("Player {} receives role {}", current._player.getPlayerName(), PlayerRole.SMALL_BLIND.name());
-            }
-            catch (Exception e) {
-                throw new CancelGameException();
-            }
             
-            current = getNextPlayerActive(current);
-            
-            try {
-                current._player.receiveRole(PlayerRole.BIG_BLIND);
-                if(_spectator != null)
-                    _spectator.notifyOtherPlayerState(current._player);
+                current = getNextPlayerActive(current);
 
+                // Give BB role to first player
+                current._player.receiveRole(PlayerRole.BIG_BLIND);
                 log.debug("Player {} receives role {}", current._player.getPlayerName(), PlayerRole.BIG_BLIND.name());
             }
-            catch (Exception e) {
+            catch (IOException e) {
                 throw new CancelGameException();
             }
-            
+        
+            notifyPlayerStateToAllPlayers(false);
+            return;
         }
-        else {
 
-            PlayerRole currentRole = null;
-            Iterator<Node> it = iterator();
-            while( it.hasNext() ) {
+        
+        List<PlayerRole> roles = PlayerRole.getRolesDistribution(numPlayers);
+        PlayerRole currentRole = null;
+        Iterator<Node> it = iterator();
+        while( it.hasNext() ) {
 
-                Node player = it.next();
-                if(!player._player.isEliminated() && !player._player.isFolded() && !player._isDisconnected){
+            Node player = it.next();
+            if(!player._player.isEliminated() && !player._player.isFolded() && !player._isDisconnected){
 
-                    try {
-                        currentRole = roles.removeFirst();
-                        player._player.receiveRole(currentRole);
-                        if(_spectator != null)
-                            _spectator.notifyOtherPlayerState(player._player);
+                try {
+                    currentRole = roles.removeFirst();
+                    player._player.receiveRole(currentRole);
 
-                        log.debug("Player {} receives role {}", player._player.getPlayerName(), currentRole.name());
-                    }
-                    catch (Exception e) {
+                    log.debug("Player {} receives role {}", player._player.getPlayerName(), currentRole.name());
+                }
+                catch (IOException e) {
 
-                        if( checkIfGameCancel() )
-                            throw new CancelGameException();
-                    }
+                    if( checkIfGameCancel() )
+                        throw new CancelGameException();
                 }
             }
         }
 
-        notifyPlayerStateToAllPlayers();
+        notifyPlayerStateToAllPlayers(false);
     }
 
+    /**
+     * Distributes two cards to the first eligible player in the list who is not disconnected, eliminated, or already has cards.
+     * If there is a spectator, it will be notified about the cards distributed to any player.
+     * @param c1 the first card to be distributed
+     * @param c2 the second card to be distributed
+     * @throws CancelGameException if the game cannot proceed due to all players being disconnected or if any player fails to receive their cards, indicating a potential disconnection or error
+     */
     public void shareOutCardsToSomePlayer(Card c1, Card c2) throws CancelGameException {
 
         if (isEmpty())
@@ -167,16 +256,19 @@ public class PlayerList implements Iterable<Node> {
         while( it.hasNext() ) {
 
             Node player = it.next();
-            if(!player._player.isEliminated() && player._player.getCardsCounter() == 0) {
+            if(!player._isDisconnected && !player._player.isEliminated() && player._player.getCardsCounter() == 0) {
 
                 try {
                     player._player.receiveCard(c1);
                     player._player.receiveCard(c2);
 
+                    if(_spectator != null)
+                        _spectator.notifyOtherPlayerCards(player._player);
+
                     log.debug("Player {} receives the cards: {} {}", player._player.getPlayerName(), c1.toString(), c2.toString());
                     return;
                 }
-                catch (Exception e) {
+                catch (IOException e) {
                     
                     player._isDisconnected = true;
                     if( checkIfGameCancel() )
@@ -187,125 +279,151 @@ public class PlayerList implements Iterable<Node> {
 
     }
 
+    /**
+     * Handles the mandatory small blind and big blind plays for the first two eligible players in the list.
+     * This method also notifies to all players about the actions taken by the small blind and big blind players, and updates the total pot accordingly.
+     * @param sb
+     * @param bb
+     * @param playersRemaining
+     * @throws CancelGameException
+     */
     private void smallBlindAndBigBlindPlays(final int sb, final int bb, final int playersRemaining) throws CancelGameException {
 
         // Select as small blind:
         // 1. First player if there is only two players -> playsToMake == 1
         // 2. Next player from first if there is more than two players -> playsToMake > 1
-        Node pNode = (playersRemaining == 2) ? _first : _first._next;
+        Node current = (playersRemaining == 2) ? _first : getNextPlayerActive(_first);
         try {
 
-            pNode._player.putSmallBlindBet(sb);
-            notifyOtherPlayerActionToAllPlayers(pNode._player);
-            if(_spectator != null)
-                _spectator.notifyOtherPlayerState(pNode._player);
+            current._hasActed = false;
+            current._player.putSmallBlindBet(sb);
+            notifyOtherPlayerActionToAllPlayers(current._player);
 
             log.debug(
                 "Player {} puts {}$ as SMALL_BLIND. Now it has {}$", 
-                pNode._player.getPlayerName(), pNode._player.getMoneyOnBet(), pNode._player.getMoneyOffBet()
+                current._player.getPlayerName(), current._player.getMoneyOnBet(), current._player.getMoneyOffBet()
             );
         }
-        catch(Exception e) {
+        catch(IOException e) {
             
-            pNode._isDisconnected = true;
+            current._isDisconnected = true;
             if( checkIfGameCancel() )
                 throw new CancelGameException();
         }
         
-        pNode = getNextPlayerActive(pNode);
+        // Pass to big-blind
+        current = getNextPlayerActive(current);
 
         try {
 
-            pNode._player.putBigBlindBet(bb);
-            notifyOtherPlayerActionToAllPlayers(pNode._player);
-            if(_spectator != null)
-                _spectator.notifyOtherPlayerState(pNode._player);
+            current._hasActed = false;
+            current._player.putBigBlindBet(bb);
+            notifyOtherPlayerActionToAllPlayers(current._player);
 
             log.debug(
                 "Player {} puts {}$ as BIG_BLIND. Now it has {}$", 
-                pNode._player.getPlayerName(), pNode._player.getMoneyOnBet(), pNode._player.getMoneyOffBet()
+                current._player.getPlayerName(), current._player.getMoneyOnBet(), current._player.getMoneyOffBet()
             );
         }
-        catch(Exception e) {
+        catch(IOException e) {
             
-            pNode._isDisconnected = true;
+            current._isDisconnected = true;
+
             if( checkIfGameCancel() )
                 throw new CancelGameException();
         }
         
+        // Calculate and notify total pot
         int totalPot = calculateTotalPot();
         notifyTotalPotToAllPlayers(totalPot);
-        if(_spectator != null)
-            _spectator.notifyTotalPot(totalPot);
     }
 
-    public void playHand(final int sb, final int bb, final boolean isPreflop) throws OnlyOnePlayerLeftException, CancelGameException {
+    /**
+     * Executes a betting round for the current hand, allowing players to take turns making their moves (fold, call, raise) until all active players have acted.
+     * @param sb small blind amount for the current hand
+     * @param bb big blind amount for the current hand
+     * @param street the current street (PREFLOP, FLOP, TURN, RIVER) of the hand
+     * @throws OnlyOnePlayerLeftException if only one player remains active after the betting round, indicating that the hand has ended prematurely
+     * @throws CancelGameException if the game cannot proceed due to disconnections or other errors, indicating that the game should be cancelled
+     */
+    public void playHand(final int sb, final int bb, final PokerStreet street) throws OnlyOnePlayerLeftException, CancelGameException {
 
-        if( checkAllPlayersAllIn() ) { // Avoid asking if all active players have used all their money
+        // Only the spectator needs to receive this info
+        // IN-GAME players infer this information, so there is no need so send it to them
+        if(_spectator != null) {
+            try {
+                _spectator.notifyGameRound(street);
+            }
+            catch (IOException e) {
+                throw new CancelGameException();
+            }
+        }
+
+        // Avoid asking if all active players have used all their money
+        if( checkAllPlayersAllIn() ) {
             log.debug("All players are ALL_IN, skipping betting round");
             notifyRoundEnded();
             return;
         }
 
 
-        int playersRemaining = activePlayersCounter();        
-        Node playerOnTurn = calculatePlayerOnTurn(playersRemaining, isPreflop);
-        Node pivotPlayer = calculatePivotPlayer(playersRemaining, isPreflop, playerOnTurn);
-        int maxBet = (isPreflop) ? bb : 0;
-        int currentBet = maxBet;
-        int minRaise = (isPreflop) ? bb - sb : 0;
-        int totalPot = 0;
-
         // In case only one player can play -> Cannot play alone
         // E.g: All players all-in except one -> Skip rounds
-        if(playersRemaining == 1) { 
+        int playersRemaining = activePlayersCounter();
+        if(playersRemaining == 1) {
             notifyRoundEnded();
             return;
         }
 
-        if(isPreflop)
+        // Small-blind and big-blind mandatory play !! Does not count as "play", it is done automatically
+        if(street == PokerStreet.PREFLOP)
             smallBlindAndBigBlindPlays(sb, bb, playersRemaining);
 
-        notifyWaitExceptTo(playerOnTurn);
+
+        Node playerOnTurn = calculatePlayerOnTurn(playersRemaining, street);
+        int maxBet = (street == PokerStreet.PREFLOP) ? bb : 0;
+        int minRaise = (street == PokerStreet.PREFLOP) ? bb + (bb - 0) : 0;
+        int totalPot = 0;
+        notifyWaitExceptTo(playerOnTurn);   // Keep all players, except the first one to play, waiting
         do {
 
-            if(isPreflop)
+            if(street == PokerStreet.PREFLOP)
                 log.debug("Current small blind: {}, current big blind: {}, current max bet: {}", sb, bb, maxBet);
             else
                 log.debug("Last maximum bet is {}", maxBet);
 
 
+            // Skip to the next active player in case the current player went all-in and cannot play
             if(playerOnTurn._player.isAllIn()) {
+                playerOnTurn._hasActed = true;
                 playerOnTurn = getNextPlayerActive(playerOnTurn);
                 continue;
             }
 
-            // Notify all about the player state
+            // Notify player to play
             notifyTurnPlayer(playerOnTurn._player);
 
-            // Ask player to play and check response time
-            long start = System.nanoTime();
-            Command command = askCommandToPlayer(playerOnTurn, sb, bb, maxBet);
-            long end = System.nanoTime();
-
-            // Annotate response time
-            playerOnTurn._player.getExperimentData().setDecisionTime((end - start) / 1_000_000);
+            // Ask player to play
+            Command command = askCommandToPlayer(playerOnTurn, sb, bb, maxBet, minRaise);
             
             // Execute player action
             CommandResult result = command.execute(sb, bb, maxBet);
+            playerOnTurn._hasActed = true;
             
-            // Notify new player state
-            notifyPlayerOwnState(playerOnTurn);
+            // Notify new player state to every other player, even himself
+            notifyPlayerOwnState(playerOnTurn, false);  // false 
             notifyOtherPlayerActionToAllPlayers(playerOnTurn._player);
             
-            // Update and notify about the current total pot
+            // Calculate total pot and notify to all players
             totalPot = calculateTotalPot() + _totalPot;
             notifyTotalPotToAllPlayers(totalPot);
 
+            // Check if game has to be cancelled : Only one player connected -> Cannot play alone
             if( result.folds() ) {
 
                 --playersRemaining;
                 if (playersRemaining == 1) {
+
                     _totalPot = totalPot;
                     updateHandState();
                     notifyHandEndsByFold();
@@ -314,21 +432,38 @@ public class PlayerList implements Iterable<Node> {
                 }
             }
 
-            currentBet = result.folds() ? 0 : result.bet();
-            minRaise = Math.max(minRaise, result.bet() - maxBet);
-            maxBet = Math.max(maxBet, currentBet);
+            // Reset hand cycle if necessary
+            if( result.raises() ) {
+                resetHandCycle();
+                playerOnTurn._hasActed = true;
+            }
 
-            pivotPlayer = result.raises() ? playerOnTurn : pivotPlayer;
+            // Update table state
+            minRaise = Math.max(maxBet, result.bet()) + (Math.max(maxBet, result.bet()) - maxBet);
+            maxBet = Math.max(maxBet, result.bet());
+
+            // Pass turn to the next active player
             playerOnTurn = getNextPlayerActive(playerOnTurn);
         }
-        while(pivotPlayer != playerOnTurn && playersRemaining != 0);
+        while( !checkAllPlayersActed() );
 
         _totalPot = totalPot;
         updateHandState();
         notifyRoundEnded();
     }
 
-    private Command askCommandToPlayer(Node node, final int sb, final int bb, final int maxBet) throws CancelGameException {
+    /**
+     * Asks the current player for their command (fold, call, raise) and handles any exceptions that may occur during the process.
+     * If the player times out or disconnects, the method will automatically issue a fold command for them and mark them as disconnected, if necessary.
+     * @param node the node representing the current player whose turn it is to play
+     * @param sb small blind amount for the current hand
+     * @param bb big blind amount for the current hand
+     * @param maxBet the current maximum bet in the hand, used to determine if a raise is valid
+     * @param minRaise the minimum amount required for a raise, used to validate the player's command
+     * @return the command issued by the player, parsed and validated
+     * @throws CancelGameException if the game cannot proceed due to disconnections or other errors, indicating that the game should be cancelled
+     */
+    private Command askCommandToPlayer(Node node, final int sb, final int bb, final int maxBet, final int minRaise) throws CancelGameException {
 
         Player player = node._player;
         Command command = null;
@@ -336,24 +471,22 @@ public class PlayerList implements Iterable<Node> {
         try {
 
             node._player.notifyTurnPlay();
-            log.debug("It's is {} turn to play", player.getPlayerName());
-            
             while (command == null) {
          
-                String commandString = player.makePlay(sb, bb, maxBet);
+                String commandString = player.makePlay(sb, bb, maxBet, minRaise);
                 String[] commandFormatted = commandString.split(" ");
 
                 command = Command.parseCommand(commandFormatted, player);
             }
         }
         catch (TurnTimeoutException e) {
-            log.warn("Player {} TIMEOUT -> auto FOLD", player.getPlayerName());
 
-            System.out.printf("Timer has ended, player {} make FOLD!\n\n", player.getPlayerName());
+            log.warn("Player {} TIMEOUT -> auto FOLD", player.getPlayerName());
             command = Command.parseCommand(new String[] {GameType.FOLD_ACTION_FULL}, player);
         }
         catch (IOException e) {
-            log.error("Error happened waiting for player {} : {}", player.getPlayerName(), e.getMessage());
+
+            log.error("Error happened waiting for player {}: {}", player.getPlayerName(), e.getMessage());
 
             node._isDisconnected = true;
             if( checkIfGameCancel() )
@@ -365,20 +498,50 @@ public class PlayerList implements Iterable<Node> {
         return command;
     }
 
+    /**
+     * Resets the hand cycle for all players in the list, marking them as having acted if they have folded, been eliminated, or gone all-in.
+     */
+    private void resetHandCycle() {
+
+        Iterator<Node> it = iterator();
+        while( it.hasNext() ) {
+
+            Node player = it.next();
+
+            // If the player has folded, is eliminated or made all-in -> Already played, cannot play in next round
+            if(!player._isDisconnected)
+                player._hasActed = (player._player.isFolded() || player._player.isEliminated() || player._player.isAllIn());
+        }
+    }
+
+    /**
+     * Updates the state of each player's hand, including their pot contributions and whether they have acted in the current betting round.
+     * @see PotManager#updatePlayerPot(int, int, boolean) for more details on how the pot is updated for each player
+     */
     private void updateHandState() {
 
         Iterator<Node> it = iterator();
         while( it.hasNext() ) {
 
             Node player = it.next();
-            if(!player._player.isEliminated()) {
+
+            // Update pots
+            if( !player._player.isEliminated() ) {
                 _potManager.updatePlayerPot(player._player.getPlayerId(), player._player.placeOnBetMoney(), player._player.isFolded());
             }
-        }
 
-        log.debug("All players pots updated!");
+            // Update player status for next round
+            // Avoid folded
+            player._hasActed = (player._player.isAllIn() || player._player.isFolded() || player._player.isEliminated());
+        }
     }
 
+    /**
+     * Passes the turn to the next player in the list, resetting the state of all players and pots for the next betting round.
+     * This is made by rotating the first and last players pointers to the next available players and then resetting the pots and player states.
+     * If there is any other round, roles will be redistributed to the players, and the new first player will be the new small blind, and so on.
+     * @throws CancelGameException if the game cannot proceed due to disconnections or other errors, indicating that the game should be cancelled
+     */
     public void passTurn() throws CancelGameException {
 
         // Restart previous bets from players
@@ -397,17 +560,46 @@ public class PlayerList implements Iterable<Node> {
         _totalPot = 0;
     }
 
+    /**
+     * Calculates the prize distribution for the current hand based on the evaluations of the players' hands.
+     * @param players the list of PlayerEvaluation objects representing the evaluated hands of the players
+     * @throws CancelGameException if the game cannot proceed due to disconnections or other errors, indicating that the game should be cancelled
+     */
     public void calculatePrizeDistribution(final List<PlayerEvaluation> players) throws CancelGameException {
+
+        // Notify spectator about showdown round
+        if(_spectator != null) {
+            try {
+                _spectator.notifyGameRound(PokerStreet.SHOWDOWN);
+            }
+            catch (IOException e) {
+                throw new CancelGameException();
+            }
+        }
 
         List<PotDistribution> distribution = _potManager.calculatePrizeDistribution(players);
         for(PotDistribution dist : distribution) {
-            givePriceToPlayerWithID(dist.playerID(), dist.potPrize());
+            givePotToPlayerWithID(dist.playerID(), dist.potPrize(), dist.rankName());
         }
 
-        notifyPlayerStateToAllPlayers();
+        notifyPlayerStateToAllPlayers(true);
     }
 
+    /**
+     * Calculates the prize for the player who is left in the game.
+     * @throws CancelGameException if the game cannot proceed due to disconnections or other errors, indicating that the game should be cancelled
+     */
     public void calculatePrizeForPlayerLeft() throws CancelGameException {
+
+        // Notify spectator about showdown round
+        if(_spectator != null) {
+            try {
+                _spectator.notifyGameRound(PokerStreet.SHOWDOWN);
+            }
+            catch (IOException e) {
+                throw new CancelGameException();
+            }
+        }
 
         Iterator<Node> it = iterator();
         Node winner = null;
@@ -419,28 +611,17 @@ public class PlayerList implements Iterable<Node> {
             }
         }
 
-        PotDistribution distribution = _potManager.calculatePrizeForPlayer(winner._player.getPlayerId());
-        givePriceToPlayerWithID(distribution.playerID(), distribution.potPrize());
+        PotDistribution dist = _potManager.calculatePrizeForPlayer(winner._player.getPlayerId());
+        givePotToPlayerWithID(dist.playerID(), dist.potPrize(), dist.rankName());
 
-        notifyPlayerStateToAllPlayers();
+        notifyPlayerStateToAllPlayers(false);
     }
 
-    public boolean checkEndOfGame() {
-
-        int playersNotEliminated = _playerCounter;
-
-        Iterator<Node> it = iterator();
-        while( it.hasNext() ) {
-
-            Node player = it.next();
-            if(player._player.isEliminated()) {
-                --playersNotEliminated;
-            }
-        }
-
-        return (playersNotEliminated == 1);
-    }
-
+    /**
+     * Sends a table card to all active players in the game.
+     * @param card the card to be sent to all players
+     * @throws CancelGameException if the game cannot proceed due to disconnections or other errors, indicating that the game should be cancelled
+     */
     public void sendTableCardToAllPlayers(final Card card) throws CancelGameException {
 
         Iterator<Node> it = iterator();
@@ -452,7 +633,7 @@ public class PlayerList implements Iterable<Node> {
                 try {
                     player._player.receiveTableCard(card);
                 }
-                catch (Exception e) {
+                catch (IOException e) {
                     
                     player._isDisconnected = true;
                     if( checkIfGameCancel() )
@@ -461,12 +642,23 @@ public class PlayerList implements Iterable<Node> {
             }
         }
 
-        if(_spectator != null)
-            _spectator.notifyTableCard(card);
+        if(_spectator != null) {
 
+            try {
+                _spectator.notifyTableCard(card);
+            }
+            catch (IOException e) {
+                throw new CancelGameException();
+            }
+        }
     }
 
-    public void manageEliminatedPlayers() {
+    /**
+     * Manages the eliminated players by checking their bet amounts and eliminating them if necessary.
+     * They will not be deleted from the list, but they will be marked as eliminated and will not be able to play in the next rounds.
+     * @throws CancelGameException if the game cannot proceed due to disconnections or other errors, indicating that the game should be cancelled
+     */
+    public void manageEliminatedPlayers() throws CancelGameException {
 
         Iterator<Node> it = iterator();
         while( it.hasNext() ) {
@@ -477,20 +669,81 @@ public class PlayerList implements Iterable<Node> {
         }
     }
 
+    /**
+     * Broadcasts the cards of all active players to every other player and the spectator, if present.
+     * This should only be done in the showdown round, and only for players who have not folded or been eliminated.
+     * @throws CancelGameException if the game cannot proceed due to disconnections or other errors, indicating that the game should be cancelled
+     */
+    public void broadcastAllPlayerCards() throws CancelGameException {
+
+        // Send the player cards to everyone just to display -> Only if the player has not folded or it is eliminated
+        Iterator<Node> modelIT = iterator();
+        while( modelIT.hasNext() ) {
+
+            Node modelPlayer = modelIT.next();
+            if(modelPlayer._player.isEliminated() || modelPlayer._player.isFolded())
+                continue;
+
+
+            // Send cards from modelPlayer to spectator
+            if(_spectator != null) {
+
+                try {
+                    _spectator.notifyOtherPlayerCards(modelPlayer._player);
+                }
+                catch (IOException e) {
+                    throw new CancelGameException();
+                }
+            }
+
+            // Send cards from modelPlayer to every player
+            Iterator<Node> receiverIT = iterator();
+            while( receiverIT.hasNext() ) {
+
+                Node receiver = receiverIT.next();
+                try {
+
+                    if(receiver._player != modelPlayer._player)
+                        receiver._player.notifyOtherPlayerCards(modelPlayer._player);
+                }
+                catch (IOException e) {
+                    
+                    receiver._isDisconnected = true;
+                    if( checkIfGameCancel() )
+                        throw new CancelGameException();
+                }
+                
+            }
+
+        }
+        
+    }
+
+    /**
+     * Generates a list of HandInfo objects for all active players in the game, containing their player IDs and the cards they hold.
+     * This information is used to determine the winner(s) of the hand during the showdown round
+     * @return a list of HandInfo objects for all active players, each containing the player's ID and their cards
+     * @see HandInfo
+     */
     public List<HandInfo> getPlayerHandsInfo() {
 
+        // Generate struct <playerID, cards> for every player to select the winner(s)
         List<HandInfo> info = new ArrayList<>(_playerCounter);
         Iterator<Node> it = iterator();
         while( it.hasNext() ) {
 
             Node player = it.next();
-            if(!player._player.isEliminated() && !player._player.isFolded())
+            if(!player._isDisconnected && !player._player.isEliminated() && !player._player.isFolded())
                 info.add( new HandInfo(player._player.getPlayerId(), player._player.getPlayerCards()) );
         }
 
         return info;
     }
 
+    /**
+     * Calculates the total amount of money in the pot for the current hand by summing the bets of all active players.
+     * @return the total amount of money in the pot for the current hand
+     */
     private int calculateTotalPot() {
 
         int total = 0;
@@ -506,22 +759,15 @@ public class PlayerList implements Iterable<Node> {
         return total;
     }
 
-    private boolean checkAllPlayersAllIn() {
+    /**
+     * Calculates the next player who should take their turn based on the current number of active players and the street of the hand.
+     * @param numPlayers the number of active players in the game
+     * @param street the current street (PREFLOP, FLOP, TURN, RIVER) of the hand
+     * @return the Node representing the next player who should take their turn
+     */
+    private Node calculatePlayerOnTurn(final int numPlayers, final PokerStreet street) {
 
-        boolean allPlayersAllIn = true;
-        Iterator<Node> it = iterator();
-        while( it.hasNext() ) {
-
-            Node player = it.next();
-            allPlayersAllIn &= player._player.isAllIn();
-        }
-
-        return allPlayersAllIn;
-    }
-
-    private Node calculatePlayerOnTurn(final int numPlayers, final boolean isPreflop) {
-
-        if(isPreflop) {
+        if(street == PokerStreet.PREFLOP) {
 
             if(numPlayers == 2) {
                 return getPlayerByRole(PlayerRole.SMALL_BLIND);
@@ -536,28 +782,18 @@ public class PlayerList implements Iterable<Node> {
         else {
 
             Node sb = getPlayerByRole(PlayerRole.SMALL_BLIND);
-            return !sb._player.isFolded() && !sb._isDisconnected ? sb : getNextPlayerActive(sb);
+            return !sb._player.isEliminated() && !sb._player.isFolded() && !sb._isDisconnected ? 
+                sb : getNextPlayerActive(sb);
         }
     }
 
-    private Node calculatePivotPlayer(final int numPlayers, final boolean isPreflop, Node current) {
-
-        if(numPlayers == 2)
-            return (isPreflop) ? getNextPlayerActive(current) : current;
-        
-        
-        Node dealer = _first;
-        if(isPreflop) {
-            Node sb = getNextPlayerActive(dealer);
-            return getNextPlayerActive(sb);
-        }
-        else {
-            return getNextPlayerActive(dealer);
-        }
-
-    }
-
-    private void givePriceToPlayerWithID(final int id, final int amount) {
+    /**
+     * Gives the pot amount to the player with the specified ID, updating their money and hand rank, and notifying the poker history of the win.
+     * @param id the ID of the player who won the pot
+     * @param amount the amount of money to be given to the player as their prize
+     * @param rankName the name of the hand rank that the player achieved to win the pot
+     */
+    private void givePotToPlayerWithID(final int id, final int amount, final String rankName) {
 
         Iterator<Node> it = iterator();
         Node winner = null;
@@ -571,14 +807,20 @@ public class PlayerList implements Iterable<Node> {
         }
 
         winner._player.receivePriceMoney(amount);
+        winner._player.receiveHandRankName(rankName);
         winner._player.wins();
         PokerHistory history = PokerHistory.current();
         if (history != null) {
             history.winner(winner._player, amount);
         }
+        
         log.debug("Player {} receives {}$ as prize! It has now {}$", winner._player.getPlayerName(), amount, winner._player.getMoneyOffBet());
     }
 
+    /**
+     * Resets the state of all players in the list, retrieving their cards and resetting their states for the next hand.
+     * This method is called at the end of each hand to prepare players for the next hand
+     */
     private void resetPlayers() {
 
         Iterator<Node> it = iterator();
@@ -587,9 +829,14 @@ public class PlayerList implements Iterable<Node> {
             Node player = it.next();
             player._player.retrieveCards();
             player._player.resetStates();
+            player._hasActed = false;
         }
     }
 
+    /**
+     * Counts the number of active players in the list who are not folded, eliminated, all-in, or disconnected.
+     * @return the number of active players in the list
+     */
     private int activePlayersCounter() {
 
         if (isEmpty())
@@ -610,6 +857,12 @@ public class PlayerList implements Iterable<Node> {
     } 
 
 
+    /* ------------------------ Notify methods ------------------------ */
+    /**
+     * Notifies all players in the list, except for the player whose turn it is, that they should wait for their turn.
+     * @param playerOnTurn the player whose turn it is
+     * @throws CancelGameException if the game cannot proceed due to disconnections or other errors
+     */
     private void notifyWaitExceptTo(final Node playerOnTurn) throws CancelGameException {
 
         Iterator<Node> it = iterator();
@@ -622,7 +875,7 @@ public class PlayerList implements Iterable<Node> {
             try {
                 player._player.notifyTurnWait();
             }
-            catch(Exception e) {
+            catch(IOException e) {
                 
                 player._isDisconnected = true;
                 if( checkIfGameCancel() )
@@ -632,6 +885,11 @@ public class PlayerList implements Iterable<Node> {
         
     }
 
+    /**
+     * Notifies the player whose turn it is that it's their turn to act.
+     * @param p the player whose turn it is
+     * @throws CancelGameException if the game cannot proceed due to disconnections or other errors
+     */
     private void notifyTurnPlayer(Player p) throws CancelGameException {
 
         Iterator<Node> it = iterator();
@@ -645,7 +903,7 @@ public class PlayerList implements Iterable<Node> {
             try {
                 player._player.notifyCurrentTurnPlayer(p);
             }
-            catch(Exception e) {
+            catch(IOException e) {
                 
                 player._isDisconnected = true;
                 if( checkIfGameCancel() )
@@ -653,16 +911,30 @@ public class PlayerList implements Iterable<Node> {
             }
         }
 
-        if(_spectator != null)
-            _spectator.notifyTurnPlayer(p);
+        
+        if(_spectator != null) {
+            try {
+                _spectator.notifyCurrentTurnPlayer(p);
+            }
+            catch (IOException e) {
+                throw new CancelGameException();
+            }
+        }
+        
     }
 
-    private void notifyPlayerOwnState(Node player) throws CancelGameException {
+    /**
+     * Notifies a player of their own state, including their current hand, bet amounts, and whether they should receive their hand rank.
+     * @param player the player to be notified of their own state
+     * @param receiveRank whether the player should receive their hand rank in the notification
+     * @throws CancelGameException if the game cannot proceed due to disconnections or other errors
+     */
+    private void notifyPlayerOwnState(Node player, final boolean receiveRank) throws CancelGameException {
 
         try {
-            player._player.notifyOwnState();
+            player._player.notifyOwnState(receiveRank);
         }
-        catch(Exception e) {
+        catch(IOException e) {
             
             player._isDisconnected = true;
             if( checkIfGameCancel() )
@@ -670,6 +942,11 @@ public class PlayerList implements Iterable<Node> {
         }
     }
 
+    /**
+     * Notifies all players in the list and the spectator, except for the specified player, of that player's action (fold, call, raise).
+     * @param p the player whose action is to be notified only to the other players
+     * @throws CancelGameException if the game cannot proceed due to disconnections or other errors
+     */
     private void notifyOtherPlayerActionToAllPlayers(Player p) throws CancelGameException {
 
         Iterator<Node> it = iterator();
@@ -683,7 +960,7 @@ public class PlayerList implements Iterable<Node> {
             try {
                 player._player.notifyOtherPlayerAction(p);
             }
-            catch(Exception e) {
+            catch(IOException e) {
                 
                 player._isDisconnected = true;
                 if( checkIfGameCancel() )
@@ -691,10 +968,21 @@ public class PlayerList implements Iterable<Node> {
             }
         }
 
-        if(_spectator != null)
-            _spectator.notifyOtherPlayerAction(p);
+        if(_spectator != null) {
+            try {
+                _spectator.notifyOtherPlayerAction(p);
+            }
+            catch (IOException e) {
+                throw new CancelGameException();
+            }
+        }
     }
 
+    /**
+     * Notifies all players in the list and the spectator of the total pot amount for the current hand.
+     * @param totalPot the total amount of money in the pot for the current hand
+     * @throws CancelGameException if the game cannot proceed due to disconnections or other errors
+     */
     private void notifyTotalPotToAllPlayers(final int totalPot) throws CancelGameException {
 
         Iterator<Node> it = iterator();
@@ -704,7 +992,7 @@ public class PlayerList implements Iterable<Node> {
             try {
                 player._player.notifyTotalPot(totalPot);
             }
-            catch(Exception e) {
+            catch(IOException e) {
                 
                 player._isDisconnected = true;
                 if( checkIfGameCancel() )
@@ -712,10 +1000,21 @@ public class PlayerList implements Iterable<Node> {
             }
         }
 
-        if(_spectator != null)
-            _spectator.notifyTotalPot(totalPot);
+        
+        if(_spectator != null) {
+            try {
+                _spectator.notifyTotalPot(totalPot);
+            }
+            catch (IOException e) {
+                throw new CancelGameException();
+            }
+        }
     }
 
+    /**
+     * Notifies all players in the list and the spectator that the hand has ended due to a fold action, indicating that only one player remains active.
+     * @throws CancelGameException if the game cannot proceed due to disconnections or other errors
+     */
     private void notifyHandEndsByFold() throws CancelGameException {
         
         Iterator<Node> it = iterator();
@@ -725,7 +1024,7 @@ public class PlayerList implements Iterable<Node> {
             try {
                 player._player.notifyHandEndsByFolds();
             }
-            catch(Exception e) {
+            catch(IOException e) {
                 
                 player._isDisconnected = true;
                 if( checkIfGameCancel() )
@@ -733,10 +1032,20 @@ public class PlayerList implements Iterable<Node> {
             }
         }
 
-        if(_spectator != null)
-            _spectator.notifyHandEndsByFolds();
+        if(_spectator != null) {
+            try {
+                _spectator.notifyHandEndsByFolds();
+            }
+            catch (IOException e) {
+                throw new CancelGameException();
+            }
+        }
     }
 
+    /**
+     * Notifies all players in the list and the spectator that the current betting round has ended, allowing them to proceed to the next round or hand.
+     * @throws CancelGameException if the game cannot proceed due to disconnections or other errors
+     */
     private void notifyRoundEnded() throws CancelGameException {
 
         Iterator<Node> it = iterator();
@@ -746,7 +1055,7 @@ public class PlayerList implements Iterable<Node> {
             try {
                 player._player.notifyRoundEnded();
             }
-            catch(Exception e) {
+            catch(IOException e) {
                 
                 player._isDisconnected = true;
                 if( checkIfGameCancel() )
@@ -754,10 +1063,21 @@ public class PlayerList implements Iterable<Node> {
             }
         }
 
-        if(_spectator != null)
-            _spectator.notifyRoundEnded();
+        if(_spectator != null) {
+            try {
+                _spectator.notifyRoundEnded();
+            }
+            catch (IOException e) {
+                throw new CancelGameException();
+            }
+        }
     }
 
+    /**
+     * Notifies all players in the list and the spectator that the game has ended, allowing them to proceed to the end-of-game state or lobby.
+     * @param gameEnds true if the game has ended, false if it is continuing
+     * @throws CancelGameException if the game cannot proceed due to disconnections or other errors
+     */
     public void notifyGameEnds(final boolean gameEnds) throws CancelGameException {
 
         Iterator<Node> it = iterator();
@@ -772,7 +1092,7 @@ public class PlayerList implements Iterable<Node> {
                     else
                         player._player.notifyGameKeeps();
                 }
-                catch(Exception e) {
+                catch(IOException e) {
                     player._isDisconnected = true;
                     if( checkIfGameCancel() )
                         throw new CancelGameException();
@@ -781,14 +1101,25 @@ public class PlayerList implements Iterable<Node> {
         }
 
         if(_spectator != null) {
-            if(gameEnds)
-                _spectator.notifyGameEnded();
-            else
-                _spectator.notifyGameKeeps();
+            try {
+
+                if(gameEnds)
+                    _spectator.notifyGameEnded();
+                else
+                    _spectator.notifyGameKeeps();
+            }
+            catch (IOException e) {
+                throw new CancelGameException();
+            }
         }
     }
 
-    private void notifyPlayerStateToAllPlayers() throws CancelGameException {
+    /**
+     * Notifies all players in the list and the spectator of each player's state, including their current hand, bet amounts, and whether they should receive their hand rank.
+     * @param receiveRank true if players should receive their hand rank in the notification, false otherwise
+     * @throws CancelGameException if the game cannot proceed due to disconnections or other errors
+     */
+    private void notifyPlayerStateToAllPlayers(final boolean receiveRank) throws CancelGameException {
 
         Iterator<Node> targetIt = iterator();
         while( targetIt.hasNext() ) {
@@ -796,27 +1127,34 @@ public class PlayerList implements Iterable<Node> {
             Node receiverPlayer = targetIt.next();
             if( !receiverPlayer._isDisconnected && !receiverPlayer._player.isEliminated() ) {
 
-                try {
-                    receiverPlayer._player.notifyOwnState();
-                }
-                catch(Exception e) {
+                // Notify own state to player
+                notifyPlayerOwnState(receiverPlayer, receiveRank);
 
-                    receiverPlayer._isDisconnected = true;
-                    if( checkIfGameCancel() )
-                        throw new CancelGameException();
-                }
-
+                // Notify player state to the remaining players
                 Iterator<Node> it = iterator();
                 while( it.hasNext() ) {
 
                     Node player = it.next();
-                    if( player.equals(receiverPlayer) )
+
+                    // Ignore himself
+                    if( player == receiverPlayer ) {
+                        try {
+                            if(_spectator != null)
+                                _spectator.notifyOtherPlayerState(player._player, receiveRank);
+                        }
+                        catch (IOException e) {
+                            throw new CancelGameException();
+                        }
+
                         continue;
+                    }  
                 
+
+                    // Notify player state to other player
                     try {
-                        receiverPlayer._player.notifyOtherPlayerState(player._player);
+                        receiverPlayer._player.notifyOtherPlayerState(player._player, receiveRank);
                     }
-                    catch(Exception e) {
+                    catch(IOException e) {
                         
                         receiverPlayer._isDisconnected = true;
                         if( checkIfGameCancel() )
@@ -824,10 +1162,11 @@ public class PlayerList implements Iterable<Node> {
                     }
                 }
 
+                // Notify end of player state to the receiver player in either case (Same/Other player)
                 try {
                     receiverPlayer._player.notifyEndPlayerState();
                 }
-                catch(Exception e) {
+                catch(IOException e) {
                     receiverPlayer._isDisconnected = true;
                     if( checkIfGameCancel() )
                         throw new CancelGameException();
@@ -836,6 +1175,11 @@ public class PlayerList implements Iterable<Node> {
         }
     }
 
+    /**
+     * Notifies all players in the list of their equity in the current hand, based on the provided equity map.
+     * @param equityMap a map containing player IDs as keys and their corresponding equity values as values
+     * @throws CancelGameException if the game cannot proceed due to disconnections or other errors
+     */
     public void notifyEquityToPlayers(Map<Integer, Double> equityMap) throws CancelGameException {
 
         if (isEmpty())
@@ -860,7 +1204,7 @@ public class PlayerList implements Iterable<Node> {
                 try {
                     player.notifyEquity(equity);
                 }
-                catch(Exception e) {
+                catch(IOException e) {
                     
                     node._isDisconnected = true;
                     if( checkIfGameCancel() )
@@ -872,23 +1216,89 @@ public class PlayerList implements Iterable<Node> {
     }
 
 
-    private boolean checkIfGameCancel() {
+    
+    /**
+     * Checks if all active players have taken their turn.
+     * @return true if all active players have acted, false otherwise
+     */
+    private boolean checkAllPlayersActed() {
 
-        if(_host != null && _host._isDisconnected)
-            return true; 
+        boolean allActed = true;
+        Iterator<Node> it = iterator();
+        while( allActed && it.hasNext() ) {
 
+            Node player = it.next();
+            if(!player._isDisconnected && !player._player.isEliminated())   // Count only players that can play
+                allActed &= player._hasActed;
+        }
 
-        int connectedPlayers = 0;
+        return allActed;
+    }
+
+    /**
+     * Checks if all active players are all-in.
+     * @return true if all active players are all-in, false otherwise
+     */
+    private boolean checkAllPlayersAllIn() {
+
+        boolean allPlayersAllIn = true;
         Iterator<Node> it = iterator();
         while( it.hasNext() ) {
 
             Node player = it.next();
-            connectedPlayers += (player._isDisconnected) ? 1 : 0;
+            if(!player._isDisconnected && !player._player.isEliminated() && !player._player.isFolded())
+                allPlayersAllIn &= player._player.isAllIn();
         }
 
-        return (connectedPlayers <= 1);
+        return allPlayersAllIn;
     }
 
+    /**
+     * Checks if the game should be cancelled due to disconnections or other conditions, such as the host being disconnected or only one player remaining in the game.
+     * @return true if the game should be cancelled, false otherwise
+     */
+    private boolean checkIfGameCancel() {
+
+        if(_host != null && _host._isDisconnected)
+            return true;
+
+
+        int playerOnGame = 0;
+        Iterator<Node> it = iterator();
+        while( it.hasNext() ) {
+
+            Node player = it.next();
+            playerOnGame += (!player._isDisconnected && !player._player.isEliminated()) ? 1 : 0;
+        }
+
+        return (playerOnGame <= 1);
+    }
+
+    /**
+     * Checks if the game has reached its end condition, which occurs when all players except one have been eliminated.
+     * @return true if the game has ended, false otherwise
+     */
+    public boolean checkEndOfGame() {
+
+        int playersNotEliminated = _playerCounter;
+
+        Iterator<Node> it = iterator();
+        while( it.hasNext() ) {
+
+            Node player = it.next();
+            if(player._player.isEliminated()) {
+                --playersNotEliminated;
+            }
+        }
+
+        return (playersNotEliminated == 1);
+    }
+
+    /**
+     * Finds the next active player in the list, starting from the specified current player, and skipping any players who are eliminated, folded, or disconnected.
+     * @param current the current player from which to start searching for the next active player
+     * @return the Node representing the next active player, or the current player if no other active players are found
+     */
     private Node getNextPlayerActive(Node current) {
 
         Iterator<Node> it = iterator(current._next);
@@ -902,6 +1312,11 @@ public class PlayerList implements Iterable<Node> {
         return current;
     }
 
+    /**
+     * Finds the next player in the list who is not eliminated or disconnected, starting from the specified current player.
+     * @param current the current player from which to start searching for the next not eliminated player
+     * @return the Node representing the next not eliminated player, or the current player if no other not eliminated players are found
+     */
     private Node getNextNotEliminatedPlayer(Node current) {
 
         Node iNode = current._next;
@@ -919,6 +1334,11 @@ public class PlayerList implements Iterable<Node> {
         return iNode;
     }
 
+    /**
+     * Finds the player in the list with the specified role (e.g., small blind, big blind, dealer).
+     * @param role the role of the player to find
+     * @return the Node representing the player with the specified role, or null if no such player is found
+     */
     private Node getPlayerByRole(final PlayerRole role) {
 
         Iterator<Node> it = iterator();
@@ -936,13 +1356,57 @@ public class PlayerList implements Iterable<Node> {
     }
 
 
+    /**
+     * Checks if the player list is empty, meaning there are no players currently in the list.
+     * @return true if the player list is empty, false otherwise
+     */
     public boolean isEmpty() { return size() == 0; }
+
+    /**
+     * Checks if the player list has reached its maximum capacity, meaning no more players can be added to the list.
+     * @return true if the player list is full, false otherwise
+     */
     public boolean isFull() { return size() == max(); }
+
+    /**
+     * Returns the current number of players in the list.
+     * @return the number of players currently in the list
+     */
     public int size() { return _playerCounter; }
+
+    /**
+     * Returns the maximum number of players allowed in the list.
+     * @return the maximum number of players that can be in the list
+     */
     public int max() { return _maxNumberOfPlayers; }
 
+    /**
+     * Returns the total amount of money in the pot for the current hand.
+     * @return the total pot amount for the current hand
+     */
+    public int getTotalPot() { return _totalPot; }
 
-    // Iterator
+
+    /**
+     * Returns a list of all players currently in the player list, including their states and information.
+     * @return a list of Player objects representing all players in the player list
+     */
+    public List<Player> getPlayers() {
+
+        List<Player> players = new ArrayList<>();
+        Iterator<Node> it = iterator();
+        while ( it.hasNext() ) {
+            players.add(it.next()._player);
+        }
+
+        return players;
+    }
+
+
+    /* ---------------------------- Iterator ---------------------------- */
+    /**
+     * An iterator for the {@link PlayerList}, allowing iteration over the nodes (players) in the list.
+     */
     private class PlayerIterator implements Iterator<Node> {
 
         private Node pivot = _first;
@@ -977,28 +1441,18 @@ public class PlayerList implements Iterable<Node> {
 
     }
 
-    public Iterator<Node> iterator() {
-        return new PlayerIterator();
-    }
+    /**
+     * {@inheritDoc}
+     * Returns an iterator over the nodes (players) in the player list, allowing iteration through
+     */
+    @Override
+    public Iterator<Node> iterator() { return new PlayerIterator(); }
 
-    public Iterator<Node> iterator(Node start) {
-        return new PlayerIterator(start);
-    }
-
-
-    public List<Player> getPlayers() {
-
-        List<Player> players = new ArrayList<>();
-
-        Iterator<Node> it = iterator();
-        while (it.hasNext()) {
-            players.add(it.next()._player);
-        }
-
-        return players;
-    }
-
-    public int getTotalPot() {
-        return _totalPot;
-    }
+    /**
+     * Returns an iterator over the nodes (players) in the player list, starting from the specified node.
+     * @param start the node from which to start the iteration
+     * @return an iterator over the nodes in the player list, starting from the specified node
+     */
+    public Iterator<Node> iterator(Node start) { return new PlayerIterator(start); }
+    
 }

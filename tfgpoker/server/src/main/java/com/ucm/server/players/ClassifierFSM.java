@@ -1,43 +1,88 @@
 package com.ucm.server.players;
 
 import java.io.IOException;
+import java.util.concurrent.ThreadLocalRandom;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
+import com.ucm.server.exceptions.TurnTimeoutException;
 import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.gameobjects.BotFSM;
 import com.ucm.server.interfaces.IPlayerInfo;
 
 
+
+/**
+ * This class represents a bot that uses a finite state machine (FSM) to decide its next move in a poker game.
+ * The bot evaluates the total value of the cards on the table and in its hand to determine its action, which can be folding, calling/checking, raising, or going all-in.
+ */
 public class ClassifierFSM extends BotFSM {
 
+    private static final Logger log = LogManager.getLogger(ClassifierFSM.class);
+
+    /**
+     * The unique identifier for this FSM bot, which is used to distinguish it from other types of bots in the game.
+     */
     private static final int FSM_ID = GameType.BOT_FSM_1;
 
 
 
+    /**
+     * Constructs a new instance of the ClassifierFSM bot with a unique identifier.
+     * The constructor initializes the bot by calling the superclass constructor with the {@link #FSM_ID}.
+     */
     public ClassifierFSM() {
         super(FSM_ID);
     }
 
 
+    /**
+     * Plays the next move for the bot based on the current game state, including the small blind (sb), big blind (bb), maximum bet (maxBet), and player information (player).
+     * The bot evaluates the total value of the cards on the table and in its hand to determine its action, which can be folding, calling/checking, raising, or going all-in.
+     */
     @Override
-    public String play(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException {
+    public String play(int sb, int bb, int maxBet, IPlayerInfo player) throws IOException, TurnTimeoutException {
         
         // Get table cards values -> Zero if there is no card on the table
-        int valueTC1 = table.get(0) != null ? table.get(0).getNumber() : 0;
-        int valueTC2 = table.get(1) != null ? table.get(1).getNumber() : 0;
-        int valueTC3 = table.get(2) != null ? table.get(2).getNumber() : 0;
-        int valueTC4 = table.get(3) != null ? table.get(3).getNumber() : 0;
-        int valueTC5 = table.get(4) != null ? table.get(4).getNumber() : 0;
+        int valueTC1 = 0;
+        int valueTC2 = 0;
+        int valueTC3 = 0;
+        int valueTC4 = 0;
+        int valueTC5 = 0;
+        switch (table.size()) {
+            case 3:
+                valueTC1 = table.get(0).getNumber();
+                valueTC2 = table.get(1).getNumber();
+                valueTC3 = table.get(2).getNumber();
+                break;
+            case 4:
+                valueTC1 = table.get(0).getNumber();
+                valueTC2 = table.get(1).getNumber();
+                valueTC3 = table.get(2).getNumber();
+                valueTC4 = table.get(3).getNumber();
+                break;
+            case 5:
+                valueTC1 = table.get(0).getNumber();
+                valueTC2 = table.get(1).getNumber();
+                valueTC3 = table.get(2).getNumber();
+                valueTC4 = table.get(3).getNumber();
+                valueTC5 = table.get(0).getNumber();
+                break;
+            default:    // Empty table : All zeros
+                break;
+        }
 
         // Get player cards values
         int valueC1 = player.getPlayerCards()[0].getNumber();
         int valueC2 = player.getPlayerCards()[1].getNumber();
 
         // Add up table cards and player cards values
-        int totalValue = 
-            valueTC1 + valueTC2 + valueTC3 + valueTC4 + valueTC5 + 
-            valueC1 + valueC2;
+        final int tableValue = valueTC1 + valueTC2 + valueTC3 + valueTC4 + valueTC5;
+        final int handValue = valueC1 + valueC2;
+        final int totalValue = tableValue + handValue;
 
         
         // Max sum possible is (A, A, A, A, K + K, K) = (14 + 14 + 14 + 14 + 13) + (13 + 13) = 95
@@ -45,14 +90,25 @@ public class ClassifierFSM extends BotFSM {
         // We split up equally the decision between them -> 95/4 = 23 'points' for each action
         // Order: FOLD < CALL/CHECK < RAISE 'amount' < ALL_IN             
         final int points_per_action = 95 / 4;
-        if(totalValue < points_per_action) {    // FOLD - x < 23
+        if(tableValue == 0) {   // In case there is no cards on the table
+             
+            String actions[] = {
+                GameType.FOLD_ACTION_FULL, 
+                GameType.CALL_ACTION_FULL, 
+                GameType.RAISE_ACTION_FULL + " " + String.valueOf(2 * maxBet), 
+                GameType.ALL_IN_ACTION_FULL
+            };
+
+            return actions[ ThreadLocalRandom.current().nextInt(actions.length) ];
+        }
+        else if(totalValue < points_per_action) {    // FOLD - x < 23
             return GameType.FOLD_ACTION_FULL;
         }
         else if(points_per_action <= totalValue && totalValue < 2 * points_per_action) {    // CALL/CHECK - 23 <= x < 46
             return GameType.CALL_ACTION_FULL;
         }
         else if(2 * points_per_action <= totalValue && totalValue < 3 * points_per_action) {    // RAISE - 46 <= x < 69
-            return GameType.RAISE_ACTION_FULL + String.valueOf(2 * maxBet);
+            return GameType.RAISE_ACTION_FULL + " " + String.valueOf(2 * maxBet);
         }
         else {  // ALL_IN
             return GameType.ALL_IN_ACTION_FULL;

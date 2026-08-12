@@ -6,8 +6,6 @@ import com.ucm.common.GameType;
  * Simple class that represents a poker card in the game.
  * It has a value such as Ace, 2, 3, ..., 10, Jack, Queen and King.
  * It has a {@link Suit} such as Hearts, Diamonds, Clubs and Spades.
- * These are created and taken by the {@link Deck} class and can be placed on
- * the table
  * or in the players' hands.
  * They can be flipped down or up to reveal their value and suit.
  */
@@ -125,8 +123,6 @@ public class Card {
     /**
      * Returns a string representation of a missing card, which is
      * represented as [--]
-     * This is only useful when a card is missing from the deck or the table and the
-     * state of the {@link Deck} or {@link Game} are being printed to the console.
      * 
      * @return {@link String} representation of the missing card
      */

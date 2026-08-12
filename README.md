@@ -1,5 +1,12 @@
 # TFG_Poker
 
+# Generar Javadoc
+- Desde tfgpoker/
+  - Crear Javadoc de server
+    - mvn -pl server javadoc:javadoc
+- Abrir el archivo de la carpeta tfgpoker/server/documentation/javadoc/apidocs/index.html
+
+
 # Indice
 Seccion [integrantes](#integrantes)\
 Seccion [modelos de bots utilzados](#modelos-de-bots-utilizados)\
@@ -12,20 +19,6 @@ Seccion [canvas](#canvas)\
 Seccion [interfaz](#interfaz)\
 Seccion [ideas](#ideas)\
 Seccion [patrones de diseño empleados](#patrones-de-diseño-empleados)
-
-# Modelos de bots utilizados 
-Repositorio hugging face 
-https://huggingface.co/YiPz/llama3-8b-pokerbench-sft
-
-# Memoria
-Memoria Version 1
-https://docs.google.com/document/d/1hPFwvcHTQgucEkQK-0uTQ0Gnrr-E6CcT/edit?usp=sharing&ouid=100471133406238296310&rtpof=true&sd=true
-
-Plantilla
-https://docs.google.com/document/d/17gitDoBetkTzmvoT2JAn79Ssiv_-TdHw/edit?usp=sharing&ouid=115274461183780907670&rtpof=true&sd=true
-
-Carpeta TFG
-https://drive.google.com/drive/folders/1gdmCRiwNo7nF5eN1FPsKJODaJ_gIdlel?usp=drive_link
 
 # Integrantes
 - Óscar Fabian Pineda German

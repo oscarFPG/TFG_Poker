@@ -1,19 +1,23 @@
 package com.ucm.server.gameobjects;
 
-import com.ucm.common.GameType;
-
+/**
+ * Parent class for all finite state machine (FSM) based bots in the poker game. 
+ * This class extends the {@link Bot} class and provides a framework for implementing bots that operate based on a finite state machine model.
+ */
 public abstract class BotFSM extends Bot {
 
+    /**
+     * Constructs a new BotFSM instance with the specified bot identifier.
+     * @param botID the unique identifier for the bot
+     */
     public BotFSM(int botID) {
         super(botID);
     }
 
-    public final String nextState_FOLD(){ return GameType.FOLD_ACTION_FULL; }
-    public final String nextState_CALL(){ return GameType.CALL_ACTION_FULL; }
-    public final String nextState_CHECK(){ return GameType.CHECK_ACTION_FULL; }
-    public final String nextState_RAISE(final int amount){ return GameType.RAISE_ACTION_FULL + String.valueOf(amount); }
-    public final String nextState_ALL_IN(){ return GameType.ALL_IN_ACTION_FULL; }
-
+    /**
+     * Returns the type of player, which is "BOT_FSM" for all finite state machine based bot instances.
+     * @return "BOT_FSM"
+     */
     @Override
     public String getPlayerType() {
         return "BOT_FSM";

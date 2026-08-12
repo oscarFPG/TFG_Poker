@@ -6,68 +6,56 @@ import org.apache.logging.log4j.Logger;
 
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.exceptions.OnlyOnePlayerLeftException;
-import com.ucm.server.history.PokerHistory;
 import com.ucm.server.logic.Game;
 
-
+/**
+ * Class that represents the Controller of the poker game.
+ * It is responsible for managing the flow of the game, including player actions and game state transitions.
+ */
 public class Controller {
 
     private static final Logger log = LogManager.getLogger(Controller.class);
 
     /**
-     * Atributo que referencia la clase Game
+     * Reference to the game instance that this controller will manage.
+     * @see Game
      */
     private Game _game;
 
-
+    /**
+     * Constructor for the Controller class.
+     * @param game the game instance that this controller will manage
+     */
     public Controller(Game game) {
         _game = game;
     }
 
+
     /**
-     * Controller constructor only for debugging purposes.
-     * It will be used in the local mode of the server, where no clients are needed.
-     * @param game The game instance to control.
-     * @param numPlayers The number of local players to add to the game.
+     * Runs the poker game, managing the flow of hands and player actions until the game ends.
+     * This method handles the different stages of a poker hand, including pre-flop, flop, turn, river, and showdown.
+     * It also manages the transition between hands and checks for end-of-game conditions.
+     * @throws CancelGameException if the game is cancelled by any reason or error
      */
-    public Controller(Game game, int numPlayers) {
-        _game = game;
-    }
-
-
     public void run() throws CancelGameException {
-
-        log.debug("Game starts!");
-        runGame();
-        log.debug("Game ends!");
-    }
-
-    private void runGame() throws CancelGameException {
 
         int handCounter = 0;
         boolean endOfGame = false;
 
-        PokerHistory.startMatch(_game.getMatchId());
-        PokerHistory history = null;
+        _game.initialize();
+
+        log.debug("Game starts!");
         while (!endOfGame) {
 
-           
             log.debug("---- HAND_{} ----", handCounter);
             try {
 
-                history = null;
                 // Asign player roles
                 _game.assignRolesToAllPlayers();
-                
-                // Initialize history
-                _game.initializeExperimentData();
-                history = new PokerHistory(_game, handCounter + 1);
-                PokerHistory.set(history);
 
                 // Pre-flop (2)
                 log.debug("---- PRE-FLOP ----");
                 _game.shareOutCardsToAllPlayers();
-                history.startHand();
                 _game.updateEquity();
                 _game.playHand();
 
@@ -76,54 +64,38 @@ public class Controller {
                 _game.addCardToTable();
                 _game.addCardToTable();
                 _game.addCardToTable();
-                history.flop(_game.getTableCards());
                 _game.updateEquity();
                 _game.playHand();
 
                 // Turn (4)
                 log.debug("---- TURN ----");
                 _game.addCardToTable();
-                history.turn(_game.getTableCards());
                 _game.updateEquity();
                 _game.playHand();
 
                 // River (5)
                 log.debug("---- RIVER ----");
                 _game.addCardToTable();
-                history.river(_game.getTableCards());
                 _game.updateEquity();
                 _game.playHand();
 
                 // Showdown (6)
                 log.debug("---- SHOWDOWN ----");
-                history.showdown();
-                _game.giveRewardToWinner();
-                _game.finishExperimentData();
+                _game.showdown();
             }
             catch (OnlyOnePlayerLeftException e) {
+                
                 log.debug("Showdown with only one player left");
-                if (history != null) 
-                    history.showdown();
-
-                _game.giveRewardToWinner();
-                _game.finishExperimentData();
+                _game.showdown();
             }
 
-            if (history != null) {
-                history.summary(_game.getTableCards());
-                history.experimentData();
-                history.endHand();
-            }
-
-            PokerHistory.clear(); 
             log.debug("---- ~HAND_{} ----", handCounter);
             endOfGame = _game.passTurn();
 
             ++handCounter;
         }
 
-        
-        PokerHistory.endMatch();
+        log.debug("Game ends!");
     }
 
 }

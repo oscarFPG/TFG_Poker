@@ -123,6 +123,20 @@
                     <forkCount>0</forkCount>
                 </configuration>
             </plugin>
+
+            <!-- Javadoc path -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.11.2</version>
+                <configuration>
+                    <outputDirectory>
+                        ${project.basedir}/documentation/javadoc
+                    </outputDirectory>
+                    <failOnError>false</failOnError>
+                    <doclint>none</doclint>
+                </configuration>
+            </plugin>
     
         </plugins>
     </build>

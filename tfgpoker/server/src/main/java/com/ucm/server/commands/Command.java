@@ -19,16 +19,31 @@ import com.ucm.server.middleclasses.CommandResult;
  */
 public abstract class Command {
 
+    /**
+     * The player associated with the command.
+     * @see IPlayerActions
+     */
     protected IPlayerActions _player;
+
+    /**
+     * The total amount of money that the player has not bet yet.
+     */
     protected int _playersOffBetMoney;
+
+    /**
+     * The amount of money that the player has already bet in the current hand.
+     */
     protected int _playersOnBetMoney;
 
+    /**
+     * A list of all available commands in the poker game.
+     */
     private static final List<Command> AVAILABLE_COMMANDS = Arrays.asList(
-            new CallCommand(),
-            new CheckCommand(),
-            new FoldCommand(),
-            new RaiseCommand(),
-            new AllInCommand()
+        new CallCommand(),
+        new CheckCommand(),
+        new FoldCommand(),
+        new RaiseCommand(),
+        new AllInCommand()
     );
 
 
@@ -99,19 +114,23 @@ public abstract class Command {
         return getCommandFormat() + "/" + getCommandFormatShortcut() + getCommandParameters();
     }
 
-    public String getCommandParameters(){
+    /**
+     * Method that returns the parameters of the command, which may include any
+     * additional information required for the command to be executed.
+     * @return a string representing the parameters of the command, or an empty string if there are no parameters.
+     */
+    public String getCommandParameters() {
         return "";
     }
 
 
-    protected abstract Command createCommand(final String[] commandFormat, final IPlayerActions player);
-
     /**
-     * Checks if the command can be executed correctly based on the context
-     * 
-     * @return true if the command can be executed, false in any other case
+     * Creates a new instance of the command with the specified format and player.
+     * @param commandFormat the format of the command
+     * @param player the player associated with the command
+     * @return a new instance of the command
      */
-    //public abstract boolean validate(final int maxBet);
+    protected abstract Command createCommand(final String[] commandFormat, final IPlayerActions player);
 
     /**
      * Method that executes the command. This method should be implemented by each
@@ -120,8 +139,7 @@ public abstract class Command {
      * @param sb     the small blind value.
      * @param bb     the big blind value.
      * @param maxBet the maximum bet value in the current round.
-     * @return a CommandResult object indicating that the player has stopped
-     *         playing.
+     * @return a CommandResult object indicating that the player has stopped playing.
      */
     public abstract CommandResult execute(final int sb, final int bb, final int maxBet);
 
@@ -151,6 +169,5 @@ public abstract class Command {
      * @return a string representing the description of the command
      */
     public abstract String getCommandDescription();
-
 
 }

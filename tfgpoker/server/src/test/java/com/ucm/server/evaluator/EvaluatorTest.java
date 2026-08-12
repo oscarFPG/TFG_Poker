@@ -1,18 +1,17 @@
 package com.ucm.server.evaluator;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.Deck;
 import com.ucm.common.gameobjects.Suit;
 import com.ucm.server.evaluator.Evaluator.RANK;
 import com.ucm.server.exceptions.EvaluatorException;
-import com.ucm.server.gameobjects.Deck;
 
 
 public class EvaluatorTest {
@@ -174,189 +173,175 @@ public class EvaluatorTest {
 
     // 7 7 7 4 2
     @Test
-    public void evaluate5hand2136Test() {
+    public void evaluate5hand2136Test() throws EvaluatorException {
         int c1 = Evaluator.encodeCard(tableCards2136[0]);
         int c2 = Evaluator.encodeCard(tableCards2136[1]);
         int c3 = Evaluator.encodeCard(tableCards2136[2]);
         int c4 = Evaluator.encodeCard(tableCards2136[3]);
         int c5 = Evaluator.encodeCard(tableCards2136[4]);
 
-        Assertions.assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 2136);
-
+        Assertions.assertEquals(2136, Evaluator.getInstance().evaluate5hand(c1, c2, c3, c4, c5));
     }
 
     // A K Q J T Royal Flush
     @Test
-    public void evaluate5hand1Test() {
+    public void evaluate5hand1Test() throws EvaluatorException {
         int c1 = Evaluator.encodeCard(tableCards1[0]);
         int c2 = Evaluator.encodeCard(tableCards1[1]);
         int c3 = Evaluator.encodeCard(tableCards1[2]);
         int c4 = Evaluator.encodeCard(tableCards1[3]);
         int c5 = Evaluator.encodeCard(tableCards1[4]);
 
-        Assertions.assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 1);
-
+        Assertions.assertEquals(1, Evaluator.getInstance().evaluate5hand(c1, c2, c3, c4, c5));
     }
 
     // K Q J T 9 King-High Straight Flush
     @Test
-    public void evaluate5hand2Test() {
+    public void evaluate5hand2Test() throws EvaluatorException {
         int c1 = Evaluator.encodeCard(tableCards2[0]);
         int c2 = Evaluator.encodeCard(tableCards2[1]);
         int c3 = Evaluator.encodeCard(tableCards2[2]);
         int c4 = Evaluator.encodeCard(tableCards2[3]);
         int c5 = Evaluator.encodeCard(tableCards2[4]);
 
-        Assertions.assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 2);
-
+        Assertions.assertEquals(2, Evaluator.getInstance().evaluate5hand(c1, c2, c3, c4, c5));
     }
 
     // 5 4 3 2 A Five-High Straight Flush
     @Test
-    public void evaluate5hand10Test() {
+    public void evaluate5hand10Test() throws EvaluatorException {
         int c1 = Evaluator.encodeCard(tableCards10[0]);
         int c2 = Evaluator.encodeCard(tableCards10[1]);
         int c3 = Evaluator.encodeCard(tableCards10[2]);
         int c4 = Evaluator.encodeCard(tableCards10[3]);
         int c5 = Evaluator.encodeCard(tableCards10[4]);
 
-        Assertions.assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 10); // assertFalse(Evaluator.evaluate5hand(c1, c2,
+        Assertions.assertEquals(10, Evaluator.getInstance().evaluate5hand(c1, c2, c3, c4, c5)); // assertFalse(Evaluator.evaluate5hand(c1, c2,
                                                                        // c3, c4, c5) == 11);
-
     }
 
     // A A A A T Four Aces
     @Test
-    public void evaluate5hand14Test() {
+    public void evaluate5hand14Test() throws EvaluatorException {
         int c1 = Evaluator.encodeCard(tableCards14[0]);
         int c2 = Evaluator.encodeCard(tableCards14[1]);
         int c3 = Evaluator.encodeCard(tableCards14[2]);
         int c4 = Evaluator.encodeCard(tableCards14[3]);
         int c5 = Evaluator.encodeCard(tableCards14[4]);
 
-        Assertions.assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 14);
-
+        Assertions.assertEquals(14, Evaluator.getInstance().evaluate5hand(c1, c2, c3, c4, c5));
     }
 
     // K K K K T Four Kings
     @Test
-    public void evaluate5hand26Test() {
+    public void evaluate5hand26Test() throws EvaluatorException {
         int c1 = Evaluator.encodeCard(tableCards26[0]);
         int c2 = Evaluator.encodeCard(tableCards26[1]);
         int c3 = Evaluator.encodeCard(tableCards26[2]);
         int c4 = Evaluator.encodeCard(tableCards26[3]);
         int c5 = Evaluator.encodeCard(tableCards26[4]);
 
-        Assertions.assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 26);
-
+        Assertions.assertEquals(26, Evaluator.getInstance().evaluate5hand(c1, c2, c3, c4, c5));
     }
 
     // Q Q Q Q 6 Four Queens
     @Test
-    public void evaluate5hand42Test() {
+    public void evaluate5hand42Test() throws EvaluatorException {
         int c1 = Evaluator.encodeCard(tableCards42[0]);
         int c2 = Evaluator.encodeCard(tableCards42[1]);
         int c3 = Evaluator.encodeCard(tableCards42[2]);
         int c4 = Evaluator.encodeCard(tableCards42[3]);
         int c5 = Evaluator.encodeCard(tableCards42[4]);
 
-        Assertions.assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 42);
-
+        Assertions.assertEquals(42, Evaluator.getInstance().evaluate5hand(c1, c2, c3, c4, c5));
     }
 
     // 7 7 7 Q Q Sevens Full over Queens
     @Test
-    public void evaluate5hand253Test() {
+    public void evaluate5hand253Test() throws EvaluatorException {
         int c1 = Evaluator.encodeCard(tableCards253[0]);
         int c2 = Evaluator.encodeCard(tableCards253[1]);
         int c3 = Evaluator.encodeCard(tableCards253[2]);
         int c4 = Evaluator.encodeCard(tableCards253[3]);
         int c5 = Evaluator.encodeCard(tableCards253[4]);
 
-        Assertions.assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 253);
-
+        Assertions.assertEquals(253, Evaluator.getInstance().evaluate5hand(c1, c2, c3, c4, c5));
     }
 
     // 9 8 5 3 2 Nine-High Flush
     @Test
-    public void evaluate5hand1565Test() {
+    public void evaluate5hand1565Test() throws EvaluatorException {
         int c1 = Evaluator.encodeCard(tableCards1565[0]);
         int c2 = Evaluator.encodeCard(tableCards1565[1]);
         int c3 = Evaluator.encodeCard(tableCards1565[2]);
         int c4 = Evaluator.encodeCard(tableCards1565[3]);
         int c5 = Evaluator.encodeCard(tableCards1565[4]);
 
-        Assertions.assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 1565);
-
+        Assertions.assertEquals(1565, Evaluator.getInstance().evaluate5hand(c1, c2, c3, c4, c5));
     }
 
     // 6 5 4 3 2 Six-High Straight
     @Test
-    public void evaluate5hand1608Test() {
+    public void evaluate5hand1608Test() throws EvaluatorException {
         int c1 = Evaluator.encodeCard(tableCards1608[0]);
         int c2 = Evaluator.encodeCard(tableCards1608[1]);
         int c3 = Evaluator.encodeCard(tableCards1608[2]);
         int c4 = Evaluator.encodeCard(tableCards1608[3]);
         int c5 = Evaluator.encodeCard(tableCards1608[4]);
 
-        Assertions.assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 1608);
-
+        Assertions.assertEquals(1608, Evaluator.getInstance().evaluate5hand(c1, c2, c3, c4, c5));
     }
 
     // 2 2 2 7 3 Six-High Straight
     @Test
-    public void evaluate5hand2461Test() {
+    public void evaluate5hand2461Test() throws EvaluatorException {
         int c1 = Evaluator.encodeCard(tableCards2461[0]);
         int c2 = Evaluator.encodeCard(tableCards2461[1]);
         int c3 = Evaluator.encodeCard(tableCards2461[2]);
         int c4 = Evaluator.encodeCard(tableCards2461[3]);
         int c5 = Evaluator.encodeCard(tableCards2461[4]);
 
-        Assertions.assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 2461);
-
+        Assertions.assertEquals(2461, Evaluator.getInstance().evaluate5hand(c1, c2, c3, c4, c5));
     }
 
     // T T 9 9 8 Tens and Nines
     @Test
-    public void evaluate5hand2934Test() {
+    public void evaluate5hand2934Test() throws EvaluatorException {
         int c1 = Evaluator.encodeCard(tableCards2934[0]);
         int c2 = Evaluator.encodeCard(tableCards2934[1]);
         int c3 = Evaluator.encodeCard(tableCards2934[2]);
         int c4 = Evaluator.encodeCard(tableCards2934[3]);
         int c5 = Evaluator.encodeCard(tableCards2934[4]);
 
-        Assertions.assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 2934);
-
+        Assertions.assertEquals(2934, Evaluator.getInstance().evaluate5hand(c1, c2, c3, c4, c5));
     }
 
     // 5 5 Q J T 1P Pair of Fives
     @Test
-    public void evaluate5hand5406Test() {
+    public void evaluate5hand5406Test() throws EvaluatorException {
         int c1 = Evaluator.encodeCard(tableCards5406[0]);
         int c2 = Evaluator.encodeCard(tableCards5406[1]);
         int c3 = Evaluator.encodeCard(tableCards5406[2]);
         int c4 = Evaluator.encodeCard(tableCards5406[3]);
         int c5 = Evaluator.encodeCard(tableCards5406[4]);
 
-        Assertions.assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 5406);
-
+        Assertions.assertEquals(5406, Evaluator.getInstance().evaluate5hand(c1, c2, c3, c4, c5));
     }
 
     // 7 6 5 4 2 HC Seven-High
     @Test
-    public void evaluate5hand7459Test() {
+    public void evaluate5hand7459Test() throws EvaluatorException {
         int c1 = Evaluator.encodeCard(tableCards7459[0]);
         int c2 = Evaluator.encodeCard(tableCards7459[1]);
         int c3 = Evaluator.encodeCard(tableCards7459[2]);
         int c4 = Evaluator.encodeCard(tableCards7459[3]);
         int c5 = Evaluator.encodeCard(tableCards7459[4]);
 
-        Assertions.assertEquals(Evaluator.evaluate5hand(c1, c2, c3, c4, c5), 7459);
-
+        Assertions.assertEquals(7459, Evaluator.getInstance().evaluate5hand(c1, c2, c3, c4, c5));
     }
 
     @Test
-    public void testAllCombinations() {
+    public void testAllCombinations() throws EvaluatorException {
 
         Deck deck = new Deck();
         int combinations = 0;
@@ -396,7 +381,7 @@ public class EvaluatorTest {
                             int c5e = Evaluator.encodeCard(c5);
 
                             // Evaluate cards
-                            short eval = Evaluator.evaluate5hand(c1e, c2e, c3e, c4e, c5e);
+                            short eval = Evaluator.getInstance().evaluate5hand(c1e, c2e, c3e, c4e, c5e);
                             RANK rank = Evaluator.handRank(eval);
                             
                             if(rank == RANK.HIGH_CARD)

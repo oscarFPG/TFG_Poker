@@ -1,6 +1,7 @@
 package com.ucm.client;
 
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,11 +23,12 @@ public class ClientInfo {
     public Socket socket;
     public boolean isHost;
 
-    public List<PlayerInfo> playerPositions;
+    public List<PlayerInfo> playerPositions = new ArrayList<>();
 
     private static ClientInfo instance;
 
     private Map<Integer, Image> avatarCache = new HashMap<>();
+
 
     private ClientInfo() {}
 
@@ -56,6 +58,10 @@ public class ClientInfo {
     public void onNameChanged(String newName) {
         this.name = newName;
         avatarCache.clear();
+    }
+
+    public void clearInfo() {
+        instance = null;
     }
 
 }

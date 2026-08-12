@@ -1,6 +1,6 @@
 package com.ucm.common;
 
-public record BotStruct (int botId, int matchId, String botName, BotStyle style) {
+public record BotStruct(int botId, int matchId, String botName, BotStyle style) {
 
     public static BotStruct createSimpleBot(int botId, int matchId, String botName) {
         return new BotStruct(botId, matchId, botName, BotStyle.DEFAULT);

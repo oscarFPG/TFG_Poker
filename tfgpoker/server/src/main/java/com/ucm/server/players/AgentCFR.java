@@ -21,22 +21,60 @@ import ai.onnxruntime.OrtSession.Result;
 /**
  * Deep CFR trained for 1v1 poker games (Heads-up)
  * 
- * AgentCFR
  */
 public class AgentCFR extends BotNN {
 
     private static final boolean DEBUG_CFR = false;
 
+
+    /**
+     * The unique identifier for the Counterfactual Regret Minimization (CFR) agent.
+     * This ID is used to distinguish this agent from other types of agents in the game.
+     */
     private static final int CFR_ID = GameType.BOT_NN_MODEL_1;
+
+    /**
+     * The filename of the ONNX model used for the Counterfactual Regret Minimization (CFR) agent.
+     */
     private static final String CFR_FILENAME = "poker_cfr.onnx";
+
+    /**
+     * The name of the Counterfactual Regret Minimization (CFR) agent, which is "DeepCFR".
+     * This name is used for identification and description purposes within the game.
+     */
     public static final String CFR_NAME = "DeepCFR";
 
-    // Action indexes
+
+    /* -------------------------------- Action indexes -------------------------------- */
+    /**
+     * The index of the "Fold" action in the action array.
+     * This index is used to identify the "Fold" action when processing the agent's predictions.
+     */
     private static final int FOLD_IDX = 0;
+    
+    /**
+     * The index of the "Call" action in the action array.
+     * This index is used to identify the "Call" action when processing the agent's predictions
+     */
     private static final int CALL_IDX = 1;
+
+    /**
+     * The index of the "Raise" action in the action array.
+     * This index is used to identify the "Raise" action when processing the agent's predictions
+     */
     private static final int RAISE_IDX = 3;
+
+    /**
+     * The index of the "All-in" action in the action array.
+     * This index is used to identify the "All-in" action when processing the agent's
+     */
     private static final int ALL_IN_IDX = 4;
 
+
+    /**
+     * Constructs a new instance of the AgentCFR class, initializing it with the unique identifier and filename for the Counterfactual Regret Minimization (CFR) agent.
+     * This constructor sets up the necessary parameters for the agent to function within the poker game environment.
+     */
     public AgentCFR() {
         super(CFR_ID, CFR_FILENAME);
     }
@@ -87,17 +125,6 @@ public class AgentCFR extends BotNN {
         return null; 
     }
 
-    /**
-     * Method to select the best action predicted by the neuronal network
-     * 
-     * @param sb Small-blind bet in this round
-     * @param bb Big-blind bet in this round
-     * @param maxBet Maximum bet in this round
-     * @param player Player used by this neuronal network
-     * @param prediction float array with 5 positions, in order:  
-     * 
-     * @return 
-     */
     @Override
     public String translate(int sb, int bb, int maxBet, IPlayerInfo player, float[] prediction) {
         
@@ -178,7 +205,7 @@ public class AgentCFR extends BotNN {
     /**
      * Index of every action ordered by probability (max to min)
      * @param probs probabilities of each action -> probs[i] = x means action i has a x probability where 0 <= x <= 1
-     * @return
+     * @return array of indexes of every action ordered by probability (max to min)
      */
     private int[] reorderActionsByProbability(final float[] probs) {
 
@@ -201,6 +228,12 @@ public class AgentCFR extends BotNN {
         return result;
     }
 
+    /**
+     * Converts a Card object to its corresponding index in the state representation.
+     * The index is calculated based on the suit and value of the card, with suits ordered as Spades, Hearts, Diamonds, and Clubs, and values ordered from Ace to King.
+     * @param c the Card object to be converted
+     * @return the index of the card in the state representation
+     */
     private int cardToIndex(final Card c) {
 
         Suit suit = c.getSuit();
@@ -228,6 +261,12 @@ public class AgentCFR extends BotNN {
         return row * 13 + column;
     }
 
+    /**
+     * Displays the probability distribution of actions based on the provided result indices and their corresponding probabilities.
+     * This is for debugging purposes
+     * @param result array of indexes of every action ordered by probability (max to min)
+     * @param probs array of probabilities of each action
+     */
     private void showProbDistribution(int[] result, float[] probs) {
 
         // Show probability of each action
@@ -258,5 +297,6 @@ public class AgentCFR extends BotNN {
     public String getPlayerModel() {
         return "AgentCFR_1";
     }
+
 
 }
