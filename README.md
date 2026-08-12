@@ -9,6 +9,8 @@
 
 # Indice
 Seccion [integrantes](#integrantes)\
+Seccion [modelos de bots utilzados](#modelos-de-bots-utilizados)\
+Seccion [memoria](#memoria)\
 Seccion [requisitos del proyecto](#requisitos-del-proyecto)\
 Seccion [guía de instalación](#guia-instalación)\
 Seccion [modos de uso](#modos-de-uso)\
@@ -98,6 +100,9 @@ Diagrama de secuencia client-servidor: https://lucid.app/lucidchart/f9ab4fa7-572
 
 ## Plantilla oficial interfaz: https://ucomplutense-my.sharepoint.com/:p:/r/personal/carlatoa_ucm_es/Documents/PLANTILLA%20POKER.pptx?d=w39d7c2dc428d45c79c11ddaaadb6830a&csf=1&web=1&e=xgrq4b
 
+# Dibujar formas 
+https://yqnn.github.io/svg-path-editor/
+
 # Ideas
 - Bot que te suguiera la siguiente accion
 - Bot personalizado (parametros que el usuario quiere que tenga el bot)
@@ -107,3 +112,55 @@ Diagrama de secuencia client-servidor: https://lucid.app/lucidchart/f9ab4fa7-572
 - Command -> Comandos para las acciones del jugador(check, fold, raise y call)
 - MVC(Modelo Vista-Controlador) -> Separación entre modelo(juego poker) y su representación(GUI con JavaFX)
 - Cliente-Servidor -> División entre las acciones y responsabilidades de los clientes y el servidor al que se conectan
+- 
+
+
+# Formato historial Poker Star
+
+PokerStars Hand #1234567890:  Hold'em No Limit ($0.50/$1.00 USD) - 2026/03/03 21:15:32 ET\
+Table 'Alpha III' 6-max Seat #3 is the button\
+Seat 1: Player1 ($100.00 in chips)\
+Seat 2: Player2 ($120.50 in chips)\
+Seat 3: Hero ($98.75 in chips)\
+Seat 4: Player4 ($101.20 in chips)\
+Seat 5: Player5 ($87.00 in chips)\
+Seat 6: Player6 ($150.00 in chips)
+
+Player4: posts small blind $0.50\
+Player5: posts big blind $1.00
+
+*** HOLE CARDS ***\
+Dealt to Hero [Ah Ks]
+
+Player6: folds\
+Player1: raises $2.00 to $3.00\
+Player2: calls $3.00\
+Hero: raises $9.00 to $12.00\
+Player4: folds\
+Player5: folds\
+Player1: calls $9.00\
+Player2: folds
+
+*** FLOP *** [Ad 7c 2h]\
+Player1: checks\
+Hero: bets $15.00\
+Player1: calls $15.00
+
+*** TURN *** [Ad 7c 2h] [Kd]\
+Player1: checks\
+Hero: bets $30.00\
+Player1: calls $30.00
+
+*** RIVER *** [Ad 7c 2h Kd] [5s]\
+Player1: checks\
+Hero: bets $41.75 and is all-in\
+Player1: folds
+
+Uncalled bet ($41.75) returned to Hero\
+Hero collected $120.50 from pot
+
+*** SUMMARY ***\
+Total pot $123.00 | Rake $2.50\
+Board [Ad 7c 2h Kd 5s]\
+Seat 1: Player1 folded on the River\
+Seat 3: Hero collected ($120.50)
