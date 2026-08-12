@@ -44,7 +44,7 @@ public class PokerPreGame {
         SocketUtils.sendInteger(out, config._initialMoney);
         SocketUtils.sendInteger(out, config._allowBots ? GameType.TRUE : GameType.FALSE);
         SocketUtils.sendString(out, config._blindsValue);
-        SocketUtils.sendInteger(out, config._dinamicBlinds ? GameType.TRUE : GameType.FALSE);
+        SocketUtils.sendInteger(out, config._dynamicBlinds ? GameType.TRUE : GameType.FALSE);
         SocketUtils.sendString(out, config._levelDuration);
         SocketUtils.sendString(out, config._hikePercentage);
         SocketUtils.sendString(out, config._turnTimerPlayer);
@@ -139,7 +139,7 @@ public class PokerPreGame {
         config._initialMoney = initialMoney;
         config._allowBots = allowBots;
         config._blindsValue = blindsValue;
-        config._dinamicBlinds = dinamicBlinds;
+        config._dynamicBlinds = dinamicBlinds;
         config._levelDuration = levelDuration;
         config._hikePercentage = hikePercentage;
         config._turnTimerPlayer = turnTimer;
@@ -160,7 +160,7 @@ public class PokerPreGame {
 
         SocketUtils.sendInteger(out, config._roomId);
         int allowBotsCode = (config._allowBots) ? GameType.TRUE : GameType.FALSE;
-        int dinamicBlinds = (config._dinamicBlinds) ? GameType.TRUE : GameType.FALSE;
+        int dinamicBlinds = (config._dynamicBlinds) ? GameType.TRUE : GameType.FALSE;
         SocketUtils.sendString(out, config._roomName);
         SocketUtils.sendString(out, config._userName);
         SocketUtils.sendInteger(out, config._initialMoney);
@@ -261,7 +261,7 @@ public class PokerPreGame {
         config._initialMoney = initialMoney;
         config._allowBots = allowBots;
         config._blindsValue = blindsValue;
-        config._dinamicBlinds = dinamicBlinds;
+        config._dynamicBlinds = dinamicBlinds;
         config._levelDuration = levelDuration;
         config._hikePercentage = hikePercentage;
         

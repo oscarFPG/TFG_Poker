@@ -28,19 +28,69 @@ public class ClientThread implements Runnable {
 
     private static final Logger log = LogManager.getLogger(ClientThread.class);
 
+    
+    /**
+     * Current player ID
+     */
     private int _playerID;
+
+    /**
+     * The socket connected to the client
+     */
     private Socket _socket;
+
+    /**
+     * Players name
+     */
     private String _playerName;
+
+    /**
+     * Indicates if the player is the host of the game
+     */
     private boolean _isHost;
 
+
+    /**
+     * The server socket for the game. This is closed by the host to stop allowing players to join and start the game
+     */
     private ServerSocket _serverSocket;
+
+    /**
+     * The unique ID generator for all the players
+     */
     private AtomicInteger _id;
+
+    /**
+     * List of players in the room
+     */
     private List<ClientThread> _roomPlayerList;
+
+    /**
+     * List of bots in the room
+     */
     private List<BotStruct> _roomBotsList;
+
+    /**
+     * Game spectator. This can be null
+     */
     private Spectator _spectator;
+
+    /**
+     * Selected game configuration by the host
+     */
     private GameConfig _gameConfig;
 
 
+    /**
+     * Constructor for the ClientThread class
+     * @param socket
+     * @param gameSocket
+     * @param idGen
+     * @param players
+     * @param bots
+     * @param spectator
+     * @param config
+     */
     public ClientThread(
         Socket socket, ServerSocket gameSocket, AtomicInteger idGen, 
         List<ClientThread> players, List<BotStruct> bots, Spectator spectator,
@@ -59,6 +109,10 @@ public class ClientThread implements Runnable {
     }
 
     
+    /**
+     * Run method for the client thread.
+     * This method handles the communication with the client, processing requests and sending responses.
+     */
     @Override
     public void run() {
         
@@ -113,7 +167,7 @@ public class ClientThread implements Runnable {
                         _gameConfig._initialMoney = config._initialMoney;
                         _gameConfig._allowBots = config._allowBots;
                         _gameConfig._blindsValue = config._blindsValue;
-                        _gameConfig._dinamicBlinds = config._dinamicBlinds;
+                        _gameConfig._dynamicBlinds = config._dynamicBlinds;
                         _gameConfig._levelDuration = config._levelDuration;
                         _gameConfig._hikePercentage = config._hikePercentage;
                         _gameConfig._turnTimerPlayer = config._turnTimerPlayer;
@@ -212,7 +266,6 @@ public class ClientThread implements Runnable {
                 case GameType.PETITION_JOIN_GAME:
                     
                     int playersCounter = _roomPlayerList.size() + _roomBotsList.size();
-
                     if(_spectator._spectatorSocket != null || (0 < playersCounter && _roomPlayerList.size() < _gameConfig._numPlayers)) {
 
                         SocketUtils.sendInteger(output, GameType.CONFIRMATION_WAITING_GAME);
@@ -280,23 +333,41 @@ public class ClientThread implements Runnable {
             log.error("Handling client connection: {}", e.getMessage());
             if(_isHost) {
 
+                log.warn("Host {} left the waiting room! Cancelling game!", _playerName);
+
+                // Close connection with all players
+                // Match is cancelled
                 synchronized(_roomPlayerList) {
                     for(ClientThread ct : _roomPlayerList) {
                         closeConnection(ct._socket);
                     }
+
+                    _id.set(0);
+                    _roomPlayerList.clear();
                 }
+                
             }
             else {
                 closeConnection(_socket);
-                _roomPlayerList.remove(this);
+
+                // Update global game state
+                _id.getAndDecrement();          // IMPORTANT !!
+                _roomPlayerList.remove(this);   // IMPORTANT !!
+
+                // Notify all players about new game room
                 broadcastPlayerJoined();
-                log.warn("Cliente {} sale de la waiting room", _playerName);
+                
+                log.warn("Client {} lef the waiting room", _playerName);
             }
         }
+        
         log.debug("Client thread terminating...");
-
     }
 
+    /**
+     * This method broadcast the player list to all players.
+     * It uses the {@link #broadcastPlayerInfoToSpectator} and {@link #broadcastPlayerInfoToRoomPlayers} methods to send the information to the spectator and the players in the room, respectively.
+     */
     private void broadcastPlayerJoined() {
 
         Thread notify = new Thread(() -> {
@@ -310,20 +381,7 @@ public class ClientThread implements Runnable {
                         return;
 
 
-                    if(_spectator._spectatorSocket != null) {
-
-                        SocketUtils.sendInteger(_spectator._spectatorSocket.getOutputStream(), GameType.EVENT_PLAYER_JOINED);
-                        SocketUtils.sendInteger(_spectator._spectatorSocket.getOutputStream(), roomSize);
-                        for (ClientThread ct : _roomPlayerList) {
-                            PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(ct._playerID, ct._playerName), _spectator._spectatorSocket);
-                            log.debug("Player {} on waiting room", ct._playerName);
-                        }
-                        for(BotStruct bs : _roomBotsList) {
-                            PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(bs.matchId(), bs.botName()), _spectator._spectatorSocket);
-                            log.debug("Bot {} on waiting room", bs.botName());
-                        }
-                    }
-
+                    broadcastPlayerInfoToSpectator();
                     broadcastPlayerInfoToRoomPlayers();
                 }
                 catch(IOException e) {
@@ -336,7 +394,14 @@ public class ClientThread implements Runnable {
         notify.start();
     }
 
+    /**
+     * Broadcasts the information of the players in the room to all connected players.
+     * This method synchronizes access to the player list to prevent concurrent modifications while broadcasting.
+     * @throws IOException
+     */
     private void broadcastPlayerInfoToRoomPlayers() throws IOException {
+
+        log.debug("----- Sending players info to in game players -----");
 
         int roomSize = _roomPlayerList.size() + _roomBotsList.size();
         for (ClientThread target : _roomPlayerList) {
@@ -349,14 +414,48 @@ public class ClientThread implements Runnable {
                 PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(ct._playerID, ct._playerName), targetSocket);
                 log.debug("Player {} on waiting room", ct._playerName);
             }
+
             for(BotStruct bs : _roomBotsList) {
                 PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(bs.matchId(), bs.botName()), targetSocket);
                 log.debug("Bot {} on waiting room", bs.botName());
             }
             
+            log.debug("All player info sent to {}\n", target._playerName);
         }
     }
 
+    /**
+     * Broadcasts the information of the players in the room to the connected spectator.
+     * This method checks if a spectator is connected and sends the player information to the spectator's socket.
+     * @throws IOException
+     */
+    private void broadcastPlayerInfoToSpectator() throws IOException {
+
+        if(_spectator._spectatorSocket != null) {
+
+            log.debug("----- Sending players info to spectator -----");
+
+            int roomSize = _roomPlayerList.size() + _roomBotsList.size();
+
+            SocketUtils.sendInteger(_spectator._spectatorSocket.getOutputStream(), GameType.EVENT_PLAYER_JOINED);
+            SocketUtils.sendInteger(_spectator._spectatorSocket.getOutputStream(), roomSize);
+            for (ClientThread ct : _roomPlayerList) {
+                PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(ct._playerID, ct._playerName), _spectator._spectatorSocket);
+                log.debug("Player {} on waiting room", ct._playerName);
+            }
+
+            for(BotStruct bs : _roomBotsList) {
+                PokerPreGame.sendPlayerInRoomInfo( new PlayerInfo(bs.matchId(), bs.botName()), _spectator._spectatorSocket);
+                log.debug("Bot {} on waiting room", bs.botName());
+            }
+        }
+    }
+
+    /**
+     * Closes the connection with the specified socket.
+     * If the socket is null or already closed, the method returns without performing any action.
+     * @param socket
+     */
     private void closeConnection(Socket socket) {
 
         if(socket == null || socket.isClosed())
@@ -372,6 +471,9 @@ public class ClientThread implements Runnable {
         }
     }
 
+    /**
+     * Displays the names of all players and bots currently in the room for debugging purposes.
+     */
     private void showPlayersInRoom() {
 
         synchronized(_roomPlayerList) {
@@ -387,6 +489,12 @@ public class ClientThread implements Runnable {
 
     }
 
+    /**
+     * Checks if the specified player name is already used by any player in the room.
+     * This method synchronizes access to the player list to prevent concurrent modifications while checking for name uniqueness.
+     * @param name
+     * @return
+     */
     private boolean isNameAlreadyUsed(String name) {
 
         synchronized(_roomPlayerList) {
@@ -402,8 +510,28 @@ public class ClientThread implements Runnable {
     }
 
 
+    /**
+     * Returns the player ID of this client thread.
+     * @return the player ID
+     */
+    public int getPlayerID() { return _playerID; }
+
+    /**
+     * Returns the socket associated with this client thread.
+     * @return the socket connected to the client
+     */
     public Socket getPlayerSocket() { return _socket; }
+
+    /**
+     * Returns the name of the player associated with this client thread.
+     * @return the player's name
+     */
     public String getPlayerName() { return _playerName; }
+
+    /**
+     * Returns whether this client thread represents the host of the game.
+     * @return true if this client thread is the host, false otherwise
+     */
     public boolean getIsHost() { return _isHost; }
 
 }

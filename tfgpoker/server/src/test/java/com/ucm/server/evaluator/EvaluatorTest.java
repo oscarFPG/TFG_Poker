@@ -8,10 +8,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.Deck;
 import com.ucm.common.gameobjects.Suit;
 import com.ucm.server.evaluator.Evaluator.RANK;
 import com.ucm.server.exceptions.EvaluatorException;
-import com.ucm.server.gameobjects.Deck;
 
 
 public class EvaluatorTest {

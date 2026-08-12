@@ -9,6 +9,9 @@ target/
 *.bak
 tfgpoker/server/src/main/resources/credentials.json
 
+# Ignorar Javadoc
+tfgpoker/server/documentation
+
 # Ignorar otros archivos comunes
 .DS_Store
 Thumbs.db

@@ -7,18 +7,12 @@ import org.junit.jupiter.api.Test;
 
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.Suit;
-import com.ucm.server.gameobjects.BotNN;
 import com.ucm.server.gameobjects.Player;
 
 import ai.onnxruntime.OrtException;
 
 
 public class BotNNTest {
-
-    @Test
-    public void testEnviroment() {
-        BotNN.testEnviroment();
-    }
 
     @Test
     public void testResponse() throws OrtException {

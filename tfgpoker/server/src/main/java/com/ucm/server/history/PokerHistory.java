@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
 
+import com.ucm.common.PokerStreet;
 import com.ucm.common.gameobjects.Card;
 import com.ucm.common.gameobjects.PlayerRole;
 import com.ucm.server.gameobjects.Player;
@@ -15,7 +16,6 @@ import com.ucm.server.interfaces.IPlayerActions;
 import com.ucm.server.logic.Game;
 import com.ucm.server.logic.PlayerList;
 import com.ucm.server.statistics.PlayerExperimentData;
-import com.ucm.server.statistics.Street;
 
 
 /**
@@ -44,14 +44,14 @@ public final class PokerHistory {
         CURRENT.remove();
     }
 
-    private Street currentStreet = Street.PREFLOP;
+    private PokerStreet currentStreet = PokerStreet.PREFLOP;
     private List<Player> players;
 
     private Player dealer;
     private Player smallBlind;
     private Player bigBlind;
 
-    private final Map<IPlayerActions, Street> foldStreet = new HashMap<>();
+    private final Map<IPlayerActions, PokerStreet> foldStreet = new HashMap<>();
     private final Map<IPlayerActions, Integer> winnerPrize = new HashMap<>();
     private boolean showdownPlayed = false;
     private boolean flopSeen = false;
@@ -77,6 +77,7 @@ public final class PokerHistory {
     }
 
     private void initializePlayers(Game game) {
+
         smallBlindAmount = game.getCurrentSmallBlind();
         bigBlindAmount = game.getCurrentBigBlind();
 
@@ -93,7 +94,6 @@ public final class PokerHistory {
         playerSeats = new HashMap<>();
 
         int seat = 1;
-
         for (Player player : players) {
 
             playerSeats.put(player, seat);
@@ -143,7 +143,7 @@ public final class PokerHistory {
         flopSeen = false;
         foldStreet.clear();
         winnerPrize.clear();
-        currentStreet = Street.PREFLOP;
+        currentStreet = PokerStreet.PREFLOP;
 
         ThreadContext.put("hand",
                 String.format("%04d", handNumber));
@@ -237,9 +237,9 @@ public final class PokerHistory {
     }
 
 
-   /*--------------------------------------------------
- * PLAYER ACTIONS
- *--------------------------------------------------*/
+    /*--------------------------------------------------
+     * PLAYER ACTIONS
+     *--------------------------------------------------*/
 
     public void fold(IPlayerActions player) {
         write("%s: folds", player.getPlayerName());
@@ -255,7 +255,7 @@ public final class PokerHistory {
                 player.getPlayerName(),
                 player.getMoneyOnBet());
 
-        if (currentStreet == Street.PREFLOP) {
+        if (currentStreet == PokerStreet.PREFLOP) {
             Player p = (Player) player;
             p.getExperimentData().setVPIP(true);
         }
@@ -266,7 +266,7 @@ public final class PokerHistory {
                 player.getPlayerName(),
                 player.getMoneyOnBet());
 
-         if (currentStreet == Street.PREFLOP) {
+         if (currentStreet == PokerStreet.PREFLOP) {
 
             Player p = (Player) player;
 
@@ -291,7 +291,7 @@ public final class PokerHistory {
                 player.getPlayerName(),
                 player.getMoneyOnBet());
 
-        if (currentStreet == Street.PREFLOP) {
+        if (currentStreet == PokerStreet.PREFLOP) {
             Player p = (Player) player;
             p.getExperimentData().setVPIP(true);
             p.getExperimentData().setPFR(true);
@@ -432,7 +432,7 @@ public final class PokerHistory {
 
     public void flop(Card[] tableCards) {
 
-        currentStreet = Street.FLOP;
+        currentStreet = PokerStreet.FLOP;
         blankLine();
         flopSeen = true;
 
@@ -442,7 +442,7 @@ public final class PokerHistory {
 
     public void turn(Card[] tableCards) {
 
-        currentStreet = Street.TURN;
+        currentStreet = PokerStreet.TURN;
         blankLine();
 
 
@@ -452,7 +452,7 @@ public final class PokerHistory {
 
     public void river(Card[] tableCards) {
 
-        currentStreet = Street.RIVER;
+        currentStreet = PokerStreet.RIVER;
         blankLine();
 
         write("*** RIVER *** %s",
@@ -469,11 +469,11 @@ public final class PokerHistory {
         for (Player player : players) {
 
             if (!player.isFolded()) {
-
                 player.getExperimentData().setWTSD(true);
             }
         }
     }
+
 
     public void summary(Card[] tableCards) {
 
@@ -569,4 +569,5 @@ public final class PokerHistory {
         };
     }
     
+
 }

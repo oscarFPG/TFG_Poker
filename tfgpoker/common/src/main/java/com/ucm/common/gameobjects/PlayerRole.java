@@ -65,7 +65,7 @@ public enum PlayerRole {
         switch (numPlayers) {
             case 2:
                 return new ArrayList<>(List.of(
-                    DEALER,
+                    SMALL_BLIND,
                     BIG_BLIND
                 ));
 

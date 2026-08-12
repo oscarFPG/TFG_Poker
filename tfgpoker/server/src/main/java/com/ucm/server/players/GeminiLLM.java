@@ -1,11 +1,14 @@
 package com.ucm.server.players;
 
 
+import java.time.Duration;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ucm.common.BotStyle;
 import com.ucm.common.GameType;
+import com.ucm.server.exceptions.TurnTimeoutException;
 import com.ucm.server.gameobjects.Bot;
 import com.ucm.server.gameobjects.BotLLMOnline;
 
@@ -34,13 +37,25 @@ import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
  * The API key can be provided directly or loaded automatically from a
  * {@code credentials.json} file located in the classpath.
  * </p>
+ * 
+ * @see LangChain4j library for interacting with LLMs
+ * @see GoogleAiGeminiChatModel for Gemini model integration
+ * @see BotLLMOnline for the base bot logic
  */
 public class GeminiLLM extends BotLLMOnline {
 
     private static final Logger log = LogManager.getLogger(GeminiLLM.class);
 
+    /**
+     * The unique identifier for this Gemini LLM bot, which is used to distinguish it from other types of bots in the game.
+     */
     private static final int GEMINI_ID = GameType.BOT_GEMINI;
+
+    /**
+     * The name of the bot, which is used for display purposes in the game interface.
+     */
     public static final String NAME = "Gemini LLM";
+
 
     /**
      * Chat model instance used to interact with Gemini.
@@ -48,12 +63,17 @@ public class GeminiLLM extends BotLLMOnline {
     private ChatModel gemini;
 
 
+    /**
+     * Constructs a new instance of the GeminiLLM bot with a specified style.
+     * @param style the style of the bot, which can influence its decision-making behavior
+     */
     public GeminiLLM(BotStyle style) {
         super(GEMINI_ID, style);
 
         gemini = GoogleAiGeminiChatModel.builder()
                 .apiKey(_apiKey)
                 .modelName("gemini-2.5-flash")
+                .timeout(Duration.ofSeconds(Bot.SECONDS_TIMEOUT))
                 .build();
     }
 
@@ -65,7 +85,7 @@ public class GeminiLLM extends BotLLMOnline {
      * @return model response as {@link String}
      */
     @Override
-    protected String callModel(String prompt) {
+    protected String callModel(String prompt) throws TurnTimeoutException {
         
         String response = GameType.FOLD_ACTION_FULL;
         try {
@@ -78,11 +98,6 @@ public class GeminiLLM extends BotLLMOnline {
         return response;
     }
 
-    /**
-     * Returns a short description of the bot.
-     * 
-     * @return {@link String} describing the bot
-     */
     @Override
     public String getDescription() {
         return "Gemini Poker LLM";
@@ -103,7 +118,7 @@ public class GeminiLLM extends BotLLMOnline {
 		return new GeminiLLM(style);
 	}
     
-     @Override
+    @Override
     public String getPlayerModel() {
         return "Gemini";
     }

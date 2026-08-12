@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test;
 
 import com.ucm.common.exceptions.CancelGameException;
 import com.ucm.common.gameobjects.Card;
+import com.ucm.common.gameobjects.Deck;
 import com.ucm.server.evaluator.Evaluator;
-import com.ucm.server.gameobjects.Deck;
 import com.ucm.server.middleclasses.HandInfo;
 
 public class EquityCalculatorTest {

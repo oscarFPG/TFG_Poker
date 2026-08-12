@@ -16,7 +16,9 @@ public class FoldCommand extends Command {
 
     private static final Logger log = LogManager.getLogger(FoldCommand.class);
 
-
+    /**
+     * Constructor to create an empty model of the Fold command
+     */
     public FoldCommand() {}
 
     /**
@@ -28,15 +30,21 @@ public class FoldCommand extends Command {
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
 	protected Command createCommand(final String[] commandFormat, final IPlayerActions player){
         return new FoldCommand(player);
 	}
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CommandResult execute(int sb, int bb, int maxBet) {
 
-        log.debug("Player {} makes FOLD", _player.getPlayerName());
+        log.debug("{} makes FOLD", _player.getPlayerName());
 
         _player.fold();
 
@@ -46,21 +54,33 @@ public class FoldCommand extends Command {
         return CommandResult.stopPlaying();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getCommandName() {
         return "FOLD";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getCommandDescription() {
         return "Retire from the current hand. If you have already bet, you will lose the money.";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getCommandFormat() {
         return GameType.FOLD_ACTION_FULL;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getCommandFormatShortcut() {
         return GameType.FOLD_ACTION_SHORTCUT;

@@ -14,7 +14,7 @@ public record CommandResult(int bet, boolean raises, boolean folds) {
      *
      * @param money the total bet after the action
      * @param raise true if the player raised the bet
-     * @return a CommandResult representing that the player continues playing
+     * @return a {@link CommandResult} representing that the player continues playing
      */
     public static CommandResult continuePlaying(int money, boolean raise) {
         return new CommandResult(money, raise, false);
@@ -22,9 +22,8 @@ public record CommandResult(int bet, boolean raises, boolean folds) {
 
     /**
      * Creates a result for an action where the player folds.
-     *
-     * @param money the total bet committed before folding
-     * @return a CommandResult representing a folding action
+     * 
+     * @return a {@link CommandResult} representing a folding action
      */
     public static CommandResult stopPlaying() {
         return new CommandResult(0, false, true);
