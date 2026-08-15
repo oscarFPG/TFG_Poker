@@ -175,6 +175,106 @@ public class WaitingGameWindowController extends GenericController {
         );
     }
 
+    private void clearAllLabels() {
+
+        for(int i = 0; i < 9; i++) {
+
+            Label nameLabel = getNameLabelByPosition(i);
+            Label moneyLabel = getMoneyLabelByPosition(i);
+            StackPane playerStackPane = getPlayerStackPaneByPosition(i);
+
+            playerStackPane.setOpacity( 0.6 );
+            nameLabel.setText("");
+            moneyLabel.setText("");
+        }
+    }
+
+    private void waitNewPlayersInfo() {
+
+        try {
+
+            InputStream input = _clientInfo.socket.getInputStream();
+            OutputStream output = _clientInfo.socket.getOutputStream();
+
+            if(_clientInfo.isHost) {
+
+                _clientInfo.id = SocketUtils.receiveInt(input);
+                System.out.printf("Player host ID is %d\n", _clientInfo.id);
+
+                if(_clientInfo.gameConfig._joinedAsSpectator) {
+                    
+                    System.out.printf("Player host is specting!\n");
+                }
+                else {
+                    System.out.printf("Player host is playing!\n");
+                    Platform.runLater(() -> {
+                        playerName0.setText(_clientInfo.name);
+                        playerMoney0.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
+                        pokerPlayer0.setOpacity(1);
+                        GUI_updateAvatarPosition(0, _clientInfo.name);
+                    });
+                }
+
+                System.out.printf("Server response: This client is the host of the game!\n");
+                NotificationManager.showSuccess(Messages.Notifications.PLAYER_IS_HOST);
+            }
+            else {
+
+                _clientInfo.id = SocketUtils.receiveInt(input);
+                System.out.printf("Player guest ID is %d\n", _clientInfo.id);
+
+                System.out.printf("Server response: This client is a guest!\n");
+                NotificationManager.showSuccess(Messages.Notifications.PLAYER_IS_GUEST);
+                
+                Platform.runLater(() -> {
+                    playerName0.setText(_clientInfo.name);
+                    playerMoney0.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
+                    pokerPlayer0.setOpacity(1);
+                    GUI_updateAvatarPosition(0, _clientInfo.name);
+                    startButton.setVisible(false);
+                });
+            }
+
+            boolean kepWaiting = true;
+            while(kepWaiting) {
+
+                int event = SocketUtils.receiveInt(input);
+                if(event == GameType.EVENT_PLAYER_JOINED) {
+
+                    _clientInfo.playerPositions = PokerPreGame.receivePlayerListWaiting(input, output);
+                    Platform.runLater(() -> {
+                        GUI_resetPlayers();
+                        GUI_showPlayers(_clientInfo.playerPositions);
+                    });    
+                }
+                else if(event == GameType.CONFIRMATION_GAME_STARTS) {
+                    System.out.printf("Event GAME_STARTS!\n");
+                    kepWaiting = false;
+                }
+                else if(event == GameType.ERROR_GAME_CANNOT_START) {
+                    System.out.printf("Game cannot start! Missing players\n");
+                    NotificationManager.showError(Messages.Notifications.ERROR_MISSING_PLAYERS);
+                }
+                else {
+                    System.out.printf("Waiting phase: event %d unknown!\n", event);
+                    NotificationManager.showError(Messages.Notifications.ERROR_UNKNOWN_EVENT);
+                }
+            }
+            System.out.printf("Game ready to start!\n");
+            SocketUtils.sendInteger(output, GameType.CONFIRMATION_PLAYER_STARTS);
+
+            Platform.runLater(() -> {
+                next();
+            });
+        }
+        catch(IOException e) {
+            System.out.printf("Error: %s\n", e.getMessage());
+            NotificationManager.showError(e.getMessage());
+        }
+
+        System.out.printf("Finished waiting for players info!\n");
+    }
+
     private StackPane getPlayerStackPaneByPosition(final int position) {
         switch(position) {
             case 0: return pokerPlayer0;
@@ -235,7 +335,7 @@ public class WaitingGameWindowController extends GenericController {
                 System.out.printf("Player host ID is %d\n", _clientInfo.id);
 
                 if(_clientInfo.gameConfig._joinedAsSpectator) {
-                    // TODO : Mostrar como espectador
+                    
                     System.out.printf("Player host is specting!\n");
                 }
                 else {

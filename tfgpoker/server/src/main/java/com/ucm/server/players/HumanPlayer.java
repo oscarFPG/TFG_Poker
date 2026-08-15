@@ -180,6 +180,7 @@ public class HumanPlayer implements IPlayerNotificator {
         SocketUtils.sendInteger(_socket.getOutputStream(), player.isFolded() ? GameType.TRUE : GameType.FALSE);
         SocketUtils.sendInteger(_socket.getOutputStream(), player.isWinner() ? GameType.TRUE : GameType.FALSE);
         SocketUtils.sendInteger(_socket.getOutputStream(), player.isEliminated() ? GameType.TRUE : GameType.FALSE);
+        SocketUtils.sendString(_socket.getOutputStream(), player.getLastCommand());
 
         if(receiveRank) {
             SocketUtils.sendInteger(_socket.getOutputStream(), GameType.TRUE);
