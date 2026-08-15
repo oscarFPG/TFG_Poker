@@ -129,13 +129,6 @@ public class GameType {
     public static final String LOOSE_AGGRESSIVE_SHORCUT = "LA";
     public static final String MANIAC_SHORCUT = "MC";
 
-    // Name bots
-    public static final String GEMINI_NAME = 
-    public static final String LLAMA_NAME =
-    public static final String NN_MODEL_NAME =
-    public static final String FSM_NAME = 
-    public static final String DEFAULT_NAME =
-
     // Bots identifier
     public static final int BOT_GEMINI = 10000;
     public static final int BOT_LLAMA = 10001;
