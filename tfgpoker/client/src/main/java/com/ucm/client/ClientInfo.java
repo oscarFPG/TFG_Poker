@@ -45,10 +45,16 @@ public class ClientInfo {
     public Image getAvatar(String name, int size) {
         
         if(name.startsWith("GeminiLLM")) {
-            return AvatarGenerator.generateBot(AvatarType.GEMINI_BOT, size);
+            return AvatarGenerator.generateBot(AvatarType.BOT_GEMINI, size);
         }
         else if(name.startsWith("LlamaPoker")) {
-            return AvatarGenerator.generateBot(AvatarType.LLAMA_BOT, size);
+            return AvatarGenerator.generateBot(AvatarType.BOT_LLAMA, size);
+        }
+        else if(name.startsWith("DeepCFR")) {
+            return AvatarGenerator.generateBot(AvatarType.BOT_FSM_1, size);
+        }
+        else if(name.startsWith("FSM")){
+            return AvatarGenerator.generateBot(AvatarType.BOT_NN_MODEL_1, size);
         }
         else {
             return AvatarGenerator.generateHuman(name, size);

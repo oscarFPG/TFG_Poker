@@ -17,10 +17,14 @@ public class AvatarGenerator {
 
     public static Image generateBot(AvatarType type, int size) {
         switch (type) {
-            case GEMINI_BOT:
-                return generateBotAvatar("GEMINI_BOT", size, Color.web("#7B61FF"));
-            case LLAMA_BOT:
-                return generateBotAvatar("LLAMA_BOT", size, Color.web("#1417dd"));
+            case BOT_GEMINI:
+                return generateBotAvatar("BOT_GEMINI", size, Color.web("#7B61FF"));
+            case BOT_LLAMA:
+                return generateBotAvatar("BOT_LLAMA", size, Color.web("#1417dd"));
+            case BOT_NN_MODEL_1:
+                return generateBotAvatar("BOT_NN_MODEL_1", size, Color.web("#14dd90"));
+            case BOT_FSM_1:
+                return generateBotAvatar("BOT_FSM_1", size, Color.web("#dd1417"));
             default:
                 throw new IllegalArgumentException("Unsupported avatar type");
         }
