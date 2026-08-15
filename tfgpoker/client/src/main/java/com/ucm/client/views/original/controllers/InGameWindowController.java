@@ -204,7 +204,7 @@ public class InGameWindowController extends GenericController {
         GUI_initializeTurnTimer();
 
         usernamePlaceHolder.setText( _clientInfo.name );
-        imgAvatarProfile.setImage( _clientInfo.getAvatar(_clientInfo.name, 64, false) );
+        imgAvatarProfile.setImage( _clientInfo.getAvatar(_clientInfo.name,64) );
         imgTableInGame.setImage(new Image(getClass().getResource(_clientInfo.gameConfig._selectedTable).toExternalForm()));
         
         _stage.setOnCloseRequest(event -> {
@@ -502,7 +502,7 @@ public class InGameWindowController extends GenericController {
                 playerStackPane.setVisible(true);
                 cardsHBox.setVisible(true);
                 onBetHBox.setVisible(true);
-                GUI_getAvatarPosition(seatIndex, p.name, p.isBot );
+                GUI_getAvatarPosition(seatIndex, p.name);
 
                 seatIndex--;
             }
@@ -512,7 +512,7 @@ public class InGameWindowController extends GenericController {
 
         
         _playerSeatMap.put(myIndex, 0);
-        GUI_getAvatarPosition(0, _clientInfo.name, false);
+        GUI_getAvatarPosition(0, _clientInfo.name);
         playerName0.setText( _clientInfo.name );
         playerMoney0.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
         pokerPlayer0.setVisible(true);
@@ -537,7 +537,7 @@ public class InGameWindowController extends GenericController {
             playerStackPane.setVisible(true);
             cardsHBox.setVisible(true);
             onBetHBox.setVisible(true);
-            GUI_getAvatarPosition(beforePosition, p.name, p.isBot);
+            GUI_getAvatarPosition(beforePosition, p.name);
 
             --beforePosition;
         }
@@ -560,7 +560,7 @@ public class InGameWindowController extends GenericController {
             playerStackPane.setVisible(true);
             cardsHBox.setVisible(true);
             onBetHBox.setVisible(true);
-            GUI_getAvatarPosition(nextPosition, p.name, p.isBot);
+            GUI_getAvatarPosition(nextPosition, p.name);
 
             ++nextPosition;
         }
@@ -1600,9 +1600,9 @@ public class InGameWindowController extends GenericController {
         moneyLabel.setText( String.valueOf(offBetMoney) );
     }
 
-    private void GUI_getAvatarPosition(final int position, String name, boolean isBot) {
+    private void GUI_getAvatarPosition(final int position, String name) {
         ImageView avatarImage = _listAvatarProfiles.get(position);
-        Image avatar = _clientInfo.getAvatar(name, 80, isBot);
+        Image avatar = _clientInfo.getAvatar(name, 80);
 
         avatarImage.setImage(avatar);
         avatarImage.setFitWidth(80);

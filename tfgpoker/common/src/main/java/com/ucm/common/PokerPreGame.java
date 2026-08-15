@@ -305,7 +305,7 @@ public class PokerPreGame {
         int id = SocketUtils.receiveInt(input);
         String name = SocketUtils.receiveString(input);
 
-        return new PlayerInfo(id, name, false);
+        return new PlayerInfo(id, name);
     }
 
     public static List<PlayerInfo> receivePlayerListWaiting(InputStream input, OutputStream output) throws IOException {

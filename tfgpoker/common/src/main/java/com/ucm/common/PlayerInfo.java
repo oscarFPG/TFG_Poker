@@ -4,11 +4,9 @@ public class PlayerInfo {
     
     public int id;
     public String name;
-    public boolean isBot;
 
-    public PlayerInfo(final int ID, final String n, final boolean check) {
+    public PlayerInfo(final int ID, final String n) {
         id = ID;
         name = n;
-        isBot = check;
     }
 }

@@ -124,10 +124,10 @@ public class GameType {
     // Styles shorcut
     public static final String DEFAULT_SHORTCUT = "DF";
     public static final String TIGHT_PASSIVE_SHORTCUT = "TP";
-    public static final String TIGHT_AGGRESSIVE_SHORCUT = "TA"; 
+    public static final String TIGHT_AGGRESSIVE_SHORCUT = "TAG"; 
     public static final String LOOSE_PASSIVE_SHORCUT = "LP";
-    public static final String LOOSE_AGGRESSIVE_SHORCUT = "LA";
-    public static final String MANIAC_SHORCUT = "MC";
+    public static final String LOOSE_AGGRESSIVE_SHORCUT = "LAG";
+    public static final String MANIAC_SHORCUT = "MNC";
 
     // Bots identifier
     public static final int BOT_GEMINI = 10000;

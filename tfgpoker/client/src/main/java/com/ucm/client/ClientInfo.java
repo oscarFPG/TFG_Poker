@@ -41,10 +41,13 @@ public class ClientInfo {
     }
 
     
-    public Image getAvatar(String name, int size, boolean isBot) {
-        // hacer busqueda para que si no encuentra uno Image con ese nombre, genere un avatar
-        if(isBot) {
-            return AvatarGenerator.generateBot(name, size);
+    public Image getAvatar(String name, int size) {
+        
+        if(name.startsWith("GeminiLLM")) {
+            return AvatarGenerator.generateBot(AvatarType.GEMINI_BOT, size);
+        }
+        else if(name.startsWith("LlamaPoker")) {
+            return AvatarGenerator.generateBot(AvatarType.LLAMA_BOT, size);
         }
         else {
             return AvatarGenerator.generateHuman(name, size);

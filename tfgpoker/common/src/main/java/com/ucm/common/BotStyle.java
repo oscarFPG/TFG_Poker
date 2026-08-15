@@ -180,12 +180,4 @@ public enum BotStyle {
         return null;
     }
 
-    public static BotStyle createByName(final String name){
-        for(BotStyle st : BotStyle.values()) {
-            if(name == st.getShorcut())
-                return st;
-        }
-        return null;
-    }
-
 }
