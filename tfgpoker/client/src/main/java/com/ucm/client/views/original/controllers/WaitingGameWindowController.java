@@ -196,7 +196,7 @@ public class WaitingGameWindowController extends GenericController {
                 System.out.printf("Player host ID is %d\n", _clientInfo.id);
 
                 if(_clientInfo.gameConfig._joinedAsSpectator) {
-                    // TODO : Mostrar como espectador
+                    
                     System.out.printf("Player host is specting!\n");
                 }
                 else {
