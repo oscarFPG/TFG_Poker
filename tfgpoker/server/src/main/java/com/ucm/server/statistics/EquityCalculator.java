@@ -166,6 +166,12 @@ public class EquityCalculator {
      * @param evaluations evaluated hands
      * @return list of winning player identifiers
      */
+
+
+    /** Gets the players with the best hand. 
+     *  @param evaluations evaluated hands  
+     * @return identifiers of the winning players
+    */
     private static List<Integer> getWinners(List<PlayerEvaluation> evaluations) {
 
         int bestRank = evaluations.stream()
