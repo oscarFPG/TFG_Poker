@@ -297,7 +297,7 @@ mvn -pl server -Prun exec:java
 ```
 
 This should be the output in our terminal:
-![Server run output](/images/readme/server-run.png)
+![Server run output](/images/server-run.png)
 
 
 ### Client application
@@ -309,10 +309,10 @@ mvn -pl client javafx:run
 ```
 
 We should see this window:
-![Client main window](/images/readme/client-main-window.png)
+![Client main window](/images/client-main-window.png)
 
 After clicking the start button and we can provide the server public IP address:
-![Client login window](/images/readme/client-login-window.png)
+![Client login window](/images/client-login-window.png)
 
 > [!NOTE] If both the server and client applications are running on the same machine, leave the IP address field empty and enter only a name to connect to the server.
 
