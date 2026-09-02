@@ -14,7 +14,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-
+/**
+ * Controller class for the Add Cards Create Game Window. This class handles the user interactions and logic for selecting card images in the game creation process.
+ */
 public class AddCardsCreateGameWindowController extends GenericController {
     
     private static final String DEFAULT_CARD_IMAGE = "/images/reversePokerCardGame.png";
@@ -44,6 +46,9 @@ public class AddCardsCreateGameWindowController extends GenericController {
 
     private int _index = 0;
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void onViewShown() {
         btnStartAddCards.setDisable(false);
@@ -52,7 +57,10 @@ public class AddCardsCreateGameWindowController extends GenericController {
         }
         initializeImage();
     }
-
+    /**
+     * Initializes the list of card images and sets the current index based on the selected card in the game configuration.
+     * If no card is selected, it defaults to the default card image. Finally, it displays the current card image.
+     */
     private void initializeImage() {
         _images = List.of(
             "/images/reversePokerCardGame.png",
@@ -68,21 +76,28 @@ public class AddCardsCreateGameWindowController extends GenericController {
         }
         showCurrentTable();
     }
-
+    /**
+     * Navigates to the next card image in the list. If the current index is -1 (indicating no selection), it sets the index to 0. 
+     * The index wraps around to the beginning of the list when it reaches the end. After updating the index, it displays the current card image.
+     */
     @FXML
     private void nextImageCard() {
         if(_index == -1) {_index = 0;}
         _index = (_index + 1) % _images.size();
         showCurrentTable();
     }
-
+    /**
+     * Navigates to the previous card image in the list. If the current index is -1 (indicating no selection), it sets the index to 0.
+     */
     @FXML
     private void backImageCard() {
         if(_index == -1) {_index = 0;}
         _index = (_index - 1 + _images.size()) % _images.size();
         showCurrentTable();
     }
-
+    /**
+     * Handles the selection of a card image. If the current index is -1, it toggles the selection between the default card image and no selection.
+     */
     @FXML
     private void onSelectCard () {
         if(_index == -1) {
@@ -100,7 +115,10 @@ public class AddCardsCreateGameWindowController extends GenericController {
         }
         updteSelectImage();
     }
-
+    /**
+     * Displays the current card image based on the index. If the index is -1, it shows the default card image. 
+     * It also updates the selection state of the card image.
+     */
     private void showCurrentTable() {
         String currentPath;
         if(_index == -1) {
@@ -112,7 +130,9 @@ public class AddCardsCreateGameWindowController extends GenericController {
         imageCard.setImage(new Image(getClass().getResource(currentPath).toExternalForm()));
         updteSelectImage();
     }
-
+    /**
+     * Updates the selection state of the card image. It checks if the current card image is selected and updates the style and button state accordingly.
+     */
     private void updteSelectImage() {
         imageCard.getStyleClass().remove("card-selected");
         boolean isSelected;
@@ -130,22 +150,31 @@ public class AddCardsCreateGameWindowController extends GenericController {
             btnSelectCard.setDisable(false);
         }
     }
-
+    /**
+     * Navigates back to the Choose Game window. This method is triggered when the user clicks the "Back" button in the Add Cards Create Game Window.
+     */
     @FXML
     public void returnChooseGame() {
         backWindow();
     }
-
+    /**
+     * Saves the selected card image to the game configuration. If no card is selected, it defaults to the default card image. This method is called when navigating to the next or previous window.
+     */
     private void saveAddTable() {
         if(_clientInfo.gameConfig._selectedCard == null) {
             _clientInfo.gameConfig._selectedCard = DEFAULT_CARD_IMAGE;
         }
     }
-
+    /**
+     * Calculates the total number of players in the game, including both human players and bots. It sums the number
+     * @return the total number of players in the game configuration
+     */
     private int totalPlayers() {
         return _clientInfo.gameConfig._numPlayers +  _clientInfo.gameConfig._botsByType.values().stream().mapToInt(Integer::intValue).sum();
     }
-
+    /**
+     * Sends the game configuration and client information to the server. It checks if there are enough players to start the game and handles server responses accordingly. If the game is successfully created, it navigates to the next window.
+     */
     @FXML
     private void sendClientInfo() {
 
@@ -195,17 +224,24 @@ public class AddCardsCreateGameWindowController extends GenericController {
 
         
     }
-
+    /**
+     * Navigates to the game table window. 
+     * This method is triggered when the user clicks to the next window button in the Add Cards Create Game Window.
+     */
     @FXML
     public void jumpToTable(){
         back();
     }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onNextEvent() {
         saveAddTable();
     }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onBackEvent() {
         saveAddTable();

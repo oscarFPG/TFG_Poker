@@ -16,7 +16,10 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
-
+/**
+ * This class manages the display of notifications in a JavaFX application. It provides methods to show error and success notifications, as well as to close all active notifications.
+ * Notifications are displayed in a stack at the top-right corner of the main application window, and they automatically disappear after a set duration or when the user clicks the close button.
+ */
 public class NotificationManager extends DialogsManager {
 
     private static final List<Stage> activeNotifications = new ArrayList<>();
@@ -24,15 +27,24 @@ public class NotificationManager extends DialogsManager {
     private static final double MARGIN_TOP = 60;
     private static final double SPACING = 10;
     private static boolean listenersAdded = false;
-
+    /**
+     * Displays an error notification with the specified message.
+     * @param msg
+     */
     public static void showError(String msg) {
         show(msg, "Error", "notification-error");
     }
-
+    /**
+     * Displays a success notification with the specified message.
+     * @param msg
+     */
     public static void showSuccess(String msg) {
         show(msg, "Success", "notification-success");
     }
-
+    /**
+     * Closes all active notifications.
+     * This method is called when the main application window is minimized or closed, or when the user explicitly requests to close all notifications.
+     */
     public static void closeAll() {
         runSafe(() -> {
             List<Stage> copy = new ArrayList<>(activeNotifications);
@@ -42,7 +54,13 @@ public class NotificationManager extends DialogsManager {
             activeNotifications.clear();
         });
     }
-
+    /**
+     * Displays a notification with the specified message, title, and style class.
+     * If there are already four active notifications, the oldest one is closed to make room for the new notification.
+     * @param msg
+     * @param titleText
+     * @param styleClass
+     */
     private static void show(String msg, String titleText, String styleClass) {
         runSafe(() -> {
 
@@ -106,7 +124,10 @@ public class NotificationManager extends DialogsManager {
             closeBtn.setOnAction(e -> closeNotification(popup));
         });
     }
-
+    /**
+     * Closes the specified notification and updates the positions of the remaining notifications.
+     * @param popup
+     */
     private static void closeNotification(Stage popup) {
         runSafe(() -> {
             if (activeNotifications.remove(popup)) {
@@ -115,7 +136,9 @@ public class NotificationManager extends DialogsManager {
             }
         });
     }
-
+    /**
+     * Updates the positions of all active notifications to ensure they are stacked correctly in the top-right corner of the main application window.
+     */
     private static void updatePositions() {
         if (stage == null || !stage.isShowing()) return;
 
@@ -139,8 +162,9 @@ public class NotificationManager extends DialogsManager {
             currentY += content.getHeight() + SPACING;
         }
     }
-
-   
+    /**
+     * Adds listeners to the main application window (stage) to update the positions of notifications when the window is moved, resized, minimized, or closed.
+     */
     private static void addStageListeners() {
         if (listenersAdded || stage == null) return;
         listenersAdded = true;

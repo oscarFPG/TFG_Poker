@@ -13,7 +13,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.layout.FlowPane;
 
-
+/**
+ * Controller for the AddBotsCreateGameWindow view. It manages the selection and configuration of bots for a game, allowing users to specify the number and styles of bots to be added.
+ * The controller handles the loading of bot cards, updating spinner values based on user input, and saving the bot configuration when navigating between views.
+ */
 public class AddBotsCreateGameWindowController extends GenericController {
     
     private static final int MAX_NUM_BOTS = 8;
@@ -37,7 +40,9 @@ public class AddBotsCreateGameWindowController extends GenericController {
     @FXML
     private FlowPane botsContainer;
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void onViewShown() {
 
@@ -53,7 +58,12 @@ public class AddBotsCreateGameWindowController extends GenericController {
         
         updateAllSpinners();
     }
-
+    /**
+     * Loads a bot card into the view, allowing users to select the number and styles of the specified bot. 
+     * The method initializes the bot card with previous values and sets up event listeners for user interaction.
+     * @param bot
+     * @param allowBots
+     */
     private void loadBotCard(BotDescriptor bot, boolean allowBots) {
 
         try {
@@ -95,7 +105,11 @@ public class AddBotsCreateGameWindowController extends GenericController {
             System.out.printf("ERROR loading bot card for %s: %s\n", bot.botName(), e.getMessage());
         }
     }
-
+    /**
+     * Updates the spinner values for all bot cards based on the total number of bots selected. 
+     * It calculates the remaining number of bots that can be added and updates each bot card's spinner accordingly, 
+     * ensuring that users cannot exceed the maximum allowed bots for the game configuration.
+     */
     public void updateAllSpinners() {
 
         // Update remaining bots quantity
@@ -111,7 +125,11 @@ public class AddBotsCreateGameWindowController extends GenericController {
             ctrl.updateSpinners(remaining);
         }
     }
-
+    /**
+     * Saves the current bot configuration to the client information. 
+     * It clears any previous bot settings and updates the game configuration with the selected number of bots and their styles, if applicable. 
+     * This method is called when navigating between views to ensure that the bot settings are preserved.
+     */
     private void saveAddBotsConfig() {
         
         // Clear previous info
@@ -133,7 +151,11 @@ public class AddBotsCreateGameWindowController extends GenericController {
             }
         }
     }
-
+    /**
+     * Checks if the current user has joined the game as a spectator.
+     * This information is used to determine the maximum number of bots that can be added to the game configuration.
+     * @return boolean indicating whether the user is a spectator (true) or not (false)
+     */
     private boolean isSpectator() {
         return _clientInfo.gameConfig._joinedAsSpectator;
     }
@@ -154,12 +176,16 @@ public class AddBotsCreateGameWindowController extends GenericController {
         next();
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onNextEvent() {
         saveAddBotsConfig();
     }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onBackEvent() {
         saveAddBotsConfig();

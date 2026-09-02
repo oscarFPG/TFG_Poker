@@ -5,15 +5,21 @@ import java.util.Map;
 import com.ucm.common.BotDescriptor;
 import com.ucm.common.BotStyle;
 
-
+/**
+ * Controller for the bot card that does not allow any style selection.
+ */
 public class BotNotAllowedStyleCardController extends BotCardController{
     
-
+    /**
+     * Constructor for the BotNotAllowedStyleCardController.
+     * Initializes the controller with no style selection allowed.
+     */
     public BotNotAllowedStyleCardController() {
         super(false);
     }
-
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setup(BotDescriptor bot, int maxBots, boolean allowBots) {
 
@@ -32,7 +38,9 @@ public class BotNotAllowedStyleCardController extends BotCardController{
         // Add view to the bot card
         this.addSpinner(controller);
     }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Map<BotStyle, Integer> getStyleDistribution(){return Map.of();}
 }

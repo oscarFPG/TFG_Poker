@@ -1,27 +1,34 @@
 package com.ucm.client.utils;
-
+/**
+ * class that contains all the messages used in the application
+ * 
+ */
 public final class Messages {
 
     private Messages() {}
 
-     public static final String GLOBAL_CSS_PATH = "/original/css/style.css";
+    public static final String GLOBAL_CSS_PATH = "/original/css/style.css";
 
-    // ---------------------- ALERTS -----------------------------
+    /**
+     * This class contains all the messages used in the alerts of the application.
+     */
     public static final class Alerts {
 
         public static final String NOT_ENOUGH_PLAYERS_TITLE = "Cannot start game";
         public static final String NOT_ENOUGH_PLAYERS_MSG = "Not enough players in the table. \n You must add at least one bot or one player before starting the game";
     }
-
-    // ------------------------- CONFIRM -------------------------------------
+    /**
+     * This class contains all the messages used in the confirmation dialogs of the application.
+     */
     public static final class Confirm {
 
         public static final String EXIT_TITLE = "Exit application";
         public static final String EXIT_MSG =
                 "Are you sure you want to exit?";
     }
-
-    // ----------------NOTIFICATIONS ------------------------
+    /**
+     * This class contains all the messages used in the notifications of the application.
+     */
     public static final class Notifications {
 
         //ERRORS
