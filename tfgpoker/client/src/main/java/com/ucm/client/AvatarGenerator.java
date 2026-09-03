@@ -9,12 +9,26 @@ import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
+/**
+ * Generates avatars for human players and bots based on a seed string or predefined bot types.
+ */
 public class AvatarGenerator {
 
+    /**
+     * Generates a human avatar based on a seed string and size.
+     * @param see
+     * @param size
+     * @return An Image object representing the generated human avatar.
+     */
     public static Image generateHuman (String see, int size) {
         return generate(see, size);
     }
-
+    /**
+     * Generates a bot avatar based on the specified AvatarType and size.
+     * @param type
+     * @param size
+     * @return An Image object representing the generated bot avatar.
+     */
     public static Image generateBot(AvatarType type, int size) {
         switch (type) {
             case BOT_GEMINI:
@@ -29,7 +43,13 @@ public class AvatarGenerator {
                 throw new IllegalArgumentException("Unsupported avatar type");
         }
     }
-
+    /**
+     * Generates a bot avatar based on a seed string, size, and main color.
+     * @param seed
+     * @param size
+     * @param mainColor
+     * @return An Image object representing the generated bot avatar.
+     */
     private static Image generateBotAvatar(String seed, int size, Color mainColor) {
 
         Canvas canvas = new Canvas(size, size);
@@ -65,7 +85,12 @@ public class AvatarGenerator {
         canvas.snapshot(null, image);
         return image;
     }
-    
+    /**
+     * Generates a human avatar based on a seed string and size.
+     * @param seed
+     * @param size
+     * @return An Image object representing the generated human avatar.
+     */
     private static Image generate(String seed, int size) {
 
         Canvas canvas = new Canvas(size, size);
@@ -103,7 +128,11 @@ public class AvatarGenerator {
         canvas.snapshot(null, image);
         return image;
     }
-
+    /**
+     * Hashes the given seed string using SHA-256 and returns the resulting byte array.
+     * @param seed
+     * @return A byte array representing the SHA-256 hash of the seed string.
+     */
     private static byte[] hash(String seed) {
         try {
             return MessageDigest.getInstance("SHA-256").digest(seed.getBytes());
@@ -111,7 +140,11 @@ public class AvatarGenerator {
             throw new RuntimeException(e);
         }
     }
-
+    /**
+     * Converts the given byte array to a long value by interpreting the first 8 bytes as a big-endian long.
+     * @param bytes
+     * @return A long value representing the first 8 bytes of the input byte array.
+     */
     private static long bytesToLong(byte[] bytes) {
         long value = 0;
         for (int i = 0; i < Math.min(8, bytes.length); i++) {

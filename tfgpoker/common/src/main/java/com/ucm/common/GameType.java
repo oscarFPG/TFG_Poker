@@ -1,20 +1,52 @@
 package com.ucm.common;
 
-
+/**
+ * Central repository of constants used throughout the poker application.
+ * <p>
+ * This class defines shared identifiers, configuration values, protocol codes,
+ * game states, player roles, card representations, player actions, bot
+ * identifiers, and other constant values required for communication between
+ * the client and server as well as for internal game logic.
+ * </p>
+ * 
+ * <p>
+ * The constants are grouped into several categories:
+ * </p>
+ * <ul>
+ *  <li>Server configuration.</li>
+ *  <li>Client-server communication protocol codes.</li>
+ *  <li>Game rounds and status identifiers.</li>
+ *  <li>Player roles and actions.</li>
+ *  <li>Card suits and values.</li>
+ *  <li>Bot identifiers and player styles.</li>
+ *  <li>Game events and notifications.</li>
+ * </ul>
+ * 
+ * <p>
+ * This class is designed to be a utility class and should not be instantiated.
+ * </p>
+ */
 public class GameType {
     
+    /**
+     * Private constructor to prevent instantiation of this utility class.
+     */
     private GameType(){}
-
-    /* ---------------- SERVER PROPERTIES ----------------  */
+    
+    /**
+     * The default port number for the poker server to listen for incoming client connections.
+     */
     public static final int PORT = 5005;
     public static final int MAX_PLAYERS = 9;
     public static final int SHOWDOWN_WAIT_TIME_SEC = 5; 
-
-    /* ---------------- BOOLEAN TYPES ----------------*/
+    /**
+     * Represents a boolean true value in the communication protocol.
+     */
     public static final int TRUE = 1;
     public static final int FALSE = 0;
-
-    /* ---------------- PREGAME CODES ----------------  */
+    /**
+     * Represents a petition from the client to the server for various actions such as requesting a player name, creating or joining a game, and adding bots.
+     */
     public static final int PETITION_PLAYER_NAME = 1;
     public static final int PETITION_CREATE_GAME = 2;
     public static final int PETITION_JOIN_GAME = 3;
@@ -42,7 +74,10 @@ public class GameType {
     public static final int ERROR_GAME_CANCELS = 506;
     public static final int ERROR_NAME_ALREADY_USED = 507;
 
-    /* ---------------- GAME CODES ----------------  */
+    /**
+     * The following constants represent various game rounds, player roles, card suits, card values, player actions, and other identifiers used in the poker application. These constants are used for communication between the client and server, as well as for internal game logic.
+     */
+    
     // Game rounds
     public static final int GAME_ROUND_PREFLOP = 70;
     public static final int GAME_ROUND_FLOP = 71;

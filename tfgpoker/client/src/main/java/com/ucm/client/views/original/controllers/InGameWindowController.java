@@ -43,22 +43,28 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-
+/**
+ * Controller class for the in-game window of the poker client application. 
+ * This class manages the user interface elements and interactions during a poker game, including player information, betting actions, and game state updates.
+ */
 public class InGameWindowController extends GenericController {
 
-    /* Constants */
+    /**
+     * Default opacity for player elements when they are active in the game.
+     */
     private static final float DEFAULT_OPACITY = 1.0f;
     private static final float FOLDED_OPACITY = 0.6f;
     private static final float ELIMINATED_OPACITY = 0.4f;
     private static final int TIMER_TOTAL_BLOCKS = 6;
-    
-
-    /* Player info */
+    /**
+     * FXML elements for displaying the player's username, avatar, and menu items in the in-game window.
+     */
     @FXML private Label usernamePlaceHolder;
     @FXML private ImageView imgAvatarProfile;
     @FXML private HBox hboxMenuItems;
-
-    /* Holder + Buttons */
+    /**
+     * FXML elements for the buttons and controls used during the poker game, including fold, call, raise, and betting options.
+     */
     @FXML private VBox buttonsHolder;
     @FXML private Button btnFold, btnCall, btnRaise;
     @FXML private Button btnRound, btnMinBet, btnHalfBet, btnMaxBet;
@@ -66,17 +72,21 @@ public class InGameWindowController extends GenericController {
     @FXML private Button btnMenu;
     @FXML private ToggleButton btnEquity;
     @FXML private ImageView imgSeeEquity;
-
-    /* Money buttons, labels and slider */
+    /**
+     * FXML elements for displaying and adjusting the player's betting amount, 
+     * including a label and a slider for selecting the bet value.
+     */
     @FXML private Label labelMoney;
     @FXML private Slider sliderMoney;
-
-    /* Table info */
+    /**
+     * FXML elements for displaying the total pot and the table cards in the poker game.
+     */
     @FXML private Label labelTotalPot;
     @FXML private ImageView imgTableInGame;
     @FXML private ImageView tableCard0, tableCard1, tableCard2, tableCard3, tableCard4;
-    
-    /* All poker players seats */
+    /**
+     * FXML elements for displaying the information and actions of each player in the poker game, including their name, money, cards, and dealer status.
+     */
     @FXML private StackPane pokerPlayer0;           // Always playing-client seat
     @FXML private Label playerName0, playerMoney0, labelOnBetMoney0, playerAction0 ;  // Always playing-client seat
     @FXML private Label labelEquity0;
@@ -148,8 +158,10 @@ public class InGameWindowController extends GenericController {
     @FXML private ImageView imgLeftCard8, imgRightCard8, imgAvatarProfile8;
     @FXML private ImageView ImgDealer8;
     @FXML private Rectangle rectFirstTimer8, rectSecondTimer8, rectThirdTimer8, rectFourthTimer8, rectFifthTimer8, rectSixthTimer8;
-    
-    /* Member variables to group all players variables */
+    /**
+     * Lists to hold references to the FXML elements for each player, 
+     * allowing for easier management and updates of player information, actions, and visual elements during the game.
+     */
     private List<StackPane> _listPlayerStackPanes;  // Player stackpanes
     private List<Label> _listNameLabels, _listMoneyLabels, _listPlayerAction; // Player names and money OFF bet
     private List<HBox> _listHandBet;    // Player money ON bet + chips image
@@ -159,11 +171,11 @@ public class InGameWindowController extends GenericController {
     private List<ImageView> _listPaintCards, _listAvatarProfiles; // Player cards images and avatar
     private List<ImageView> _listDealer;    // Player dealer chip
     private Map<Integer, List<Rectangle>> _listTimer; // Players timer
-    
-
-    /* Variables to add logic */
-    // Command queue to save user actions via buttons - Avoid multiple sends cause by multiple clicks
-    private BlockingQueue<String> _commandQueue = new LinkedBlockingQueue<>();
+    /**
+     * Variables to manage the state of the poker game, including the command queue for user actions, 
+     * the game thread for receiving game logic, and various flags for controlling UI behavior and game flow.
+     */
+    private BlockingQueue<String> _commandQueue = new LinkedBlockingQueue<>(); // Command queue to save user actions via buttons - Avoid multiple sends cause by multiple clicks
     private Thread _gameThread; // Receiving game logic thread
     private Map<Integer, Integer> _playerSeatMap; // Player id = i -> list[i] = m -> m stackpane label
     private boolean _swapCallToCheck = false;   // Flag to change call button for check button
@@ -172,12 +184,14 @@ public class InGameWindowController extends GenericController {
     private boolean _equityVisible = false; // Flag to show/hide player equity
     private boolean _controlsMustBeSeen = false;
     private String _myEquity = "0%";
-
-    // Images to show if equity is being displayed
+    /**
+     * Images to show if equity is being displayed
+     */
     private final Image equityOn = new Image(getClass().getResource("/images/seeStatistic.png").toExternalForm());
     private final Image equityOff = new Image(getClass().getResource("/images/notSeeStatistic.png").toExternalForm());
-    
-    // Player visual turn timer
+    /**
+     * Player visual turn timer
+     */
     private int _turnTimerTotal;
     private int _blockTime;
     private final ScheduledExecutorService _scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -187,6 +201,9 @@ public class InGameWindowController extends GenericController {
     private int _bigBlind;
 
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void onViewShown() {
 
@@ -272,7 +289,9 @@ public class InGameWindowController extends GenericController {
         });
         _gameThread.start();
     }
-
+    /**
+     * Initializes the lists of FXML elements for each player, allowing for easier management and updates of player information, actions, and visual elements during the game.
+     */
     private void initialize() {
         
         _listPlayerStackPanes = List.of(
@@ -407,7 +426,11 @@ public class InGameWindowController extends GenericController {
             labelEquity8
         );
     } 
-
+    /**
+     * Initializes the player information display by clearing all player names, money labels,
+     * and hiding their respective stack panes, card images, betting areas, and equity labels. 
+     * This prepares the UI for a new game or round.
+     */
     private void GUI_initializePlayersInfo() {
         _listNameLabels.forEach(label -> label.setText("") );
         _listMoneyLabels.forEach(label -> label.setText("") );
@@ -417,12 +440,16 @@ public class InGameWindowController extends GenericController {
         _listHandBet.get(0).setOpacity(1);
         _listEquity.forEach(label -> { label.setVisible(false); label.setText("0%");});
     }
-
+    /**
+     * Flips down all player cards to a default card back image, hiding their actual card values.
+     */
     private void GUI_flipDownAllPlayerCards() { 
         Image cardImage = new Image(getClass().getResource(_clientInfo.gameConfig._selectedCard).toExternalForm());
         _listPaintCards.subList(2, _listPaintCards.size()).forEach(iv -> iv.setImage(cardImage));
     }
-
+    /**
+     * Initializes the dealer button images for all players, setting them to a default dealer chip image and hiding them initially.
+     */
     private void GUI_initializeDealerButton() {
         
         Image DealerImage = new Image(getClass().getResource("/images/fichaDealer.png").toExternalForm());
@@ -432,7 +459,10 @@ public class InGameWindowController extends GenericController {
             iv.setOpacity(1.0f);
         });
     }
-
+    /**
+     * Initializes the money slider used for betting, setting its minimum, maximum, and initial values,
+     * and adding a listener to update the displayed bet amount and enable/disable the raise button based on the slider's value.
+     */
     private void GUI_initializeMoneySlider() {   
         sliderMoney.setMin(0);
         sliderMoney.setValue(0);
@@ -448,7 +478,10 @@ public class InGameWindowController extends GenericController {
                 btnRaise.setDisable(false);
         });
     }
-
+    /**
+     * Initializes the visual timers for each player, creating a mapping of player indices to their respective timer rectangles.
+     * All timer rectangles are initially set to be invisible.
+     */
     private void GUI_initializeTimers() {
 
         _listTimer = new HashMap<>();
@@ -469,12 +502,18 @@ public class InGameWindowController extends GenericController {
             }
         }
     }
-
+    /**
+     * Initializes the turn timer for the poker game, calculating the total time allowed for a player's turn and dividing it into blocks for visual representation.
+     */
     private void GUI_initializeTurnTimer() {
         _turnTimerTotal = Integer.parseInt(_clientInfo.gameConfig._turnTimerPlayer);
         _blockTime = _turnTimerTotal / TIMER_TOTAL_BLOCKS;
     }
-
+    /**
+     * Displays the list of waiting players in the game lobby, 
+     * assigning them to specific seats based on their order in the list and updating their corresponding UI elements with their names, initial money, and visibility.
+     * @param players
+     */
     private void GUI_showWaitingPlayers(final List<PlayerInfo> players) {
 
         int myIndex = IntStream.range(0, players.size())
@@ -510,8 +549,9 @@ public class InGameWindowController extends GenericController {
             return;
         }
 
-        
-        _playerSeatMap.put(myIndex, 0);
+
+        // Add myself to the seat list
+        _playerSeatMap.put(_clientInfo.id, 0);
         GUI_getAvatarPosition(0, _clientInfo.name);
         playerName0.setText( _clientInfo.name );
         playerMoney0.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
@@ -519,7 +559,7 @@ public class InGameWindowController extends GenericController {
         _listImageCards.get(0).setVisible(true);
         _listHandBet.get(0).setVisible(true);
 
-        // Show players behind me(in the list) : position 1, 2, 3, ...
+        // Show players behind me(in the list) : position 8, 7, 6, ...
         int beforePosition = 8;
         for(int i = myIndex - 1; 0 <= i; i--) {
 
@@ -542,7 +582,7 @@ public class InGameWindowController extends GenericController {
             --beforePosition;
         }
 
-        // Show players ahead of me(in the list) : position 8, 7, 6, ...
+        // Show players ahead of me(in the list) : position 1, 2, 3, ...
         int nextPosition = 1;
         for(int i = myIndex + 1; i < players.size(); i++) {
 
@@ -572,8 +612,9 @@ public class InGameWindowController extends GenericController {
         }
         System.out.printf("\n");
     }
-
-    
+    /**
+     * Handles the action of folding in the poker game. If the command queue is empty, it adds a fold action to the queue, indicating that the player has chosen to fold their hand.
+     */
     @FXML
     private void foldAction() {
 
@@ -583,7 +624,9 @@ public class InGameWindowController extends GenericController {
 
         _commandQueue.offer(GameType.FOLD_ACTION_FULL);
     }
-
+    /**
+     * Handles the action of calling or checking in the poker game. If the command queue is empty, it adds either a call or check action to the queue based on the current state of the `_swapCallToCheck` flag, indicating that the player has chosen to call or check their hand.
+     */
     @FXML
     private void callAction() {
 
@@ -602,7 +645,9 @@ public class InGameWindowController extends GenericController {
              //NotificationManager.showSuccess(Messages.Notifications.CALL_ACTION_FULL);
         }
     }
-
+    /**
+     * Handles the action of raising in the poker game. If the command queue is empty, it retrieves the current bet amount from the `labelMoney` label, adds a raise action with the specified amount to the command queue, and prepares to send this action to the server.
+     */
     @FXML
     private void raiseAction() {
 
@@ -614,30 +659,40 @@ public class InGameWindowController extends GenericController {
         _commandQueue.offer( String.format("%s %d", GameType.RAISE_ACTION_FULL, amount) );
        // NotificationManager.showSuccess(Messages.Notifications.RAISE_ACTION_FULL + amount);
     }
-
+    /**
+     * Handles the action of setting the bet amount to the minimum value for the player money. When triggered, it sets the value of the `sliderMoney` slider to its minimum value, allowing the player to quickly select the minimum bet amount.
+     */
     @FXML
     private void minBetAction() {
         sliderMoney.setValue(sliderMoney.getMin());
     }
-
+    /**
+     * Handles the action of setting the bet amount to half of the maximum value for the player money. When triggered, it sets the value of the `sliderMoney` slider to half of its maximum value, allowing the player to quickly select a mid-range bet amount.
+     */
     @FXML
     private void halfBetAction() {
         sliderMoney.setValue(sliderMoney.getMax()/2);
     }
-
+    /**
+     * Handles the action of setting the bet amount to the maximum value for the player money. When triggered, it sets the value of the `sliderMoney` slider to its maximum value, allowing the player to quickly select the maximum bet amount.
+     */
     @FXML
     private void maxBetAction() {
         double MAX_VALUE = sliderMoney.getMax();
         sliderMoney.setValue(MAX_VALUE);
     }
-
+    /**
+     * Handles the action of decreasing the bet amount by the value of the big blind. When triggered, it decreases the value of the `sliderMoney` slider by the amount of `_bigBlind`, ensuring that the new value remains within the slider's minimum and maximum bounds.
+     */
     @FXML
     private void decreaseMoneyAction() {
         double newValue = sliderMoney.getValue() - _bigBlind;
         newValue = Math.clamp(newValue, sliderMoney.getMin(), sliderMoney.getMax());
         sliderMoney.setValue(newValue);
     }
-
+    /**
+     * Handles the action of increasing the bet amount by the value of the big blind.
+     */
     @FXML
     private void increaseMoneyAction() {
         
@@ -645,23 +700,28 @@ public class InGameWindowController extends GenericController {
         newValue = Math.clamp(newValue, sliderMoney.getMin(), sliderMoney.getMax());
         sliderMoney.setValue(newValue);
     }
-
+    /**
+     * Toggles the visibility of the top menu in the in-game window.
+     */
     @FXML
     private void openMenu() {
         _menuOpen = !_menuOpen;
         
         hboxMenuItems.setVisible(_menuOpen);
     }
-
+    /**
+     * Toggles the visibility of the player's equity information in the poker game.
+     */
     @FXML
     private void seeEquity() {
         _equityVisible = btnEquity.isSelected();
         imgSeeEquity.setImage(_equityVisible ? equityOn : equityOff);
         GUI_putEquityToPlayer();
     }
-
-
-    /* Poker game methods */
+    /**
+     * Handles the action of a poker game view by a spectator. This method listens for updates from the server regarding the game state, including player statuses, table cards, and betting actions, and updates the user interface accordingly to reflect the current state of the game for the spectator.
+     * @param socket
+     */
     private void spectateGame(Socket socket) {
 
         Card[] tableCards = new Card[5];
@@ -878,7 +938,12 @@ public class InGameWindowController extends GenericController {
             System.out.printf("Error spectating game: %s\n", e.getMessage());
         }
     }
-
+    /**
+     * Handles the main poker game logic for a player. It manages the game flow, including receiving player roles, cards, and handling each round of betting. The method listens for server messages and updates the user interface accordingly, while also managing player actions and game state transitions.
+     * @param socket
+     * @return true if the game finished successfully, false if the game was cancelled by the server
+     * @throws IOException
+     */
     private boolean pokerGame(Socket socket) throws IOException {
 
         PlayerRole role;
@@ -1030,7 +1095,14 @@ public class InGameWindowController extends GenericController {
 
         return true;
     }
-
+    /**
+     * Handles the logic for playing a single round of poker, including receiving server messages about player turns, bets, and game state changes. It updates the user interface accordingly and manages player actions during their turn.
+     * @param socket
+     * @throws OnlyOnePlayerLeftException
+     * @throws CancelGameException
+     * @throws IOException
+     * @throws InterruptedException
+     */
     private void playRound(Socket socket) 
     throws OnlyOnePlayerLeftException, CancelGameException, IOException, InterruptedException {
 
@@ -1068,6 +1140,7 @@ public class InGameWindowController extends GenericController {
 			else if(serverCode == GameType.TURN_WAIT) {
 
                 System.out.printf("Wait for the other players to play...\n");
+                System.out.printf("My ID is %d\n", _clientInfo.id);
 
                 int seatID = _playerSeatMap.get(_clientInfo.id);
                 Platform.runLater(() -> {
@@ -1075,7 +1148,6 @@ public class InGameWindowController extends GenericController {
                     _listPlayerStackPanes.get(seatID).getStyleClass().remove("tourn-player-color");
                     GUI_stopVisualTimer();
                 });
-
 			}
 			else if(serverCode == GameType.TURN_PLAY) {
 
@@ -1250,7 +1322,15 @@ public class InGameWindowController extends GenericController {
 			throw new OnlyOnePlayerLeftException();
         }
     }
-
+    /**
+     * Handles the showdown phase of the poker game, where players reveal their hands and determine the winner. 
+     * It listens for server messages regarding player statuses, including whether they have folded, won, or been eliminated, and updates the user interface accordingly. The method continues to process messages until the game ends or continues based on server instructions.
+     * @param socket
+     * @return true if the game ends, false if the game continues
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws CancelGameException
+     */
     private boolean showdown(Socket socket) throws IOException, InterruptedException, CancelGameException {
 
         boolean gameEnds = false;
@@ -1351,7 +1431,17 @@ public class InGameWindowController extends GenericController {
         waitShowdown();
         return gameEnds;
     }
-    
+    /**
+     * Handles the selection of a command by the player during their turn. It waits for the player to input a command (raise, fold, check, call, or all in) and sends the command to the server. 
+     * The method also updates the user interface to reflect the player's action and manages the visibility of controls based on the game state.
+     * @param socket
+     * @param sb
+     * @param bb
+     * @param maxBet
+     * @param offBetMoney
+     * @param onBetMoney
+     * @throws InterruptedException
+     */
     private void selectCommand(
         Socket socket, 
         final int sb, 
@@ -1448,7 +1538,13 @@ public class InGameWindowController extends GenericController {
                     
         }
     }
-
+    /**
+     * Handles the initial information exchange between the client and server regarding player statuses at the start of a game. 
+     * It receives and processes messages about the player's own status as well as the statuses of other players, updating the user interface accordingly. The method continues to listen for player status updates until it receives a signal indicating that the status updates have ended or if the game is cancelled.
+     * @param socket
+     * @throws IOException
+     * @throws CancelGameException
+     */
     private void playerStartInfo(Socket socket) throws IOException, CancelGameException {
 
         int code;
@@ -1526,23 +1622,42 @@ public class InGameWindowController extends GenericController {
         } 
         while(code != GameType.PLAYER_STATUS_END);
     }
-
+    /**
+     * Handles the reception of equity information from the server for the current player. 
+     * It reads the equity value from the server and updates the user interface to display this information to the player.
+     * @param socket
+     * @throws IOException
+     */
     private void handleEquity(Socket socket) throws IOException {
 
         int code = SocketUtils.receiveInt(socket.getInputStream());
         _myEquity = SocketUtils.receiveString(socket.getInputStream());
         Platform.runLater(this::GUI_putEquityToPlayer);
     }
-
+    /**
+     * Pauses the execution of the game for a predefined amount of time to allow players to view the showdown results. 
+     * This method is called after the showdown phase to give players a moment to see the winner before proceeding with the next hand or ending the game.
+     * @throws InterruptedException
+     */
     private void waitShowdown() throws InterruptedException {
 
         // Wait to display player cards for the user
         System.out.printf("%d seconds pause to see the winner...\n", GameType.SHOWDOWN_WAIT_TIME_SEC);
         Thread.sleep(GameType.SHOWDOWN_WAIT_TIME_SEC * 1000);
     }
-
-
-    /* GUI auxiliar methods : MUST be called by the JavaFX Thread */
+    /**
+     * Updates the graphical user interface (GUI) to reflect the current status of a player in the game. 
+     * This includes updating the player's role, bet amounts, folded status, winner status, elimination status, and whether they are in a showdown. 
+     * The method retrieves the appropriate GUI components for the player based on their ID and updates them accordingly.
+     * @param playerID
+     * @param role
+     * @param onBetMoney
+     * @param offBetMoney
+     * @param isFolded
+     * @param isWinner
+     * @param isEliminated
+     * @param isShowdown
+     */
     private void GUI_updatePlayerInfo(
         int playerID, 
         PlayerRole role, 
@@ -1613,7 +1728,11 @@ public class InGameWindowController extends GenericController {
         
         moneyLabel.setText( String.valueOf(offBetMoney) );
     }
-
+    /**
+     * Updates the graphical user interface (GUI) to display the avatar of a player at a specific position in the game.
+     * @param position
+     * @param name
+     */
     private void GUI_getAvatarPosition(final int position, String name) {
         ImageView avatarImage = _listAvatarProfiles.get(position);
         Image avatar = _clientInfo.getAvatar(name, 80);
@@ -1631,7 +1750,11 @@ public class InGameWindowController extends GenericController {
         avatarImage.setClip(clip);
         avatarImage.setVisible(true);
     }
-
+    /**
+     * Updates the graphical user interface (GUI) to display a specific card image in an ImageView component.
+     * @param imageView
+     * @param card
+     */
     private void GUI_showCard(ImageView imageView, Card card) {
 
         String path = "images/cards/";
@@ -1664,7 +1787,12 @@ public class InGameWindowController extends GenericController {
         Image cardImage = new Image(in);
         imageView.setImage( cardImage );
     }
-
+    /**
+     * Updates the graphical user interface (GUI) to display the two cards of the current player in their respective ImageView components.
+     * @param playerID
+     * @param card1
+     * @param card2
+     */
     private void GUI_putMyCards(int playerID, Card card1, Card card2) {
         int seatID = _playerSeatMap.get(playerID);
         ImageView leftCard = (ImageView) _listPaintCards.get(seatID * 2);
@@ -1673,18 +1801,31 @@ public class InGameWindowController extends GenericController {
         GUI_showCard(leftCard, card1);
         GUI_showCard(rightCard, card2);
     }
-
+    /**
+     * Updates the graphical user interface (GUI) to display the name of the current round in the game.
+     * @param round
+     */
     private void GUI_putRoundName(String round) {
         btnRound.setText(round);
     }
-
+    /**
+     * Updates the graphical user interface (GUI) to display the dealer button for a specific player based on their ID.
+     * @param playerID
+     */
     private void GUI_putDealerButton(int playerID) {
 
         Integer seatID = _playerSeatMap.get(playerID);
         if(seatID != null)
             _listDealer.get(seatID).setVisible(true);
     }
-
+    /**
+     * Updates the graphical user interface (GUI) to display the bet amounts for a specific player, including their on-bet and off-bet money, folded status, and last action command.
+     * @param playerID
+     * @param amountOnBet
+     * @param amountOffBet
+     * @param isFolded
+     * @param PlayerLastCommand
+     */
     private void GUI_putPlayerBet(int playerID, int amountOnBet, int amountOffBet, boolean isFolded, String PlayerLastCommand) {
 
         int seatID = _playerSeatMap.get(playerID);
@@ -1718,7 +1859,10 @@ public class InGameWindowController extends GenericController {
         String lastAction = Character.toUpperCase( PlayerLastCommand.charAt(0) ) + PlayerLastCommand.substring(1);
         actionLabel.setText( String.valueOf(lastAction) );
     }
-
+    /**
+     * Updates the graphical user interface (GUI) to highlight the current player whose turn it is in the game.
+     * @param playerID
+     */
     private void GUI_putTurnPlayer(int playerID) {
         GUI_clearTurnPlayer();
         Integer seatID = _playerSeatMap.get(playerID);
@@ -1726,7 +1870,9 @@ public class InGameWindowController extends GenericController {
             _listPlayerStackPanes.get(seatID).getStyleClass().add("tourn-player-color");
         }
     }
-
+    /**
+     * Updates the graphical user interface (GUI) to display the equity percentage for the current player.
+     */
     private void GUI_putEquityToPlayer() {
         Label myEquityLabel = _listEquity.get(0);
         
@@ -1741,7 +1887,11 @@ public class InGameWindowController extends GenericController {
             myEquityLabel.setVisible(false);
         }
     }
-
+    /**
+     * Updates the graphical user interface (GUI) to apply a color style to the equity label based on the equity value.
+     * @param equityLabel
+     * @param equity
+     */
     private void GUI_putColorStyleToEquity(Label equityLabel, double equity) {
 
         equityLabel.getStyleClass().removeAll(
@@ -1761,7 +1911,10 @@ public class InGameWindowController extends GenericController {
         }
 
     }
-
+    /**
+     * Updates the graphical user interface (GUI) to display the remaining time for a specific player in their turn timer.
+     * @param seatID
+     */
     private void GUI_putPlayerTimer(int seatID) {
         
         List<Rectangle> rectangles = _listTimer.get(seatID);
@@ -1776,7 +1929,10 @@ public class InGameWindowController extends GenericController {
             }
         });
     }
-
+    /**
+     * Resets the graphical user interface (GUI) for a specific player's turn timer, making all timer blocks visible again.
+     * @param seatID
+     */
     private void GUI_resetPlayerTimer(int seatID) {
         List<Rectangle> rectangles = _listTimer.get(seatID);
         if(rectangles == null) return;
@@ -1787,7 +1943,9 @@ public class InGameWindowController extends GenericController {
             }
         });
     }
-
+    /**
+     * Clears the graphical user interface (GUI) by removing all cards from the table, hiding player bets, and resetting the dealer and turn indicators. This method is typically called at the end of a round or hand to prepare the interface for the next round.
+     */
     private void GUI_clearTableCards() {
         tableCard0.setImage(null);
         tableCard1.setImage(null);
@@ -1795,7 +1953,9 @@ public class InGameWindowController extends GenericController {
         tableCard3.setImage(null);
         tableCard4.setImage(null);
     }
-
+    /**
+     * Clears the graphical user interface (GUI) by hiding all player bet labels and resetting their visibility and opacity. This method is typically called at the end of a round or hand to prepare the interface for the next round.
+     */
     private void GUI_clearPlayerBets() {
 
         _listOnBetMoney.forEach(label -> label.setVisible(false));
@@ -1805,15 +1965,22 @@ public class InGameWindowController extends GenericController {
             bet.setOpacity(1.0);
         });
     }
-
+    /**
+     * Clears the graphical user interface (GUI) by hiding all dealer buttons from the player stack panes. This method is typically called at the end of a round or hand to prepare the interface for the next round.
+     */
     private void GUI_clearDealer() {
         _listDealer.forEach(iv -> iv.setVisible(false));
     }
-
+    /**
+     * Clears the graphical user interface (GUI) by removing the highlight from the current turn player. This method is typically called at the end of a player's turn to prepare the interface for the next player's turn.
+     */
     private void GUI_clearTurnPlayer() {
         _listPlayerStackPanes.forEach(pane -> pane.getStyleClass().remove("tourn-player-color"));
     }
-
+    /**
+     * Clears the graphical user interface (GUI) for a specific player's turn timer, making all timer blocks invisible. This method is typically called at the end of a player's turn to reset the timer display for the next player.
+     * @param seatID
+     */
     private void GUI_clearTimer(int seatID) {
         List<Rectangle> rectangles = _listTimer.get(seatID);
         if(rectangles == null) return;
@@ -1824,19 +1991,28 @@ public class InGameWindowController extends GenericController {
             }
         });
     }
-
+    /**
+     * Makes the graphical user interface (GUI) controls visible, allowing the player to interact with the game. 
+     * This method is typically called when it is the player's turn to make a decision.
+     */
     private void GUI_controlsVisible() {
         buttonsHolder.setVisible(true);
     }
-
+    /**
+     * Hides the graphical user interface (GUI) controls, preventing the player from interacting with the game.
+     * This method is typically called when it is not the player's turn or when the controls are not needed.
+     */
     private void GUI_controlsNotVisible() {
 
         // Allow deactivate buttons only if not necessary
         if(!_controlsMustBeSeen)
             buttonsHolder.setVisible(false);
     }
-
-    /* GUI methods for the player timer  */
+    /**
+     * Starts the visual timer for a specific player, updating the graphical user interface (GUI) to show the remaining time for their turn. 
+     * The timer counts down from a predefined total time and updates the display at regular intervals. If the timer reaches zero, it stops automatically.
+     * @param playerID
+     */
     private synchronized void GUI_startVisualTimer(int playerID) {
 
         GUI_stopVisualTimer();
@@ -1863,7 +2039,9 @@ public class InGameWindowController extends GenericController {
 
         }, 0, 200, TimeUnit.MILLISECONDS);
     }
-
+    /**
+     * Stops the visual timer for the current player, cancelling any scheduled tasks and clearing the timer display in the graphical user interface (GUI).
+     */
     private synchronized void GUI_stopVisualTimer() {
         
         if(_task != null && !_task.isCancelled()) {
@@ -1880,7 +2058,9 @@ public class InGameWindowController extends GenericController {
         }
         _timerPlayerId = null;
     }
-
+    /**
+     * Shuts down the visual timer scheduler, stopping any ongoing timer tasks and preventing further timer updates in the graphical user interface (GUI).
+     */
     private synchronized void GUI_shutdownVisualTimer() {
         _scheduler.shutdownNow();
     }

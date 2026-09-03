@@ -14,22 +14,37 @@ import com.ucm.common.SocketUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
+/**
+ * class that controls the ChooseGameWindow view
+ */
 public class ChooseGameWindowController extends GenericController {
     
+    /**
+     * FXML button to go back to the main window
+     */
     @FXML
     private Button btnBackMainWindow;
-
+    /**
+     * FXML button to go to the next window corresponded to the create a new game window
+     */
     @FXML
     private Button btnCreateGame;
-
+    /**
+     * FXML button to join a game
+     */
     @FXML
     private Button btnJoinGame;
-
+    /**
+     * method that is called when the user clicks the create game button, it calls the chooseCreateGame method from the main controller
+     */
     @FXML
     private void onCreateGame() {
         chooseCreateGame();
     }
-
+    /**
+     * method that is called when the user clicks the join game button, it sends a petition to the server to join a game and handles the response accordingly
+     * if the response is a confirmation, it receives the game configuration and sets the client type
+     */
     @FXML
     private void onJoinGame() {
 
@@ -69,6 +84,9 @@ public class ChooseGameWindowController extends GenericController {
         }
 
     }
+    /**
+     * method that is called when the user clicks the back button, it calls the back method from the generic controller
+     */
     @FXML
     public void returnMainWindow() {
         back();

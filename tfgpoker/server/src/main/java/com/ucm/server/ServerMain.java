@@ -15,6 +15,10 @@ import com.ucm.server.exceptions.EvaluatorException;
 import com.ucm.server.players.Spectator;
 
 
+/**
+ * Main class of the server. 
+ * It is responsible for starting the server, initializing the pregame, initializing the game and handling exceptions that may occur during the server's operation.
+ */
 public class ServerMain {
     
     private static final Logger log = LogManager.getLogger(ServerMain.class);
@@ -23,16 +27,18 @@ public class ServerMain {
     /*
      * Desde la ruta TFGPOKER/tfgpoker
      *      .\mvnw.cmd clean install
+     * 
      * Run server:
      *      .\mvnw.cmd -pl server -Prun exec:java
-     * Run server in local mode (no server, only for testing):
-     *      .\mvnw.cmd -pl server -Prun-local exec:java -Dn=<int>
+     * 
      * Debug:
      *      .\mvnwDebug.cmd -pl server -Pdebug exec:java
-     * Debug server in local mode (no server, only for testing):
-     *      .\mvnwDebug.cmd -pl server -Pdebug-local exec:java -Dn=<int>
+     * 
      * Run the tests
      *      .\mvnw.cmd test
+     * 
+     * Generate the Javadoc:
+     *     .\mvnw.cmd -pl server javadoc:javadoc
      */
 
     /**

@@ -3,6 +3,19 @@ package com.ucm.common;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Stores the configuration of a poker game before it is created or joined.
+ * <p>
+ * This class contains all settings selected by the user during the game
+ * creation workflow, including room information, blind structure, bot
+ * configuration, player capacity, visual customization options, and spectator
+ * settings.
+ * </p>
+ * <p>
+ * A {@code GameConfig} instance can also be cloned using the copy constructor
+ * to safely preserve a snapshot of the current configuration state.
+ * </p>
+ */
 public class GameConfig {
     
     private static final int DEFAULT_INITIAL_MONEY = 100;
@@ -57,10 +70,15 @@ public class GameConfig {
      */
     public boolean _joinedAsSpectator = DEFAULT_JOIN_AS_SPECTATOR;
 
-
+    /**
+     * Default constructor for GameConfig. Initializes the configuration with default values.
+     */
     public GameConfig() {}
 
-    // Deep-copy constructor
+    /**
+     * Copy constructor for GameConfig. Creates a new instance by copying the values from another GameConfig instance.
+     * @param other config instance to copy values from
+     */
     public GameConfig(GameConfig other) {
 
         // Mode configuration
@@ -89,11 +107,21 @@ public class GameConfig {
         _joinedAsSpectator = other._joinedAsSpectator;
     }
 
+    /**
+     * Validates if the provided room name is valid (not null and not empty).
+     * @param roomName
+     * @return true if the room name is valid, false otherwise
+     */
     public static boolean isValidRoomName(String roomName){
         if(roomName == null) { return false; }
         return !roomName.trim().isEmpty();
     }
-
+    /**
+     * Resets the game configuration to its default values.
+     * <p>
+     * This method clears all settings and restores the initial state of the configuration.
+     * </p>
+     */
     public void reset() {
         _initialMoney = DEFAULT_INITIAL_MONEY;
         _allowBots = DEFAULT_ALLOW_BOTS;
@@ -107,7 +135,16 @@ public class GameConfig {
         _selectedTable = null;
         _selectedCard = null;
     }
-
+    /**
+     * Sets the number of bots of a specific type.
+     * <p>
+     * If the count is less than or equal to zero, the bot type and its style
+     * configuration are removed from the configuration.
+     * </p>
+     * 
+     * @param botId
+     * @param count
+     */
     public void setBotCount(int botId, int count) {
         if(count <= 0) {
             _botsByType.remove(botId);
@@ -117,11 +154,26 @@ public class GameConfig {
             _botsByType.put(botId, count);
         }
     }
-
+    /**
+     * Returns the configured number of bots of a specific type.
+     * @param botId identifier of the bot type
+     * @return the number of configured bots, or {@code 0} if none exist
+     */
     public int getBotCount(int botId) {
         return _botsByType.getOrDefault(botId, 0);
     }
-
+    /**
+     * Sets the number of bots assigned to a specific style.
+     * <p>
+     * If the count is less than or equal to zero, the style assignment is
+     * removed. If the style map becomes empty, the corresponding bot type
+     * entry is also removed.
+     * </p>
+     * 
+     * @param botId identifier of the bot type
+     * @param style bot styñe to configure
+     * @param count number of bots assigned to the style
+     */
     public void setBotStyleCount(int botId, BotStyle style,int count) {
         
         _botStylesByType.computeIfAbsent(botId, k -> new HashMap<>());
@@ -139,17 +191,28 @@ public class GameConfig {
             _botStylesByType.get(botId).put(style, count);
         }
     }
-
+    /**
+     * Returns the number of bots assigned to a specific style for a given bot type.
+     * @param botId identifier of the bot type
+     * @param style bot style to query
+     * @return number of bots that use the specified style, or {@code 0} if none exist
+     */
     public int getBotStyleCount(int botId, BotStyle style){
         return _botStylesByType.getOrDefault(botId, Map.of()).getOrDefault(style, 0);
     }
-
+    /**
+     * Calculates the total number of bots configured across all bot types.
+     * @return the total number of bots
+     */
     private int getTotalBots() {
         return _botsByType.values().stream().mapToInt(Integer::intValue).sum();
     }
-
+    /**
+     * Calculates the total number of players in the game, including both human players and bots.
+     * @return the total number of players in the game
+     */
     public int getTotalPlayers() {
         return _numPlayers + getTotalBots();
     }
-
 }
+
