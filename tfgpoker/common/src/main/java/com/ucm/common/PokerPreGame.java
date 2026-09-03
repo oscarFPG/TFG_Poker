@@ -9,33 +9,61 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * This class provides utility methods for handling the pre-game phase of a poker game, including connecting to the server, sending and receiving player names, game configurations, and player information.
+ */
 public class PokerPreGame {
 
+    /**
+     * The localhost IP address, used to connect to the server running on the same machine.
+     */
     public static final String LOCAL_HOST = "localhost"; 
 
-
+    /**
+     * Private constructor to prevent instantiation of the PokerPreGame class.
+     */
     private PokerPreGame() {}
 
-
+    /**
+     * Connects to the poker server using the specified server IP address.
+     * @param serverIP The IP address of the poker server to connect to.
+     * @return A Socket object representing the connection to the server.
+     * @throws IOException If an I/O error occurs when creating the socket.
+     */
     public static Socket connect(final String serverIP) throws IOException {
 
 		Socket socket = new Socket(serverIP, GameType.PORT);
 		return socket;
 	}
-
+    /**
+     * Sends the player's name to the server through the specified socket.
+     * @param name The name of the player to send to the server.
+     * @param socket The socket through which to send the player's name.
+     * @throws IOException If an I/O error occurs when sending the name to the server.
+     */
     public static void sendName(final String name, Socket socket) throws IOException {
 
         SocketUtils.sendInteger(socket.getOutputStream(), GameType.PETITION_PLAYER_NAME);
         SocketUtils.sendString(socket.getOutputStream(), name);
     }
-
+    /**
+     * Receives the player's name from the server through the specified input stream.
+     * @param input The input stream from which to receive the player's name.
+     * @param output The output stream to which to send any necessary responses or acknowledgments.
+     * @return The name of the player received from the server.
+     * @throws IOException If an I/O error occurs when receiving the name from the server.
+     */
     public static String receiveName(InputStream input, OutputStream output) throws IOException {
 
         String name = SocketUtils.receiveString(input);
         return name;
     }
-
+    /**
+     * Sends the game configuration to the server through the specified output stream.
+     * @param config The GameConfig object containing the game configuration to send to the server.
+     * @param out The output stream through which to send the game configuration to the server.
+     * @throws IOException If an I/O error occurs when sending the game configuration to the server.
+     */
     public static void sendGameConfig(GameConfig config, OutputStream out) throws IOException {
     
         SocketUtils.sendInteger(out, GameType.PETITION_CREATE_GAME);
@@ -82,7 +110,13 @@ public class PokerPreGame {
         SocketUtils.sendString(out, config._selectedCard);
         SocketUtils.sendInteger(out, config._joinedAsSpectator ? GameType.TRUE : GameType.FALSE);
     }
-
+    /**
+     * Receives the game configuration from the server through the specified input stream.
+     * @param input The input stream from which to receive the game configuration.
+     * @param output The output stream to which to send any necessary responses or acknowledgments.
+     * @return A GameConfig object containing the game configuration received from the server.
+     * @throws IOException If an I/O error occurs when receiving the game configuration from the server.
+     */
     public static GameConfig receiveGameConfig(InputStream input, OutputStream output) throws IOException {
 
         String roomName = SocketUtils.receiveString(input);
@@ -155,7 +189,12 @@ public class PokerPreGame {
 
         return config;
     }
-
+    /**
+     * Sends the game configuration to a player who has joined the game through the specified output stream.
+     * @param config The GameConfig object containing the game configuration to send to the joined player.
+     * @param out The output stream through which to send the game configuration to the joined player.
+     * @throws IOException If an I/O error occurs when sending the game configuration to the joined player.
+     */
     public static void sendGameConfigToJoinedPlayer(GameConfig config, OutputStream out) throws IOException {
 
         SocketUtils.sendInteger(out, config._roomId);
@@ -203,7 +242,13 @@ public class PokerPreGame {
         SocketUtils.sendString(out, config._selectedCard);
         SocketUtils.sendInteger(out, config._joinedAsSpectator ? GameType.TRUE : GameType.FALSE);
     }
-
+    /**
+     * Receives the game configuration from the server for a player who has joined the game through the specified input stream.
+     * @param input The input stream from which to receive the game configuration for the joined player.
+     * @param output The output stream to which to send any necessary responses or acknowledgments.
+     * @return A GameConfig object containing the game configuration received from the server for the joined player.
+     * @throws IOException If an I/O error occurs when receiving the game configuration from the server for the joined player.
+     */
     public static GameConfig receiveGameConfigAsJoinedPlayer(InputStream input, OutputStream output) throws IOException {
 
         int roomId = SocketUtils.receiveInt(input);
@@ -276,24 +321,44 @@ public class PokerPreGame {
 
         return config;
     }
-
+    /**
+     * Sends a waiting room confirmation message to the server through the specified socket.
+     * @param socket The socket through which to send the waiting room confirmation message.
+     * @throws IOException If an I/O error occurs when sending the waiting room confirmation message to the server.
+     */
     public static void sendWaitingRoomConfirmation(Socket socket) throws IOException {
         SocketUtils.sendInteger(socket.getOutputStream(), GameType.CONFIRMATION_WAITING_GAME);
     }
-
+    /**
+     * Receives a waiting room confirmation message from the server through the specified socket.
+     * @param socket The socket from which to receive the waiting room confirmation message.
+     * @return An integer representing the waiting room confirmation message received from the server.
+     * @throws IOException If an I/O error occurs when receiving the waiting room confirmation message from the server.
+     */
     public static int receiveWaitingRoomConfirmation(Socket socket) throws IOException {
        
         int response = SocketUtils.receiveInt(socket.getInputStream());
         return response;
     }
-
+    /**
+     * Sends the information of a player in the room to the server through the specified socket.
+     * @param p The PlayerInfo object containing the information of the player in the room to send to the server.
+     * @param socket The socket through which to send the player's information to the server.
+     * @throws IOException If an I/O error occurs when sending the player's information to the server.
+     */
     public static void sendPlayerInRoomInfo(PlayerInfo p, Socket socket) throws IOException {
 
         SocketUtils.sendInteger(socket.getOutputStream(), GameType.EVENT_PLAYER_JOINED);
         SocketUtils.sendInteger(socket.getOutputStream(), p.id);
         SocketUtils.sendString(socket.getOutputStream(), p.name);
     }
-
+    /**
+     * Receives the information of a player in the room from the server through the specified input stream.
+     * @param input The input stream from which to receive the player's information.
+     * @param output The output stream to which to send any necessary responses or acknowledgments.
+     * @return A PlayerInfo object containing the information of the player in the room received from the server, or null if the response is not as expected.
+     * @throws IOException If an I/O error occurs when receiving the player's information from the server.
+     */
     public static PlayerInfo receivePlayerInRoomInfo(InputStream input, OutputStream output) throws IOException {
 
         int response = SocketUtils.receiveInt(input);
@@ -307,7 +372,13 @@ public class PokerPreGame {
 
         return new PlayerInfo(id, name);
     }
-
+    /**
+     * Receives the list of players waiting in the room from the server through the specified input stream.
+     * @param input The input stream from which to receive the list of players waiting in the room.
+     * @param output The output stream to which to send any necessary responses or acknowledgments.
+     * @return A list of PlayerInfo objects representing the players waiting in the room received from the server.
+     * @throws IOException If an I/O error occurs when receiving the list of players waiting in the room from the server.
+     */
     public static List<PlayerInfo> receivePlayerListWaiting(InputStream input, OutputStream output) throws IOException {
 
         List<PlayerInfo> playerPositions = new ArrayList<>();
@@ -320,16 +391,27 @@ public class PokerPreGame {
 
         return playerPositions;
     }
-
-    /* Auxiliar methods */
+    /**
+     * Checks if the provided IP address is valid (not empty or whitespace).
+     * @param IP The IP address to check for validity.
+     * @return true if the IP address is valid (not empty or whitespace), false otherwise.
+     */
     public static boolean checkIpValid(final String IP){
 		return !IP.trim().isEmpty();
 	}
-
+    /**
+     * Checks if the provided player name is too short (less than 3 characters).
+     * @param name The player name to check for length.
+     * @return true if the name is too short (less than 3 characters), false otherwise.
+     */
     public static boolean checkNameIsTooShort(final String name) {
         return name.length() < 3;
     }
-
+    /**
+     * Checks if the provided player name is too long (more than 10 characters).
+     * @param name The player name to check for length.
+     * @return true if the name is too long (more than 10 characters), false otherwise.
+     */
     public static boolean checkNameIsTooLong(final String name) {
         return 10 < name.length();
     }
