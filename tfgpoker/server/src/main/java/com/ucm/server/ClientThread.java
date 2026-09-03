@@ -23,6 +23,9 @@ import com.ucm.common.SocketUtils;
 import com.ucm.server.players.Spectator;
 
 
+/**
+ * Class that represents a connected player during the pre-game phase
+ */
 public class ClientThread implements Runnable {
 
 
@@ -479,11 +482,10 @@ public class ClientThread implements Runnable {
         synchronized(_roomPlayerList) {
 
             for(ClientThread cl : _roomPlayerList) {
-                log.debug("Player {} in room", cl._playerName);
+                log.debug("Player {} in room with ID {}", cl._playerName, cl.getPlayerID());
             }
-
             for(BotStruct bs : _roomBotsList) {
-                log.debug("Bot {} int the room", bs.botName());
+                log.debug("Bot {} int the room with ID {}", bs.botName(), bs.matchId());
             }
         }
 

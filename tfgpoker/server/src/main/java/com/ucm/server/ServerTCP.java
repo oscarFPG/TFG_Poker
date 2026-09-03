@@ -31,10 +31,15 @@ import com.ucm.server.logic.Game;
 import com.ucm.server.players.Spectator;
 
 
+/**
+ * Class responsible for handling de pregame and game phases of the poker server.
+ */
 public class ServerTCP {
+
 
     private static final Logger log = LogManager.getLogger(ServerTCP.class);
 
+    
     /**
      * Server public IP address
      */

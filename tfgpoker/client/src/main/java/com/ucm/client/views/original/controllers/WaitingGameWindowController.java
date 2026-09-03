@@ -396,7 +396,7 @@ public class WaitingGameWindowController extends GenericController {
                     Platform.runLater(() -> {
                         GUI_resetPlayers();
                         GUI_showPlayers(_clientInfo.playerPositions);
-                    });    
+                    });   
                 }
                 else if(event == GameType.CONFIRMATION_GAME_STARTS) {
                     System.out.printf("Event GAME_STARTS!\n");

@@ -549,8 +549,9 @@ public class InGameWindowController extends GenericController {
             return;
         }
 
-        
-        _playerSeatMap.put(myIndex, 0);
+
+        // Add myself to the seat list
+        _playerSeatMap.put(_clientInfo.id, 0);
         GUI_getAvatarPosition(0, _clientInfo.name);
         playerName0.setText( _clientInfo.name );
         playerMoney0.setText( String.valueOf(_clientInfo.gameConfig._initialMoney) );
@@ -558,7 +559,7 @@ public class InGameWindowController extends GenericController {
         _listImageCards.get(0).setVisible(true);
         _listHandBet.get(0).setVisible(true);
 
-        // Show players behind me(in the list) : position 1, 2, 3, ...
+        // Show players behind me(in the list) : position 8, 7, 6, ...
         int beforePosition = 8;
         for(int i = myIndex - 1; 0 <= i; i--) {
 
@@ -581,7 +582,7 @@ public class InGameWindowController extends GenericController {
             --beforePosition;
         }
 
-        // Show players ahead of me(in the list) : position 8, 7, 6, ...
+        // Show players ahead of me(in the list) : position 1, 2, 3, ...
         int nextPosition = 1;
         for(int i = myIndex + 1; i < players.size(); i++) {
 
@@ -1139,6 +1140,7 @@ public class InGameWindowController extends GenericController {
 			else if(serverCode == GameType.TURN_WAIT) {
 
                 System.out.printf("Wait for the other players to play...\n");
+                System.out.printf("My ID is %d\n", _clientInfo.id);
 
                 int seatID = _playerSeatMap.get(_clientInfo.id);
                 Platform.runLater(() -> {
@@ -1146,7 +1148,6 @@ public class InGameWindowController extends GenericController {
                     _listPlayerStackPanes.get(seatID).getStyleClass().remove("tourn-player-color");
                     GUI_stopVisualTimer();
                 });
-
 			}
 			else if(serverCode == GameType.TURN_PLAY) {
 
