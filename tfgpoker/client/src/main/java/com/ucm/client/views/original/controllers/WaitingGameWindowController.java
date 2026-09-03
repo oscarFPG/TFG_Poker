@@ -22,47 +22,35 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 
-
-
+/**
+ * Controller for the waiting game window. It manages the UI elements and handles the communication with the server to update the player list and start the game.
+ */
 public class WaitingGameWindowController extends GenericController {
 
+    /**
+     * Button to start the game. Only visible to the host player.
+     */
     @FXML
     private Button startButton;
-
+    /**
+     * Labels to display the room name and ID in the top-right corner of the window.
+     */
     @FXML
     private Label roomNamePlaceholder;
-
+    /**
+     * Labels to display the room ID in the top-right corner of the window.
+     */
     @FXML
     private Label roomIdPlaceholder;
-
+    /**
+     * StackPanes representing the player positions in the waiting room. Each StackPane corresponds to a player slot (0-8).
+     */
     @FXML
-    private StackPane pokerPlayer0;
+    private StackPane pokerPlayer0, pokerPlayer1, pokerPlayer2, pokerPlayer3, pokerPlayer4, pokerPlayer5, pokerPlayer6, pokerPlayer7, pokerPlayer8;
 
-    @FXML
-    private StackPane pokerPlayer1;
-
-    @FXML
-    private StackPane pokerPlayer2;
-
-    @FXML
-    private StackPane pokerPlayer3;
-
-    @FXML
-    private StackPane pokerPlayer4;
-
-    @FXML
-    private StackPane pokerPlayer5;
-
-    @FXML
-    private StackPane pokerPlayer6;
-
-    @FXML
-    private StackPane pokerPlayer7;
-
-    @FXML
-    private StackPane pokerPlayer8;
-
-    // Always the client position
+    /**
+     * Labels and ImageViews for displaying player names, money, and avatars in the waiting room. Each set corresponds to a player slot (0-8).
+     */
     @FXML
     private Label playerName0, playerMoney0;
     @FXML
@@ -107,15 +95,23 @@ public class WaitingGameWindowController extends GenericController {
     private Label playerName8, playerMoney8;
     @FXML
     private ImageView imgAvatarProfile8;
-
+    /**
+     * List of ImageViews for player avatars, used to easily access and update avatar images based on player positions.
+     */
     private List<ImageView> _listaAvatarProfiles;
-
+    /**
+     * ImageView for displaying the background table image in the waiting game window.
+     */
     @FXML
     private ImageView imgTableInGame;
-
+    /**
+     *  Thread that handles the waiting for player information and game start events from the server. It runs in the background to keep the UI responsive.
+     */
     private Thread _infoThread;
 
-    
+    /**
+     * Sends a request to the server to start the game. This method is called when the host player clicks the "Start" button. It sends an integer event code to the server indicating that the game should start.
+     */
     @FXML
     private void startGame() {
         
@@ -127,7 +123,9 @@ public class WaitingGameWindowController extends GenericController {
             NotificationManager.showError(Messages.Notifications.ERROR_SENDING_EVENT_GAME_STARTS + e.getMessage());
         }
     }
-
+     /**
+     * {@inheritDoc}
+     */
     @Override
     protected void onViewShown() {
 
@@ -160,7 +158,9 @@ public class WaitingGameWindowController extends GenericController {
         });
 
     }
-
+    /**
+     * Initializes the list of avatar profile ImageViews. This method populates the `_listaAvatarProfiles` list with references to the ImageView elements corresponding to each player slot (0-8). It allows for easy access and updating of avatar images based on player positions in the waiting room.
+     */
     private void initializeAvatarProfiles () {
         _listaAvatarProfiles = List.of(
             imgAvatarProfile0,
@@ -174,7 +174,9 @@ public class WaitingGameWindowController extends GenericController {
             imgAvatarProfile8
         );
     }
-
+    /**
+     * Clears all player labels and resets the opacity of player StackPanes in the waiting room. This method iterates through all player positions (0-8) and sets the text of name and money labels to empty strings, while also setting the opacity of each player StackPane to 0.6, indicating that the slots are empty or inactive.
+     */
     private void clearAllLabels() {
 
         for(int i = 0; i < 9; i++) {
@@ -188,7 +190,9 @@ public class WaitingGameWindowController extends GenericController {
             moneyLabel.setText("");
         }
     }
-
+    /**
+     * Waits for new player information from the server and updates the UI accordingly. This method runs in a separate thread and continuously listens for events from the server, such as new players joining or the game starting. It updates the player list and UI elements based on the received information, ensuring that the waiting room reflects the current state of the game.
+     */
     private void waitNewPlayersInfo() {
 
         try {
@@ -274,7 +278,11 @@ public class WaitingGameWindowController extends GenericController {
 
         System.out.printf("Finished waiting for players info!\n");
     }
-
+    /**
+     * Retrieves the StackPane corresponding to a given player position. This method is used to access the UI element representing a specific player slot in the waiting room, allowing for updates to the player's display (e.g., name, money, avatar) based on their position in the game.
+     * @param position
+     * @return The StackPane associated with the specified player position (0-8).
+     */
     private StackPane getPlayerStackPaneByPosition(final int position) {
         switch(position) {
             case 0: return pokerPlayer0;
@@ -289,7 +297,11 @@ public class WaitingGameWindowController extends GenericController {
             default: throw new IllegalArgumentException("Invalid player position");
         }
     }
-
+    /**
+     * Retrieves the Label corresponding to a given player position for displaying the player's name. This method is used to access the UI element that shows the name of a specific player in the waiting room, allowing for updates based on their position in the game.
+     * @param position
+     * @return The Label associated with the specified player position (0-8) for displaying the player's name.
+     */
     private Label getNameLabelByPosition(final int position) {
         switch(position) {
             case 0: return playerName0;
@@ -304,7 +316,11 @@ public class WaitingGameWindowController extends GenericController {
             default: throw new IllegalArgumentException("Invalid player position");
         }
     }
-
+    /**
+     * Retrieves the Label corresponding to a given player position for displaying the player's money. This method is used to access the UI element that shows the amount of money a specific player has in the waiting room, allowing for updates based on their position in the game.
+     * @param position
+     * @return The Label associated with the specified player position (0-8) for displaying the player's money.
+     */
     private Label getMoneyLabelByPosition(final int position) {
         switch(position) {
             case 0: return playerMoney0;
@@ -319,9 +335,9 @@ public class WaitingGameWindowController extends GenericController {
             default: throw new IllegalArgumentException("Invalid player position");
         }
     }
-
-    
-    /* Main game thread */
+    /**
+     * Waits for the game to start by listening for events from the server. This method runs in a separate thread and continuously checks for player join events, game start confirmations, and error messages. It updates the UI accordingly and transitions to the next view when the game is ready to start.
+     */
     private void waitToStartGame() {
 
         try {
@@ -409,8 +425,9 @@ public class WaitingGameWindowController extends GenericController {
 
         System.out.printf("Finished waiting for players info!\n");
     }
-    
-    /* GUI methods : MUST be called inside JavaFX Thread */
+    /**
+     * Clears all player labels and resets the opacity of player StackPanes in the waiting room. This method iterates through all player positions (0-8) and sets the text of name and money labels to empty strings, while also setting the opacity of each player StackPane to 0.6, indicating that the slots are empty or inactive. This method should be called from the JavaFX Application Thread to ensure thread safety when updating UI components.
+     */
     private void GUI_clearAllLabels() {
 
         for(int i = 0; i < 9; i++) {
@@ -424,7 +441,11 @@ public class WaitingGameWindowController extends GenericController {
             moneyLabel.setText("");
         }
     }
-
+    /**
+     * Updates the avatar image for a specific player position in the waiting room. This method retrieves the avatar image associated with the player's name and sets it to the corresponding ImageView. It also applies a circular clip to the avatar image to create a rounded appearance. The avatar is made visible after being updated.
+     * @param position
+     * @param name
+     */
     private void GUI_updateAvatarPosition(final int position, String name) {
 
         ImageView avatarImage = _listaAvatarProfiles.get(position);
@@ -443,7 +464,10 @@ public class WaitingGameWindowController extends GenericController {
         avatarImage.setClip(clip);
         avatarImage.setVisible(true);
     }
-
+    /**
+     * Displays the list of players in the waiting room UI. This method takes a list of PlayerInfo objects and updates the corresponding UI elements (name labels, money labels, and avatar images) based on the players' positions. It handles the display logic for both spectators and active players, ensuring that the current player's information is shown in the correct position, with other players displayed relative to them.
+     * @param players
+     */
     private void GUI_showPlayers(final List<PlayerInfo> players) {
 
         if(players == null || players.isEmpty()) {
@@ -504,7 +528,11 @@ public class WaitingGameWindowController extends GenericController {
         }
         System.out.printf("\n");
     }
-
+    /**
+     * Draws a player's information in the waiting room UI at a specified position. This method updates the name label, money label, and avatar image for the given player based on their position in the waiting room. It sets the opacity of the player's StackPane to fully visible and calls the method to update the avatar image accordingly.
+     * @param player
+     * @param pos
+     */
     private void GUI_drawPlayer(final PlayerInfo player, final int pos) {
 
         Label nameLabel = getNameLabelByPosition(pos);
@@ -516,7 +544,9 @@ public class WaitingGameWindowController extends GenericController {
         playerStackPane.setOpacity( 1 );
         GUI_updateAvatarPosition(pos, player.name);
     }
-
+    /**
+     * Clears all player labels and resets the opacity of player StackPanes in the waiting room. This method iterates through all player positions (0-8) and sets the text of name and money labels to empty strings, while also setting the opacity of each player StackPane to 0.6, indicating that the slots are empty or inactive. It also hides the avatar images for each player slot. This method should be called from the JavaFX Application Thread to ensure thread safety when updating UI components.
+     */
     private void GUI_resetPlayers() {
 
         for(int seatIndex = 0; seatIndex < 9; seatIndex++) {

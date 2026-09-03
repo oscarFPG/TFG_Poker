@@ -8,12 +8,21 @@ import javafx.application.Application;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+/**
+ * Main class of the application, responsible for initializing the JavaFX application and setting up the main window.
+ */
 public class MainApp extends Application {
-
-    private static final String APP_ICON_PATH = "/images/logoPoker.png";
-    
     /*
         Run javafx: .\mvnw.cmd -pl client javafx:run
+    */
+
+    /**
+     * Path to the application icon image used in the main window.
+     */
+    private static final String APP_ICON_PATH = "/images/logoPoker.png";
+
+   /**
+    * Starts the JavaFX application by setting up the primary stage, including the title and icon, and initializing the main controller.
     */
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -31,7 +40,10 @@ public class MainApp extends Application {
         DialogsManager.init(primaryStage);
         mainController.start();
     }
-
+    /**
+     * The main entry point of the application, which launches the JavaFX application.
+     * @param args
+     */
     public static void main(String[] args) {
         launch(args);
     }

@@ -1,7 +1,13 @@
 package com.ucm.client.views.original.controllers;
 
+/**
+ * Controller that manages the current state of the application. 
+ */
 public class StatusController {
 
+    /**
+     * Enum that represents the different states of the application.
+     */
     public enum State {
         START_APP,
         SET_PROFILE,
@@ -15,13 +21,19 @@ public class StatusController {
         WAITING_GAME,
         GAME
     }
-
+    /**
+     * The current state of the application.
+     */
     private State currentState;
-
+    /**
+     * Constructor for the StatusController class. Initializes the current state to START_APP.
+     */
     public StatusController() {
         currentState = State.START_APP;
     }
-
+    /**
+     * Method to transition to the next state based on the current state of the application.
+     */
     public void next() {
 
         switch(currentState) {
@@ -71,7 +83,9 @@ public class StatusController {
         }
         
     }
-
+    /**
+     * Method to transition to the previous state based on the current state of the application.
+     */
     public void back() {
 
         switch(currentState) {
@@ -120,20 +134,28 @@ public class StatusController {
             break;
         }
     }
-
-
+    /**
+     * Method to set the current state to CREATE_GAME.
+     */
     public void stateCreateGame() {
         currentState = State.CREATE_GAME;
     }
-
+    /**
+     * Method to set the current state to WAITING_GAME.
+     */
     public void stateJoinGame() {
         currentState = State.WAITING_GAME;
     }
-
+    /**
+     * Method to set the current state to CHOOSE_GAME.
+     */
     public void stateChooseGame() {
         currentState = State.CHOOSE_GAME;
     }
-
+    /**
+     * Method to get the current state of the application.
+     * @return The current state of the application.
+     */
     public State getCurrentState() {
         return currentState;
     }
