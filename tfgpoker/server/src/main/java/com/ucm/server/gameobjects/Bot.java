@@ -324,9 +324,9 @@ public abstract class Bot implements IPlayerNotificator {
 
         // Check response time
         long responseTime = System.currentTimeMillis() - startTime;
-        //log.warn("Bot {} response took {} miliseconds", player.getPlayerName(), responseTime);
+        log.warn("Bot {} response took {} miliseconds", player.getPlayerName(), responseTime);
         
-        //waitExtraTime(responseTime);
+        waitExtraTime(responseTime);
 
         return action;
     }
