@@ -454,46 +454,44 @@ If the server listens on:
 
 it will only accept connections originating from the local machine.
 
-> **IMPORTANT - FIREWALL / ROUTER CONFIGURATION**
->
-> If you cannot connect to the server from another device on your network, you may need to allow incoming traffic through **port 5005** in your router's firewall.
->
-> ### How to configure it
->
-> 1. Open your router's web administration interface. This is usually accessible by entering the router's IP address (for example, `192.168.1.1` or `192.168.0.1`) in your web browser.
-> 2. Log in using your router's administrator credentials.
-> 3. Look for a section named **Firewall**, **Port Forwarding**, **NAT**, **Virtual Server**, or **Port Mapping**. The exact name depends on your router model.
-> 4. Create a new rule to allow/forward **TCP traffic on port 5005** to the local IP address of the computer running the server.
-> 5. Save the configuration and, if required, restart the router.
->
-> **Example configuration:**
->
-> | Setting        | Value                            |
-> | -------------- | -------------------------------- |
-> | Protocol       | `TCP`                            |
-> | External Port  | `5005`                           |
-> | Internal Port  | `5005`                           |
-> | Destination IP | *Local IP address of the server* |
->
-> > **Note:** The exact steps and terminology may vary depending on your router manufacturer and firmware version. If the application is only being accessed from devices on the same local network, you may only need to allow port `5005` in the router/firewall rather than configure Internet-facing port forwarding.
+## IMPORTANT: FIREWALL / ROUTER CONFIGURATION
+
+If you cannot connect to the server, you may need to allow traffic through port `5005` in your router's firewall.
+> [!IMPORTANT]
+> Opening TCP port `5005` in a firewall only provides network connectivity. It does not encrypt or otherwise secure the application protocol.
+
+### How to configure it
+
+1. Open your router's web administration interface. This is usually accessible by entering the router's IP address (for example, `192.168.1.1` or `192.168.0.1`) in your web browser.
+2. Log in using your router's administrator credentials.
+3. Look for a section named **Firewall**, **Port Forwarding**, **NAT**, **Virtual Server**, or **Port Mapping**. The exact name depends on your router model.
+4. Create a rule allowing/forwarding **TCP traffic on port `5005`** to the local IP address of the computer running the server.
+5. Save the configuration and restart the router if required.
+
+| Setting            | Value                            |
+| ------------------ | -------------------------------- |
+| **Protocol**       | `TCP`                            |
+| **External Port**  | `5005`                           |
+| **Internal Port**  | `5005`                           |
+| **Destination IP** | *Local IP address of the server* |
+
+> **Note:** The exact steps and terminology may vary depending on your router manufacturer and firmware version.
+
 
 
 ## Run the server
 
 From the project root directory:
-
 ```bash
 cd ./tfgpoker
 ```
 
 On Linux:
-
 ```bash
 ./mvnw -pl server -Prun exec:java
 ```
 
 On Windows:
-
 ```cmd
 mvnw.cmd -pl server -Prun exec:java
 ```
@@ -509,13 +507,11 @@ The client application uses JavaFX and can be started independently from the ser
 From the project root directory:
 
 Windows:
-
 ```cmd
 mvnw.cmd -pl client javafx:run
 ```
 
 Linux:
-
 ```bash
 ./mvnw -pl client javafx:run
 ```
@@ -545,28 +541,13 @@ Server IP address : 5005
 
 ## Local network
 
-If the client and server are on the same local network, the client can normally connect using the server's local IP address.
-
-For example:
-
-```text
-192.168.1.100
-```
-
-The client would connect to:
-
-```text
-192.168.1.100:5005
-```
-
-The actual IP address depends on the server's network configuration.
+If the client and server are on the same local network, the client can normally connect using the loopback address.
 
 ## Public Internet
 
 If the server is behind a router or NAT and clients need to connect from outside the local network, the router must forward incoming TCP traffic from port `5005` to the server's local IP address.
 
 The general configuration is:
-
 ```text
 Internet
     │
@@ -582,20 +563,6 @@ Server
 
 The exact port forwarding procedure depends on the router.
 
-## Cloud or VPS servers
-
-If the server is hosted on a VPS or cloud provider, opening the operating system firewall may not be sufficient.
-
-The provider may also have an external firewall, security group or network access rule.
-
-TCP port `5005` must therefore be allowed both:
-
-1. In the server's operating system firewall.
-2. In the cloud/VPS provider's network configuration, if applicable.
-
-> [!WARNING]
-> Do not expose port `5005` to the public Internet unless the server application is appropriately protected against unauthorized connections and malformed input.
-
 # Connectivity Test
 
 Before troubleshooting the application itself, verify that the client machine can reach the server.
@@ -603,19 +570,16 @@ Before troubleshooting the application itself, verify that the client machine ca
 ## Windows
 
 From PowerShell:
-
 ```powershell
 Test-NetConnection <SERVER_IP> -Port 5005
 ```
 
 For example:
-
 ```powershell
 Test-NetConnection 192.168.1.100 -Port 5005
 ```
 
 A successful test should report:
-
 ```text
 TcpTestSucceeded : True
 ```
@@ -623,19 +587,16 @@ TcpTestSucceeded : True
 ## Linux
 
 If `netcat` is installed:
-
 ```bash
 nc -vz <SERVER_IP> 5005
 ```
 
 For example:
-
 ```bash
 nc -vz 192.168.1.100 5005
 ```
 
 If the connection succeeds, the network path to the server is available.
-
 If the connection fails, check:
 
 * Server status.
@@ -646,46 +607,6 @@ If the connection fails, check:
 * IP address used by the client.
 * Network connectivity between the machines.
 
-# Security Considerations
-
-The application communicates between clients and the server over a network connection.
-
-When the server is only used on a local machine or trusted local network, the security requirements may be different from a deployment over the public Internet.
-
-If the server is exposed to an untrusted network, the following aspects should be considered.
-
-## Input validation
-
-The server should not blindly trust data received from clients.
-Incoming messages should be validated before they are processed.
-Invalid or unexpected data should not be allowed to crash the server.
-
-## Authentication
-
-If the application requires users to authenticate, authentication data should be validated and handled securely.
-The server should also prevent clients from accessing functionality for which they are not authorized.
-
-## Client disconnections
-
-The server should correctly handle clients that:
-
-* close the application unexpectedly;
-* lose network connectivity;
-* terminate their connection;
-* stop responding.
-
-A disconnected client should not leave the server in an inconsistent state.
-
-## Connection limits
-
-If the server is exposed to the Internet, it is recommended to consider limits on the number of simultaneous connections and the amount of data accepted from each client.
-
-## Encryption
-
-If sensitive information such as authentication credentials is transmitted over an untrusted network, communication should use an appropriate encryption mechanism such as **TLS**.
-
-> [!IMPORTANT]
-> Opening TCP port `5005` in a firewall only provides network connectivity. It does not encrypt or otherwise secure the application protocol.
 
 # Troubleshooting
 
