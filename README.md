@@ -1,56 +1,167 @@
 # TFG_Poker
+
 Poker application developed in Java as part of a Bachelor's Thesis.
 This application allows humans and bots to play No-Limit Texas Hold'em (NLHE) poker games.
 
+The application follows a distributed client-server architecture. The server is responsible for managing the game environment, while clients connect to the server to participate in poker games.
 
 # Table of Contents
+
 * [Project Requirements](#project-requirements)
+
+* [Project Structure](#project-structure)
+
+* [Architecture](#architecture)
+
 * [Installation Guide](#installation-guide)
   * [Windows](#windows)
   * [Linux](#linux)
+
 * [VS Code Configuration](#vs-code-configuration)
+
+* [Building the Project](#building-the-project)
+
 * [Running the Project](#running-the-project)
+  * [Server application](#server-application)
+  * [Client application](#client-application)
+
+* [Network Configuration](#network-configuration)
+
+* [Connectivity Test](#connectivity-test)
+
+* [Security Considerations](#security-considerations)
+
 * [Troubleshooting](#troubleshooting)
+
+* [Installation Summary](#installation-summary)
 
 
 # Project Requirements
-The following components are required to build and run the project:
 
+The following components are required to build and run the project:
 * **Java SDK 21**
 * **JavaFX 21**
-* **Maven (Optional)**
-* **Visual Studio Code**
+* **Visual Studio Code** (recommended)
 
-The project includes several `.cmd` files that act as **Maven wrappers**, so a separate global Maven installation is not required on Windows.
+**Maven is optional.**
+
+The project includes the **Maven Wrapper**, so a separate global Maven installation is not required. The Maven Wrapper downloads and uses the Maven version configured by the project.
+
+On Windows, use `mvnw.cmd`.
+On Linux, use `./mvnw`.
+
+## Check Java installation
 
 To check the installed Java version:
+
 ```bash
 java -version
 ```
 
 To check the Java compiler version:
+
 ```bash
 javac -version
 ```
 
 Both commands should report **Java 21**.
 
-> [!NOTE] Although the project uses Maven, Maven commands are executed through the wrappers included in the project. This avoids depending on a globally installed Maven version.
+## Check Maven Wrapper
 
+On Windows:
+
+```cmd
+mvnw.cmd -version
+```
+
+On Linux:
+
+```bash
+./mvnw -version
+```
+
+The output should indicate that Maven is running with **Java 21**.
+
+> [!NOTE]
+> Although the project uses Maven, a global Maven installation is not required. The Maven Wrapper included in the project should be used whenever possible to ensure that the expected Maven version is used.
+
+# Project Structure
+
+The project is organized as a Maven multi-module project.
+The main components include:
+
+```text
+tfgpoker/
+├── pom.xml
+├── client/
+├── server/
+└── ...
+```
+
+The **client** module contains the client application and its JavaFX graphical user interface.
+The **server** module contains the server application responsible for accepting client connections and managing the server-side functionality.
+
+The root `pom.xml` manages the Maven project and its modules.
+
+> [!NOTE]
+> The exact internal package and class structure may vary depending on the implementation. The important modules for running the distributed application are `client` and `server`.
+
+# Architecture
+
+The application uses a distributed client-server architecture.
+
+```text
+                         TCP connection
+                    Port 5005
+                         │
+        ┌────────────────┴────────────────┐
+        │                                 │
+   Client 1                           Client 2
+   JavaFX                              JavaFX
+        │                                 │
+        └────────────────┬────────────────┘
+                         │
+                         ▼
+                  Poker Server
+                    Port 5005
+```
+
+The server must be running before external clients attempt to connect.
+Multiple clients can connect to the same server, depending on the application's implementation and configuration.
+
+## Server
+
+The server application listens for client connections on:
+
+```text
+TCP port: 5005
+```
+
+When the server is running on a remote machine, clients must be able to establish a TCP connection to the server's IP address on port `5005`.
+
+## Client
+
+The client application provides the JavaFX graphical interface.
+When connecting to a remote server, the client must be provided with the server's reachable IP address.
+
+If the client and server are running on the same machine, the IP address can be left empty according to the application's current behavior.
 
 # Installation Guide
 
 ## Windows
+
 ### 1. Install Java SDK 21
 
 Install a distribution of **Java SDK 21**.
 
 It is recommended to install it in a path similar to:
+
 ```text
 C:\Program Files\Java\jdk-21
 ```
 
 Once Java has been installed, open a new terminal and check the installation:
+
 ```cmd
 java -version
 ```
@@ -64,27 +175,32 @@ Both commands should display Java version 21.
 ### 2. Configure JAVA_HOME
 
 The `JAVA_HOME` environment variable must point to the Java SDK installation.
+
 In Windows:
 
 1. Search for **"Edit the system environment variables"**.
 2. Select **"Environment Variables"**.
 3. Create a new variable named:
+
 ```text
 JAVA_HOME
 ```
 
 4. Set its value to the JDK installation directory, for example:
+
 ```text
 C:\Program Files\Java\jdk-21
 ```
 
 5. Edit the `Path` variable.
 6. Add:
+
 ```text
 %JAVA_HOME%\bin
 ```
 
 After making these changes, open a new terminal and check the configuration:
+
 ```cmd
 echo %JAVA_HOME%
 ```
@@ -99,20 +215,24 @@ The project uses **JavaFX 21** for its graphical user interface.
 
 JavaFX is managed through **Maven**, so a manual installation of the JavaFX SDK is not required.
 
-The necessary JavaFX dependencies are defined in the project's Maven configuration and will be downloaded automatically when Maven builds the project.
+The necessary JavaFX dependencies are defined in the project's Maven configuration and will be downloaded automatically when Maven builds or runs the client application.
 
----
+> [!NOTE]
+> Avoid installing and manually configuring a separate JavaFX SDK unless the project configuration specifically requires it. Mixing a manual JavaFX installation with the Maven-managed dependencies can cause configuration and runtime problems.
 
 ## Linux
+
 ### 1. Install Java SDK 21
 
 On Debian/Ubuntu-based distributions, Java 21 can be installed with:
+
 ```bash
 sudo apt update
 sudo apt install openjdk-21-jdk
 ```
 
 Check the installation:
+
 ```bash
 java -version
 ```
@@ -126,32 +246,38 @@ Both commands should display Java version 21.
 ### 2. Configure JAVA_HOME
 
 To find the Java installation path, use:
+
 ```bash
 readlink -f $(which java)
 ```
 
 The JDK is usually installed in a path similar to:
+
 ```text
 /usr/lib/jvm/java-21-openjdk-amd64
 ```
 
 To configure `JAVA_HOME`, edit the Bash configuration file:
+
 ```bash
 nano ~/.bashrc
 ```
 
-Add the following lines:
+Add the following lines, adjusting the path if necessary:
+
 ```bash
 export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
 export PATH=$JAVA_HOME/bin:$PATH
 ```
 
 Apply the changes:
+
 ```bash
 source ~/.bashrc
 ```
 
 Check the configuration:
+
 ```bash
 echo $JAVA_HOME
 ```
@@ -163,7 +289,8 @@ java -version
 ### 3. JavaFX 21
 
 JavaFX is managed through **Maven**, so no manual JavaFX SDK installation is required.
-Maven will automatically download the required JavaFX dependencies when the project is built.
+
+Maven will automatically download the required JavaFX dependencies when the project is built or the client is run.
 
 # VS Code Configuration
 
@@ -186,135 +313,379 @@ The **Maven for Java** extension allows Maven projects and their available goals
 Make sure that VS Code is using **Java 21**.
 
 Open the Command Palette:
+
 ```text
 Ctrl + Shift + P
 ```
 
 Search for:
+
 ```text
 Java: Configure Java Runtime
 ```
 
-The installed JDKs should be displayed. Make sure that **JDK 21** is selected for the project.
+The installed JDKs should be displayed.
+
+Make sure that **JDK 21** is selected for the project.
 
 If multiple Java versions are installed, make sure that Java 21 is configured as the JDK used by the project.
 
-# Running the Project
+# Building the Project
 
-The project uses **Maven** to manage dependencies, compile the source code, and run the application.
+Before running the applications, it is recommended to build the complete project and download its dependencies.
 
-Several `.cmd` files are included in the project to simplify the execution of Maven commands without installing Maven, but it can be compiled and executed using your system Maven installation.
+Open a terminal in the project's root directory.
 
 ## Windows
 
-Open the integrated terminal in VS Code and make sure you are in the project's root directory.
-The Maven wrapper files included in the project can then be used to execute the required Maven commands.
+Use the Maven Wrapper:
 
-For example:
 ```cmd
-mvnw.cmd <command>
-```
-
-Or using the system installation:
-```cmd
-mvn <command>
+mvnw.cmd clean install -DskipTests
 ```
 
 ## Linux
 
-On Linux, Maven can be executed using the Maven wrapper included in the project.
+First make sure that the Maven Wrapper has execution permissions:
 
-If the wrapper does not have execution permissions, run:
 ```bash
 chmod +x mvnw
 ```
 
-The Maven wrapper can then be executed with:
+Then run:
+
 ```bash
-./mvnw <command>
+./mvnw clean install -DskipTests
 ```
 
-Or:
-```bash
-mvn <command>
+The command cleans the project, downloads the required dependencies, compiles the modules and installs the generated artifacts while skipping the tests.
+
+> [!NOTE]
+> A separate `clean compile` command is not necessary after `clean install`, because the Maven `install` lifecycle already includes the compilation phase.
+
+## Verify Maven Java version
+
+To verify which Java installation Maven is using:
+
+Windows:
+
+```cmd
+mvnw.cmd -version
 ```
 
+Linux:
 
-## Running from VS Code
+```bash
+./mvnw -version
+```
 
-The project can be run from VS Code using either of the following methods:
-1. **Maven for Java extension** — use the Maven panel to access the project's available Maven goals.
-2. **Integrated terminal** — execute the Maven wrapper or the provided `.cmd` scripts.
+Make sure the Java version reported by Maven is **21**.
 
-It is recommended to use the commands provided specifically by the project to ensure that the application is built and executed using the expected configuration.
+# Running the Project
 
-> [!NOTE] This guide assumes that Maven is installed and configured as a system-wide command. All Maven commands can also be executed using the Maven Wrapper `.cmd` files included with the project.
+The server and client applications must be started separately.
+The recommended workflow is:
 
+```text
+1. Start the server
+2. Make sure port 5005 is accessible
+3. Start one or more clients
+4. Connect the clients to the server
+```
 
-First, we are going to install the project's dependencies and compile the entire project by running the following commands in the **/tfgpoker** directory:
-1. `mvn clean install -DskipTests`
-2. `mvn clean compile`
+# Server application
 
-The first command cleans the project, installs all required dependencies **without running the project tests**, and builds the project while skipping the tests. The second command performs a clean compilation of the project.
+> [!IMPORTANT]
+> Running the server on a Linux machine is recommended.
 
+## Open port 5005
 
-### Server application
+If clients connect from another machine, the server must accept incoming TCP connections on port `5005`.
 
-> [!IMPORTANT] We highly recommend running the server from a Linux machine
+### UFW (Ubuntu/Debian)
 
-#### Open port 5005
+To allow incoming connections:
 
-To allow external clients to communicate with the server application, the port used by the application must be open in the Linux firewall.
-
-The following example opens port `5005/TCP`.
-
-#### UFW (Ubuntu/Debian)
 ```bash
 sudo ufw allow in 5005/tcp
+```
+
+If outgoing traffic also needs to be explicitly configured:
+
+```bash
 sudo ufw allow out 5005/tcp
+```
+
+Check the firewall status:
+
+```bash
 sudo ufw status
 ```
 
-#### firewalld (Fedora/RHEL/CentOS)
+### firewalld (Fedora/RHEL/CentOS)
+
 ```bash
 sudo firewall-cmd --permanent --add-port=5005/tcp
 sudo firewall-cmd --reload
 sudo firewall-cmd --list-ports
 ```
 
-#### Verify the port
+## Verify that the server is listening
+
+After starting the server, verify that port `5005` is listening:
+
 ```bash
 sudo ss -lntp | grep :5005
 ```
 
-The application should listen on `0.0.0.0:5005` to accept external connections. If it listens on `127.0.0.1:5005`, it will only be accessible from the local machine.
+The server should listen on:
 
-
-#### Run application
-```bash
-cd .\tfgpoker\
-mvn -pl server -Prun exec:java
+```text
+0.0.0.0:5005
 ```
 
-This should be the output in our terminal:
-![Server run output](/images/server-run.png)
+This allows connections through the available network interfaces.
 
+If the server listens on:
 
-### Client application
-
-#### Run application:
-```bash
-cd .\tfgpoker\
-mvn -pl client javafx:run
+```text
+127.0.0.1:5005
 ```
 
-We should see this window:
-![Client main window](/images/client-main-window.png)
+it will only accept connections originating from the local machine.
 
-After clicking the start button and we can provide the server public IP address:
-![Client login window](/images/client-login-window.png)
+> **IMPORTANT - FIREWALL / ROUTER CONFIGURATION**
+>
+> If you cannot connect to the server from another device on your network, you may need to allow incoming traffic through **port 5005** in your router's firewall.
+>
+> ### How to configure it
+>
+> 1. Open your router's web administration interface. This is usually accessible by entering the router's IP address (for example, `192.168.1.1` or `192.168.0.1`) in your web browser.
+> 2. Log in using your router's administrator credentials.
+> 3. Look for a section named **Firewall**, **Port Forwarding**, **NAT**, **Virtual Server**, or **Port Mapping**. The exact name depends on your router model.
+> 4. Create a new rule to allow/forward **TCP traffic on port 5005** to the local IP address of the computer running the server.
+> 5. Save the configuration and, if required, restart the router.
+>
+> **Example configuration:**
+>
+> | Setting        | Value                            |
+> | -------------- | -------------------------------- |
+> | Protocol       | `TCP`                            |
+> | External Port  | `5005`                           |
+> | Internal Port  | `5005`                           |
+> | Destination IP | *Local IP address of the server* |
+>
+> > **Note:** The exact steps and terminology may vary depending on your router manufacturer and firmware version. If the application is only being accessed from devices on the same local network, you may only need to allow port `5005` in the router/firewall rather than configure Internet-facing port forwarding.
 
-> [!NOTE] If both the server and client applications are running on the same machine, leave the IP address field empty and enter only a name to connect to the server.
+
+## Run the server
+
+From the project root directory:
+
+```bash
+cd ./tfgpoker
+```
+
+On Linux:
+
+```bash
+./mvnw -pl server -Prun exec:java
+```
+
+On Windows:
+
+```cmd
+mvnw.cmd -pl server -Prun exec:java
+```
+
+The server should start and listen for incoming client connections on TCP port `5005`.
+
+# Client application
+
+The client application uses JavaFX and can be started independently from the server.
+
+## Run the client
+
+From the project root directory:
+
+Windows:
+
+```cmd
+mvnw.cmd -pl client javafx:run
+```
+
+Linux:
+
+```bash
+./mvnw -pl client javafx:run
+```
+
+The JavaFX client window should appear.
+
+After clicking the start button, the client can be configured with the server's IP address.
+
+If the server is running on another machine, enter the server's reachable IP address.
+
+If both the server and client applications are running on the same machine, leave the IP address field empty and enter only a name to connect to the server.
+
+# Network Configuration
+
+When the server and client run on different machines, network connectivity must be configured correctly.
+
+The basic configuration is:
+
+```text
+Client
+   │
+   │ TCP
+   │
+   ▼
+Server IP address : 5005
+```
+
+## Local network
+
+If the client and server are on the same local network, the client can normally connect using the server's local IP address.
+
+For example:
+
+```text
+192.168.1.100
+```
+
+The client would connect to:
+
+```text
+192.168.1.100:5005
+```
+
+The actual IP address depends on the server's network configuration.
+
+## Public Internet
+
+If the server is behind a router or NAT and clients need to connect from outside the local network, the router must forward incoming TCP traffic from port `5005` to the server's local IP address.
+
+The general configuration is:
+
+```text
+Internet
+    │
+    │ TCP 5005
+    ▼
+Router / NAT
+    │
+    │ TCP 5005
+    ▼
+Server
+192.168.x.x:5005
+```
+
+The exact port forwarding procedure depends on the router.
+
+## Cloud or VPS servers
+
+If the server is hosted on a VPS or cloud provider, opening the operating system firewall may not be sufficient.
+
+The provider may also have an external firewall, security group or network access rule.
+
+TCP port `5005` must therefore be allowed both:
+
+1. In the server's operating system firewall.
+2. In the cloud/VPS provider's network configuration, if applicable.
+
+> [!WARNING]
+> Do not expose port `5005` to the public Internet unless the server application is appropriately protected against unauthorized connections and malformed input.
+
+# Connectivity Test
+
+Before troubleshooting the application itself, verify that the client machine can reach the server.
+
+## Windows
+
+From PowerShell:
+
+```powershell
+Test-NetConnection <SERVER_IP> -Port 5005
+```
+
+For example:
+
+```powershell
+Test-NetConnection 192.168.1.100 -Port 5005
+```
+
+A successful test should report:
+
+```text
+TcpTestSucceeded : True
+```
+
+## Linux
+
+If `netcat` is installed:
+
+```bash
+nc -vz <SERVER_IP> 5005
+```
+
+For example:
+
+```bash
+nc -vz 192.168.1.100 5005
+```
+
+If the connection succeeds, the network path to the server is available.
+
+If the connection fails, check:
+
+* Server status.
+* Server listening address.
+* Server firewall.
+* Router/NAT configuration.
+* Cloud/VPS firewall rules.
+* IP address used by the client.
+* Network connectivity between the machines.
+
+# Security Considerations
+
+The application communicates between clients and the server over a network connection.
+
+When the server is only used on a local machine or trusted local network, the security requirements may be different from a deployment over the public Internet.
+
+If the server is exposed to an untrusted network, the following aspects should be considered.
+
+## Input validation
+
+The server should not blindly trust data received from clients.
+Incoming messages should be validated before they are processed.
+Invalid or unexpected data should not be allowed to crash the server.
+
+## Authentication
+
+If the application requires users to authenticate, authentication data should be validated and handled securely.
+The server should also prevent clients from accessing functionality for which they are not authorized.
+
+## Client disconnections
+
+The server should correctly handle clients that:
+
+* close the application unexpectedly;
+* lose network connectivity;
+* terminate their connection;
+* stop responding.
+
+A disconnected client should not leave the server in an inconsistent state.
+
+## Connection limits
+
+If the server is exposed to the Internet, it is recommended to consider limits on the number of simultaneous connections and the amount of data accepted from each client.
+
+## Encryption
+
+If sensitive information such as authentication credentials is transmitted over an untrusted network, communication should use an appropriate encryption mechanism such as **TLS**.
+
+> [!IMPORTANT]
+> Opening TCP port `5005` in a firewall only provides network connectivity. It does not encrypt or otherwise secure the application protocol.
 
 # Troubleshooting
 
@@ -328,29 +699,76 @@ If an error indicates that `java` or `javac` is not recognized as a command, che
 * A new terminal was opened after modifying the environment variables.
 
 Check the installation with:
+
 ```bash
 java -version
 ```
 
-## VS Code is using the wrong Java version
+and:
 
-Open the Command Palette:
-```text
-Ctrl + Shift + P
+```bash
+javac -version
 ```
 
-Select:
-```text
-Java: Configure Java Runtime
+## Maven uses the wrong Java version
+
+Run:
+
+Windows:
+
+```cmd
+mvnw.cmd -version
 ```
 
-Make sure that **JDK 21** is selected for the project.
+Linux:
+
+```bash
+./mvnw -version
+```
+
+Check the Java version shown in the Maven output.
+
+If it is not Java 21, verify:
+
+* `JAVA_HOME`.
+* The system `PATH`.
+* The Java runtime selected by VS Code.
+* Any other installed Java versions.
+
+## Maven Wrapper does not run on Linux
+
+If the wrapper does not have execution permissions, run:
+
+```bash
+chmod +x mvnw
+```
+
+Then:
+
+```bash
+./mvnw -version
+```
 
 ## Maven cannot download dependencies
 
-Make sure that the computer has an active Internet connection and that Maven can access the required repositories.
+Make sure that:
 
-The build can also be executed again so Maven can check for and download any missing dependencies.
+* The computer has an active Internet connection.
+* Maven can access the required repositories.
+* No proxy or firewall is blocking Maven.
+* The Maven Wrapper can execute correctly.
+
+Run the build again:
+
+```bash
+./mvnw clean install -DskipTests
+```
+
+On Windows:
+
+```cmd
+mvnw.cmd clean install -DskipTests
+```
 
 ## JavaFX errors
 
@@ -361,12 +779,133 @@ If an error related to JavaFX occurs:
 * Run the project using the Maven commands provided by the project.
 * Avoid mixing a manual JavaFX installation with the JavaFX dependencies managed by Maven.
 
+## Client cannot connect to server
+
+Check the following:
+
+1. The server application is running.
+2. The server is listening on TCP port `5005`.
+3. The server is listening on `0.0.0.0:5005` when remote connections are required.
+4. Port `5005/TCP` is allowed by the server firewall.
+5. If applicable, the router forwards port `5005` to the server.
+6. If applicable, the cloud/VPS firewall allows port `5005`.
+7. The client is using the correct server IP address.
+8. The client machine can reach the server.
+
+Test the connection with:
+
+Windows:
+
+```powershell
+Test-NetConnection <SERVER_IP> -Port 5005
+```
+
+Linux:
+
+```bash
+nc -vz <SERVER_IP> 5005
+```
+
+## Server works locally but not remotely
+
+If the client can connect when both applications run on the same machine but cannot connect remotely, verify:
+
+* The server is not bound only to `127.0.0.1`.
+* The operating system firewall allows TCP port `5005`.
+* The router/NAT forwards TCP port `5005` if necessary.
+* The client is using the correct public or private IP address for the network configuration.
+* Any cloud/VPS firewall allows the connection.
+
+## VS Code is using the wrong Java version
+
+Open the Command Palette:
+
+```text
+Ctrl + Shift + P
+```
+
+Select:
+
+```text
+Java: Configure Java Runtime
+```
+
+Make sure that **JDK 21** is selected for the project.
+
 # Installation Summary
 
-| Component         | Version                |
-| ----------------- | ---------------------- |
-| Java SDK          | 21                     |
-| JavaFX            | 21                     |
-| Maven             | Managed by the project |
-| IDE (preference)  | Visual Studio Code     |
-| Operating Systems | Windows / Linux        |
+| Component                 | Version / Configuration                 |
+| ------------------------- | --------------------------------------- |
+| Java SDK                  | 21                                      |
+| JavaFX                    | 21                                      |
+| Maven                     | Maven Wrapper included with the project |
+| Global Maven installation | Optional                                |
+| IDE                       | Visual Studio Code                      |
+| Client                    | JavaFX application                      |
+| Server                    | Java application                        |
+| Communication             | TCP                                     |
+| Server port               | 5005                                    |
+| Operating Systems         | Windows / Linux                         |
+
+# Quick Start
+
+For a quick installation and execution:
+
+## 1. Install Java 21
+
+Verify:
+
+```bash
+java -version
+javac -version
+```
+
+Both should report Java 21.
+
+## 2. Open the project
+
+Open the project root directory in VS Code.
+
+## 3. Build the project
+
+Windows:
+```cmd
+mvnw.cmd clean install -DskipTests
+```
+
+Linux:
+```bash
+chmod +x mvnw
+./mvnw clean install -DskipTests
+```
+
+## 4. Start the server
+
+Windows:
+```cmd
+mvnw.cmd -pl server -Prun exec:java
+```
+
+Linux:
+```bash
+./mvnw -pl server -Prun exec:java
+```
+
+## 5. Start the client
+
+Windows:
+```cmd
+mvnw.cmd -pl client javafx:run
+```
+
+Linux:
+```bash
+./mvnw -pl client javafx:run
+```
+
+## 6. Connect to the server
+
+If the server is running on the same machine, leave the IP address field from client application empty.
+If the server is running on another machine, enter its reachable IP address and make sure TCP port `5005` is accessible.
+
+The client can then connect to the server and participate in the poker application.
