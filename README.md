@@ -8,17 +8,15 @@ The application follows a distributed client-server architecture. The server is 
 # Table of Contents
 
 * [Project Requirements](#project-requirements)
-
 * [Project Structure](#project-structure)
-
 * [Architecture](#architecture)
+* [Release Version — No Installation Required](#release-version--no-installation-required)
 
 * [Installation Guide](#installation-guide)
   * [Windows](#windows)
   * [Linux](#linux)
 
 * [VS Code Configuration](#vs-code-configuration)
-
 * [Building the Project](#building-the-project)
 
 * [Running the Project](#running-the-project)
@@ -26,14 +24,10 @@ The application follows a distributed client-server architecture. The server is 
   * [Client application](#client-application)
 
 * [Network Configuration](#network-configuration)
-
 * [Connectivity Test](#connectivity-test)
-
-* [Security Considerations](#security-considerations)
-
 * [Troubleshooting](#troubleshooting)
-
 * [Installation Summary](#installation-summary)
+* [Quick start](#quick-start)
 
 
 # Project Requirements
@@ -145,6 +139,48 @@ The client application provides the JavaFX graphical interface.
 When connecting to a remote server, the client must be provided with the server's reachable IP address.
 
 If the client and server are running on the same machine, the IP address can be left empty according to the application's current behavior.
+
+# Release Version — No Installation Required
+
+A pre-built version of the application is available through the project's GitHub Releases.
+
+This version includes everything required to run the application, including the Java runtime and all necessary dependencies. **No installation or configuration is required.**
+
+> [!NOTE]
+> This version includes a limited selection of pre-configured artificial intelligence models. If you wish to customize, replace, or remove these models, it is recommended to download the repository and open it in an IDE, giving you full control over the project's configuration and source code.
+
+## 1. Download the latest Release
+
+Go to the project's **Releases** section on GitHub and download the ZIP file corresponding to the desired release.
+Extract the downloaded ZIP file to a location of your choice.
+
+## 2. Start the server
+
+Open the extracted folder and run:
+```text
+run-server.bat
+```
+
+This will launch the poker server.
+The server must be running before starting the clients.
+
+## 3. Start the client
+
+To launch a client application, run:
+```text
+run-client.bat
+```
+
+A JavaFX client window will open.
+
+Multiple clients can be started by running `run-client.bat` multiple times.
+
+> [!NOTE]
+> The Release version is intended for users who only want to run the application. It does not require Java, Maven, JavaFX, or any other additional software to be installed.**
+
+> [!IMPORTANT]
+> The server and clients must still be able to communicate over TCP port `5005`. If the server and client are running on different machines, network and firewall configuration may be required. See the [Network Configuration](#network-configuration) section for more information.
+
 
 # Installation Guide
 
@@ -477,6 +513,42 @@ If you cannot connect to the server, you may need to allow traffic through port 
 
 > **Note:** The exact steps and terminology may vary depending on your router manufacturer and firmware version.
 
+## Credentials Configuration
+
+The server requires a `credentials.json` file containing the credentials and configuration required by the application.
+
+The file must be created at the following path:
+```text
+tfgpoker/server/src/main/resources/credentials.json
+```
+
+The `credentials.json` file must be configured according to the structure and requirements described in the project's Javadoc.
+
+For detailed information about the required fields, format, and configuration, please refer to the **[Server Javadoc documentation](./tfgpoker/server/documentation/javadoc/apidocs)** and the **[Client Javadoc documentation](./tfgpoker/client/documentation/javadoc/apidocs)**.
+
+> [!IMPORTANT]
+> The `credentials.json` file may contain sensitive information. Do not commit personal credentials, passwords, API keys, or other secrets to a public repository.
+
+## Ollama model installation
+
+The project uses **Ollama** to run the required artificial intelligence models locally.
+
+First, download and install the **Ollama client** from the official website:
+
+[Download Ollama](https://ollama.com/download?utm_source=chatgpt.com)
+
+Once Ollama is installed, open PowerShell from the project's root directory and run the provided setup script:
+
+```powershell
+.\setup-llama.ps1
+```
+
+The script is located at:
+```text
+tfgpoker/setup-llama.ps1
+```
+
+This script automatically downloads and configures the AI models required by the application.
 
 
 ## Run the server
@@ -500,12 +572,11 @@ The server should start and listen for incoming client connections on TCP port `
 
 # Client application
 
-The client application uses JavaFX and can be started independently from the server.
+The client application uses JavaFX and can be started independently from the server. There is no need to install JavaFX to launch this application from and IDE or terminal.
 
 ## Run the client
 
 From the project root directory:
-
 Windows:
 ```cmd
 mvnw.cmd -pl client javafx:run

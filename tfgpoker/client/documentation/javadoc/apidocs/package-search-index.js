@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.ucm.client"},{"l":"com.ucm.client.utils"},{"l":"com.ucm.client.views.original.controllers"}];updateSearchResults();

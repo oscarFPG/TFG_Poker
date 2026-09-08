@@ -1,0 +1,13 @@
+com.ucm.server
+com.ucm.server.commands
+com.ucm.server.control
+com.ucm.server.evaluator
+com.ucm.server.exceptions
+com.ucm.server.gameobjects
+com.ucm.server.history
+com.ucm.server.interfaces
+com.ucm.server.logic
+com.ucm.server.managers
+com.ucm.server.middleclasses
+com.ucm.server.players
+com.ucm.server.statistics
