@@ -500,13 +500,21 @@ First, download and install the **Ollama client** from the official website:
 [Download Ollama](https://ollama.com/download?utm_source=chatgpt.com)
 
 Once Ollama is installed, open PowerShell from the project's root directory and run the provided setup script:
+
+If you want a lighter version (4.5GB):
 ```powershell
 .\setup-llama.ps1
 ```
 
-The script is located at:
+If you want a more powerful version (8GB):
+```powershell
+.\setup-llama_8gb.ps1
+```
+
+Both scripts are located at:
 ```text
 tfgpoker/setup-llama.ps1
+tfgpoker/setup-llama_8gb.ps1
 ```
 
 This script automatically downloads and configures the AI models required by the application.
