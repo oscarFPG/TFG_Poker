@@ -34,7 +34,7 @@ The application follows a distributed client-server architecture. The server is 
 
 The following components are required to build and run the project:
 * **Java SDK 21**
-* **JavaFX 21**
+* **JavaFX 21** (Handled by Maven)
 * **Visual Studio Code** (recommended)
 
 **Maven is optional.**
@@ -47,13 +47,11 @@ On Linux, use `./mvnw`.
 ## Check Java installation
 
 To check the installed Java version:
-
 ```bash
 java -version
 ```
 
 To check the Java compiler version:
-
 ```bash
 javac -version
 ```
@@ -63,13 +61,11 @@ Both commands should report **Java 21**.
 ## Check Maven Wrapper
 
 On Windows:
-
 ```cmd
 mvnw.cmd -version
 ```
 
 On Linux:
-
 ```bash
 ./mvnw -version
 ```
@@ -83,7 +79,6 @@ The output should indicate that Maven is running with **Java 21**.
 
 The project is organized as a Maven multi-module project.
 The main components include:
-
 ```text
 tfgpoker/
 ├── pom.xml
@@ -103,9 +98,8 @@ The root `pom.xml` manages the Maven project and its modules.
 # Architecture
 
 The application uses a distributed client-server architecture.
-
 ```text
-                         TCP connection
+                  TCP connection
                     Port 5005
                          │
         ┌────────────────┴────────────────┐
@@ -126,7 +120,6 @@ Multiple clients can connect to the same server, depending on the application's 
 ## Server
 
 The server application listens for client connections on:
-
 ```text
 TCP port: 5005
 ```
@@ -172,7 +165,6 @@ run-client.bat
 ```
 
 A JavaFX client window will open.
-
 Multiple clients can be started by running `run-client.bat` multiple times.
 
 > [!NOTE]
@@ -191,13 +183,11 @@ Multiple clients can be started by running `run-client.bat` multiple times.
 Install a distribution of **Java SDK 21**.
 
 It is recommended to install it in a path similar to:
-
 ```text
 C:\Program Files\Java\jdk-21
 ```
 
 Once Java has been installed, open a new terminal and check the installation:
-
 ```cmd
 java -version
 ```
@@ -213,30 +203,25 @@ Both commands should display Java version 21.
 The `JAVA_HOME` environment variable must point to the Java SDK installation.
 
 In Windows:
-
 1. Search for **"Edit the system environment variables"**.
 2. Select **"Environment Variables"**.
 3. Create a new variable named:
-
 ```text
 JAVA_HOME
 ```
 
 4. Set its value to the JDK installation directory, for example:
-
 ```text
 C:\Program Files\Java\jdk-21
 ```
 
 5. Edit the `Path` variable.
 6. Add:
-
 ```text
 %JAVA_HOME%\bin
 ```
 
 After making these changes, open a new terminal and check the configuration:
-
 ```cmd
 echo %JAVA_HOME%
 ```
@@ -261,14 +246,12 @@ The necessary JavaFX dependencies are defined in the project's Maven configurati
 ### 1. Install Java SDK 21
 
 On Debian/Ubuntu-based distributions, Java 21 can be installed with:
-
 ```bash
 sudo apt update
 sudo apt install openjdk-21-jdk
 ```
 
 Check the installation:
-
 ```bash
 java -version
 ```
@@ -282,38 +265,32 @@ Both commands should display Java version 21.
 ### 2. Configure JAVA_HOME
 
 To find the Java installation path, use:
-
 ```bash
 readlink -f $(which java)
 ```
 
 The JDK is usually installed in a path similar to:
-
 ```text
 /usr/lib/jvm/java-21-openjdk-amd64
 ```
 
 To configure `JAVA_HOME`, edit the Bash configuration file:
-
 ```bash
 nano ~/.bashrc
 ```
 
 Add the following lines, adjusting the path if necessary:
-
 ```bash
 export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
 export PATH=$JAVA_HOME/bin:$PATH
 ```
 
 Apply the changes:
-
 ```bash
 source ~/.bashrc
 ```
 
 Check the configuration:
-
 ```bash
 echo $JAVA_HOME
 ```
@@ -335,7 +312,6 @@ Once Java 21 has been installed, open the project's root directory with **Visual
 ## Recommended Extensions
 
 The following extensions are recommended for working with the project:
-
 * **Extension Pack for Java**
 * **Language Support for Java™ by Red Hat**
 * **Debugger for Java**
@@ -349,13 +325,11 @@ The **Maven for Java** extension allows Maven projects and their available goals
 Make sure that VS Code is using **Java 21**.
 
 Open the Command Palette:
-
 ```text
 Ctrl + Shift + P
 ```
 
 Search for:
-
 ```text
 Java: Configure Java Runtime
 ```
@@ -375,7 +349,6 @@ Open a terminal in the project's root directory.
 ## Windows
 
 Use the Maven Wrapper:
-
 ```cmd
 mvnw.cmd clean install -DskipTests
 ```
@@ -383,13 +356,11 @@ mvnw.cmd clean install -DskipTests
 ## Linux
 
 First make sure that the Maven Wrapper has execution permissions:
-
 ```bash
 chmod +x mvnw
 ```
 
 Then run:
-
 ```bash
 ./mvnw clean install -DskipTests
 ```
@@ -404,13 +375,11 @@ The command cleans the project, downloads the required dependencies, compiles th
 To verify which Java installation Maven is using:
 
 Windows:
-
 ```cmd
 mvnw.cmd -version
 ```
 
 Linux:
-
 ```bash
 ./mvnw -version
 ```
@@ -421,7 +390,6 @@ Make sure the Java version reported by Maven is **21**.
 
 The server and client applications must be started separately.
 The recommended workflow is:
-
 ```text
 1. Start the server
 2. Make sure port 5005 is accessible
@@ -441,19 +409,16 @@ If clients connect from another machine, the server must accept incoming TCP con
 ### UFW (Ubuntu/Debian)
 
 To allow incoming connections:
-
 ```bash
 sudo ufw allow in 5005/tcp
 ```
 
 If outgoing traffic also needs to be explicitly configured:
-
 ```bash
 sudo ufw allow out 5005/tcp
 ```
 
 Check the firewall status:
-
 ```bash
 sudo ufw status
 ```
@@ -469,13 +434,11 @@ sudo firewall-cmd --list-ports
 ## Verify that the server is listening
 
 After starting the server, verify that port `5005` is listening:
-
 ```bash
 sudo ss -lntp | grep :5005
 ```
 
 The server should listen on:
-
 ```text
 0.0.0.0:5005
 ```
@@ -483,7 +446,6 @@ The server should listen on:
 This allows connections through the available network interfaces.
 
 If the server listens on:
-
 ```text
 127.0.0.1:5005
 ```
@@ -538,7 +500,6 @@ First, download and install the **Ollama client** from the official website:
 [Download Ollama](https://ollama.com/download?utm_source=chatgpt.com)
 
 Once Ollama is installed, open PowerShell from the project's root directory and run the provided setup script:
-
 ```powershell
 .\setup-llama.ps1
 ```
@@ -600,13 +561,12 @@ If both the server and client applications are running on the same machine, leav
 When the server and client run on different machines, network connectivity must be configured correctly.
 
 The basic configuration is:
-
 ```text
 Client
-   │
-   │ TCP
-   │
-   ▼
+  │
+  │ TCP
+  │
+  ▼
 Server IP address : 5005
 ```
 
@@ -621,17 +581,16 @@ If the server is behind a router or NAT and clients need to connect from outside
 The general configuration is:
 ```text
 Internet
-    │
-    │ TCP 5005
-    ▼
+  │
+  │ TCP 5005
+  ▼
 Router / NAT
-    │
-    │ TCP 5005
-    ▼
+  │
+  │ TCP 5005
+  ▼
 Server
 192.168.x.x:5005
 ```
-
 The exact port forwarding procedure depends on the router.
 
 # Connectivity Test
@@ -691,13 +650,11 @@ If an error indicates that `java` or `javac` is not recognized as a command, che
 * A new terminal was opened after modifying the environment variables.
 
 Check the installation with:
-
 ```bash
 java -version
 ```
 
 and:
-
 ```bash
 javac -version
 ```
@@ -707,13 +664,11 @@ javac -version
 Run:
 
 Windows:
-
 ```cmd
 mvnw.cmd -version
 ```
 
 Linux:
-
 ```bash
 ./mvnw -version
 ```
@@ -730,13 +685,11 @@ If it is not Java 21, verify:
 ## Maven Wrapper does not run on Linux
 
 If the wrapper does not have execution permissions, run:
-
 ```bash
 chmod +x mvnw
 ```
 
 Then:
-
 ```bash
 ./mvnw -version
 ```
@@ -751,13 +704,11 @@ Make sure that:
 * The Maven Wrapper can execute correctly.
 
 Run the build again:
-
 ```bash
 ./mvnw clean install -DskipTests
 ```
 
 On Windows:
-
 ```cmd
 mvnw.cmd clean install -DskipTests
 ```
@@ -787,13 +738,11 @@ Check the following:
 Test the connection with:
 
 Windows:
-
 ```powershell
 Test-NetConnection <SERVER_IP> -Port 5005
 ```
 
 Linux:
-
 ```bash
 nc -vz <SERVER_IP> 5005
 ```
@@ -811,13 +760,11 @@ If the client can connect when both applications run on the same machine but can
 ## VS Code is using the wrong Java version
 
 Open the Command Palette:
-
 ```text
 Ctrl + Shift + P
 ```
 
 Select:
-
 ```text
 Java: Configure Java Runtime
 ```
@@ -846,7 +793,6 @@ For a quick installation and execution:
 ## 1. Install Java 21
 
 Verify:
-
 ```bash
 java -version
 javac -version
